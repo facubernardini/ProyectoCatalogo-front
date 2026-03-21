@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-brand-primary: #E06512;
+  --color-brand-secondary: var(--color-zinc-900);
+  --color-brand-accent: var(--color-amber-400);
+  
+  --color-cat-bg: #f9fafb;
+  --color-cat-text: var(--color-zinc-800);
+}
+
+body {
+  background-color: var(--color-cat-bg);
+  color: var(--color-cat-text);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}

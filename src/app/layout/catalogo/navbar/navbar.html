@@ -1,0 +1,26 @@
+<nav class="sticky top-0 z-50 w-full border-b border-zinc-200 bg-cat-bg px-4 py-3">
+  <div class="mx-auto flex max-w-7xl items-center justify-between">
+    
+    <button class="text-cat-text hover:text-brand-primary p-2 transition-colors" aria-label="Abrir menú">
+      <app-icon name="menu" classes="size-6 fill-current" />
+    </button>
+
+    <div class="text-xl font-bold tracking-tight text-brand-primary">
+      MiCatálogo
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button class="text-cat-text hover:text-brand-primary p-2 transition-colors" aria-label="Buscar">
+        <app-icon name="search" classes="size-6 fill-current" />
+      </button>
+
+      <button class="relative text-cat-text hover:text-brand-primary p-2 transition-colors" aria-label="Ver carrito">
+        <app-icon name="shopping_cart" classes="size-6 fill-current" />
+        <span class="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+          0
+        </span>
+      </button>
+    </div>
+
+  </div>
+</nav>
