@@ -1,0 +1,19 @@
+<div style="max-width: 300px; margin: 50px auto; padding: 20px; border: 1px solid #ccc;">
+  <h2>Login de Prueba</h2>
+  
+  <form [formGroup] ="loginForm" (ngSubmit)="onSubmit()">
+    <div style="margin-bottom: 15px;">
+      <label>Correo:</label><br>
+      <input type="email" formControlName="correo" placeholder="admin@correo.com">
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label>Contraseña:</label><br>
+      <input type="password" formControlName="password" placeholder="******">
+    </div>
+
+    <button type="submit" [disabled]="loginForm.invalid">
+      Ingresar
+    </button>
+  </form>
+</div>
