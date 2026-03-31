@@ -3,14 +3,14 @@
     
     <div class="flex items-end justify-between mb-8">
       <div>
-        <h2 class="text-3xl font-bold text-brand-secondary">Destacados</h2>
-        <p class="text-zinc-500 mt-2">Lo mejor de nuestra tienda</p>
+        <h2 class="text-3xl font-bold text-brand-text">Destacados</h2>
+        <p class="text-brand-text-sec mt-2">Lo mejor de nuestra tienda</p>
       </div>
     </div>
 
     <div class="relative items-center flex">
       <button (click)="scroll(-1)" 
-              class="absolute -left-4 z-10 bg-white shadow-lg rounded-full p-2 text-brand-secondary 
+              class="absolute -left-4 z-10 bg-white shadow-lg rounded-full p-2 text-brand-text 
                 hover:text-brand-primary transition-all border border-zinc-100 hidden md:block">
         <app-icon name="chevron_left" classes="size-6 fill-current" />
       </button>
@@ -26,7 +26,7 @@
       </div>
 
       <button (click)="scroll(1)" 
-              class="absolute -right-4 z-10 bg-white shadow-lg rounded-full p-2 text-brand-secondary hover:text-brand-primary transition-all border border-zinc-100 hidden md:block">
+              class="absolute -right-4 z-10 bg-white shadow-lg rounded-full p-2 text-brand-text hover:text-brand-primary transition-all border border-zinc-100 hidden md:block">
         <app-icon name="chevron_right" classes="size-6 fill-current" />
       </button>
     </div>

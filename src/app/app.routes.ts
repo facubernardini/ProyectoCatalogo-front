@@ -4,11 +4,12 @@ import { Catalogo } from '@layout/catalogo/catalogo';
 import { Login } from '@layout/login/login';
 import { PanelVendedor } from '@layout/panel-vendedor/panel-vendedor';
 import { authGuard } from 'src/app/core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
 	{ path: '', component: Catalogo },
 	{ path: 'login', component: Login },
 	{ path: 'panel-vendedor', component: PanelVendedor, canActivate: [authGuard] },
-	{ path: 'backoffice', component: Backoffice, canActivate: [authGuard] },
+	{ path: 'backoffice', component: Backoffice, canActivate: [authGuard, adminGuard] },
 	{ path: '**', redirectTo: '' }
 ];

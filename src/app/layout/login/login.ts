@@ -30,10 +30,9 @@ export class Login {
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
         if (res.vendedor.admin) {
-          console.log('Bienvenido, Administrador');
+          console.log('Bienvenido, Admin');
           this.router.navigate(['/backoffice']);
         } else {
-          console.log('Bienvenido, Vendedor');
           this.router.navigate(['/panel-vendedor']);
         }
       },

@@ -1,0 +1,4 @@
+Principal (Base) - Azul Glaciar: #D1E9F6
+Acento (Acción) - Azul Real Profundo: #2E5A88
+Texto (Títulos) - Azul Medianoche: #0A1929
+Texto Secundario - Gris Acero: #546E7A
