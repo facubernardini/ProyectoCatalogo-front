@@ -9,6 +9,6 @@ import { CarrouselDestacados } from "./carrousel-destacados/carrousel-destacados
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
-export class Catalogo {
+export class CatalogoPublico {
 
 }

@@ -1,9 +1,4 @@
-export interface Vendedor {
-  id: number;
-  nombre: string;
-  correo: string;
-  admin: boolean;
-}
+import { Vendedor } from "./vendedor.model";
 
 export interface LoginResponse {
   message: string;

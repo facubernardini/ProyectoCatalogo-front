@@ -1,19 +1,54 @@
-<div style="max-width: 300px; margin: 50px auto; padding: 20px; border: 1px solid #ccc;">
-  <h2>Login de Prueba</h2>
-  
-  <form [formGroup] ="loginForm" (ngSubmit)="onSubmit()">
-    <div style="margin-bottom: 15px;">
-      <label>Correo:</label><br>
-      <input type="email" formControlName="correo" placeholder="admin@correo.com">
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-brand-bg p-8">
+    
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-bg rounded-full mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-brand-text">Bienvenido</h2>
+      <p class="text-brand-text-sec text-sm mt-1">Ingresá a tu panel de control</p>
     </div>
 
-    <div style="margin-bottom: 15px;">
-      <label>Contraseña:</label><br>
-      <input type="password" formControlName="password" placeholder="******">
-    </div>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      
+      <div>
+        <label class="block text-sm font-semibold text-brand-text mb-2">Correo electrónico</label>
+        <div class="relative">
+          <input 
+            type="email" 
+            formControlName="correo" 
+            placeholder="admin@correo.com"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white"
+          >
+        </div>
+      </div>
 
-    <button type="submit" [disabled]="loginForm.invalid">
-      Ingresar
-    </button>
-  </form>
+      <div>
+        <label class="block text-sm font-semibold text-brand-text mb-2">Contraseña</label>
+        <div class="relative">
+          <input 
+            type="password" 
+            formControlName="password" 
+            placeholder="••••••••"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white"
+          >
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        [disabled]="loginForm.invalid"
+        class="w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 hover:bg-[#1e3d5e] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+      >
+        Iniciar Sesión
+      </button>
+
+    </form>
+
+    <p class="mt-8 text-center text-xs text-brand-text-sec">
+      ¿Olvidaste tu acceso? <a href="#" class="text-brand-accent font-semibold hover:underline">Contactar soporte</a>
+    </p>
+  </div>
 </div>

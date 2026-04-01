@@ -19,7 +19,7 @@ export class Login {
 
   constructor() {
     this.loginForm = this.fb.group({
-      correo: ['admin@test.com', [Validators.required, Validators.email]],
+      correo: ['vendedor@test.com', [Validators.required, Validators.email]],
       password: ['password123', [Validators.required, Validators.minLength(6)]]
     });
   }
@@ -29,11 +29,11 @@ export class Login {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
+        console.log("Login: ", res);
         if (res.vendedor.admin) {
-          console.log('Bienvenido, Admin');
           this.router.navigate(['/backoffice']);
         } else {
-          this.router.navigate(['/panel-vendedor']);
+          this.router.navigate(['/panel-vendedor/inicio']);
         }
       },
       error: (err) => {
