@@ -7,6 +7,9 @@ import { authGuard } from 'src/app/core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { MisProductos } from '@layout/panel-vendedor/mis-productos/mis-productos';
 import { Dashboard } from '@layout/panel-vendedor/dashboard/dashboard';
+import { MisCategorias } from '@layout/panel-vendedor/mis-categorias/mis-categorias';
+import { MiTienda } from '@layout/panel-vendedor/mi-tienda/mi-tienda';
+import { Perfil } from '@layout/panel-vendedor/perfil/perfil';
 
 export const routes: Routes = [
 	{ path: '', component: CatalogoPublico },
@@ -18,10 +21,12 @@ export const routes: Routes = [
         children: [
 			{ path: 'inicio', component: Dashboard },
             { path: 'mis-productos', component: MisProductos },
+            { path: 'mis-categorias', component: MisCategorias },
+            { path: 'mi-tienda', component: MiTienda },
+            { path: 'perfil', component: Perfil },
         ]
     },
-
 	{ path: 'backoffice', component: Backoffice, canActivate: [authGuard, adminGuard] },
-	
+    { path: ':slug', component: CatalogoPublico },
 	{ path: '**', redirectTo: '' },
 ];

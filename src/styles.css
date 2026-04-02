@@ -12,3 +12,19 @@ body {
   color: var(--color-cat-text);
   font-family: ui-sans-serif, system-ui, sans-serif;
 }
+
+/* Ocultar barra de scroll en Chrome, Safari y Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ocultar barra de scroll en IE, Edge y Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.snap-x {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}

@@ -4,7 +4,7 @@ export interface Catalogo {
   slug: string;
   minimo_compra: number;
   wpp_numero: string | null;
-  instagram: string | null;
+  instagram_usuario: string | null;
   ofrece_envio: boolean;
   costo_envio: number;
 }

@@ -1,0 +1,33 @@
+<div class="px-4">
+    <div class="flex items-center gap-2 mb-4">
+        
+        <div class="flex-1 overflow-x-auto no-scrollbar">
+            <div class="flex gap-2">
+                <button 
+                    (click)="seleccionarCategoria('todos')"
+                    [class]="categoriaSeleccionada() === 'todos' ? 'bg-brand-accent text-white shadow-md' : 'bg-white text-brand-text border border-gray-200'"
+                    class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95">
+                    Todos
+                </button>
+
+                @for (cat of categorias(); track cat.id) {
+                    <button 
+                        (click)="seleccionarCategoria(cat.nombre)"
+                        [class]="categoriaSeleccionada() === cat.nombre 
+                            ? 'bg-brand-accent text-white shadow-md' 
+                            : 'bg-white text-brand-text border border-gray-200'"
+                        class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95">
+                        
+                        {{ cat.nombre }} 
+                    </button>
+                }
+            </div>
+        </div>
+
+        <button 
+            (click)="abrirFiltros()"
+            class="shrink-0 p-2.5 bg-white border border-gray-200 rounded-xl text-brand-accent shadow-sm active:scale-90 transition-transform">
+            <app-icon name="filter" classes="size-6 fill-current" />
+        </button>
+    </div>
+</div>

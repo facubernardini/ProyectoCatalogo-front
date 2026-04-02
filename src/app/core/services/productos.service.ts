@@ -13,4 +13,8 @@ export class ProductoService {
     getProductosByCatalogo(catalogoId: number): Observable<Producto[]> {
         return this.http.get<Producto[]>(`${this.API_URL}/catalogo/${catalogoId}`);
     }
+
+    getProductosBySlug(slug: string): Observable<Producto[]> {
+        return this.http.get<Producto[]>(`${this.API_URL}/publico/${slug}`);
+    }
 }

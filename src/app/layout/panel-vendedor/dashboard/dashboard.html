@@ -14,7 +14,7 @@
         </h1>
     </div>
 
-    <button
+    <button [routerLink]="['../perfil']"
         class="p-2 text-brand-accent active:scale-95 transition-transform"
         aria-label="Mi perfil">
         <app-icon name="profile" classes="size-7 fill-current" />
@@ -25,7 +25,6 @@
 
 <main class="min-h-screen bg-gray-50 p-4">
     <div class="relative w-full max-w-md mx-auto group">
-
         <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <app-icon name="search" classes="size-6 fill-current text-brand-accent" />
@@ -44,7 +43,7 @@
 
     <div class="flex flex-col py-4 space-y-4">
         <div class="w-full"> 
-            <button [routerLink]="['../mis-productos']" 
+            <button [routerLink]="['../mis-productos']"
                 class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
                 >
                 <div class="flex items-center gap-4">
@@ -57,7 +56,7 @@
                             Mis productos
                         </span>
                         <span class="text-brand-text-sec text-xs sm:text-sm">
-                            Agrega, elimina o editá tus productos
+                            Agrega, elimina o edita tus productos
                         </span>
                     </div>
                 </div>
@@ -71,7 +70,7 @@
         </div>
 
         <div class="w-full"> 
-            <button 
+            <button [routerLink]="['../mis-categorias']"
                 class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
                 >
                 <div class="flex items-center gap-4">
@@ -98,7 +97,7 @@
         </div>
 
         <div class="w-full"> 
-            <button 
+            <button [routerLink]="['../mi-tienda']"
                 class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
                 >
                 <div class="flex items-center gap-4">
