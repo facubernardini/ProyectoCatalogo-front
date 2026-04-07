@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 
 @Component({
@@ -7,4 +7,6 @@ import { Icon } from "@shared/components/icon";
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {}
+export class Navbar {
+  nombreTienda = input.required<string>();
+}

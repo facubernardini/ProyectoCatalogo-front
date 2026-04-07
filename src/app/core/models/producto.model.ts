@@ -10,4 +10,5 @@ export interface Producto {
   activo: boolean;
   
   presentaciones: Presentacion[];
+  categorias: string[];
 }

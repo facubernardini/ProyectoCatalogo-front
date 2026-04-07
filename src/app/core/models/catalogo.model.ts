@@ -1,3 +1,9 @@
+export interface MedioPago {
+  id: number;
+  nombre: string;
+  icono: string;
+}
+
 export interface Catalogo {
   id: number;
   nombre_tienda: string;
@@ -7,4 +13,5 @@ export interface Catalogo {
   instagram_usuario: string | null;
   ofrece_envio: boolean;
   costo_envio: number;
+  medios_pago: MedioPago[];
 }
