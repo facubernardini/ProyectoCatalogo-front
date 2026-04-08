@@ -17,6 +17,8 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden; /* Evita scrolls raros por el desenfoque */
+
+  overscroll-behavior-y: none;
 }
 
 /* Aplicación del Punto 1: Soft Mesh Gradient */
@@ -56,4 +58,9 @@ body::before {
 .snap-x {
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
+}
+
+[appSwipeDown] {
+  touch-action: pan-y; /* Permite el movimiento vertical pero le dice al browser que nosotros lo controlamos */
+  overscroll-behavior: contain; /* Encapsula el scroll dentro del elemento */
 }

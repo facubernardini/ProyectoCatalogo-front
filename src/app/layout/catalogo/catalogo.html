@@ -52,8 +52,10 @@
 @if (cartService.isOpen()) {
   <div class="fixed inset-0 z-80 bg-black/60 backdrop-blur-sm" (click)="cartService.close()">
     
-    <div class="absolute bottom-0 w-full max-h-[90vh] bg-white rounded-t-[40px] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300" 
-         (click)="$event.stopPropagation()">
+    <div appSwipeDown
+        (onSwipe)="cartService.close()"
+        class="absolute bottom-0 w-full max-h-[90vh] bg-white rounded-t-[40px] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300" 
+        (click)="$event.stopPropagation()">
       
         <div class="p-6 pb-2 border-b border-gray-100">
             <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4"></div>
@@ -65,7 +67,7 @@
                     
                     <span>Mi Pedido</span>
                 </h2>
-                <button (click)="cartService.limpiarCarrito()" class="text-xs font-bold text-red-500 uppercase tracking-wider">
+                <button (click)="cartService.limpiarCarrito(); cartService.close()" class="text-xs font-bold text-red-500 uppercase tracking-wider">
                     Vaciar
                 </button>
             </div>

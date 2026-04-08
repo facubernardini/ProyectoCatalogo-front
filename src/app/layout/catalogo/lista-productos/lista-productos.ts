@@ -4,12 +4,13 @@ import { Icon } from "@shared/components/icon";
 import { Producto } from 'src/app/core/models/producto.model';
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { CartService } from 'src/app/core/services/cart.service';
+import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 
 type OrdenCriterio = 'menor-precio' | 'mayor-precio' | 'alfa' | 'default';
 
 @Component({
   selector: 'app-lista-productos',
-  imports: [Icon],
+  imports: [Icon, SwipeDownDirective],
   templateUrl: './lista-productos.html',
   styleUrl: './lista-productos.css',
 })

@@ -12,10 +12,11 @@ import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 import { ListaProductos } from "@layout/catalogo/lista-productos/lista-productos";
 import { Icon } from "@shared/components/icon";
 import { CartService } from 'src/app/core/services/cart.service';
+import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 
 @Component({
   selector: 'app-catalogo',
-  imports: [CommonModule, Navbar, CarrouselDestacados, ListaProductos, Icon],
+  imports: [CommonModule, Navbar, CarrouselDestacados, ListaProductos, Icon, SwipeDownDirective],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })

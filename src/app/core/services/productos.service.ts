@@ -6,15 +6,15 @@ import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ProductoService {
-    private http = inject(HttpClient);
-    private API_URL = `${environment.apiUrl}/productos`;
+	private http = inject(HttpClient);
+	private API_URL = `${environment.apiUrl}/productos`;
 
-    // Obtenemos productos por ID de catálogo
-    getProductosByCatalogo(catalogoId: number): Observable<Producto[]> {
-        return this.http.get<Producto[]>(`${this.API_URL}/catalogo/${catalogoId}`);
-    }
+	// Obtenemos productos por ID de catálogo
+	getProductosByCatalogo(catalogoId: number): Observable<Producto[]> {
+		return this.http.get<Producto[]>(`${this.API_URL}/catalogo/${catalogoId}`);
+	}
 
-    getProductosBySlug(slug: string): Observable<Producto[]> {
-        return this.http.get<Producto[]>(`${this.API_URL}/publico/${slug}`);
-    }
+	getProductosBySlug(slug: string): Observable<Producto[]> {
+		return this.http.get<Producto[]>(`${this.API_URL}/publico/${slug}`);
+	}
 }
