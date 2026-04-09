@@ -29,45 +29,10 @@
         </button>
     </div>
 
-    <div class="pb-24"> 
+    <div class="pb-12"> 
         <div class="flex flex-col gap-3">
             @for (producto of productos(); track producto.id) {
-                <div class="bg-white rounded-3xl p-3 shadow-sm border border-gray-100 flex items-center gap-4">
-                    <div class="relative shrink-0 w-20 h-20 bg-brand-bg rounded-2xl overflow-hidden border border-gray-50">
-                        <img [src]="producto.imagen || 'https://placehold.co/200x200?text=📦'" 
-                            class="w-full h-full object-cover">
-                    </div>
-
-                    <div class="flex-1 min-w-0">
-                        <h3 class="text-brand-text font-bold text-base truncate leading-tight">{{ producto.nombre }}</h3>
-                        
-                        <div class="flex flex-wrap gap-1.5 mt-1.5">
-                            @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
-                                <span class="text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg border border-gray-200/50">
-                                    {{ pres.unidad_venta }}
-                                </span>
-                            }
-                            @if (producto.presentaciones.length > 3) {
-                                <span class="text-[10px] font-bold text-brand-accent">+{{ producto.presentaciones.length - 3 }}</span>
-                            }
-                        </div>
-
-                        <div class="flex items-baseline gap-1 mt-2">
-                            @if (producto.presentaciones.length > 1) {
-                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Desde</span>
-                            }
-                            <span class="text-brand-accent font-black text-xl leading-none">
-                                ${{ producto.presentaciones[0]?.precio }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <button 
-                        (click)="abrirSelector(producto)" 
-                        class="bg-brand-accent text-white p-2.5 rounded-xl active:scale-90 transition-transform">
-                        <app-icon name="shop-add" classes="size-5 fill-current" />
-                    </button>
-                </div>
+                <app-product-card [producto]="producto"></app-product-card>
             } @empty {
                 <div class="flex flex-col items-center justify-center py-20 text-center">
                     <div class="bg-gray-100 p-6 rounded-full mb-4">
@@ -130,55 +95,6 @@
         <button (click)="cerrarFiltros()" 
                 class="w-full mt-8 py-4 bg-brand-accent text-white font-bold rounded-2xl active:scale-95 transition-transform">
             Listo
-        </button>
-    </div>
-</div>
-}
-
-@if (productoParaDetalle(); as prod) {
-<div class="fixed inset-0 z-70 bg-black/60 backdrop-blur-sm transition-all" (click)="productoParaDetalle.set(null)">
-    
-    <div appSwipeDown
-        (onSwipe)="productoParaDetalle.set(null)"
-        class="absolute bottom-0 w-full bg-white rounded-t-[40px] p-6 shadow-2xl animate-in slide-in-from-bottom duration-300" 
-        (click)="$event.stopPropagation()">
-    
-        <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
-
-        <div class="flex gap-4 mb-8">
-            <div class="w-20 h-20 bg-brand-bg rounded-2xl overflow-hidden shrink-0">
-                <img [src]="prod.imagen || 'https://placehold.co/200x200?text=%F0%9F%93%A6'" class="w-full h-full object-cover">
-            </div>
-            <div>
-                <h2 class="text-xl font-black text-brand-text">{{ prod.nombre }}</h2>
-                <p class="text-sm text-gray-500">{{ prod.descripcion }}</p>
-            </div>
-        </div>
-
-        <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">Seleccioná una opción</h3>
-
-        <div class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto no-scrollbar">
-            @for (pres of prod.presentaciones; track pres.id) {
-            <button (click)="agregarAlCarrito(prod, pres)"
-                    class="flex items-center justify-between p-4 rounded-2xl border-2 border-gray-100 hover:border-brand-accent active:bg-brand-accent/5 transition-all group">
-                
-                <div class="flex flex-col items-start">
-                    <span class="font-bold text-brand-text group-hover:text-brand-accent">{{ pres.unidad_venta }}</span>
-                    @if (pres.porcentaje_descuento > 0) {
-                        <span class="text-[10px] mt-0.5 bg-green-100 text-green-600 px-1.5 py-0.5 rounded-md font-bold">
-                            {{ pres.porcentaje_descuento }}% OFF
-                        </span>
-                    }
-                </div>
-
-                <span class="block font-black text-lg text-brand-text">${{ pres.precio }}</span>
-            </button>
-            }
-        </div>
-
-        <button (click)="productoParaDetalle.set(null)" 
-                class="w-full mt-6 py-4 text-gray-400 font-bold hover:text-brand-text transition-colors">
-            Cancelar
         </button>
     </div>
 </div>

@@ -1,209 +1,29 @@
 <app-navbar
-    [nombreTienda]="catalogo()?.nombre_tienda ?? 'Cargando...'">
+    [catalogo]="catalogo()">
 </app-navbar>
 
-<div #sentinel class="h-px w-full pointer-events-none"></div>
-<div #stickyHeader
-    class="sticky top-0 z-40 w-full transition-all duration-500 ease-in-out"
-    [class.bg-white/70]="isStuck()"
-    [class.backdrop-blur-md]="isStuck()"
-    [class.shadow-xl]="isStuck()"
-    [class.rounded-b-[32px]]="isStuck()"
-    [class.py-2]="isStuck()"
+<app-search-nav
+    [productos]="productos()">
+</app-search-nav>
 
-    [class.py-1]="!isStuck()"
-    [class.bg-transparent]="!isStuck()">
-    <div class="w-full max-w-7xl mx-auto px-4 py-2 flex items-center gap-3">
-        <div class="relative flex-1 group">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <app-icon name="search" classes="size-5 fill-current text-brand-accent" />
-            </div>
-
-            <input 
-                type="text" 
-                placeholder="Buscar productos..."
-                class="w-full pl-11 pr-4 py-3 bg-white border border-brand-bg rounded-xl 
-                    text-brand-text placeholder:text-brand-text-sec/60
-                    focus:outline-none focus:ring-4 focus:ring-brand-bg focus:border-brand-accent 
-                    transition-all duration-300 shadow-sm"
-            >
-        </div>
-
-        <button (click)="cartService.open()" class="relative shrink-0 p-2.5 bg-white border border-brand-bg text-brand-text rounded-xl shadow-sm active:scale-90 transition-transform" aria-label="Ver carrito">
-            <app-icon name="shopping_cart" classes="size-6 fill-current" />
-            @if (cartService.totalItems() > 0) {
-                <span class="absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white">
-                    {{ cartService.totalItems() }}
-                </span>
-            }
-        </button>
-    </div>
-</div>
-
-<app-carrousel-destacados 
+<app-carousel-destacados
     [productosDestacados]="productosDestacados()">
-</app-carrousel-destacados>
+</app-carousel-destacados>
+
+<app-carousel-ofertas 
+    [productosRaw]="productos()">
+</app-carousel-ofertas>
 
 <app-lista-productos 
     [productosRaw]="productos()"
     [categorias]="categorias()">
 </app-lista-productos>
 
-@if (cartService.isOpen()) {
-  <div class="fixed inset-0 z-80 bg-black/60 backdrop-blur-sm" (click)="cartService.close()">
-    
-    <div appSwipeDown
-        (onSwipe)="cartService.close()"
-        class="absolute bottom-0 w-full max-h-[90vh] bg-white rounded-t-[40px] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300" 
-        (click)="$event.stopPropagation()">
-      
-        <div class="p-6 pb-2 border-b border-gray-100">
-            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4"></div>
-            <div class="flex justify-between items-center">
-                <h2 class="flex items-center gap-3 text-2xl font-black text-brand-text">
-                    <div class="flex items-center justify-center size-10 bg-brand-accent/10 text-brand-accent rounded-xl shrink-0">
-                        <app-icon name="receipt" classes="size-6 fill-current" />
-                    </div>
-                    
-                    <span>Mi Pedido</span>
-                </h2>
-                <button (click)="cartService.limpiarCarrito(); cartService.close()" class="text-xs font-bold text-red-500 uppercase tracking-wider">
-                    Vaciar
-                </button>
-            </div>
-        </div>
+<!-- Dialogs emergentes -->
+<app-search-products [productos]="productos()"></app-search-products>
+<app-carrito [catalogo]="catalogo()"></app-carrito>
+<app-menu-info [catalogo]="catalogo()"></app-menu-info>
+<app-product-selector></app-product-selector>
 
-        <div class="flex-1 overflow-y-auto p-6 no-scrollbar">
-            <div class="flex flex-col gap-4">
-            @for (item of cartService.items(); track item.presentacionId) {
-                <div class="flex items-center gap-3">
-                    <img [src]="item.imagen || 'https://placehold.co/100x100?text=%F0%9F%93%A6'" class="size-14 rounded-xl object-cover bg-brand-bg">
-                    
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-brand-text truncate">{{ item.nombre }}</h4>
-                        <p class="text-xs text-gray-400">{{ item.unidad }} • ${{ item.precio }} c/u</p>
-                    </div>
-
-                    <div class="flex items-center gap-3 bg-gray-100 p-1 rounded-xl">
-                        <button (click)="cartService.restarUno(item.presentacionId)" class="size-8 flex items-center justify-center bg-white rounded-lg shadow-sm active:scale-90 transition-transform">
-                            <app-icon name="remove" classes="size-4 fill-current text-brand-text" />
-                        </button>
-                        <span class="font-black text-brand-text min-w-5 text-center">{{ item.cantidad }}</span>
-                        <button (click)="cartService.sumarUno(item.presentacionId)" class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-transform text-white">
-                            <app-icon name="add-producto" classes="size-4 fill-current" />
-                        </button>
-                    </div>
-                </div>
-            } @empty {
-                <div class="py-10 text-center">
-                    <p class="text-gray-400 font-medium">Tu carrito está vacío</p>
-                </div>
-            }
-            </div>
-
-            <div class="mt-8">
-                <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Cómo lo recibís?</h3>
-                
-                @if (catalogo()?.ofrece_envio) {
-                    <div class="grid grid-cols-2 gap-3 mb-6">
-                        <button (click)="metodoEntrega.set('retiro')"
-                                [class.border-brand-accent]="metodoEntrega() === 'retiro'"
-                                [class.bg-brand-accent/5]="metodoEntrega() === 'retiro'"
-                                class="p-4 border-2 border-gray-100 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
-                            <div [class.text-brand-accent]="metodoEntrega() === 'retiro'" class="text-gray-400">
-                                <app-icon name="store" classes="size-7 fill-current" />
-                            </div>
-                            <div class="text-center">
-                                <span class="block font-bold text-sm text-brand-text">Retiro en el local</span>
-                                <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
-                            </div>
-                        </button>
-
-                        <button (click)="metodoEntrega.set('envio')"
-                                [class.border-brand-accent]="metodoEntrega() === 'envio'"
-                                [class.bg-brand-accent/5]="metodoEntrega() === 'envio'"
-                                class="p-4 border-2 border-gray-100 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
-                            <div [class.text-brand-accent]="metodoEntrega() === 'envio'" class="text-gray-400">
-                                <app-icon name="delivery" classes="size-7 fill-current" />
-                            </div>
-                            <div class="text-center">
-                                <span class="block font-bold text-sm text-brand-text">Envío a domicilio</span>
-                                <span class="text-[10px] text-brand-accent uppercase font-bold">+${{ catalogo()?.costo_envio }}</span>
-                            </div>
-                        </button>
-                    </div>
-                } @else {
-                    <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center gap-3">
-                        <app-icon name="info" classes="size-5 text-blue-500 fill-current" />
-                        <p class="text-sm text-blue-700 font-medium">Esta tienda solo opera con <b>Retiro en el Local</b>.</p>
-                    </div>
-                }
-            </div>
-
-            <div class="mt-8">
-                <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Elegí como pagar</h3>
-                
-                <div class="grid grid-cols-3 gap-3">
-                    @for (mp of catalogo()?.medios_pago; track mp.id) {
-                        <button (click)="cartService.selectPaymentMethod(mp)"
-                                [class.border-brand-accent]="cartService.selectedPaymentMethod()?.id === mp.id"
-                                [class.bg-brand-accent/5]="cartService.selectedPaymentMethod()?.id === mp.id"
-                                class="flex flex-col items-center gap-2 p-3 border-2 border-gray-100 rounded-2xl transition-all active:scale-95">
-                            
-                            <div [class.text-brand-accent]="cartService.selectedPaymentMethod()?.id === mp.id" 
-                                class="text-gray-400 transition-colors">
-                                <img [src]="mp.icono" class="size-10 rounded-xl object-cover">
-                            </div>
-                            
-                            <span class="text-[9px] font-black uppercase text-center leading-tight"
-                                [class.text-brand-accent]="cartService.selectedPaymentMethod()?.id === mp.id"
-                                [class.text-gray-500]="cartService.selectedPaymentMethod()?.id !== mp.id">
-                                {{ mp.nombre }}
-                            </span>
-                        </button>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div class="p-6 bg-gray-50 rounded-t-4xl border-t border-gray-100">
-        
-            @if (montoFaltante() > 0 && cartService.totalItems() > 0) {
-                <div class="mb-4 p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-center gap-2 animate-pulse">
-                    <app-icon name="alert" classes="size-4 text-amber-500 fill-current" />
-                    <p class="text-xs text-amber-700 font-bold">
-                        Te faltan ${{ montoFaltante() }} para alcanzar el mínimo de compra (${{ catalogo()?.minimo_compra }})
-                    </p>
-                </div>
-            }
-
-            <div class="space-y-2 mb-6 px-2">
-                <div class="flex justify-between text-sm">
-                    <span class="text-gray-500">Subtotal</span>
-                    <span class="font-bold text-brand-text">${{ cartService.totalPrice() }}</span>
-                </div>
-                
-                @if (metodoEntrega() === 'envio') {
-                    <div class="flex justify-between text-sm animate-in fade-in duration-300">
-                        <span class="text-gray-500">Costo de envío</span>
-                        <span class="font-bold text-brand-accent">+${{ catalogo()?.costo_envio }}</span>
-                    </div>
-                }
-
-                <div class="flex justify-between items-center pt-2 border-t border-dashed border-gray-200">
-                    <span class="text-lg font-bold text-brand-text">Total</span>
-                    <span class="text-3xl font-black text-brand-accent">${{ totalFinal() }}</span>
-                </div>
-            </div>
-
-            <button (click)="finalizarPedido()"
-                    [disabled]="!puedeFinalizar()"
-                    class="w-full py-4 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all 
-                        disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed">
-                Confirmar por WhatsApp
-            </button>
-        </div>
-
-    </div>
-</div>
-}
+<!-- Toast -->
+<app-toast></app-toast>

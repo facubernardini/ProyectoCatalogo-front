@@ -8,6 +8,7 @@ export interface Catalogo {
   id: number;
   nombre_tienda: string;
   slug: string;
+  logo: string;
   minimo_compra: number;
   wpp_numero: string | null;
   instagram_usuario: string | null;

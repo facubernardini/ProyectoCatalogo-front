@@ -1,0 +1,59 @@
+@if (productSelectorService.isOpen()) {
+    <div class="fixed inset-0 z-80 bg-black/60 backdrop-blur-sm transition-all" 
+        (click)="productSelectorService.close()">
+        
+        <div appSwipeDown
+            (onSwipe)="productSelectorService.close()"
+            class="fixed bottom-0 w-full bg-white rounded-t-[40px] p-6 shadow-2xl animate-in slide-in-from-bottom duration-300" 
+            (click)="$event.stopPropagation()">
+        
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+
+            @if (productSelectorService.selectedProduct(); as prod) {
+                <div class="flex gap-4 mb-8">
+                    <div class="w-20 h-20 bg-brand-bg rounded-2xl overflow-hidden shrink-0">
+                        <img [src]="prod.imagen || 'https://placehold.co/200x200?text=%F0%9F%93%A6'" 
+                            class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black text-brand-text">{{ prod.nombre }}</h2>
+                        <p class="text-sm text-gray-500 line-clamp-2">{{ prod.descripcion }}</p>
+                    </div>
+                </div>
+
+                <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">
+                    Seleccioná una opción
+                </h3>
+
+                <div class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto no-scrollbar">
+                    @for (pres of prod.presentaciones; track pres.id) {
+                    <button (click)="productSelectorService.seleccionarYAgregar(pres)"
+                            class="flex items-center justify-between p-4 rounded-2xl border-2 border-gray-100 hover:border-brand-accent active:bg-brand-accent/5 transition-all group">
+                        
+                        <div class="flex flex-col items-start text-left">
+                            <span class="font-bold text-brand-text group-hover:text-brand-accent">
+                                {{ pres.unidad_venta }}
+                            </span>
+                            
+                            @if (pres.porcentaje_descuento > 0) {
+                                <span class="text-[10px] mt-0.5 bg-green-100 text-green-600 px-1.5 py-0.5 rounded-md font-bold">
+                                    {{ pres.porcentaje_descuento }}% OFF
+                                </span>
+                            }
+                        </div>
+
+                        <span class="block font-black text-lg text-brand-text">
+                            ${{ pres.precio }}
+                        </span>
+                    </button>
+                    }
+                </div>
+            }
+
+            <button (click)="productSelectorService.close()" 
+                    class="w-full mt-6 py-4 text-gray-400 font-bold hover:text-brand-text transition-colors">
+                Cancelar
+            </button>
+        </div>
+    </div>
+}

@@ -1,0 +1,36 @@
+<div class="bg-white rounded-3xl p-3 shadow-sm border border-gray-100 flex items-center gap-4">
+    <div class="relative shrink-0 w-20 h-20 bg-brand-bg rounded-2xl overflow-hidden border border-gray-50">
+        <img [src]="producto().imagen || 'https://placehold.co/200x200?text=📦'" 
+            class="w-full h-full object-cover">
+    </div>
+
+    <div class="flex-1 min-w-0">
+        <h3 class="text-brand-text font-bold text-base truncate leading-tight">{{ producto().nombre }}</h3>
+        
+        <div class="flex flex-wrap gap-1.5 mt-1.5">
+            @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
+                <span class="text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg border border-gray-200/50">
+                    {{ pres.unidad_venta }}
+                </span>
+            }
+            @if (producto().presentaciones.length > 3) {
+                <span class="text-[10px] font-bold text-brand-accent">+{{ producto().presentaciones.length - 3 }}</span>
+            }
+        </div>
+
+        <div class="flex items-baseline gap-1 mt-2">
+            @if (producto().presentaciones.length > 1) {
+                <span class="mr-0.5 text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Desde</span>
+            }
+            <span class="text-brand-accent font-black text-xl leading-none">
+                ${{ producto().presentaciones[0]?.precio }}
+            </span>
+        </div>
+    </div>
+
+    <button 
+        (click)="productSelectorService.open(producto())"
+        class="bg-brand-accent text-white p-2.5 rounded-xl active:scale-90 transition-transform">
+        <app-icon name="shop-add" classes="size-5 fill-current" />
+    </button>
+</div>

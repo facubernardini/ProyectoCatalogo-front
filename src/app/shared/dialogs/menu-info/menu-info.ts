@@ -1,16 +1,18 @@
 import { Component, inject, input } from '@angular/core';
-import { Icon } from "@shared/components/icon";
 import { Catalogo } from 'src/app/core/models/catalogo.model';
+import { Icon } from "@shared/components/icon";
 import { MenuService } from 'src/app/core/services/menu.service';
+import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 
 @Component({
-  selector: 'app-navbar',
-  imports: [Icon],
-  templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  selector: 'app-menu-info',
+  imports: [Icon, SwipeDownDirective],
+  templateUrl: './menu-info.html',
+  styleUrl: './menu-info.css',
 })
-export class Navbar {
+export class MenuInfo {
   catalogo = input<Catalogo | null>(null);
 
   public menuService = inject(MenuService);
+  
 }

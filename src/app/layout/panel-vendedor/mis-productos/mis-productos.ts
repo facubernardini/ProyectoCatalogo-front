@@ -2,8 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { Location } from '@angular/common';
 import { Producto } from 'src/app/core/models/producto.model';
-import { ProductoService } from 'src/app/core/services/productos.service';
-import { CategoriaService } from 'src/app/core/services/categoriasVendedor.service';
+import { ProductoService } from 'src/app/core/services-backend/productos.service';
+import { CategoriaService } from 'src/app/core/services-backend/categoriasVendedor.service';
 import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 
 @Component({

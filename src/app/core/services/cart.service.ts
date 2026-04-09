@@ -1,14 +1,17 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { Producto } from '../models/producto.model';
 import { CartItem } from '../models/cartItem.model';
 import { Presentacion } from '../models/presentacion.model';
 import { MedioPago } from '../models/catalogo.model';
+import { ToastService } from './toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private cartItems = signal<CartItem[]>(this.loadFromStorage());
   
   selectedPaymentMethod = signal<MedioPago | null>(null);
+
+  private toastService = inject(ToastService);
 
   isOpen = signal(false);
 
@@ -51,6 +54,8 @@ export class CartService {
       };
       return [...prev, nuevoItem];
     });
+
+    this.toastService.show(`${producto.nombre} agregado al carrito 🛒`);
   }
 
   sumarUno(presentacionId: number) {
@@ -76,8 +81,11 @@ export class CartService {
   }
 
   limpiarCarrito() {
-    this.cartItems.set([]);
-    this.selectedPaymentMethod.set(null);
+    if (this.cartItems().length > 0){
+      this.cartItems.set([]);
+      this.selectedPaymentMethod.set(null);
+      this.toastService.show('Carrito vaciado con éxito 🗑️', 'success');
+    }
   }
 
   private loadFromStorage(): CartItem[] {
@@ -89,7 +97,15 @@ export class CartService {
     this.selectedPaymentMethod.set(method);
   }
 
-  open() { this.isOpen.set(true); }
-  close() { this.isOpen.set(false); }
+  open() { 
+    this.isOpen.set(true); 
+    document.body.style.overflow = 'hidden';
+  }
+
+  close() { 
+    this.isOpen.set(false); 
+    document.body.style.overflow = 'auto';
+  }
+  
   toggle() { this.isOpen.update(v => !v); }
 }
