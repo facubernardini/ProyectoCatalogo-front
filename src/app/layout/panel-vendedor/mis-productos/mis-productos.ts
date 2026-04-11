@@ -2,9 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { Location } from '@angular/common';
 import { Producto } from 'src/app/core/models/producto.model';
-import { ProductoService } from 'src/app/core/services-backend/productos.service';
-import { CategoriaService } from 'src/app/core/services-backend/categoriasVendedor.service';
-import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ProductFormService } from 'src/app/core/services/product-form.service';
 
 @Component({
   selector: 'app-mis-productos',
@@ -13,51 +12,18 @@ import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
   styleUrl: './mis-productos.css',
 })
 export class MisProductos {
-  productos = signal<Producto[]>([]);
-  loading = signal<boolean>(true);
+  adminStore = inject(AdminStoreService);
 
-  categorias = signal<CategoriaVendedor[]>([]);
+  productos = this.adminStore.productos; 
+  categorias = this.adminStore.categorias;
+
   categoriaSeleccionada = signal<string>('todos');
 
-  private productoService = inject(ProductoService);
-  private categoriaService = inject(CategoriaService);
   private location = inject(Location);
+  formService = inject(ProductFormService);
 
-  ngOnInit() {
-    this.cargarDatosIniciales();
-  }
-
-  cargarDatosIniciales() {
-    const data = localStorage.getItem('vendedor');
-    if (data) {
-      const { catalogo } = JSON.parse(data);
-      if (catalogo?.id) {
-        this.cargarProductos(catalogo.id);
-        
-        this.categoriaService.getCategoriasByCatalogo(catalogo.id).subscribe({
-          next: (res) => this.categorias.set(res),
-          error: (err) => console.error('Error al cargar categorías', err)
-        });
-      }
-    }
-    else{
-      this.loading.set(false);
-    }
-  }
-
-  cargarProductos(catalogoId: number) {
-    if (catalogoId) {
-      this.productoService.getProductosByCatalogo(catalogoId).subscribe({
-        next: (res) => {
-          this.productos.set(res);
-          this.loading.set(false);
-        },
-        error: (err) => {
-          console.error('Error al cargar productos', err);
-          this.loading.set(false);
-        }
-      });
-    }
+  abrirFiltros() {
+    throw new Error('Method not implemented.');
   }
 
   seleccionarCategoria(nombre: string) {
@@ -67,5 +33,13 @@ export class MisProductos {
 
   volverAtras() {
     this.location.back();
+  }
+
+  onAdd() {
+    this.formService.openCreate();
+  }
+
+  onEdit(prod: Producto) {
+    this.formService.openEdit(prod);
   }
 }

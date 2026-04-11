@@ -18,4 +18,12 @@ export class ProductoService {
 	getProductosBySlug(slug: string): Observable<Producto[]> {
 		return this.http.get<Producto[]>(`${this.API_URL}/publico/${slug}`);
 	}
+
+	createProducto(productoNuevo: Producto): Observable<Producto> {
+		return this.http.get<Producto>(`${this.API_URL}/publico`);
+	}
+
+	updateProducto(id: number, productoNuevo: Producto): Observable<Producto> {
+		return this.http.get<Producto>(`${this.API_URL}/publico`);
+	}
 }

@@ -28,70 +28,91 @@
             </div>
 
             <input 
-            type="text" 
-            placeholder="Buscar productos..."
-            class="w-full pl-11 pr-4 py-3 bg-white border border-brand-bg rounded-xl 
-                    text-brand-text placeholder:text-brand-text-sec/60
-                    focus:outline-none focus:ring-4 focus:ring-brand-bg focus:border-brand-accent 
-                    transition-all duration-300 shadow-sm"
+                type="text" 
+                placeholder="Buscar productos..."
+                class="w-full pl-11 pr-4 py-3 bg-white border border-brand-bg rounded-xl 
+                        text-brand-text placeholder:text-brand-text-sec/60
+                        focus:outline-none focus:ring-4 focus:ring-brand-bg focus:border-brand-accent 
+                        transition-all duration-300 shadow-sm"
             >
         </div>
     </div>
 
     <div class="flex items-center gap-2 py-4">
-        
-        <div class="flex-1 overflow-x-auto no-scrollbar">
-            <div class="flex gap-2">
-                <button 
-                    (click)="seleccionarCategoria('todos')"
-                    [class]="categoriaSeleccionada() === 'todos' ? 'bg-brand-accent text-white shadow-md' : 'bg-white text-brand-text border border-gray-200'"
-                    class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95">
-                    Todos
-                </button>
-
-                @for (cat of categorias(); track cat.id) {
+    
+        <div class="flex-1 relative overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 z-10 w-4 bg-linear-to-r from-gray-50 via-white/40 to-transparent pointer-events-none"></div>
+            <div class="overflow-x-auto no-scrollbar py-1 px-2">
+                <div class="flex gap-2">
                     <button 
-                        (click)="seleccionarCategoria(cat.nombre)"
-                        [class]="categoriaSeleccionada() === cat.nombre 
-                            ? 'bg-brand-accent text-white shadow-md' 
-                            : 'bg-white text-brand-text border border-gray-200'"
+                        (click)="seleccionarCategoria('todos')"
+                        [class]="categoriaSeleccionada() === 'todos' ? 'bg-brand-accent text-white shadow-md' : 'bg-white text-brand-text border border-gray-200'"
                         class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95">
-                        
-                        {{ cat.nombre }} 
+                        Todos
                     </button>
-                }
+
+                    @for (cat of categorias(); track cat.id) {
+                        <button 
+                            (click)="seleccionarCategoria(cat.nombre)"
+                            [class]="categoriaSeleccionada() === cat.nombre 
+                                ? 'bg-brand-accent text-white shadow-md' 
+                                : 'bg-white text-brand-text border border-gray-200'"
+                            class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95">
+                            {{ cat.nombre }} 
+                        </button>
+                    }
+                </div>
             </div>
+            <div class="absolute right-0 top-0 bottom-0 z-10 w-4 bg-linear-to-l from-gray-50 via-white/40 to-transparent pointer-events-none"></div>
         </div>
+        <button 
+            (click)="abrirFiltros()"
+            class="shrink-0 p-2.5 bg-white border border-gray-200 rounded-xl text-brand-accent shadow-sm active:scale-90 transition-transform">
+            <app-icon name="filter" classes="size-6 fill-current" />
+        </button>
     </div>
 
-    @if (loading()) {
-        <div class="flex justify-center p-10">
-            <span class="animate-bounce">Cargando productos...</span>
-        </div>
-    } @else {
-        <div class="flex flex-col gap-3">
-            @for (producto of productos(); track producto.id) {
-                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-brand-bg shadow-sm">
-                    <div class="shrink-0 w-12 h-12 bg-brand-bg rounded-lg overflow-hidden">
-                        <img [src]="producto.imagen || 'https://placehold.co/200x200?text=Sin+Imagen'" 
-                    class="object-cover w-full h-full">
-                    </div>
+    <div class="flex flex-col gap-3">
+        @for (producto of productos(); track producto.id) {
+            <div class="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-100 hover:border-brand-accent/20 transition-all group">
+                <div class="relative shrink-0 w-12 h-12 bg-gray-50 rounded-lg overflow-hidden border border-gray-100">
+                    <img [src]="producto.imagen || 'https://placehold.co/200x200?text=📦'" 
+                        class="object-cover w-full h-full"
+                        [class.grayscale]="!producto.activo">
                     
-                    <div class="flex-1">
-                        <h3 class="text-brand-text font-bold text-sm">{{ producto.nombre }}</h3>
-                        <p class="text-brand-accent font-bold">${{ producto.presentaciones[0]?.precio }}</p>
+                    <div [class]="producto.activo ? 'bg-green-500' : 'bg-gray-300'" 
+                        class="absolute bottom-0.5 right-0.5 size-2.5 rounded-full border-2 border-white shadow-sm">
                     </div>
                 </div>
-            } @empty {
-                <div class="text-center py-10">
-                    <p class="text-brand-text-sec">No se encontraron productos.</p>
+                
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-brand-text font-bold text-sm truncate">{{ producto.nombre }}</h3>
+                    
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium">
+                            <app-icon name="layers" classes="size-3 fill-current" />
+                            {{ producto.presentaciones.length }} {{ producto.presentaciones.length === 1 ? 'variante' : 'variantes' }}
+                        </div>
+                        <span class="text-gray-300">•</span>
+                        <p class="text-xs text-brand-accent font-black">${{ producto.presentaciones[0]?.precio }}</p>
+                    </div>
                 </div>
-            }
-        </div>
-    }
+
+                <button (click)="onEdit(producto)" 
+                        class="shrink-0 p-2.5 bg-gray-100 text-gray-400 rounded-xl transition-colors active:scale-90">
+                    <app-icon name="edit" classes="size-5 fill-brand-accent" />
+                </button>
+            </div>
+        } @empty {
+            <div class="text-center py-10">
+                <p class="text-brand-text-sec">No se encontraron productos.</p>
+            </div>
+        }
+    </div>
+    
 
     <div class="fixed bottom-8 right-6 z-50">
-        <button
+        <button (click)="onAdd()"
             class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 hover:scale-105 transition-all duration-200 group"
             aria-label="Agregar producto">
             <app-icon name="add-producto" classes="size-6 fill-current" />

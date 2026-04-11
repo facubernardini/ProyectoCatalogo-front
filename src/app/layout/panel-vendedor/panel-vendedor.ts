@@ -1,10 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ProductForm } from "@shared/dialogs/product-form/product-form";
+import { Toast } from "@shared/toast/toast";
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ProductForm, Toast],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })
-export class PanelVendedor {}
+export class PanelVendedor {
+  private adminStore = inject(AdminStoreService);
+
+  ngOnInit() {
+    const data = localStorage.getItem('vendedor');
+    if (data) {
+      const { catalogo } = JSON.parse(data);
+      if (catalogo?.id) {
+        this.adminStore.cargarDatosPanel(catalogo.id);
+      }
+    }
+  }
+}

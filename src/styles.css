@@ -85,3 +85,8 @@ body::before {
 .animate-shimmer {
   animation: shimmer 2.5s infinite;
 }
+
+
+.soft-bounce {
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
