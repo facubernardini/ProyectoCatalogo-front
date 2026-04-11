@@ -1,8 +1,9 @@
-import { Component, computed, effect, ElementRef, inject, input, viewChild } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Producto } from 'src/app/core/models/producto.model';
 import { ProductSelectorService } from 'src/app/core/services/product-selector.service';
 import { SearchService } from 'src/app/core/services/search.service';
 import { Icon } from "@shared/components/icon";
+import { Presentacion } from 'src/app/core/models/presentacion.model';
 
 @Component({
   selector: 'app-search-products',
@@ -16,7 +17,6 @@ export class SearchProducts {
   public searchService = inject(SearchService);
   private selectorService = inject(ProductSelectorService);
 
-  // Filtramos automáticamente cuando cambia la query o los productos
   resultados = computed(() => {
     const q = this.searchService.debouncedQuery().toLowerCase().trim();
     
@@ -34,7 +34,21 @@ export class SearchProducts {
   }
 
   abrirProducto(producto: Producto) {
-    this.searchService.close(); // Cerramos el buscador
-    this.selectorService.open(producto); // Abrimos el detalle del producto
+    this.searchService.close();
+    this.selectorService.open(producto);
+  }
+
+  getPrecioDesde(presentaciones: Presentacion[]): number {
+    if (!presentaciones.length) return 0;
+    
+    const preciosActuales = presentaciones.map(p => 
+      p.precio_descuento !== null ? Number(p.precio_descuento) : Number(p.precio)
+    );
+    
+    return Math.min(...preciosActuales);
+  }
+
+  tieneOfertas(presentaciones: Presentacion[]): boolean {
+    return presentaciones.some(p => p.precio_descuento !== null);
   }
 }

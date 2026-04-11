@@ -32,6 +32,8 @@ export class CartService {
   }
 
   agregarProducto(producto: Producto, pres: Presentacion) {
+    const precioEfectivo = pres.precio_descuento ?? pres.precio;
+    
     this.cartItems.update(prev => {
       const existe = prev.find(i => i.presentacionId === pres.id);
 
@@ -48,7 +50,8 @@ export class CartService {
         presentacionId: pres.id,
         nombre: producto.nombre,
         unidad: pres.unidad_venta,
-        precio: pres.precio,
+        precio: precioEfectivo,
+        precio_base: Number(pres.precio),
         imagen: producto.imagen,
         cantidad: 1
       };

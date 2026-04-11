@@ -21,7 +21,24 @@
 
 <main class="min-h-screen bg-gray-50 p-4">
 
-    <div class="flex items-center gap-2 mb-4">
+    <div class="relative w-full max-w-md mx-auto group">
+        <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <app-icon name="search" classes="size-6 fill-current text-brand-accent" />
+            </div>
+
+            <input 
+            type="text" 
+            placeholder="Buscar productos..."
+            class="w-full pl-11 pr-4 py-3 bg-white border border-brand-bg rounded-xl 
+                    text-brand-text placeholder:text-brand-text-sec/60
+                    focus:outline-none focus:ring-4 focus:ring-brand-bg focus:border-brand-accent 
+                    transition-all duration-300 shadow-sm"
+            >
+        </div>
+    </div>
+
+    <div class="flex items-center gap-2 py-4">
         
         <div class="flex-1 overflow-x-auto no-scrollbar">
             <div class="flex gap-2">
@@ -45,12 +62,6 @@
                 }
             </div>
         </div>
-
-        <button 
-            (click)="abrirFiltros()"
-            class="shrink-0 p-2.5 bg-white border border-gray-200 rounded-xl text-brand-accent shadow-sm active:scale-90 transition-transform">
-            <app-icon name="filter" classes="size-6 fill-current" />
-        </button>
     </div>
 
     @if (loading()) {

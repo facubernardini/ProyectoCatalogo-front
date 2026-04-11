@@ -57,13 +57,54 @@
                         @for (prod of resultados(); track prod.id) {
                             <div (click)="abrirProducto(prod)" 
                                 class="flex items-center gap-4 p-2 mb-3 rounded-2xl active:bg-gray-50 transition-colors border border-transparent active:border-gray-100">
-                                <div class="size-14 rounded-xl bg-gray-100 overflow-hidden shrink-0">
+                                
+                                <div class="relative size-14 rounded-xl bg-gray-100 overflow-hidden shrink-0 shadow-sm">
                                     <img [src]="prod.imagen || 'assets/img/placeholder.png'" class="w-full h-full object-cover">
+                                    
+                                    @if (tieneOfertas(prod.presentaciones)) {
+                                        <div class="absolute top-0 left-0 bg-green-600 text-white p-1 rounded-br-lg">
+                                            <app-icon name="discount" classes="size-3 fill-current" />
+                                        </div>
+                                    }
                                 </div>
+
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="font-bold text-brand-text truncate">{{ prod.nombre }}</h4>
-                                    <p class="text-xs text-brand-accent font-black">${{ prod.presentaciones[0]?.precio }}</p>
+                                    <h4 class="font-bold text-brand-text truncate leading-tight">{{ prod.nombre }}</h4>
+                                    
+                                    <div class="flex items-center gap-1.5 mt-0.5">
+                                        @if (prod.presentaciones.length > 1) {
+                                            <span class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">Desde</span>
+                                            <p class="text-sm text-brand-accent font-black">
+                                                ${{ getPrecioDesde(prod.presentaciones) }}
+                                            </p>
+                                            <span class="text-[10px] text-gray-300 font-medium">• {{ prod.presentaciones.length }} opciones</span>
+                                        } 
+                                        @else {
+                                            @let pres = prod.presentaciones[0];
+
+                                            <div class="flex items-center gap-1.5">
+                                                @if (pres?.precio_descuento) {
+                                                    <span class="text-[10px] text-gray-400 line-through">
+                                                        ${{ pres.precio }}
+                                                    </span>
+                                                    <p class="text-sm text-brand-accent font-black">
+                                                        ${{ pres.precio_descuento }}
+                                                    </p>
+                                                } 
+                                                @else {
+                                                    <p class="text-sm text-brand-accent font-black">
+                                                        ${{ pres?.precio }}
+                                                    </p>
+                                                }
+                                                
+                                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
+                                                    • {{ pres?.unidad_venta }}
+                                                </span>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
+
                                 <app-icon name="chevron-right" classes="size-4 fill-gray-300" />
                             </div>
                         } 

@@ -65,11 +65,6 @@ export class MisProductos {
     // Aquí podrías disparar la lógica de filtrado del array de productos
   }
 
-  abrirFiltros() {
-    console.log('Abriendo filtros avanzados...');
-    // Funcionalidad para implementar luego
-  }
-
   volverAtras() {
     this.location.back();
   }

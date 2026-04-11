@@ -13,9 +13,12 @@ import { CartService } from 'src/app/core/services/cart.service';
 export class Carrito {
   catalogo = input<Catalogo | null>(null);
 
+  nombreCliente = signal<string>('');
+  direccionEnvio = signal<string>('');
+
   public cartService = inject(CartService);
 
-  metodoEntrega = signal<'envio' | 'retiro'>('retiro');
+  metodoEntrega = signal<'envio' | 'retiro' | null>(null);
 
   montoFaltante = computed(() => {
     const minimo = Number(this.catalogo()?.minimo_compra ?? 0);
@@ -26,9 +29,15 @@ export class Carrito {
   puedeFinalizar = computed(() => {
     const tieneItems = this.cartService.totalItems() > 0;
     const cumpleMinimo = this.cartService.totalPrice() >= (this.catalogo()?.minimo_compra ?? 0);
-    const tienePago = this.cartService.selectedPaymentMethod() !== null; // <--- NUEVA REGLA
+    const tieneEntrega = this.metodoEntrega() !== null;
+    const tienePago = this.cartService.selectedPaymentMethod() !== null;
+
+    const nombreValido = this.nombreCliente().trim().length > 3;
+    const direccionValida = this.metodoEntrega() === 'envio' 
+        ? this.direccionEnvio().trim().length > 5 
+        : true;
     
-    return tieneItems && cumpleMinimo && tienePago;
+    return tieneItems && cumpleMinimo && tieneEntrega && tienePago && nombreValido && direccionValida;
   });
 
   totalFinal = computed(() => {
@@ -43,13 +52,21 @@ export class Carrito {
   finalizarPedido() {
     const items = this.cartService.items();
     const envio = this.metodoEntrega() === 'envio';
-    const costoEnvio = this.catalogo()?.costo_envio ?? 0;
+    const costoEnvio = Number(this.catalogo()?.costo_envio ?? 0);
     const pago = this.cartService.selectedPaymentMethod()?.nombre;
     
     let mensaje = `*Nuevo Pedido - ${this.catalogo()?.nombre_tienda}*\n\n`;
+    mensaje += `*Cliente:* ${this.nombreCliente()}\n`;
+
+    if (this.metodoEntrega() === 'envio') {
+        mensaje += `*Dirección:* ${this.direccionEnvio()}\n`;
+    }
+
+    mensaje += `\n--------------------------\n`;
     
     items.forEach(item => {
-      mensaje += `• ${item.cantidad}x ${item.nombre} (${item.unidad}): $${item.precio * item.cantidad}\n`;
+      const subtotalItem = item.precio * item.cantidad;
+      mensaje += `• ${item.cantidad}x ${item.nombre} (${item.unidad}): $${subtotalItem}\n`;
     });
 
     mensaje += `\n--------------------------`;
@@ -69,5 +86,27 @@ export class Carrito {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
     
     window.open(url, '_blank');
+  }
+
+  getPorcentaje(base: number, oferta: number): number {
+    if (!base || base <= 0) return 0;
+    const ahorro = ((base - oferta) / base) * 100;
+    return Math.round(ahorro);
+  }
+
+  seleccionarMetodo(metodo: 'envio' | 'retiro', element: HTMLElement) {
+    this.metodoEntrega.set(metodo);
+    
+    setTimeout(() => {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+
+  seleccionarPago(mp: any, element: HTMLElement) {
+    this.cartService.selectPaymentMethod(mp);
+    
+    setTimeout(() => {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   }
 }

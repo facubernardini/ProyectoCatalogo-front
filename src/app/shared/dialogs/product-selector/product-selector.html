@@ -11,13 +11,20 @@
 
             @if (productSelectorService.selectedProduct(); as prod) {
                 <div class="flex gap-4 mb-8">
-                    <div class="w-20 h-20 bg-brand-bg rounded-2xl overflow-hidden shrink-0">
+                    <div class="relative w-20 h-20 bg-brand-bg rounded-2xl overflow-hidden shrink-0 shadow-sm">
                         <img [src]="prod.imagen || 'https://placehold.co/200x200?text=%F0%9F%93%A6'" 
                             class="w-full h-full object-cover">
+
+                        @if (tieneOfertas(prod.presentaciones)) {
+                            <div class="absolute top-0 left-0 bg-green-600 text-white p-1.5 rounded-br-xl animate-in zoom-in duration-300">
+                                <app-icon name="discount" classes="size-4 fill-current" />
+                            </div>
+                        }
                     </div>
-                    <div>
-                        <h2 class="text-xl font-black text-brand-text">{{ prod.nombre }}</h2>
-                        <p class="text-sm text-gray-500 line-clamp-2">{{ prod.descripcion }}</p>
+
+                    <div class="flex-1">
+                        <h2 class="text-xl font-black text-brand-text leading-tight">{{ prod.nombre }}</h2>
+                        <p class="text-sm text-gray-500 line-clamp-2 mt-1">{{ prod.descripcion }}</p>
                     </div>
                 </div>
 
@@ -35,16 +42,27 @@
                                 {{ pres.unidad_venta }}
                             </span>
                             
-                            @if (pres.porcentaje_descuento > 0) {
+                            @if (pres.precio_descuento) {
                                 <span class="text-[10px] mt-0.5 bg-green-100 text-green-600 px-1.5 py-0.5 rounded-md font-bold">
-                                    {{ pres.porcentaje_descuento }}% OFF
+                                    {{ getPorcentaje(pres.precio, pres.precio_descuento) }}% OFF
                                 </span>
                             }
                         </div>
 
-                        <span class="block font-black text-lg text-brand-text">
-                            ${{ pres.precio }}
-                        </span>
+                        <div class="flex flex-col items-end">
+                            @if (pres.precio_descuento) {
+                                <span class="text-xs text-gray-400 line-through mb-0.5">
+                                    ${{ pres.precio }}
+                                </span>
+                                <span class="block font-black text-lg text-brand-text leading-none">
+                                    ${{ pres.precio_descuento }}
+                                </span>
+                            } @else {
+                                <span class="block font-black text-lg text-brand-text">
+                                    ${{ pres.precio }}
+                                </span>
+                            }
+                        </div>
                     </button>
                     }
                 </div>
