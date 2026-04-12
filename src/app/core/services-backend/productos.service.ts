@@ -9,6 +9,7 @@ export class ProductoService {
 	private http = inject(HttpClient);
 	private API_URL = `${environment.apiUrl}/productos`;
 
+	// -- GET --
 	// Obtenemos productos por ID de catálogo - Panel Vendedor
 	getProductosByCatalogo(catalogoId: number): Observable<Producto[]> {
 		return this.http.get<Producto[]>(`${this.API_URL}/catalogo/${catalogoId}`);
@@ -19,6 +20,7 @@ export class ProductoService {
 		return this.http.get<Producto[]>(`${this.API_URL}/publico/${slug}`);
 	}
 
+	// -- POST --
 	createProducto(productoNuevo: Producto): Observable<Producto> {
 		return this.http.get<Producto>(`${this.API_URL}/publico`);
 	}

@@ -74,7 +74,7 @@
 
     <div class="flex flex-col gap-3">
         @for (producto of productos(); track producto.id) {
-            <div class="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-100 hover:border-brand-accent/20 transition-all group">
+            <div class="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-100 hover:border-brand-accent/10 transition-all group">
                 <div class="relative shrink-0 w-12 h-12 bg-gray-50 rounded-lg overflow-hidden border border-gray-100">
                     <img [src]="producto.imagen || 'https://placehold.co/200x200?text=📦'" 
                         class="object-cover w-full h-full"
@@ -87,21 +87,36 @@
                 
                 <div class="flex-1 min-w-0">
                     <h3 class="text-brand-text font-bold text-sm truncate">{{ producto.nombre }}</h3>
-                    
-                    <div class="flex items-center gap-2 mt-0.5">
-                        <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium">
-                            <app-icon name="layers" classes="size-3 fill-current" />
-                            {{ producto.presentaciones.length }} {{ producto.presentaciones.length === 1 ? 'variante' : 'variantes' }}
-                        </div>
-                        <span class="text-gray-300">•</span>
-                        <p class="text-xs text-brand-accent font-black">${{ producto.presentaciones[0]?.precio }}</p>
+                    <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium mt-0.5">
+                        <app-icon name="layers" classes="size-3 fill-current" />
+                        {{ producto.presentaciones.length }} {{ producto.presentaciones.length === 1 ? 'variante' : 'variantes' }}
                     </div>
                 </div>
 
-                <button (click)="onEdit(producto)" 
-                        class="shrink-0 p-2.5 bg-gray-100 text-gray-400 rounded-xl transition-colors active:scale-90">
-                    <app-icon name="edit" classes="size-5 fill-brand-accent" />
-                </button>
+                <div class="flex items-center gap-1">
+                    
+                    <button (click)="onView(producto)" 
+                            class="p-2 bg-gray-50 text-gray-400 hover:text-brand-accent rounded-lg transition-colors active:scale-90">
+                        <app-icon name="info" classes="size-4.5 fill-current" />
+                    </button>
+
+                    <button (click)="onToggleFeatured(producto)" 
+                            [class]="producto.destacado ? 'text-yellow-500 hover:bg-yellow-100 bg-yellow-50' : 'text-gray-300 hover:text-yellow-500 hover:bg-yellow-50'"
+                            class="p-2 rounded-lg transition-colors active:scale-90">
+                        <app-icon name="star" classes="size-4.5 fill-current" />
+                    </button>
+
+                    <button (click)="onToggleStatus(producto)" 
+                            [class]="producto.activo ? 'text-green-500 hover:bg-green-100 bg-green-50' : 'text-gray-300 hover:text-red-400 hover:bg-red-50'"
+                            class="p-2 rounded-lg transition-colors active:scale-90">
+                        <app-icon [name]="producto.activo ? 'visible' : 'hidden'" classes="size-4.5 fill-current" />
+                    </button>
+
+                    <button (click)="onEdit(producto)" 
+                            class="ml-1 p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-lg transition-colors active:scale-90 border border-gray-100">
+                        <app-icon name="edit" classes="size-4.5 fill-current" />
+                    </button>
+                </div>
             </div>
         } @empty {
             <div class="text-center py-10">

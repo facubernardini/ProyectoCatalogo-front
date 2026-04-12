@@ -1,6 +1,7 @@
 @if (menuService.isOpen()) {
     <div class="fixed inset-0 z-60 bg-black/20 backdrop-blur-sm transition-opacity"
-       (click)="menuService.close()"></div>
+       (click)="menuService.close()">
+    </div>
 
     <div appSwipeDown 
         (onSwipe)="menuService.close()"
@@ -18,43 +19,43 @@
 
         <div class="w-full space-y-3">
         
-        @if (catalogo()?.wpp_numero) {
-            <a [href]="'https://wa.me/' + catalogo()?.wpp_numero" 
-                target="_blank"
-                class="flex w-full items-center gap-4 rounded-2xl bg-green-50 p-4 text-green-700 transition-all active:scale-95 shadow-sm border border-green-100/50">
-                <app-icon name="whatsapp" classes="size-6 fill-current" />
-                <div class="flex flex-1 flex-col">
-                    <span class="text-[10px] font-black uppercase tracking-widest opacity-60">WhatsApp</span>
-                    <span class="font-bold">+{{ catalogo()?.wpp_numero }}</span>
-                </div>
-                <app-icon name="chevron-right" classes="size-5 fill-current opacity-40" />
-            </a>
-        }
+            @if (catalogo()?.wpp_numero) {
+                <a [href]="'https://wa.me/' + catalogo()?.wpp_numero" 
+                    target="_blank"
+                    class="flex w-full items-center gap-4 rounded-2xl bg-green-50 p-4 text-green-700 transition-all active:scale-95 shadow-sm border border-green-100/50">
+                    <app-icon name="whatsapp" classes="size-6 fill-current" />
+                    <div class="flex flex-1 flex-col">
+                        <span class="text-[10px] font-black uppercase tracking-widest opacity-60">WhatsApp</span>
+                        <span class="font-bold">+{{ catalogo()?.wpp_numero }}</span>
+                    </div>
+                    <app-icon name="chevron-right" classes="size-5 fill-current opacity-40" />
+                </a>
+            }
 
-        @if (catalogo()?.instagram_usuario) {
-            <a [href]="'https://instagram.com/' + catalogo()?.instagram_usuario" target="_blank"
-            class="flex w-full items-center gap-4 rounded-2xl bg-pink-50 p-4 text-pink-700 transition-active active:scale-95">
-                <app-icon name="shop" classes="size-6 fill-current" />
-                <div class="flex flex-1 flex-col">
-                    <span class="text-xs font-bold uppercase tracking-wider opacity-60">Instagram</span>
-                    <span class="font-bold">&#64;{{ catalogo()?.instagram_usuario }}</span>
-                </div>
-                <app-icon name="chevron-right" classes="size-5 fill-current opacity-40" />
-            </a>
-        }
+            @if (catalogo()?.instagram_usuario) {
+                <a [href]="'https://instagram.com/' + catalogo()?.instagram_usuario" target="_blank"
+                class="flex w-full items-center gap-4 rounded-2xl bg-pink-50 p-4 text-pink-700 transition-active active:scale-95">
+                    <app-icon name="shop" classes="size-6 fill-current" />
+                    <div class="flex flex-1 flex-col">
+                        <span class="text-xs font-bold uppercase tracking-wider opacity-60">Instagram</span>
+                        <span class="font-bold">&#64;{{ catalogo()?.instagram_usuario }}</span>
+                    </div>
+                    <app-icon name="chevron-right" classes="size-5 fill-current opacity-40" />
+                </a>
+            }
 
-        <div class="grid grid-cols-2 gap-3 pt-2">
-            <div class="rounded-2xl border border-zinc-200 p-4 text-center">
-                <p class="text-[10px] font-bold uppercase text-zinc-400">Mínimo de compra</p>
-                <p class="font-black text-brand-accent">${{ catalogo()?.minimo_compra }}</p>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <div class="rounded-2xl border border-zinc-200 p-4 text-center">
+                    <p class="text-[10px] font-bold uppercase text-zinc-400">Mínimo de compra</p>
+                    <p class="font-black text-brand-accent">${{ catalogo()?.minimo_compra }}</p>
+                </div>
+                <div class="rounded-2xl border border-zinc-200 p-4 text-center">
+                    <p class="text-[10px] font-bold uppercase text-zinc-400">Costo de envío</p>
+                    <p class="font-black text-brand-accent">
+                        {{ catalogo()?.ofrece_envio ? '$' + catalogo()?.costo_envio : 'No ofrece' }}
+                    </p>
+                </div>
             </div>
-            <div class="rounded-2xl border border-zinc-200 p-4 text-center">
-                <p class="text-[10px] font-bold uppercase text-zinc-400">Costo de envío</p>
-                <p class="font-black text-brand-accent">
-                    {{ catalogo()?.ofrece_envio ? '$' + catalogo()?.costo_envio : 'No ofrece' }}
-                </p>
-            </div>
-        </div>
         </div>
 
         <button (click)="menuService.close()" 

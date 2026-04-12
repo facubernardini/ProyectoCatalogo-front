@@ -28,7 +28,7 @@ export class MisProductos {
 
   seleccionarCategoria(nombre: string) {
     this.categoriaSeleccionada.set(nombre);
-    // Aquí podrías disparar la lógica de filtrado del array de productos
+    throw new Error('Method not implemented.');
   }
 
   volverAtras() {
@@ -41,5 +41,17 @@ export class MisProductos {
 
   onEdit(prod: Producto) {
     this.formService.openEdit(prod);
+  }
+
+  onView(_t35: Producto) {
+    
+  }
+
+  onToggleStatus(_t35: Producto) {
+    throw new Error('Method not implemented.');
+  }
+
+  onToggleFeatured(_t35: Producto) {
+    throw new Error('Method not implemented.');
   }
 }

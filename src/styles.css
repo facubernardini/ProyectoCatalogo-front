@@ -86,7 +86,25 @@ body::before {
   animation: shimmer 2.5s infinite;
 }
 
-
 .soft-bounce {
   transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Product Form - Panel Vendedor */
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-side-panel {
+  animation: slideInRight 0.5s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.animate-backdrop {
+  animation: fadeIn 0.4s ease-out forwards;
 }

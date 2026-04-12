@@ -1,40 +1,154 @@
-<div class="fixed inset-0 z-50 flex justify-end overflow-hidden transition-all duration-500"
-    [class.invisible]="!formService.isOpen()">
+@if (productFormService.isOpen()) {
+<div class="fixed inset-0 z-50 flex justify-end overflow-hidden">
     
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-500 ease-in-out"
-        [class.opacity-0]="!formService.isOpen()"
-        [class.opacity-100]="formService.isOpen()"
-        (click)="formService.close()">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm animate-backdrop"
+         (click)="productFormService.close()">
     </div>
 
     <div (click)="$event.stopPropagation()"
-        class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col transition-transform duration-500 soft-bounce"
-        [class.translate-x-full]="!formService.isOpen()"
-        [class.translate-x-0]="formService.isOpen()">
+         class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col animate-side-panel">
         
-        <div class="p-4 border-b flex items-center justify-between bg-gray-50/50">
-            <div class="flex items-center gap-3">
-                <button (click)="formService.close()" class="p-2 hover:bg-gray-200 rounded-full transition-colors">
-                    <app-icon name="back" classes="size-5 text-gray-500 fill-current" />
+        <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 backdrop-blur-md border-b border-gray-100 rounded-tl-4xl shadow-sm">
+            <div class="flex items-center gap-4">
+                <button (click)="productFormService.close()" 
+                        class="group p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-all duration-300 active:scale-90 border border-gray-200/50">
+                    <app-icon name="back" 
+                            classes="size-5 text-gray-500 group-hover:text-brand-accent transition-colors fill-current" />
                 </button>
-                <h2 class="font-bold text-brand-text">
-                    {{ formService.editingProduct() ? 'Editar Producto' : 'Nuevo Producto' }}
+    
+                <h2 class="text-base font-black text-brand-text leading-tight">
+                    {{ productFormService.editingProduct() ? 'Editar Producto' : 'Nuevo Producto' }}
                 </h2>
             </div>
-            
+
             <button (click)="guardar()" 
-                    class="px-6 py-2 bg-brand-accent text-white font-bold rounded-xl active:scale-95 transition-all">
-                Guardar
+                    [disabled]="productFormService.loading()"
+                    class="relative px-7 py-2.5 bg-brand-accent text-white text-sm font-black rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
+                
+                <div class="flex items-center gap-2">
+                    @if (productFormService.loading()) {
+                        <div class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    }
+                    
+                    <span>
+                        {{ 
+                            productFormService.loading() 
+                            ? 'Procesando' 
+                            : (productFormService.editingProduct() ? 'Guardar' : 'Crear producto') 
+                        }}
+                    </span>
+                </div>
             </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-6">
-            <p class="text-xs text-gray-400 uppercase font-bold mb-4">Información General</p>
+        <div class="flex-1 overflow-y-auto p-6 space-y-8">
             
-            <div class="flex flex-col gap-2 mb-6">
-                <label class="text-sm font-bold text-gray-700">Nombre del producto</label>
-                <input type="text" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 transition-all" placeholder="Ej: Pizza Napolitana">
-            </div>
+            <section>
+                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest mb-3">Imagen</p>
+                <div class="flex items-center gap-4">
+                    <div class="size-24 bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center relative group">
+                        @if (producto.imagen) {
+                            <img [src]="producto.imagen" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <app-icon name="edit" classes="size-6 text-white fill-current" />
+                            </div>
+                        } @else {
+                            <app-icon name="image-add" classes="size-8 text-gray-300 fill-current" />
+                        }
+                        <input type="file" (change)="onFileChange($event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-brand-text">Foto del producto</p>
+                        <p class="text-xs text-gray-400 leading-tight">Recomendado: Cuadrada, fondo claro.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-4">
+                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">General</p>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-gray-600 ml-1">Nombre</label>
+                    <input type="text" [(ngModel)]="producto.nombre" 
+                           class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300" 
+                           placeholder="Ej: Pizza Napolitana">
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-gray-600 ml-1">Descripción</label>
+                    <textarea [(ngModel)]="producto.descripcion" rows="3" 
+                              class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300 resize-none" 
+                              placeholder="Breve detalle del producto..."></textarea>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Tag de Evento</label>
+                    <input type="text" [(ngModel)]="producto.tag_evento" 
+                           class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-xs font-medium text-brand-text placeholder:text-gray-300" 
+                           placeholder="Navidad, Black Friday...">
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Destacado</label>
+                    <button (click)="producto.destacado = !producto.destacado" 
+                            [class]="producto.destacado ? 'bg-brand-accent text-white border-brand-accent shadow-md' : 'bg-gray-50 text-gray-400 border-gray-100'"
+                            class="flex items-center justify-center gap-2 h-11.5 rounded-xl border font-bold text-sm transition-all active:scale-95">
+                        <app-icon name="star" [classes]="'size-4 ' + (producto.destacado ? 'fill-white' : 'fill-gray-400')" />
+                        {{ producto.destacado ? 'Destacado' : 'Destacar' }}
+                    </button>
+                </div>
+            </section>
+
+            <section class="space-y-4 pb-12">
+                <div class="flex items-center justify-between pb-1">
+                    <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Precios y Unidades</p>
+                    <button (click)="agregarPresentacion()" class="text-brand-accent text-xs font-bold hover:underline">+ Agregar</button>
+                </div>
+
+                @for (pres of producto.presentaciones; track $index) {
+                    <div [class]="!pres.activo ? 'opacity-60 grayscale-[0.5] bg-gray-100' : 'bg-gray-50'" 
+                        class="p-4 rounded-2xl border border-gray-100 relative group/item animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all">
+                        
+                        <button (click)="pres.activo = !pres.activo"
+                                [class]="pres.activo ? 'bg-green-500 text-white border-green-600' : 'bg-gray-400 text-white border-gray-500'"
+                                class="absolute -top-2 left-4 z-10 px-3 py-1 rounded-full border text-[10px] font-black transition-all active:scale-95 shadow-sm uppercase tracking-tighter">
+                            {{ pres.activo ? 'Visible' : 'Pausado' }}
+                        </button>
+
+                        @if (producto.presentaciones.length > 1) {
+                            <button (click)="eliminarPresentacion($index)" 
+                                    class="absolute -top-2 -right-2 z-10 bg-red-500 shadow-sm p-1.5 rounded-full text-white hover:bg-red-600 transition-colors">
+                                <app-icon name="trash" classes="size-3.5 fill-current" />
+                            </button>
+                        }
+
+                        <div class="grid grid-cols-12 gap-3 mt-2">
+                            <div class="col-span-12">
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Unidad</label>
+                                <input type="text" [(ngModel)]="pres.unidad_venta" 
+                                    class="w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                    placeholder="Ej: 500g, Pack x6">
+                            </div>
+                            <div class="col-span-6">
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio</label>
+                                <input type="number" [(ngModel)]="pres.precio" 
+                                    class="w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                    placeholder="0.00">
+                            </div>
+                            <div class="col-span-6">
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio oferta</label>
+                                <input type="number" [(ngModel)]="pres.precio_descuento" 
+                                    class="w-full p-2.5 bg-white border border-brand-accent/20 rounded-lg outline-none focus:border-brand-accent/50 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                    placeholder="Opcional">
+                            </div>
+                        </div>
+
+                        @if (!pres.activo) {
+                            <p class="text-[9px] text-gray-500 font-bold mt-2 text-center uppercase">Esta variante no se mostrará en el catálogo</p>
+                        }
+                    </div>
+                }
+            </section>
         </div>
     </div>
 </div>
+}
