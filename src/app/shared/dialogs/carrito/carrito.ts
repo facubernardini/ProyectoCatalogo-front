@@ -18,8 +18,6 @@ export class Carrito {
 
   public cartService = inject(CartService);
 
-  metodoEntrega = signal<'envio' | 'retiro' | null>(null);
-
   montoFaltante = computed(() => {
     const minimo = Number(this.catalogo()?.minimo_compra ?? 0);
     const total = this.cartService.totalPrice();
@@ -29,11 +27,10 @@ export class Carrito {
   puedeFinalizar = computed(() => {
     const tieneItems = this.cartService.totalItems() > 0;
     const cumpleMinimo = this.cartService.totalPrice() >= (this.catalogo()?.minimo_compra ?? 0);
-    const tieneEntrega = this.metodoEntrega() !== null;
+    const tieneEntrega = this.cartService.deliveryMethod() !== null;
     const tienePago = this.cartService.selectedPaymentMethod() !== null;
-
     const nombreValido = this.nombreCliente().trim().length > 3;
-    const direccionValida = this.metodoEntrega() === 'envio' 
+    const direccionValida = this.cartService.deliveryMethod() === 'envio' 
         ? this.direccionEnvio().trim().length > 5 
         : true;
     
@@ -44,49 +41,10 @@ export class Carrito {
     const subtotal = this.cartService.totalPrice();
     const costoEnvio = Number(this.catalogo()?.costo_envio ?? 0);
     
-    return this.metodoEntrega() === 'envio' 
+    return this.cartService.deliveryMethod() === 'envio' 
       ? subtotal + costoEnvio 
       : subtotal;
   });
-
-  finalizarPedido() {
-    const items = this.cartService.items();
-    const envio = this.metodoEntrega() === 'envio';
-    const costoEnvio = Number(this.catalogo()?.costo_envio ?? 0);
-    const pago = this.cartService.selectedPaymentMethod()?.nombre;
-    
-    let mensaje = `*Nuevo Pedido - ${this.catalogo()?.nombre_tienda}*\n\n`;
-    mensaje += `*Cliente:* ${this.nombreCliente()}\n`;
-
-    if (this.metodoEntrega() === 'envio') {
-        mensaje += `*Dirección:* ${this.direccionEnvio()}\n`;
-    }
-
-    mensaje += `\n--------------------------\n`;
-    
-    items.forEach(item => {
-      const subtotalItem = item.precio * item.cantidad;
-      mensaje += `• ${item.cantidad}x ${item.nombre} (${item.unidad}): $${subtotalItem}\n`;
-    });
-
-    mensaje += `\n--------------------------`;
-    mensaje += `\n*Subtotal:* $${this.cartService.totalPrice()}`;
-    mensaje += `\n*Medio de Pago:* ${pago}`;
-    
-    if (envio) {
-      mensaje += `\n*Envío:* $${costoEnvio}`;
-      mensaje += `\n*Entrega:* Envío a domicilio`;
-    } else {
-      mensaje += `\n*Entrega:* Retiro en el local`;
-    }
-
-    mensaje += `\n*TOTAL FINAL: $${this.totalFinal()}*`;
-    
-    const phone = this.catalogo()?.wpp_numero;
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
-    
-    window.open(url, '_blank');
-  }
 
   getPorcentaje(base: number, oferta: number): number {
     if (!base || base <= 0) return 0;
@@ -95,7 +53,7 @@ export class Carrito {
   }
 
   seleccionarMetodo(metodo: 'envio' | 'retiro', element: HTMLElement) {
-    this.metodoEntrega.set(metodo);
+    this.cartService.setDeliveryMethod(metodo);
     
     setTimeout(() => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -108,5 +66,50 @@ export class Carrito {
     setTimeout(() => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+  }
+
+  finalizarPedido() {
+    const items = this.cartService.items();
+    const envio = this.cartService.deliveryMethod() === 'envio';
+    const costoEnvio = Number(this.catalogo()?.costo_envio ?? 0);
+    const pago = this.cartService.selectedPaymentMethod()?.nombre;
+    const cupon = this.cartService.appliedCupon();
+    const montoDescuento = this.cartService.discountAmount();
+    
+    let mensaje = `*Nuevo Pedido - ${this.catalogo()?.nombre_tienda}*\n\n`;
+    mensaje += `*Cliente:* ${this.nombreCliente()}\n`;
+
+    if (envio) {
+        mensaje += `*Dirección:* ${this.direccionEnvio()}\n`;
+    }
+
+    mensaje += `\n--------------------------\n`;
+    
+    items.forEach(item => {
+      const subtotalItem = item.precio * item.cantidad;
+      mensaje += `• ${item.cantidad}x ${item.nombre} (${item.unidad}): $${subtotalItem}\n`;
+    });
+
+    mensaje += `\n--------------------------`;
+    
+    mensaje += `\n*Subtotal:* $${this.cartService.subtotalPrice()}`;
+
+    if (cupon) {
+      mensaje += `\n*Cupón:* ${cupon.codigo} (-$${montoDescuento})`;
+    }
+    
+    if (envio) {
+      mensaje += `\n*Envío:* $${costoEnvio}`;
+    }
+
+    mensaje += `\n*Medio de Pago:* ${pago}`;
+    mensaje += `\n*Entrega:* ${envio ? 'Envío a domicilio' : 'Retiro en el local'}`;
+
+    mensaje += `\n\n*TOTAL FINAL: $${this.totalFinal()}*`;
+    
+    const phone = this.catalogo()?.wpp_numero;
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
+    
+    window.open(url, '_blank');
   }
 }

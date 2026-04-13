@@ -24,8 +24,10 @@ export class ListaProductos {
   productos = computed(() => {
     const cat = this.categoriaSeleccionada();
     let listaFiltrada = (cat === 'todos') 
-      ? this.productosRaw() 
-      : this.productosRaw().filter(p => p.categorias.includes(cat));
+    ? this.productosRaw() 
+    : this.productosRaw().filter(p => 
+        p.categorias.some(c => c.nombre === cat)
+      );
 
     const criterio = this.ordenSeleccionado();
     if (criterio === 'default') return listaFiltrada;

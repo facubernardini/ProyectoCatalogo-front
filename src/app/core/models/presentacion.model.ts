@@ -4,4 +4,5 @@ export interface Presentacion {
   precio: number;
   stock: number;
   precio_descuento: number | null;
+  activo: boolean;
 }

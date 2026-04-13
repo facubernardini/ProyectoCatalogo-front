@@ -1,0 +1,91 @@
+@if (categoryFormService.isOpen()) {
+<div class="fixed inset-0 z-50 flex justify-end overflow-hidden">
+    
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm animate-backdrop"
+         (click)="categoryFormService.close()">
+    </div>
+
+    <div (click)="$event.stopPropagation()"
+         class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col animate-side-panel rounded-tl-4xl">
+        
+        <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+            <div class="flex items-center gap-4">
+                <button (click)="categoryFormService.close()" 
+                        class="group p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-all duration-300 active:scale-90 border border-gray-200/50">
+                    <app-icon name="back" 
+                            classes="size-5 text-gray-500 group-hover:text-brand-accent transition-colors fill-current" />
+                </button>
+    
+                <h2 class="text-base font-black text-brand-text leading-tight">
+                    {{ categoryFormService.editingCategory() ? 'Editar Categoría' : 'Nueva Categoría' }}
+                </h2>
+            </div>
+
+            <button (click)="guardar()" 
+                    [disabled]="categoryFormService.loading() || !categoryFormService.nombre().trim()"
+                    class="relative px-7 py-2.5 bg-brand-accent text-white text-sm font-black rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
+                
+                <div class="flex items-center gap-2">
+                    @if (categoryFormService.loading()) {
+                        <div class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    }
+                    <span>
+                        {{ 
+                            categoryFormService.loading() 
+                            ? 'Procesando' 
+                            : (categoryFormService.editingCategory() ? 'Guardar' : 'Crear categoría') 
+                        }}
+                    </span>
+                </div>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-8">
+            
+            <section class="space-y-4">
+                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">General</p>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-gray-600 ml-1">Nombre de la categoría</label>
+                    <input type="text" 
+                        [ngModel]="categoryFormService.nombre()" 
+                        (ngModelChange)="categoryFormService.nombre.set($event)" 
+                        class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300" 
+                        placeholder="Ej: Pizzas, Bebidas, Postres...">
+                </div>
+            </section>
+
+            <section class="space-y-4">
+                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad</p>
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-bold text-brand-text">Estado de la categoría</p>
+                        <p class="text-xs text-gray-400">Si está pausada, no aparecerá en el catálogo.</p>
+                    </div>
+                    
+                    <button (click)="categoria.activo = !categoria.activo"
+                            [class]="categoria.activo ? 'bg-green-500 text-white border-green-600' : 'bg-gray-400 text-white border-gray-500'"
+                            class="px-4 py-2 rounded-xl border text-xs font-black transition-all active:scale-95 shadow-sm uppercase tracking-tighter">
+                        {{ categoria.activo ? 'Visible' : 'Pausada' }}
+                    </button>
+                </div>
+            </section>
+
+            @if (categoryFormService.editingCategory()) {
+                <section class="pt-8 border-t border-red-50">
+                    <p class="text-[12px] text-red-400 uppercase font-black tracking-widest mb-4">Zona de peligro</p>
+                    <button (click)="eliminar()"
+                            [disabled]="categoryFormService.loading()"
+                            class="w-full flex items-center justify-center gap-2 p-4 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-2xl border border-red-100 transition-all font-bold text-sm active:scale-95">
+                        <app-icon name="trash" classes="size-5 fill-current" />
+                        Eliminar categoría permanentemente
+                    </button>
+                    <p class="text-[10px] text-red-400 mt-2 text-center font-medium italic">
+                        * Los productos asociados no se borrarán, pero quedarán sin categoría.
+                    </p>
+                </section>
+            }
+
+        </div>
+    </div>
+</div>
+}

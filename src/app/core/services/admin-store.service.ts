@@ -1,32 +1,32 @@
-import { inject, Injectable, signal } from "@angular/core";
-import { ProductoService } from "../services-backend/productos.service";
-import { CategoriaService } from "../services-backend/categoriasVendedor.service";
+import { inject, Injectable, signal, computed } from "@angular/core";
+import { ProductoService } from "../services-backend/productos.ServiceBackend";
+import { CategoriaService } from "../services-backend/categorias.ServiceBackend";
 import { Producto } from "../models/producto.model";
 import { forkJoin } from "rxjs";
 import { CategoriaVendedor } from "../models/categoriaVendedor.model";
 import { Catalogo } from "../models/catalogo.model";
 
-// admin-store.service.ts
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
   private productoService = inject(ProductoService);
   private categoriaService = inject(CategoriaService);
 
-  productos = signal<Producto[]>([]);
-  categorias = signal<CategoriaVendedor[]>([]);
   catalogo = signal<Catalogo | null>(null);
-
+  categorias = signal<CategoriaVendedor[]>([]);
+  productos = signal<Producto[]>([]);
+  
   cargado = signal(false);
 
-  cargarDatosPanel(catalogoId: number) {
-    if (this.cargado()) return; // Si ya cargamos, no hacemos nada
+  catalogoId = computed(() => this.catalogo()?.id ?? 0);
 
-    // Podemos usar forkJoin para disparar ambas peticiones en paralelo
+  cargarDatosPanel(catalogoId: number) {
+    if (this.cargado()) return;
     forkJoin({
       prods: this.productoService.getProductosByCatalogo(catalogoId),
       cats: this.categoriaService.getCategoriasByCatalogo(catalogoId)
     }).subscribe({
       next: ({ prods, cats }) => {
+        this.catalogo.set({ id: catalogoId } as any);
         this.productos.set(prods);
         this.categorias.set(cats);
         this.cargado.set(true);
@@ -35,13 +35,37 @@ export class AdminStoreService {
     });
   }
 
-  agregarProductoALista(nuevo: any) {
-		this.productos.update(list => [nuevo, ...list]);
-	}
+  // --- MÉTODOS PARA PRODUCTOS ---
 
-	updateProductoEnLista(editado: any) {
-		this.productos.update(list => 
-			list.map(p => p.id === editado.id ? editado : p)
-		);
-	}
+  agregarProductoALista(nuevo: Producto) {
+    this.productos.update(list => [nuevo, ...list]);
+  }
+
+  updateProductoEnLista(editado: Producto) {
+    this.productos.update(list => 
+      list.map(p => p.id === editado.id ? editado : p)
+    );
+  }
+
+  eliminarProductoDeLista(id: number) {
+    this.productos.update(list => list.filter(p => p.id !== id));
+  }
+
+  // --- MÉTODOS PARA CATEGORÍAS ---
+
+  agregarCategoriaALista(nueva: CategoriaVendedor) {
+    // Al agregar una nueva, forzamos que productos_count sea 0 para que no tire error el front
+    const nuevaConConteo = { ...nueva, productos_count: 0 };
+    this.categorias.update(list => [...list, nuevaConConteo]);
+  }
+
+  updateCategoriaEnLista(editada: CategoriaVendedor) {
+    this.categorias.update(list => 
+      list.map(c => c.id === editada.id ? { ...c, ...editada } : c)
+    );
+  }
+
+  eliminarCategoriaDeLista(id: number) {
+    this.categorias.update(list => list.filter(c => c.id !== id));
+  }
 }

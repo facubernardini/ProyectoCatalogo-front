@@ -20,7 +20,7 @@ export class MisProductos {
   categoriaSeleccionada = signal<string>('todos');
 
   private location = inject(Location);
-  formService = inject(ProductFormService);
+  productFormService = inject(ProductFormService);
 
   abrirFiltros() {
     throw new Error('Method not implemented.');
@@ -36,15 +36,15 @@ export class MisProductos {
   }
 
   onAdd() {
-    this.formService.openCreate();
+    this.productFormService.openCreate();
   }
 
   onEdit(prod: Producto) {
-    this.formService.openEdit(prod);
+    this.productFormService.openEdit(prod);
   }
 
   onView(_t35: Producto) {
-    
+    throw new Error('Method not implemented.');
   }
 
   onToggleStatus(_t35: Producto) {

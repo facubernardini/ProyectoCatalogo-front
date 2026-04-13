@@ -3,6 +3,7 @@ import { ProductFormService } from 'src/app/core/services/product-form.service';
 import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
 @Component({
   selector: 'app-product-form',
@@ -12,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class ProductForm {
   public productFormService = inject(ProductFormService);
+  adminStore = inject(AdminStoreService);
 
   public producto = {
     nombre: '',
@@ -19,21 +21,43 @@ export class ProductForm {
     imagen: '',
     destacado: false,
     tag_evento: '',
+    categorias_ids: [] as number[],
     presentaciones: [
-      { unidad_venta: '', precio: 0, precio_descuento: null, activo: true }
+      { unidad_venta: '', precio: null, precio_descuento: null, activo: true }
     ]
   };
 
   constructor() {
-    // Sincronizar el formulario cuando el Signal del servicio cambie
     effect(() => {
       const editing = this.productFormService.editingProduct();
       if (editing) {
-        this.producto = JSON.parse(JSON.stringify(editing)); // Clonación profunda simple
+        console.log('DATA QUE LLEGA AL FORM:', editing);
+        const p = JSON.parse(JSON.stringify(editing));
+
+        p.categorias_ids = editing.categorias?.map((c: any) => c.id) || [];
+
+        this.producto = p;
       } else {
         this.resetForm();
       }
     });
+  }
+
+  toggleCategoria(id: number) {
+    if (!this.producto.categorias_ids) {
+      this.producto.categorias_ids = [];
+    }
+    
+    const index = this.producto.categorias_ids.indexOf(id);
+    if (index > -1) {
+      this.producto.categorias_ids.splice(index, 1);
+    } else {
+      this.producto.categorias_ids.push(id);
+    }
+  }
+
+  isCategoriaSelected(id: number): boolean {
+    return this.producto.categorias_ids?.includes(id) || false;
   }
 
   resetForm() {
@@ -43,7 +67,8 @@ export class ProductForm {
       imagen: '',
       destacado: false,
       tag_evento: '',
-      presentaciones: [{ unidad_venta: '', precio: 0, precio_descuento: null, activo: true }]
+      categorias_ids: [],
+      presentaciones: [{ unidad_venta: '', precio: null, precio_descuento: null, activo: true }]
     };
   }
 
@@ -59,7 +84,7 @@ export class ProductForm {
   }
 
   agregarPresentacion() {
-    this.producto.presentaciones.push({ unidad_venta: '', precio: 0, precio_descuento: null, activo: true });
+    this.producto.presentaciones.push({ unidad_venta: '', precio: null, precio_descuento: null, activo: true });
   }
 
   eliminarPresentacion(index: number) {
@@ -70,5 +95,13 @@ export class ProductForm {
 
   guardar() {
     this.productFormService.save(this.producto);
+  }
+
+  get esFormularioInvalido(): boolean {
+    return this.producto.presentaciones.some(pres => 
+      pres.precio_descuento !== null && 
+      pres.precio !== null && 
+      Number(pres.precio_descuento) >= Number(pres.precio)
+    );
   }
 }

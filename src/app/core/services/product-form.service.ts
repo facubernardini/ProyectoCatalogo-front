@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { AdminStoreService } from './admin-store.service';
 import { finalize } from 'rxjs';
-import { ProductoService } from '../services-backend/productos.service';
+import { ProductoService } from '../services-backend/productos.ServiceBackend';
 import { Producto } from '../models/producto.model';
 
 @Injectable({ providedIn: 'root' })

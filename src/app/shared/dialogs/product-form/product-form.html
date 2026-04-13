@@ -22,7 +22,7 @@
             </div>
 
             <button (click)="guardar()" 
-                    [disabled]="productFormService.loading()"
+                    [disabled]="productFormService.loading() || esFormularioInvalido"
                     class="relative px-7 py-2.5 bg-brand-accent text-white text-sm font-black rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
                 
                 <div class="flex items-center gap-2">
@@ -78,6 +78,37 @@
                               class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300 resize-none" 
                               placeholder="Breve detalle del producto..."></textarea>
                 </div>
+                <div class="flex flex-col gap-1.5">
+                    <section class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Categorías</p>
+                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
+                                {{ producto.categorias_ids.length }} seleccionada(s)
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            @for (cat of adminStore.categorias(); track cat.id) {
+                                <button type="button"
+                                        (click)="toggleCategoria(cat.id)"
+                                        [class]="isCategoriaSelected(cat.id) 
+                                            ? 'bg-brand-accent text-white border-brand-accent shadow-md shadow-brand-accent/20 scale-105' 
+                                            : 'bg-gray-50 text-gray-500 border-gray-100 hover:border-gray-200'"
+                                        class="px-4 py-2 rounded-xl border text-xs font-bold transition-all duration-200 active:scale-95 flex items-center gap-2">
+                                    
+                                    @if (isCategoriaSelected(cat.id)) {
+                                        <app-icon name="check" classes="size-3 fill-current" />
+                                    }
+                                    {{ cat.nombre }}
+                                </button>
+                            }
+                            
+                            @if (adminStore.categorias().length === 0) {
+                                <p class="text-xs text-gray-400 italic">No hay categorías creadas todavía.</p>
+                            }
+                        </div>
+                    </section>
+                </div>
             </section>
 
             <section class="grid grid-cols-2 gap-4">
@@ -130,15 +161,33 @@
                             </div>
                             <div class="col-span-6">
                                 <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio</label>
-                                <input type="number" [(ngModel)]="pres.precio" 
-                                    class="w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
-                                    placeholder="0.00">
+                                <div class="relative group/input">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 transition-colors group-focus-within/input:text-brand-accent">
+                                        $
+                                    </span>
+                                    <input type="number" [(ngModel)]="pres.precio" 
+                                        class="w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        placeholder="0.00">
+                                </div>
                             </div>
+
                             <div class="col-span-6">
                                 <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio oferta</label>
-                                <input type="number" [(ngModel)]="pres.precio_descuento" 
-                                    class="w-full p-2.5 bg-white border border-brand-accent/20 rounded-lg outline-none focus:border-brand-accent/50 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
-                                    placeholder="Opcional">
+                                <div class="relative group/input">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 transition-colors group-focus-within/input:text-brand-accent">
+                                        $
+                                    </span>
+                                    <input type="number" [(ngModel)]="pres.precio_descuento" 
+                                        [class.border-red-400]="pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio"
+                                        class="w-full p-2.5 pl-7 bg-white border border-brand-accent/20 rounded-lg outline-none focus:border-brand-accent/50 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        placeholder="Opcional">
+                                </div>
+                                
+                                @if (pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio) {
+                                    <p class="text-[8px] text-red-500 font-black mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
+                                        EL PRECIO OFERTA DEBE SER MENOR
+                                    </p>
+                                }
                             </div>
                         </div>
 

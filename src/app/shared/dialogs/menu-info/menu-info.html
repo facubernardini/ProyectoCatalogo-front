@@ -5,7 +5,7 @@
 
     <div appSwipeDown 
         (onSwipe)="menuService.close()"
-        class="fixed bottom-0 left-0 z-70 w-full max-h-[80vh] rounded-t-[40px] bg-white p-6 shadow-2xl flex flex-col items-center animate-in slide-in-from-bottom duration-300">
+        class="fixed bottom-0 left-0 z-70 w-full max-h-[90vh] rounded-t-[40px] bg-white p-6 shadow-2xl flex flex-col items-center animate-in slide-in-from-bottom duration-300">
     
         <div class="mb-6 h-1.5 w-12 rounded-full bg-zinc-200"></div>
 
@@ -15,10 +15,19 @@
                     class="h-full w-full object-cover">
             </div>
             <h2 class="text-2xl font-black text-brand-accent">{{ catalogo()?.nombre_tienda }}</h2>
+            
+            @if (catalogo()?.ciudad || catalogo()?.direccion) {
+                <div class="mt-1 flex items-center gap-1 text-zinc-400">
+                    <app-icon name="location" classes="size-3.5 fill-current" />
+                    <p class="text-xs font-bold">
+                        {{ catalogo()?.direccion }}{{ catalogo()?.direccion && catalogo()?.ciudad ? ',' : '' }} {{ catalogo()?.ciudad }}
+                    </p>
+                </div>
+            }
         </div>
 
-        <div class="w-full space-y-3">
-        
+        <div class="w-full space-y-3 overflow-y-auto">
+            
             @if (catalogo()?.wpp_numero) {
                 <a [href]="'https://wa.me/' + catalogo()?.wpp_numero" 
                     target="_blank"
@@ -45,22 +54,33 @@
             }
 
             <div class="grid grid-cols-2 gap-3 pt-2">
-                <div class="rounded-2xl border border-zinc-200 p-4 text-center">
-                    <p class="text-[10px] font-bold uppercase text-zinc-400">Mínimo de compra</p>
-                    <p class="font-black text-brand-accent">${{ catalogo()?.minimo_compra }}</p>
+                <div class="rounded-2xl border border-zinc-100 bg-zinc-50/50 p-4 text-center flex flex-col justify-center">
+                    <p class="text-[10px] font-bold uppercase text-zinc-400 tracking-tighter">Mínimo compra</p>
+                    <p class="font-black text-base text-brand-accent">${{ catalogo()?.minimo_compra }}</p>
                 </div>
-                <div class="rounded-2xl border border-zinc-200 p-4 text-center">
-                    <p class="text-[10px] font-bold uppercase text-zinc-400">Costo de envío</p>
-                    <p class="font-black text-brand-accent">
-                        {{ catalogo()?.ofrece_envio ? '$' + catalogo()?.costo_envio : 'No ofrece' }}
-                    </p>
+
+                <div class="rounded-2xl border border-zinc-100 bg-zinc-50/50 p-4 text-center flex flex-col items-center justify-center">
+                    <p class="text-[10px] font-bold uppercase text-zinc-400 tracking-tighter">Costo envío</p>
+                    
+                    @if (catalogo()?.ofrece_envio) {
+                        <p class="font-black text-base text-brand-accent">${{ catalogo()?.costo_envio }}</p>
+                        
+                        @if (catalogo()?.envio_gratis_desde) {
+                            <div class="mt-1 inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-black text-green-700 uppercase tracking-tighter border border-green-200">
+                                <app-icon name="check" classes="size-2 fill-current" />
+                                Gratis desde ${{ catalogo()?.envio_gratis_desde }}
+                            </div>
+                        }
+                    } @else {
+                        <p class="font-black text-zinc-300">No ofrece</p>
+                    }
                 </div>
             </div>
         </div>
 
         <button (click)="menuService.close()" 
-                class="mt-8 w-full rounded-2xl py-4 font-black text-zinc-400 hover:bg-zinc-50 transition-colors">
-            Cerrar menú
+                class="mt-6 w-full rounded-2xl py-4 font-black text-zinc-400 hover:bg-zinc-50 transition-colors">
+            Cerrar información
         </button>
     </div>
 }

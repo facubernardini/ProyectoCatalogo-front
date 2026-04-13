@@ -6,9 +6,8 @@ export interface Producto {
   descripcion: string | null;
   imagen: string | null;
   destacado: boolean;
-  tag_evento: string | null;
   activo: boolean;
   
   presentaciones: Presentacion[];
-  categorias: string[];
+  categorias: any[];
 }
