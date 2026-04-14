@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, effect } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { Catalogo } from 'src/app/core/models/catalogo.model';
@@ -6,6 +6,7 @@ import { CartService } from 'src/app/core/services/cart.service';
 
 @Component({
   selector: 'app-carrito',
+  standalone: true,
   imports: [Icon, SwipeDownDirective],
   templateUrl: './carrito.html',
   styleUrl: './carrito.css',
@@ -18,18 +19,33 @@ export class Carrito {
 
   public cartService = inject(CartService);
 
+  constructor() {
+    effect(() => {
+      const cat = this.catalogo();
+      if (cat) {
+        this.cartService.setCatalogConfig(
+          Number(cat.costo_envio ?? 0),
+          Number(cat.envio_gratis_desde ?? 0)
+        );
+      }
+    });
+  }
+
+  // Comparamos el mínimo contra el precio de los productos (con descuento de cupón)
   montoFaltante = computed(() => {
     const minimo = Number(this.catalogo()?.minimo_compra ?? 0);
-    const total = this.cartService.totalPrice();
-    return Math.max(0, minimo - total);
+    const precioProductos = this.cartService.priceAfterDiscount();
+    return Math.max(0, minimo - precioProductos);
   });
 
   puedeFinalizar = computed(() => {
     const tieneItems = this.cartService.totalItems() > 0;
-    const cumpleMinimo = this.cartService.totalPrice() >= (this.catalogo()?.minimo_compra ?? 0);
+    const cumpleMinimo = this.cartService.priceAfterDiscount() >= (this.catalogo()?.minimo_compra ?? 0);
+    
     const tieneEntrega = this.cartService.deliveryMethod() !== null;
     const tienePago = this.cartService.selectedPaymentMethod() !== null;
     const nombreValido = this.nombreCliente().trim().length > 3;
+    
     const direccionValida = this.cartService.deliveryMethod() === 'envio' 
         ? this.direccionEnvio().trim().length > 5 
         : true;
@@ -37,24 +53,13 @@ export class Carrito {
     return tieneItems && cumpleMinimo && tieneEntrega && tienePago && nombreValido && direccionValida;
   });
 
-  totalFinal = computed(() => {
-    const subtotal = this.cartService.totalPrice();
-    const costoEnvio = Number(this.catalogo()?.costo_envio ?? 0);
-    
-    return this.cartService.deliveryMethod() === 'envio' 
-      ? subtotal + costoEnvio 
-      : subtotal;
-  });
-
   getPorcentaje(base: number, oferta: number): number {
     if (!base || base <= 0) return 0;
-    const ahorro = ((base - oferta) / base) * 100;
-    return Math.round(ahorro);
+    return Math.round(((base - oferta) / base) * 100);
   }
 
   seleccionarMetodo(metodo: 'envio' | 'retiro', element: HTMLElement) {
     this.cartService.setDeliveryMethod(metodo);
-    
     setTimeout(() => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
@@ -62,7 +67,6 @@ export class Carrito {
 
   seleccionarPago(mp: any, element: HTMLElement) {
     this.cartService.selectPaymentMethod(mp);
-    
     setTimeout(() => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
@@ -71,10 +75,8 @@ export class Carrito {
   finalizarPedido() {
     const items = this.cartService.items();
     const envio = this.cartService.deliveryMethod() === 'envio';
-    const costoEnvio = Number(this.catalogo()?.costo_envio ?? 0);
     const pago = this.cartService.selectedPaymentMethod()?.nombre;
     const cupon = this.cartService.appliedCupon();
-    const montoDescuento = this.cartService.discountAmount();
     
     let mensaje = `*Nuevo Pedido - ${this.catalogo()?.nombre_tienda}*\n\n`;
     mensaje += `*Cliente:* ${this.nombreCliente()}\n`;
@@ -91,21 +93,24 @@ export class Carrito {
     });
 
     mensaje += `\n--------------------------`;
-    
     mensaje += `\n*Subtotal:* $${this.cartService.subtotalPrice()}`;
 
     if (cupon) {
-      mensaje += `\n*Cupón:* ${cupon.codigo} (-$${montoDescuento})`;
+      mensaje += `\n*Cupón:* ${cupon.codigo} (-$${this.cartService.discountAmount()})`;
     }
     
     if (envio) {
-      mensaje += `\n*Envío:* $${costoEnvio}`;
+      if (this.cartService.esEnvioGratis()) {
+          mensaje += `\n*Envío:* Gratis (Bonificado)`;
+      } else {
+          mensaje += `\n*Envío:* $${this.catalogo()?.costo_envio}`;
+      }
     }
 
     mensaje += `\n*Medio de Pago:* ${pago}`;
     mensaje += `\n*Entrega:* ${envio ? 'Envío a domicilio' : 'Retiro en el local'}`;
 
-    mensaje += `\n\n*TOTAL FINAL: $${this.totalFinal()}*`;
+    mensaje += `\n\n*TOTAL FINAL: $${this.cartService.totalFinal()}*`;
     
     const phone = this.catalogo()?.wpp_numero;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;

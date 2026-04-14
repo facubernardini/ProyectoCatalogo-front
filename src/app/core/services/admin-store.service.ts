@@ -48,7 +48,7 @@ export class AdminStoreService {
   }
 
   eliminarProductoDeLista(id: number) {
-    this.productos.update(list => list.filter(p => p.id !== id));
+    this.productos.update(prods => prods.filter(p => p.id !== id));
   }
 
   // --- MÉTODOS PARA CATEGORÍAS ---

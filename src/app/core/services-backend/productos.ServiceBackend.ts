@@ -21,11 +21,17 @@ export class ProductoService {
 	}
 
 	// -- POST --
-	createProducto(productoNuevo: Producto): Observable<Producto> {
-		return this.http.get<Producto>(`${this.API_URL}/publico`);
+	createProducto(producto: Producto): Observable<Producto> {
+		// Enviamos el objeto producto completo al endpoint de creación
+		return this.http.post<Producto>(this.API_URL, producto);
 	}
 
-	updateProducto(id: number, productoNuevo: Producto): Observable<Producto> {
-		return this.http.get<Producto>(`${this.API_URL}/publico`);
+	updateProducto(id: number, productoNuevo: Partial<Producto>): Observable<Producto> {
+		// Usamos PATCH para actualizaciones parciales y concatenamos el ID en la URL
+		return this.http.patch<Producto>(`${this.API_URL}/${id}`, productoNuevo);
+	}
+
+	deleteProducto(id: number): Observable<void> {
+		return this.http.delete<void>(`${this.API_URL}/${id}`);
 	}
 }

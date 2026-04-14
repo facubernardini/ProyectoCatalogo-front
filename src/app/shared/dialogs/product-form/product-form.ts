@@ -20,7 +20,6 @@ export class ProductForm {
     descripcion: '',
     imagen: '',
     destacado: false,
-    tag_evento: '',
     categorias_ids: [] as number[],
     presentaciones: [
       { unidad_venta: '', precio: null, precio_descuento: null, activo: true }
@@ -66,7 +65,6 @@ export class ProductForm {
       descripcion: '',
       imagen: '',
       destacado: false,
-      tag_evento: '',
       categorias_ids: [],
       presentaciones: [{ unidad_venta: '', precio: null, precio_descuento: null, activo: true }]
     };
@@ -98,10 +96,26 @@ export class ProductForm {
   }
 
   get esFormularioInvalido(): boolean {
-    return this.producto.presentaciones.some(pres => 
-      pres.precio_descuento !== null && 
-      pres.precio !== null && 
-      Number(pres.precio_descuento) >= Number(pres.precio)
-    );
+    // 1. Validar nombre del producto (que no esté vacío ni sean solo espacios)
+    const nombreInvalido = !this.producto.nombre || this.producto.nombre.trim().length === 0;
+    if (nombreInvalido) return true;
+
+    // 2. Validar presentaciones
+    return this.producto.presentaciones.some(pres => {
+      // A. Campos obligatorios vacíos o precio en 0/negativo
+      const datosIncompletos = 
+        !pres.unidad_venta || 
+        pres.unidad_venta.trim() === '' || 
+        pres.precio === null || 
+        pres.precio <= 0;
+
+      // B. Lógica de descuento (el descuento no puede ser mayor o igual al precio original)
+      const descuentoInvalido = 
+        pres.precio_descuento !== null && 
+        pres.precio !== null && 
+        Number(pres.precio_descuento) >= Number(pres.precio);
+
+      return datosIncompletos || descuentoInvalido;
+    });
   }
 }

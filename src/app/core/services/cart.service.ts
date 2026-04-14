@@ -10,45 +10,74 @@ import { CuponVerificado } from '../models/cupon.model';
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private cartItems = signal<CartItem[]>(this.loadFromStorage());
-  
   private cuponServiceBackend = inject(CuponServiceBackend);
   private toastService = inject(ToastService);
 
+  // --- Estado del Carrito ---
   appliedCupon = signal<CuponVerificado | null>(null);
-  
   selectedPaymentMethod = signal<MedioPago | null>(null);
-
   deliveryMethod = signal<'envio' | 'retiro' | null>(null);
   isOpen = signal(false);
-  
+
+  // Nueva signal para la configuración dinámica del catálogo
+  catalogConfig = signal<{ costoEnvio: number; envioGratisDesde: number } | null>(null);
+
   items = computed(() => this.cartItems());
-  
-  totalItems = computed(() => 
+
+  totalItems = computed(() =>
     this.cartItems().reduce((acc, item) => acc + item.cantidad, 0)
   );
-  
-  subtotalPrice = computed(() => 
+
+  // Suma bruta de productos
+  subtotalPrice = computed(() =>
     this.cartItems().reduce((acc, item) => acc + (item.precio * item.cantidad), 0)
   );
 
-  // Cálculo del descuento basado en el cupón
+  // Valor del descuento aplicado
   discountAmount = computed(() => {
     const cupon = this.appliedCupon();
     const subtotal = this.subtotalPrice();
-    
     if (!cupon || subtotal === 0) return 0;
 
-    if (cupon.es_porcentaje) {
-      return subtotal * (cupon.descuento / 100);
-    } else {
-      return cupon.descuento;
-    }
+    return cupon.es_porcentaje
+      ? subtotal * (cupon.descuento / 100)
+      : cupon.descuento;
   });
 
-  // Precio final que el usuario realmente paga
-  totalPrice = computed(() => {
+  // Precio después de cupones (pero antes de envío)
+  priceAfterDiscount = computed(() => {
     const final = this.subtotalPrice() - this.discountAmount();
     return final > 0 ? final : 0;
+  });
+
+  // --- Lógica de Envío Gratis ---
+  esEnvioGratis = computed(() => {
+    const threshold = this.catalogConfig()?.envioGratisDesde;
+    if (!threshold || threshold <= 0) return false;
+    // Comparamos contra el precio con descuento aplicado
+    return this.priceAfterDiscount() >= threshold;
+  });
+
+  faltanteEnvioGratis = computed(() => {
+    const threshold = this.catalogConfig()?.envioGratisDesde ?? 0;
+    return Math.max(0, threshold - this.priceAfterDiscount());
+  });
+
+  porcentajeEnvioGratis = computed(() => {
+    const threshold = this.catalogConfig()?.envioGratisDesde ?? 0;
+    if (threshold <= 0) return 0;
+    return Math.min(100, (this.priceAfterDiscount() / threshold) * 100);
+  });
+
+  // --- TOTAL FINAL ---
+  totalFinal = computed(() => {
+    const base = this.priceAfterDiscount();
+    const config = this.catalogConfig();
+
+    if (this.deliveryMethod() === 'envio' && !this.esEnvioGratis() && config) {
+      return base + config.costoEnvio;
+    }
+    return base;
   });
 
   constructor() {
@@ -57,60 +86,62 @@ export class CartService {
     });
   }
 
+  // --- Métodos de Acción ---
+  setCatalogConfig(costoEnvio: number, envioGratisDesde: number) {
+    this.catalogConfig.set({ costoEnvio, envioGratisDesde });
+  }
+
   agregarProducto(producto: Producto, pres: Presentacion) {
     const precioEfectivo = pres.precio_descuento ?? pres.precio;
-    
-    this.cartItems.update(prev => {
-      const existe = prev.find(i => i.presentacionId === pres.id);
 
+    this.cartItems.update((prev) => {
+      const existe = prev.find((i) => i.presentacionId === pres.id);
       if (existe) {
-        return prev.map(i => 
-          i.presentacionId === pres.id 
-            ? { ...i, cantidad: i.cantidad + 1 } 
-            : i
+        return prev.map((i) =>
+          i.presentacionId === pres.id ? { ...i, cantidad: i.cantidad + 1 } : i
         );
       }
-
-      const nuevoItem: CartItem = {
-        productoId: producto.id,
-        presentacionId: pres.id,
-        nombre: producto.nombre,
-        unidad: pres.unidad_venta,
-        precio: precioEfectivo,
-        precio_base: Number(pres.precio),
-        imagen: producto.imagen,
-        cantidad: 1
-      };
-      return [...prev, nuevoItem];
+      return [
+        ...prev,
+        {
+          productoId: producto.id,
+          presentacionId: pres.id,
+          nombre: producto.nombre,
+          unidad: pres.unidad_venta,
+          precio: precioEfectivo,
+          precio_base: Number(pres.precio),
+          imagen: producto.imagen,
+          cantidad: 1,
+        },
+      ];
     });
-
     this.toastService.show(`${producto.nombre} agregado al carrito 🛒`);
   }
 
   sumarUno(presentacionId: number) {
-    this.cartItems.update(prev => 
-        prev.map(i => i.presentacionId === presentacionId 
-        ? { ...i, cantidad: i.cantidad + 1 } 
-        : i
-        )
+    this.cartItems.update((prev) =>
+      prev.map((i) =>
+        i.presentacionId === presentacionId ? { ...i, cantidad: i.cantidad + 1 } : i
+      )
     );
-    }
+  }
 
   restarUno(presentacionId: number) {
-    this.cartItems.update(prev => 
-      prev.map(i => i.presentacionId === presentacionId 
-        ? { ...i, cantidad: i.cantidad - 1 } 
-        : i
-      ).filter(i => i.cantidad > 0)
+    this.cartItems.update((prev) =>
+      prev.map((i) =>
+        i.presentacionId === presentacionId ? { ...i, cantidad: i.cantidad - 1 } : i
+      ).filter((i) => i.cantidad > 0)
     );
   }
 
   eliminarItem(presentacionId: number) {
-    this.cartItems.update(prev => prev.filter(i => i.presentacionId !== presentacionId));
+    this.cartItems.update((prev) =>
+      prev.filter((i) => i.presentacionId !== presentacionId)
+    );
   }
 
   limpiarCarrito() {
-    if (this.cartItems().length > 0){
+    if (this.cartItems().length > 0) {
       this.cartItems.set([]);
       this.selectedPaymentMethod.set(null);
       this.appliedCupon.set(null);
@@ -121,17 +152,15 @@ export class CartService {
 
   aplicarCupon(codigo: string, catalogoId: number) {
     if (!codigo.trim()) return;
-
     this.cuponServiceBackend.verificarCupon(codigo, catalogoId).subscribe({
       next: (res) => {
         this.appliedCupon.set(res);
-        this.toastService.show(`Cupón "${codigo}" aplicado con éxito ✅`, 'success');
+        this.toastService.show(`Cupón "${codigo}" aplicado ✅`, 'success');
       },
       error: (err) => {
         this.appliedCupon.set(null);
-        const errorMsg = err.error?.error || 'Cupón no válido';
-        this.toastService.show(errorMsg, 'error');
-      }
+        this.toastService.show(err.error?.error || 'Cupón no válido', 'error');
+      },
     });
   }
 
@@ -153,15 +182,17 @@ export class CartService {
     this.deliveryMethod.set(method);
   }
 
-  open() { 
-    this.isOpen.set(true); 
+  open() {
+    this.isOpen.set(true);
     document.body.style.overflow = 'hidden';
   }
 
-  close() { 
-    this.isOpen.set(false); 
+  close() {
+    this.isOpen.set(false);
     document.body.style.overflow = 'auto';
   }
-  
-  toggle() { this.isOpen.update(v => !v); }
+
+  toggle() {
+    this.isOpen.update((v) => !v);
+  }
 }

@@ -4,6 +4,11 @@ export interface MedioPago {
   icono: string | null;
 }
 
+export interface HorarioSemana {
+  dia: string;
+  horas: string;
+}
+
 export interface Catalogo {
   id: number;
   nombre_tienda: string;
@@ -19,6 +24,8 @@ export interface Catalogo {
   ofrece_envio: boolean;
   costo_envio: number | null;
   envio_gratis_desde: number | null;
+
+  horarios: HorarioSemana[];
   
   medios_pago: MedioPago[];
 }
