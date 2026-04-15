@@ -3,11 +3,13 @@ import { finalize } from 'rxjs';
 import { AdminStoreService } from './admin-store.service';
 import { CategoriaService } from '../services-backend/categorias.ServiceBackend';
 import { CategoriaVendedor } from '../models/categoriaVendedor.model';
+import { ToastService } from './toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryFormService {
   private categoriaBackend = inject(CategoriaService);
   private adminStore = inject(AdminStoreService);
+  private toastService = inject(ToastService);
 
   isOpen = signal(false);
   loading = signal(false);
@@ -33,17 +35,20 @@ export class CategoryFormService {
     this.nombre.set('');
   }
 
-  save() {
-    const nombreValor = this.nombre().trim();
-    if (!nombreValor) return;
+  save(datos: Partial<CategoriaVendedor>) {
+    if (!datos.nombre?.trim()) return;
 
     this.loading.set(true);
     const currentCategory = this.editingCategory();
-    const catalogoId = this.adminStore.catalogoId;
+    
+    const payload = {
+      ...datos,
+      catalogo_id: this.adminStore.catalogoId()
+    };
 
     const request = currentCategory
-      ? this.categoriaBackend.updateCategoria(currentCategory.id, { nombre: nombreValor })
-      : this.categoriaBackend.createCategoria(nombreValor, catalogoId());
+      ? this.categoriaBackend.updateCategoria(currentCategory.id, payload)
+      : this.categoriaBackend.createCategoria(payload);
 
     request.pipe(
       finalize(() => this.loading.set(false))
@@ -51,25 +56,29 @@ export class CategoryFormService {
       next: (res) => {
         if (currentCategory) {
           this.adminStore.updateCategoriaEnLista(res);
+          this.toastService.show(`Categoría actualizada`);
         } else {
           this.adminStore.agregarCategoriaALista(res);
+          this.toastService.show(`Categoría creada con éxito`);
         }
         this.close();
       },
-      error: (err) => console.error('Error al guardar categoría:', err)
+      error: (err) => {
+        console.error('Error al guardar categoría:', err);
+        // Aquí podrías disparar un toast de error si tenés uno
+      }
     });
   }
 
   delete(id: number) {
-    if (!confirm('¿Estás seguro de eliminar esta categoría? Los productos asociados quedarán sin categoría.')) return;
-
+    // Usamos el ID directamente
     this.loading.set(true);
     this.categoriaBackend.deleteCategoria(id).pipe(
       finalize(() => this.loading.set(false))
     ).subscribe({
       next: () => {
         this.adminStore.eliminarCategoriaDeLista(id);
-        this.close(); // Cerramos el form si estaba abierto
+        this.close();
       },
       error: (err) => console.error('Error al eliminar categoría:', err)
     });

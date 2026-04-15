@@ -1,6 +1,6 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { Catalogo } from 'src/app/core/models/catalogo.model';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { MenuService } from 'src/app/core/services/menu.service';
 
 @Component({
@@ -10,7 +10,6 @@ import { MenuService } from 'src/app/core/services/menu.service';
   styleUrl: './navbar.css',
 })
 export class Navbar {
-  catalogo = input<Catalogo | null>(null);
-
+  public adminStore = inject(AdminStoreService);
   public menuService = inject(MenuService);
 }

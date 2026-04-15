@@ -234,39 +234,40 @@
             </div>
             }
 
-            <div class="space-y-2 mb-6 px-2">
+            <div class="space-y-3 mb-6 px-2">
                 @if (cartService.deliveryMethod() === 'envio' || cartService.appliedCupon()) {
-                <div class="flex justify-between text-sm animate-in fade-in duration-300">
-                    <span class="text-gray-500 font-bold">Subtotal</span>
-                    <span class="font-bold text-brand-text">${{ cartService.subtotalPrice() }}</span>
+                <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
+                    <span class="text-gray-500 font-bold whitespace-nowrap">Subtotal</span>
+                    <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
+                    <span class="font-bold text-brand-text whitespace-nowrap">${{ cartService.subtotalPrice() }}</span>
                 </div>
                 }
 
                 @if (cartService.discountAmount() > 0) {
-                <div class="flex justify-between text-sm text-green-600 animate-in slide-in-from-right duration-300">
-                    <span class="flex items-center gap-1 font-bold">Descuento</span>
-                    <span class="font-black">-${{ cartService.discountAmount() }}</span>
+                <div class="flex items-center gap-2 text-sm text-green-600 animate-in slide-in-from-right duration-300">
+                    <span class="font-bold whitespace-nowrap">Descuento</span>
+                    <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
+                    <span class="font-black whitespace-nowrap">-${{ cartService.discountAmount() }}</span>
                 </div>
                 }
 
                 @if (cartService.deliveryMethod() === 'envio') {
-                <div class="flex justify-between text-sm animate-in fade-in duration-300">
-                    <span class="text-gray-500 font-bold">Costo de envío</span>
+                <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
+                    <span class="text-gray-500 font-bold whitespace-nowrap">Costo de envío</span>
+                    <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
+                    
                     @if (cartService.esEnvioGratis()) {
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 whitespace-nowrap">
                         <span class="text-gray-400 line-through text-xs">${{ catalogo()?.costo_envio }}</span>
                         <span class="font-bold text-green-500">Gratis</span>
                     </div>
                     } @else {
-                    <span class="font-bold text-brand-accent">+${{ catalogo()?.costo_envio }}</span>
+                    <span class="font-bold text-brand-accent whitespace-nowrap">+${{ catalogo()?.costo_envio }}</span>
                     }
                 </div>
                 }
 
-                <div class="flex justify-between items-center pt-2"
-                    [class.border-t]="cartService.deliveryMethod() === 'envio' || cartService.appliedCupon()"
-                    [class.border-dashed]="cartService.deliveryMethod() === 'envio' || cartService.appliedCupon()"
-                    [class.border-gray-200]="cartService.deliveryMethod() === 'envio' || cartService.appliedCupon()">
+                <div class="flex justify-between items-center pt-3 border-t-2 border-dashed border-gray-100 mt-2">
                     <span class="text-lg font-bold text-brand-text">Total</span>
                     <span class="text-3xl font-black text-brand-accent">${{ cartService.totalFinal() }}</span>
                 </div>

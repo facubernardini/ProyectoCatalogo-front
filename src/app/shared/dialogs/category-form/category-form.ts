@@ -1,5 +1,4 @@
 import { Component, effect, inject } from '@angular/core';
-import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CategoryFormService } from 'src/app/core/services/category-form.service';
 import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
@@ -16,25 +15,39 @@ export class CategoryForm {
 
   public categoria = {
     nombre: '',
-    activo: true
+    activo: true,
+    especial: false
   };
 
   constructor() {
     effect(() => {
+      const isOpen = this.categoryFormService.isOpen();
       const editing = this.categoryFormService.editingCategory();
-      if (editing) {
-        this.categoria = { 
-          nombre: editing.nombre, 
-          activo: editing.activo 
-        };
-      } else {
-        this.categoria = { nombre: '', activo: true };
+      
+      if (isOpen) {
+        if (editing) {
+          this.categoria = { 
+            nombre: editing.nombre, 
+            activo: editing.activo,
+            especial: editing.especial ?? false
+          };
+          this.categoryFormService.nombre.set(editing.nombre);
+        } else {
+          this.resetLocalForm();
+        }
       }
     });
   }
 
+  private resetLocalForm() {
+    this.categoria = { nombre: '', activo: true, especial: false };
+    this.categoryFormService.nombre.set('');
+  }
+
   guardar() {
-    this.categoryFormService.save();
+    this.categoria.nombre = this.categoryFormService.nombre();
+    
+    this.categoryFormService.save(this.categoria);
   }
 
   eliminar() {

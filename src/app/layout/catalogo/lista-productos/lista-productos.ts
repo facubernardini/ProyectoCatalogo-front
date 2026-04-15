@@ -1,9 +1,8 @@
-import { Component, computed, input, signal } from '@angular/core';
-import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { Producto } from 'src/app/core/models/producto.model';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { ProductCard } from "./product-card/product-card";
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
 type OrdenCriterio = 'menor-precio' | 'mayor-precio' | 'alfa' | 'default';
 
@@ -14,8 +13,10 @@ type OrdenCriterio = 'menor-precio' | 'mayor-precio' | 'alfa' | 'default';
   styleUrl: './lista-productos.css',
 })
 export class ListaProductos {
-  productosRaw = input.required<Producto[]>();
-  categorias = input.required<CategoriaVendedor[]>();
+  public adminStore = inject(AdminStoreService);
+  
+  productosRaw = this.adminStore.productos;
+  categorias = this.adminStore.categorias;
   
   categoriaSeleccionada = signal<string>('todos');
   ordenSeleccionado = signal<OrdenCriterio>('default');
@@ -42,6 +43,16 @@ export class ListaProductos {
         case 'alfa': return a.nombre.localeCompare(b.nombre);
         default: return 0;
       }
+    });
+  });
+
+  categoriasOrdenadas = computed(() => {
+    const lista = this.categorias();
+    
+    return [...lista].sort((a, b) => {
+      if (a.especial && !b.especial) return -1;
+      if (!a.especial && b.especial) return 1;
+      return a.nombre.localeCompare(b.nombre);
     });
   });
 

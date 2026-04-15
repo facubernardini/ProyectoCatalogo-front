@@ -24,7 +24,20 @@
 
                     <div class="flex-1">
                         <h2 class="text-xl font-black text-brand-text leading-tight">{{ prod.nombre }}</h2>
-                        <p class="text-sm text-gray-500 line-clamp-2 mt-1">{{ prod.descripcion }}</p>
+                        
+                        @if (prod.descripcion) {
+                            <p class="text-sm text-gray-500 line-clamp-2 mt-1">{{ prod.descripcion }}</p>
+                        }
+
+                        @if (prod.tags.length > 0) {
+                            <div class="flex flex-wrap gap-1.5 mt-3">
+                                @for (tag of prod.tags; track tag.id) {
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/4 px-2 py-1 rounded-lg border border-brand-accent/10">
+                                        {{ tag.nombre }}
+                                    </span>
+                                }
+                            </div>
+                        }
                     </div>
                 </div>
 

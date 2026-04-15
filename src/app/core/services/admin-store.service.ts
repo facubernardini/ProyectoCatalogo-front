@@ -5,11 +5,13 @@ import { Producto } from "../models/producto.model";
 import { forkJoin } from "rxjs";
 import { CategoriaVendedor } from "../models/categoriaVendedor.model";
 import { Catalogo } from "../models/catalogo.model";
+import { CatalogoService } from "../services-backend/catalogo.ServiceBackend";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
   private productoService = inject(ProductoService);
   private categoriaService = inject(CategoriaService);
+  private catalogoService = inject(CatalogoService);
 
   catalogo = signal<Catalogo | null>(null);
   categorias = signal<CategoriaVendedor[]>([]);
@@ -19,7 +21,25 @@ export class AdminStoreService {
 
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
 
-  cargarDatosPanel(catalogoId: number) {
+  cargarDatosPublicos(slug: string) {
+    this.cargado.set(false);
+    
+    forkJoin({
+      catalogo: this.catalogoService.getCatalogoBySlug(slug),
+      prods: this.productoService.getProductosBySlug(slug),
+      cats: this.categoriaService.getCategoriasBySlug(slug) 
+    }).subscribe({
+      next: ({ catalogo, prods, cats }) => {
+        this.catalogo.set(catalogo);
+        this.productos.set(prods);
+        this.categorias.set(cats);
+        this.cargado.set(true);
+      },
+      error: (err) => console.error('Error cargando catálogo público', err)
+    });
+  }
+
+  cargarDatosPanelVendedor(catalogoId: number) {
     if (this.cargado()) return;
     forkJoin({
       prods: this.productoService.getProductosByCatalogo(catalogoId),
@@ -33,6 +53,17 @@ export class AdminStoreService {
       },
       error: (err) => console.error('Error cargando el panel', err)
     });
+  }
+
+  refrescarCategorias() {
+    const id = this.catalogoId();
+
+    if (id > 0) {
+      this.categoriaService.getCategoriasByCatalogo(id).subscribe({
+        next: (cats) => this.categorias.set(cats),
+        error: (err) => console.error('Error al refrescar categorías por ID', err)
+      });
+    }
   }
 
   // --- MÉTODOS PARA PRODUCTOS ---

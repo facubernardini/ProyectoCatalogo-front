@@ -3,7 +3,8 @@ export interface CategoriaVendedor {
   nombre: string;
   catalogo_id: number;
   productos_count: number;
-  activo: boolean,
+  activo: boolean;
+  especial: boolean;
 }
 
 export interface CategoriaMinimal {

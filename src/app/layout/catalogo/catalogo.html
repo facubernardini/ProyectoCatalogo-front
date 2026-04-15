@@ -1,29 +1,15 @@
-<app-navbar
-    [catalogo]="catalogo()">
-</app-navbar>
-
-<app-search-nav
-    [productos]="productos()">
-</app-search-nav>
-
-<app-carousel-destacados
-    [productosDestacados]="productosDestacados()">
-</app-carousel-destacados>
-
-<app-carousel-ofertas 
-    [productosRaw]="productos()">
-</app-carousel-ofertas>
-
-<app-lista-productos 
-    [productosRaw]="productos()"
-    [categorias]="categorias()">
-</app-lista-productos>
+<!-- Layout -->
+<app-navbar/>
+<app-search-nav/>
+<app-carousel-destacados/>
+<app-carousel-ofertas/>
+<app-lista-productos/>
 
 <!-- Dialogs emergentes -->
-<app-search-products [productos]="productos()"></app-search-products>
-<app-carrito [catalogo]="catalogo()"></app-carrito>
-<app-menu-info [catalogo]="catalogo()"></app-menu-info>
-<app-product-selector></app-product-selector>
+<app-search-products/>
+<app-carrito/>
+<app-menu-info/>
+<app-product-selector/>
 
 <!-- Toast -->
-<app-toast></app-toast>
+<app-toast/>

@@ -54,21 +54,38 @@
                 </div>
             </section>
 
-            <section class="space-y-4">
-                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad</p>
-                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-bold text-brand-text">Estado de la categoría</p>
-                        <p class="text-xs text-gray-400">Si está pausada, no aparecerá en el catálogo.</p>
-                    </div>
-                    
-                    <button (click)="categoria.activo = !categoria.activo"
-                            [class]="categoria.activo ? 'bg-green-500 text-white border-green-600' : 'bg-gray-400 text-white border-gray-500'"
-                            class="px-4 py-2 rounded-xl border text-xs font-black transition-all active:scale-95 shadow-sm uppercase tracking-tighter">
-                        {{ categoria.activo ? 'Visible' : 'Pausada' }}
+            <section>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad especial</label>
+                    <button (click)="categoria.especial = !categoria.especial" 
+                            [class]="categoria.especial ? 'bg-brand-accent text-white border-brand-accent shadow-md' : 'bg-gray-50 text-gray-400 border-gray-100'"
+                            class="flex items-center justify-center gap-2 h-11.5 rounded-xl border font-bold text-sm transition-all active:scale-95 w-full sm:w-1/2">
+                        <app-icon name="star" [classes]="'size-4 ' + (categoria.especial ? 'fill-white' : 'fill-gray-400')" />
+                        {{ categoria.especial ? 'Categoría Especial' : 'Marcar como Especial' }}
                     </button>
+                    <p class="text-[10px] text-gray-400 ml-1 mt-1 italic">
+                        * Aparecerá al principio de la lista con un diseño destacado.
+                    </p>
                 </div>
             </section>
+
+            @if (categoryFormService.editingCategory()) {
+                <section class="space-y-4">
+                    <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad</p>
+                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-bold text-brand-text">Estado de la categoría</p>
+                            <p class="text-xs text-gray-400">Si está pausada, no aparecerá en el catálogo.</p>
+                        </div>
+                        
+                        <button (click)="categoria.activo = !categoria.activo"
+                                [class]="categoria.activo ? 'bg-green-500 text-white border-green-600' : 'bg-gray-400 text-white border-gray-500'"
+                                class="px-4 py-2 rounded-xl border text-xs font-black transition-all active:scale-95 shadow-sm uppercase tracking-tighter">
+                            {{ categoria.activo ? 'Visible' : 'Pausada' }}
+                        </button>
+                    </div>
+                </section>
+            }
 
             @if (categoryFormService.editingCategory()) {
                 <section class="pt-8 border-t border-red-50">

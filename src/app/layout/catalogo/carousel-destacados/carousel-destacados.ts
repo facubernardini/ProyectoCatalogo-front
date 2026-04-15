@@ -1,9 +1,9 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { ProductSelectorService } from 'src/app/core/services/product-selector.service';
 import { Presentacion } from 'src/app/core/models/presentacion.model';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
 @Component({
   selector: 'app-carousel-destacados',
@@ -12,7 +12,11 @@ import { Presentacion } from 'src/app/core/models/presentacion.model';
   styleUrl: './carousel-destacados.css',
 })
 export class CarouselDestacados {
-  productosDestacados = input.required<Producto[]>();
+  public adminStore = inject(AdminStoreService);
+
+  productosDestacados = computed(() => 
+    this.adminStore.productos().filter(p => p.destacado)
+  );
 
   public productSelectorService = inject(ProductSelectorService);
 

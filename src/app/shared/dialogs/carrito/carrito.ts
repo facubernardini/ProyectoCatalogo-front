@@ -1,7 +1,7 @@
-import { Component, computed, inject, input, signal, effect } from '@angular/core';
+import { Component, computed, inject, signal, effect } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
-import { Catalogo } from 'src/app/core/models/catalogo.model';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CartService } from 'src/app/core/services/cart.service';
 
 @Component({
@@ -12,12 +12,13 @@ import { CartService } from 'src/app/core/services/cart.service';
   styleUrl: './carrito.css',
 })
 export class Carrito {
-  catalogo = input<Catalogo | null>(null);
+  public adminStore = inject(AdminStoreService);
+  public cartService = inject(CartService);
+
+  catalogo = this.adminStore.catalogo;
 
   nombreCliente = signal<string>('');
   direccionEnvio = signal<string>('');
-
-  public cartService = inject(CartService);
 
   constructor() {
     effect(() => {

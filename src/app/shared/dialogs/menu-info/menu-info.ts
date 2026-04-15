@@ -1,8 +1,8 @@
-import { Component, inject, input } from '@angular/core';
-import { Catalogo } from 'src/app/core/models/catalogo.model';
+import { Component, inject } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { MenuService } from 'src/app/core/services/menu.service';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
 @Component({
   selector: 'app-menu-info',
@@ -11,8 +11,8 @@ import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive
   styleUrl: './menu-info.css',
 })
 export class MenuInfo {
-  catalogo = input<Catalogo | null>(null);
-
+  public adminStore = inject(AdminStoreService);
   public menuService = inject(MenuService);
-  
+
+  catalogo = this.adminStore.catalogo;
 }

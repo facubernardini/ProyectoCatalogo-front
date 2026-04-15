@@ -60,9 +60,10 @@ export class ProductFormService {
       finalize(() => this.loading.set(false))
     ).subscribe({
       next: (res) => {
-        if (currentProduct) { // Usamos la constante aquí también
+        if (currentProduct) {
           this.adminStore.updateProductoEnLista(res);
-          this.toastService.show(`Producto guardado con éxito`);
+          this.adminStore.refrescarCategorias();
+          this.toastService.show(`Producto actualizado`);
         } else {
           this.adminStore.agregarProductoALista(res);
           this.toastService.show(`Producto creado con éxito`);

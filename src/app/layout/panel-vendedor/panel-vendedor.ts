@@ -19,7 +19,7 @@ export class PanelVendedor {
     if (data) {
       const { catalogo } = JSON.parse(data);
       if (catalogo?.id) {
-        this.adminStore.cargarDatosPanel(catalogo.id);
+        this.adminStore.cargarDatosPanelVendedor(catalogo.id);
       }
     }
   }

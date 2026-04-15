@@ -39,25 +39,48 @@
 
     <div class="max-w-md mx-auto space-y-3">
         @for (cat of categoriasFiltradas(); track cat.id) {
-            <div class="flex items-center gap-4 bg-white p-3 rounded-2xl border border-gray-100 hover:border-brand-accent/20 transition-all group shadow-sm">
+            <div class="flex items-center gap-4 bg-white p-3 rounded-2xl border border-gray-100 hover:border-brand-accent/20 transition-all group shadow-sm"
+                [class.border-l-4]="cat.especial"
+                [class.border-l-amber-400]="cat.especial">
                 
-                <div class="shrink-0 size-12 bg-brand-bg/30 rounded-xl flex items-center justify-center text-brand-accent">
-                    <app-icon name="category" classes="size-6 fill-current" />
-                </div>
-                
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-brand-text font-bold text-sm truncate uppercase tracking-tight">
-                        {{ cat.nombre }}
-                    </h3>
-                    <div class="flex items-center gap-2 mt-0.5">
-                        <span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-500 rounded-lg font-black uppercase">
-                            {{ cat.productos_count }} {{ (cat.productos_count === 1) ? 'Producto' : 'Productos' }}
-                        </span>
+                <div class="flex flex-1 items-center gap-4 min-w-0"
+                    [class.opacity-50]="!cat.activo">
+                    
+                    <div class="shrink-0 size-12 rounded-xl flex items-center justify-center transition-colors"
+                        [class]="!cat.activo 
+                            ? 'bg-gray-100 text-gray-400' 
+                            : (cat.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/30 text-brand-accent')">
+                        <app-icon [name]="!cat.activo ? 'hidden' : (cat.especial ? 'star' : 'category')" 
+                                classes="size-6 fill-current" />
+                    </div>
+                    
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-sm truncate uppercase tracking-tight"
+                                [class]="!cat.activo ? 'text-gray-400' : 'text-brand-text'">
+                                {{ cat.nombre }}
+                            </h3>
+
+                            @if (!cat.activo) {
+                                <span class="text-[9px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-md font-black uppercase tracking-widest border border-gray-200">
+                                    Pausada
+                                </span>
+                            }
+                        </div>
+
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg font-black uppercase transition-colors"
+                                [class]="!cat.activo 
+                                    ? 'bg-gray-50 text-gray-300' 
+                                    : (cat.especial ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-500')">
+                                {{ cat.productos_count }} {{ (cat.productos_count === 1) ? 'Producto' : 'Productos' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
                 <button (click)="onEditCategory(cat)" 
-                        class="shrink-0 p-3 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-xl transition-all active:scale-90">
+                        class="shrink-0 p-3 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-xl transition-all active:scale-90 shadow-sm border border-gray-100/50">
                     <app-icon name="edit" classes="size-5 fill-current" />
                 </button>
             </div>

@@ -1,5 +1,15 @@
 import { Presentacion } from "./presentacion.model";
 
+export interface CategoriaSimplificada {
+  id: number;
+  nombre: string;
+}
+
+export interface Tag {
+  id: number;
+  nombre: string;
+}
+
 export interface Producto {
   id: number;
   nombre: string;
@@ -10,5 +20,7 @@ export interface Producto {
   catalogo_id: number;
   
   presentaciones: Presentacion[];
-  categorias: any[];
+  
+  categorias: CategoriaSimplificada[];
+  tags: Tag[];
 }

@@ -1,13 +1,13 @@
 <nav class="w-full border-b border-zinc-100 bg-white px-4 py-2">
   <div class="mx-auto flex max-w-7xl items-center justify-between">
     
-    <img [src]="catalogo()?.logo" 
+    <img [src]="adminStore.catalogo()?.logo" 
       alt="Logo de la tienda"
       class="size-14 rounded-full object-cover shadow-sm">
 
     <div class="flex flex-col items-center text-center">
       <h1 class="text-xl font-black tracking-tighter text-brand-accent">
-        {{ catalogo()?.nombre_tienda || 'Cargando...' }}
+        {{ adminStore.catalogo()?.nombre_tienda || 'Cargando...' }}
       </h1>
     </div>
 
