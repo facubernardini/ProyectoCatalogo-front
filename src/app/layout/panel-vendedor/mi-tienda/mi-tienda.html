@@ -20,9 +20,73 @@
 </header>
 
 <main class="min-h-screen bg-gray-50 p-4">
+	<div class="max-w-2xl mx-auto pb-20 p-4 space-y-6">
+		<section class="bg-white rounded-4xl p-6 shadow-sm border border-gray-100 space-y-6">
+			<div class="flex items-center gap-4">
+				<div class="size-20 bg-brand-bg rounded-3xl overflow-hidden border-2 border-gray-100 flex items-center justify-center shrink-0">
+					@if (catalogo()?.logo_tienda) {
+						<img [src]="catalogo()?.logo_tienda" class="w-full h-full object-cover">
+					} @else {
+						<app-icon name="store" classes="size-8 text-brand-accent/40" />
+					}
+				</div>
+				<div class="flex-1">
+					<label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Nombre Público</label>
+					<input type="text" [ngModel]="catalogo()?.nombre_tienda"
+						class="w-full bg-gray-50 border-none rounded-xl p-3 font-bold text-brand-text">
+				</div>
+			</div>
+		</section>
 
-    
-    
+		<section class="bg-white rounded-4xl p-6 shadow-sm border border-gray-100 space-y-4">
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div>
+					<label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">WhatsApp</label>
+					<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
+						<app-icon name="whatsapp" classes="size-5 text-green-500" />
+						<input type="text" [ngModel]="catalogo()?.wpp_numero" placeholder="2923..."
+								class="flex-1 bg-transparent border-none p-3 font-bold focus:ring-0">
+					</div>
+				</div>
+				<div>
+					<label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Instagram</label>
+					<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
+						<app-icon name="shop" classes="size-5 text-pink-500" />
+						<input type="text" [ngModel]="catalogo()?.instagram_usuario" placeholder="usuario"
+								class="flex-1 bg-transparent border-none p-3 font-bold focus:ring-0">
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="bg-white rounded-4xl p-6 shadow-sm border border-gray-100">
+			<h3 class="text-sm font-black uppercase tracking-widest text-gray-400 mb-4 ml-1">Horarios de atención</h3>
+			<div class="space-y-3">
+				@for (item of catalogo()?.horarios; track item.dia) {
+					<div class="flex items-center gap-4 bg-gray-50 p-3 rounded-2xl">
+						<span class="w-24 font-bold text-brand-text text-sm capitalize">{{ item.dia }}</span>
+						<input type="text" [(ngModel)]="item.horas" placeholder="Cerrado o 09:00 - 18:00"
+								class="flex-1 bg-white border-none rounded-lg p-2 text-xs font-medium shadow-sm">
+					</div>
+				}
+			</div>
+		</section>
+
+		<section class="bg-white rounded-4xl p-6 shadow-sm border border-gray-100">
+			<h3 class="text-sm font-black uppercase tracking-widest text-gray-400 mb-4 ml-1">Medios de Pago aceptados</h3>
+			<div class="flex flex-wrap gap-2">
+				@for (pago of catalogo()?.medios_pago; track pago.id) {
+					<div class="flex items-center gap-2 px-4 py-2 bg-brand-bg rounded-xl border border-brand-accent/10">
+						<app-icon [name]="pago.icono || 'card'" classes="size-4 text-brand-accent" />
+						<span class="text-xs font-bold text-brand-text">{{ pago.nombre }}</span>
+					</div>
+				}
+				<button class="px-4 py-2 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 text-xs font-bold hover:border-brand-accent hover:text-brand-accent transition-all">
+					+ Gestionar Pagos
+				</button>
+			</div>
+		</section>
+	</div>
 </main>
 
 <footer>

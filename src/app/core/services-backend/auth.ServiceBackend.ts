@@ -20,6 +20,11 @@ export class AuthService {
     );
   }
 
+  getVendedorLocalStorage() {
+    const vendedor = localStorage.getItem('vendedor');
+    return vendedor ? JSON.parse(vendedor) : null;
+  }
+
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('vendedor');

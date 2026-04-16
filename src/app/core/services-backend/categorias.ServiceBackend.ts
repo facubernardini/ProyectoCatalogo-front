@@ -9,27 +9,27 @@ import { environment } from 'src/environments/environment';
 })
 export class CategoriaService {
 	private http = inject(HttpClient);
-	private API_URL = `${environment.apiUrl}/categorias`; 
+	private API_URL = environment.apiUrl;
 
 	// GET
 	getCategoriasByCatalogo(catalogoId: number): Observable<CategoriaVendedor[]> {
-		return this.http.get<CategoriaVendedor[]>(`${this.API_URL}/catalogo/${catalogoId}`);
+		return this.http.get<CategoriaVendedor[]>(`${this.API_URL}/seller/categorias/${catalogoId}`);
 	}
 
 	getCategoriasBySlug(slug: string): Observable<CategoriaVendedor[]> {
-		return this.http.get<CategoriaVendedor[]>(`${this.API_URL}/slug/${slug}`);
+		return this.http.get<CategoriaVendedor[]>(`${this.API_URL}/public/categorias/${slug}`);
 	}
 
 	// POST
     createCategoria(categoria: Partial<CategoriaVendedor>): Observable<CategoriaVendedor> {
-        return this.http.post<CategoriaVendedor>(this.API_URL, categoria);
+        return this.http.post<CategoriaVendedor>(`${this.API_URL}/seller/categorias`, categoria);
     }
 
     updateCategoria(id: number, data: Partial<CategoriaVendedor>): Observable<CategoriaVendedor> {
-        return this.http.patch<CategoriaVendedor>(`${this.API_URL}/${id}`, data);
+        return this.http.patch<CategoriaVendedor>(`${this.API_URL}/seller/categorias/${id}`, data);
     }
 
     deleteCategoria(id: number): Observable<any> {
-        return this.http.delete<any>(`${this.API_URL}/${id}`);
+        return this.http.delete<any>(`${this.API_URL}/seller/categorias/${id}`);
     }
 }

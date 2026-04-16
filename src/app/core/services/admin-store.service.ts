@@ -6,9 +6,11 @@ import { forkJoin } from "rxjs";
 import { CategoriaVendedor } from "../models/categoriaVendedor.model";
 import { Catalogo } from "../models/catalogo.model";
 import { CatalogoService } from "../services-backend/catalogo.ServiceBackend";
+import { AuthService } from "../services-backend/auth.ServiceBackend";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
+  private authService = inject(AuthService);
   private productoService = inject(ProductoService);
   private categoriaService = inject(CategoriaService);
   private catalogoService = inject(CatalogoService);
@@ -20,6 +22,13 @@ export class AdminStoreService {
   cargado = signal(false);
 
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
+
+  constructor() {
+    const vendedorData = this.authService.getVendedorLocalStorage();
+    if (vendedorData?.catalogo) {
+      this.catalogo.set(vendedorData.catalogo);
+    }
+  }
 
   cargarDatosPublicos(slug: string) {
     this.cargado.set(false);
@@ -41,12 +50,16 @@ export class AdminStoreService {
 
   cargarDatosPanelVendedor(catalogoId: number) {
     if (this.cargado()) return;
+
+    this.cargado.set(false);
+    
     forkJoin({
+      catalogo: this.catalogoService.getCatalogoById(catalogoId),
       prods: this.productoService.getProductosByCatalogo(catalogoId),
       cats: this.categoriaService.getCategoriasByCatalogo(catalogoId)
     }).subscribe({
-      next: ({ prods, cats }) => {
-        this.catalogo.set({ id: catalogoId } as any);
+      next: ({ catalogo, prods, cats }) => {
+        this.catalogo.set(catalogo);
         this.productos.set(prods);
         this.categorias.set(cats);
         this.cargado.set(true);

@@ -1,0 +1,33 @@
+@if (confirmService.isOpen()) {
+    <div class="fixed inset-0 z-110 bg-black/60 backdrop-blur-sm transition-all" (click)="confirmService.cancel()">
+        <div appSwipeDown (onSwipe)="confirmService.cancel()"
+             class="fixed bottom-0 w-full bg-white rounded-t-[40px] p-8 shadow-2xl animate-in slide-in-from-bottom-full duration-500 ease-out" 
+             (click)="$event.stopPropagation()">
+        
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-8"></div>
+
+            <div class="text-center mb-8">
+                <div class="mx-auto size-16 rounded-2xl flex items-center justify-center mb-4 transition-colors"
+                     [class]="confirmService.type() === 'danger' ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-brand-accent'">
+                    <app-icon [name]="confirmService.icon()" classes="size-8 fill-current" />
+                </div>
+                
+                <h2 class="text-xl font-black text-brand-text leading-tight mb-2">{{ confirmService.title() }}</h2>
+                <p class="text-gray-500 text-sm px-4">{{ confirmService.message() }}</p>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <button (click)="confirmService.confirm()"
+                        class="w-full py-4 text-white font-black rounded-2xl active:scale-95 transition-all shadow-lg"
+                        [class]="confirmService.type() === 'danger' ? 'bg-red-500 shadow-red-200' : 'bg-brand-accent shadow-brand-accent/20'">
+                    {{ confirmService.confirmText() }}
+                </button>
+                
+                <button (click)="confirmService.cancel()"
+                        class="w-full py-4 text-gray-400 font-bold hover:text-brand-text transition-colors">
+                    {{ confirmService.cancelText() }}
+                </button>
+            </div>
+        </div>
+    </div>
+}

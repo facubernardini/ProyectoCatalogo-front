@@ -4,12 +4,14 @@ import { AdminStoreService } from './admin-store.service';
 import { CategoriaService } from '../services-backend/categorias.ServiceBackend';
 import { CategoriaVendedor } from '../models/categoriaVendedor.model';
 import { ToastService } from './toast.service';
+import { ConfirmService } from './confirm.service';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryFormService {
   private categoriaBackend = inject(CategoriaService);
   private adminStore = inject(AdminStoreService);
   private toastService = inject(ToastService);
+  public confirmService = inject(ConfirmService);
 
   isOpen = signal(false);
   loading = signal(false);
@@ -70,17 +72,27 @@ export class CategoryFormService {
     });
   }
 
-  delete(id: number) {
-    // Usamos el ID directamente
-    this.loading.set(true);
-    this.categoriaBackend.deleteCategoria(id).pipe(
-      finalize(() => this.loading.set(false))
-    ).subscribe({
-      next: () => {
-        this.adminStore.eliminarCategoriaDeLista(id);
-        this.close();
-      },
-      error: (err) => console.error('Error al eliminar categoría:', err)
-    });
+  async delete(id: number) {
+    const confirmacion = await this.confirmService.ask({
+        title: '¿Eliminar categoría?',
+        message: `Estás por borrar "${this.editingCategory()?.nombre}".`,
+        confirmText: 'Sí, eliminar',
+        cancelText: 'Volver',
+        icon: 'trash',
+        type: 'danger'
+      });
+
+    if (confirmacion) {
+      this.loading.set(true);
+      this.categoriaBackend.deleteCategoria(id).pipe(
+        finalize(() => this.loading.set(false))
+      ).subscribe({
+        next: () => {
+          this.adminStore.eliminarCategoriaDeLista(id);
+          this.close();
+        },
+        error: (err) => console.error('Error al eliminar categoría:', err)
+      });
+    }
   }
 }

@@ -4,6 +4,8 @@ import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ConfirmService } from 'src/app/core/services/confirm.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-product-form',
@@ -13,7 +15,10 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 })
 export class ProductForm {
   public productFormService = inject(ProductFormService);
-  adminStore = inject(AdminStoreService);
+  public adminStore = inject(AdminStoreService);
+  public confirmService = inject(ConfirmService);
+
+  private toastService = inject(ToastService);
 
   public producto = {
     nombre: '',
@@ -30,7 +35,6 @@ export class ProductForm {
     effect(() => {
       const editing = this.productFormService.editingProduct();
       if (editing) {
-        console.log('DATA QUE LLEGA AL FORM:', editing);
         const p = JSON.parse(JSON.stringify(editing));
 
         p.categorias_ids = editing.categorias?.map((c: any) => c.id) || [];
@@ -85,14 +89,37 @@ export class ProductForm {
     this.producto.presentaciones.push({ unidad_venta: '', precio: null, precio_descuento: null, activo: true });
   }
 
-  eliminarPresentacion(index: number) {
-    if (this.producto.presentaciones.length > 1) {
-      this.producto.presentaciones.splice(index, 1);
+  async eliminarPresentacion(index: number) {
+    const sinCategorias = !this.producto.categorias_ids || this.producto.categorias_ids.length === 0;
+    if (sinCategorias) {
+      this.toastService.show(`Primero debes asignarle una categoría a tu producto`, 'error');
+    }
+    else{
+      const presentaciones = this.producto.presentaciones;
+      const presAEliminar = presentaciones[index];
+  
+      const confirmacion = await this.confirmService.ask({
+        title: '¿Eliminar presentación?',
+        message: `Estás por borrar "${presAEliminar.unidad_venta}" de "${this.producto.nombre}".`,
+        confirmText: 'Sí, eliminar',
+        cancelText: 'Volver',
+        icon: 'trash',
+        type: 'danger'
+      });
+  
+      if (confirmacion) {
+  
+        if (this.producto.presentaciones.length > 1) {
+          this.producto.presentaciones.splice(index, 1);
+          this.productFormService.save(this.producto);
+        }
+      }
     }
   }
 
   guardar() {
     this.productFormService.save(this.producto);
+    this.productFormService.close();
   }
 
   get esFormularioInvalido(): boolean {
@@ -100,7 +127,11 @@ export class ProductForm {
     const nombreInvalido = !this.producto.nombre || this.producto.nombre.trim().length === 0;
     if (nombreInvalido) return true;
 
-    // 2. Validar presentaciones
+    // 2. Validar que tenga al menos una categoría
+    const sinCategorias = !this.producto.categorias_ids || this.producto.categorias_ids.length === 0;
+    if (sinCategorias) return true;
+
+    // 3. Validar presentaciones
     return this.producto.presentaciones.some(pres => {
       // A. Campos obligatorios vacíos o precio en 0/negativo
       const datosIncompletos = 

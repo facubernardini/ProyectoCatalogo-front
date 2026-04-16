@@ -13,7 +13,7 @@ export interface Catalogo {
   id: number;
   nombre_tienda: string;
   slug: string;
-  logo: string;
+  logo_tienda: string;
   wpp_numero: string | null;
   instagram_usuario: string | null;
   

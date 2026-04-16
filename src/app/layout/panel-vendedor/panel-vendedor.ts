@@ -4,10 +4,11 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductForm } from "@shared/dialogs/product-form/product-form";
 import { Toast } from "@shared/toast/toast";
 import { CategoryForm } from "@shared/dialogs/category-form/category-form";
+import { ConfirmDialog } from "@shared/dialogs/confirm-dialog/confirm-dialog";
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet, ProductForm, Toast, CategoryForm],
+  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })
