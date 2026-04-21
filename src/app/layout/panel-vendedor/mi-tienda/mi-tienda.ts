@@ -18,27 +18,24 @@ import { FormsModule } from '@angular/forms';
 export class MiTienda {
   private location = inject(Location);
 
-  private adminStore = inject(AdminStoreService);
+  public adminStore = inject(AdminStoreService);
   private catalogoService = inject(CatalogoService);
   private confirmService = inject(ConfirmService);
   private toastService = inject(ToastService);
-
-  // Estado local para el formulario (Copia del Store)
-  // Inicializamos con una copia profunda para evitar mutar el Store por referencia
-  catalogo = signal<Catalogo | null>(null);
   
+  catalogo = signal<Catalogo | null>(null);
   loading = signal(false);
 
   constructor() {
-    // 2. REACCIÓN AUTOMÁTICA: Cada vez que el store cambie, actualizamos el formulario
+    // 2. Sincronización: Cuando el Store tenga el catálogo, hacemos la copia local
     effect(() => {
-      const storeCat = this.adminStore.catalogo();
-      if (storeCat && !this.catalogo()) { 
-        // Solo seteamos si nuestro signal local está vacío (primera carga)
-        this.catalogo.set(JSON.parse(JSON.stringify(storeCat)));
+      const storeData = this.adminStore.catalogo();
+      if (storeData && !this.catalogo()) {
+        // Clonamos para evitar mutar el Store global por referencia
+        this.catalogo.set(JSON.parse(JSON.stringify(storeData)));
         this.inicializarHorariosSiVacio();
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   // Validación básica del formulario
@@ -65,47 +62,39 @@ export class MiTienda {
   }
 
   async guardarCambios() {
-  // 1. Extraemos el valor actual a una constante
-  const catalogoActual = this.catalogo();
-  
-  // 2. Cláusula de guarda: si no hay datos, salimos de la función
-  if (!catalogoActual) return;
+    // 1. Extraemos el valor actual a una constante
+    const catalogoActual = this.catalogo();
+    
+    // 2. Cláusula de guarda: si no hay datos, salimos de la función
+    if (!catalogoActual) return;
 
-  const confirmacion = await this.confirmService.ask({
-    title: '¿Guardar cambios?',
-    message: 'La configuración de tu tienda se actualizará inmediatamente.',
-    confirmText: 'Sí, guardar',
-    cancelText: 'Volver',
-    icon: 'save',
-    type: 'info'
-  });
-
-  if (!confirmacion) return;
-
-  this.loading.set(true);
-  
-  // 3. Ahora usamos 'catalogoActual'. TypeScript sabe que aquí NO es null,
-  // por lo que te permite acceder a .id sin problemas.
-  this.catalogoService.updateCatalogo(catalogoActual.id, catalogoActual)
-    .pipe(finalize(() => this.loading.set(false)))
-    .subscribe({
-      next: (catalogoActualizado) => {
-        this.adminStore.catalogo.set(catalogoActualizado);
-        this.toastService.show('Configuración guardada con éxito');
-      },
-      error: (err) => {
-        console.error('Error al actualizar catálogo:', err);
-        this.toastService.show('Error al guardar los cambios', 'error');
-      }
+    const confirmacion = await this.confirmService.ask({
+      title: '¿Guardar cambios?',
+      message: 'La configuración de tu tienda se actualizará inmediatamente.',
+      confirmText: 'Sí, guardar',
+      cancelText: 'Volver',
+      icon: 'save',
+      type: 'info'
     });
-  }
 
-  // Método auxiliar para manejar el toggle de envío
-  toggleEnvio() {
-    this.catalogo.update(c => c ? ({ 
-        ...c, 
-        ofrece_envio: !c.ofrece_envio 
-      }) : null);
+    if (!confirmacion) return;
+
+    this.loading.set(true);
+    
+    // 3. Ahora usamos 'catalogoActual'. TypeScript sabe que aquí NO es null,
+    // por lo que te permite acceder a .id sin problemas.
+    this.catalogoService.updateCatalogo(catalogoActual.id, catalogoActual)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (catalogoActualizado) => {
+          this.catalogo.set(catalogoActualizado);
+          this.toastService.show('Configuración guardada con éxito');
+        },
+        error: (err) => {
+          console.error('Error al actualizar catálogo:', err);
+          this.toastService.show('Error al guardar los cambios', 'error');
+        }
+      });
   }
 
   volverAtras() {

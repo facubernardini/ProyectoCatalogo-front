@@ -32,9 +32,19 @@ export class ConfirmService {
     this.type.set(options.type || 'danger');
     
     this.isOpen.set(true);
+    document.body.style.overflow = 'hidden';
     return new Promise((res) => { this.resolve = res; });
   }
 
-  confirm() { this.isOpen.set(false); this.resolve(true); }
-  cancel() { this.isOpen.set(false); this.resolve(false); }
+  confirm() { 
+    this.isOpen.set(false);
+    this.resolve(true);
+    document.body.style.overflow = 'auto';
+  }
+
+  cancel() { 
+    this.isOpen.set(false);
+    this.resolve(false);
+    document.body.style.overflow = 'auto';
+  }
 }

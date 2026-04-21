@@ -5,10 +5,11 @@ import { ProductForm } from "@shared/dialogs/product-form/product-form";
 import { Toast } from "@shared/toast/toast";
 import { CategoryForm } from "@shared/dialogs/category-form/category-form";
 import { ConfirmDialog } from "@shared/dialogs/confirm-dialog/confirm-dialog";
+import { ProductPreview } from "@shared/dialogs/product-preview/product-preview";
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog],
+  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })

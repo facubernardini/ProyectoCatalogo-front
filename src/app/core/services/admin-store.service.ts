@@ -49,8 +49,6 @@ export class AdminStoreService {
   }
 
   cargarDatosPanelVendedor(catalogoId: number) {
-    if (this.cargado()) return;
-
     this.cargado.set(false);
     
     forkJoin({

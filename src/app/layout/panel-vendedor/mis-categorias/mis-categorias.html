@@ -20,7 +20,7 @@
 </header>
 
 <main class="min-h-screen bg-gray-50 p-4 pb-24">
-    <div class="relative w-full max-w-md mx-auto mb-6 group">
+    <div class="relative w-full max-w-md mx-auto mb-4 group">
         <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <app-icon name="search" classes="size-6 fill-current text-brand-accent" />
@@ -80,8 +80,8 @@
                 </div>
 
                 <button (click)="onEditCategory(cat)" 
-                        class="shrink-0 p-3 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-xl transition-all active:scale-90 shadow-sm border border-gray-100/50">
-                    <app-icon name="edit" classes="size-5 fill-current" />
+                        class="p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                    <app-icon name="edit" classes="size-4.5 fill-current" />
                 </button>
             </div>
         } @empty {

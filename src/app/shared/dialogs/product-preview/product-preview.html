@@ -1,0 +1,74 @@
+@if (productPreviewService.isOpen()) {
+    <div class="fixed inset-0 z-100 bg-black/60 backdrop-blur-sm transition-all" 
+         (click)="productPreviewService.close()">
+        
+        <div appSwipeDown
+            (onSwipe)="productPreviewService.close()"
+            class="fixed bottom-0 w-full bg-white rounded-t-[40px] p-6 shadow-2xl animate-in slide-in-from-bottom duration-300 max-w-lg left-1/2 -translate-x-1/2" 
+            (click)="$event.stopPropagation()">
+        
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+
+            @if (productPreviewService.selectedProduct(); as prod) {
+                <div class="flex gap-4 mb-8">
+                    <div class="relative w-24 h-24 bg-brand-bg rounded-2xl overflow-hidden shrink-0 shadow-sm">
+                        <img [src]="prod.imagen || 'https://placehold.co/200x200?text=📦'" 
+                            class="w-full h-full object-cover">
+                    </div>
+
+                    <div class="flex-1">
+                        <h2 class="text-xl font-black text-brand-text leading-tight">{{ prod.nombre }}</h2>
+                        <p class="text-sm text-gray-500 mt-1">{{ prod.descripcion || 'Sin descripción' }}</p>
+                        
+                        <div class="flex gap-2 mt-3">
+                            <span [class]="prod.activo ? 'bg-green-100 text-green-600' : 'bg-red-100 text-orange-600'"
+                                class="text-[10px] font-bold uppercase px-2 py-1 rounded-md">
+                                {{ prod.activo ? 'Activo' : 'Pausado' }}
+                            </span>
+
+                            @if (prod.destacado) {
+                                <span class="text-[10px] bg-yellow-100 text-yellow-600 font-bold uppercase px-2 py-1 rounded-md">
+                                    Destacado
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">
+                    Presentaciones y Precios
+                </h3>
+
+                <div class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto no-scrollbar">
+                    @for (pres of prod.presentaciones; track pres.id) {
+                        <div class="flex items-center justify-between p-4 rounded-2xl border-2 border-gray-50 bg-gray-50/30">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-brand-text">{{ pres.unidad_venta }}</span>
+                            </div>
+
+                            <div class="flex flex-col items-end">
+                                @if (pres.precio_descuento) {
+                                    <span class="text-xs text-gray-400 line-through mb-0.5">${{ pres.precio }}</span>
+                                    <span class="font-black text-lg text-brand-text">${{ pres.precio_descuento }}</span>
+                                } @else {
+                                    <span class="font-black text-lg text-brand-text">${{ pres.precio }}</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="flex gap-3 mt-8">
+                    <button (click)="productPreviewService.close()" 
+                            class="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
+                        Cerrar
+                    </button>
+                    <button (click)="onEdit(prod)" 
+                            class="flex-1 py-4 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all">
+                        Editar Producto
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+}

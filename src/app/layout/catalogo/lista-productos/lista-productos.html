@@ -13,7 +13,7 @@
                     <button 
                         (click)="seleccionarCategoria(cat.nombre)"
                         [class]="categoriaSeleccionada() === cat.nombre 
-                            ? 'bg-brand-accent text-white shadow-md' 
+                            ? 'bg-brand-accent text-white' 
                             : (cat.especial 
                                 ? 'bg-white/80 backdrop-blur-md border border-brand-accent' 
                                 : 'bg-white text-brand-text border border-gray-200')"
