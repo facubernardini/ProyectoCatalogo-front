@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { MenuService } from 'src/app/core/services/menu.service';
+import { InfoService } from 'src/app/core/services/info.service';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
@@ -12,7 +12,7 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 })
 export class MenuInfo {
   public adminStore = inject(AdminStoreService);
-  public menuService = inject(MenuService);
+  public infoService = inject(InfoService);
 
   catalogo = this.adminStore.catalogo;
 }

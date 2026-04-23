@@ -12,15 +12,17 @@ import { SearchProducts } from "@shared/dialogs/search-products/search-products"
 import { Carrito } from "@shared/dialogs/carrito/carrito";
 import { MenuInfo } from "@shared/dialogs/menu-info/menu-info";
 import { ProductSelector } from "@shared/dialogs/product-selector/product-selector";
+import { MenuLateral } from "@shared/dialogs/menu-lateral/menu-lateral";
 
 @Component({
   selector: 'app-catalogo',
   standalone: true,
   imports: [
-    CommonModule, Navbar, CarouselDestacados, ListaProductos, 
-    SearchNav, SearchProducts, Carrito, MenuInfo, 
-    ProductSelector, CarouselOfertas, Toast
-  ],
+    CommonModule, Navbar, CarouselDestacados, ListaProductos,
+    SearchNav, SearchProducts, Carrito, MenuInfo,
+    ProductSelector, CarouselOfertas, Toast,
+    MenuLateral
+],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })

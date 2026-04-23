@@ -19,73 +19,167 @@
   </div>
 </header>
 
-<main class="min-h-screen bg-gray-50 p-4">
-	<div class="max-w-2xl mx-auto pb-20 p-4 space-y-6">
-		<section class="bg-white rounded-4xl p-6 shadow-sm border border-gray-100 space-y-6">
-			<div class="flex items-center gap-4">
-				<div class="size-20 bg-brand-bg rounded-3xl overflow-hidden border-2 border-gray-100 flex items-center justify-center shrink-0">
-					@if (adminStore.catalogo()?.logo_tienda) {
-						<img [src]="adminStore.catalogo()?.logo_tienda" class="w-full h-full object-cover">
-					} @else {
-						<app-icon name="store" classes="size-8 text-brand-accent/40" />
+<main class="min-h-screen bg-gray-50 p-2">
+	<div class="max-w-2xl mx-auto pb-20 p-4 space-y-4">
+		
+		<app-config-section
+			#sectionConfigPrincipal
+			title="Configuración Principal" 
+			icon="store" 
+			[loading]="loading()"
+			(onSave)="guardarCambios(sectionConfigPrincipal)"
+			(onCancel)="resetearValores()">
+			<section class="pt-3 border-t border-brand-accent/20 space-y-5">
+				<div class="flex items-center gap-4">
+					<div class="size-20 bg-brand-bg rounded-3xl overflow-hidden border-2 border-gray-100 flex items-center justify-center shrink-0">
+						@if (adminStore.catalogo()?.logo_tienda) {
+							<img [src]="adminStore.catalogo()?.logo_tienda" class="w-full h-full object-cover">
+						} @else {
+							<app-icon name="store" classes="size-8 text-brand-accent/40" />
+						}
+					</div>
+					<div class="flex-1">
+						<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Nombre Público</label>
+						<input type="text" [ngModel]="catalogo()?.nombre_tienda"
+							class="w-full bg-gray-50 border-none rounded-xl p-3 font-bold text-brand-text">
+					</div>
+				</div>
+				<div class="w-full">
+					<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">URL de tu tienda</label>
+					<div class="flex items-center bg-gray-50 rounded-xl overflow-hidden mt-1 border border-transparent focus-within:border-brand-accent/20 transition-all">
+						<span class="pl-4 py-3 text-sm font-bold text-gray-400 whitespace-nowrap select-none">
+							mitienda.com/
+						</span>
+						
+						<input type="text" 
+							[(ngModel)]="catalogo()!.slug"
+							placeholder="tu-tienda"
+							class="w-full bg-transparent border-none p-3 pl-1 font-bold text-brand-text focus:ring-0">
+					</div>
+					<p class="text-[10px] text-brand-text/60 mt-1 ml-1">Tus clientes accederán usando este enlace personalizado.</p>
+				</div>
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div>
+						<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">WhatsApp</label>
+						<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
+							<app-icon name="whatsapp" classes="size-5 text-green-500" />
+							<input type="text" [ngModel]="adminStore.catalogo()?.wpp_numero" placeholder="2923..."
+									class="flex-1 bg-transparent border-none p-3 font-bold focus:ring-0">
+						</div>
+					</div>
+					<div>
+						<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Instagram</label>
+						<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
+							<app-icon name="instagram" classes="size-5 text-pink-500" />
+							<input type="text" [ngModel]="adminStore.catalogo()?.instagram_usuario" placeholder="usuario"
+									class="flex-1 bg-transparent border-none p-3 font-bold focus:ring-0">
+						</div>
+					</div>
+				</div>
+			</section>
+		</app-config-section>
+
+		<app-config-section
+			#sectionConfigHorarios
+			title="Horarios de atención" 
+			icon="time" 
+			[loading]="loading()"
+			(onSave)="guardarCambios(sectionConfigHorarios)"
+			(onCancel)="resetearValores()">
+			<section class="pt-3 border-t border-brand-accent/20">
+				<div class="space-y-3">
+					@for (item of adminStore.catalogo()?.horarios; track item.dia) {
+						<div class="flex items-center gap-4 bg-gray-50 p-3 rounded-2xl">
+							<span class="w-24 font-bold text-brand-text text-sm capitalize">{{ item.dia }}</span>
+							<input type="text" [(ngModel)]="item.horas" placeholder="Cerrado o 09:00 - 18:00"
+									class="flex-1 bg-white border-none rounded-lg p-2 text-xs font-medium shadow-sm">
+						</div>
 					}
 				</div>
-				<div class="flex-1">
-					<label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Nombre Público</label>
-					<input type="text" [ngModel]="adminStore.catalogo()?.nombre_tienda"
-						class="w-full bg-gray-50 border-none rounded-xl p-3 font-bold text-brand-text">
-				</div>
-			</div>
-		</section>
+			</section>
+		</app-config-section>
 
-		<section class="bg-white rounded-4xl p-6 shadow-sm border border-gray-100 space-y-4">
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<div>
-					<label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">WhatsApp</label>
-					<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
-						<app-icon name="whatsapp" classes="size-5 text-green-500" />
-						<input type="text" [ngModel]="adminStore.catalogo()?.wpp_numero" placeholder="2923..."
-								class="flex-1 bg-transparent border-none p-3 font-bold focus:ring-0">
-					</div>
+		<app-config-section
+			#sectionEnvios
+			title="Entregas y Envíos" 
+			icon="delivery" 
+			[loading]="loading()"
+			(onSave)="guardarCambios(sectionEnvios)"
+			(onCancel)="resetearValores()">
+			
+			<section class="pt-3 border-t border-brand-accent/20 space-y-4">
+				
+				<div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-2xl">
+					<button (click)="haceEnvios.set(false)"
+						[class]="!haceEnvios() ? 'bg-white text-brand-text shadow-sm' : 'text-gray-500'"
+						class="flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all">
+						<app-icon name="store" classes="size-4" />
+						Solo Retiro
+					</button>
+					<button (click)="haceEnvios.set(true)"
+						[class]="haceEnvios() ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/20' : 'text-gray-500'"
+						class="flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all">
+						<app-icon name="delivery" classes="size-4" />
+						Hago Envíos
+					</button>
 				</div>
-				<div>
-					<label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Instagram</label>
-					<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
-						<app-icon name="shop" classes="size-5 text-pink-500" />
-						<input type="text" [ngModel]="adminStore.catalogo()?.instagram_usuario" placeholder="usuario"
-								class="flex-1 bg-transparent border-none p-3 font-bold focus:ring-0">
-					</div>
-				</div>
-			</div>
-		</section>
 
-		<section class="bg-white rounded-4xl p-6 shadow-sm border border-gray-100">
-			<h3 class="text-sm font-black uppercase tracking-widest text-gray-400 mb-4 ml-1">Horarios de atención</h3>
-			<div class="space-y-3">
-				@for (item of adminStore.catalogo()?.horarios; track item.dia) {
-					<div class="flex items-center gap-4 bg-gray-50 p-3 rounded-2xl">
-						<span class="w-24 font-bold text-brand-text text-sm capitalize">{{ item.dia }}</span>
-						<input type="text" [(ngModel)]="item.horas" placeholder="Cerrado o 09:00 - 18:00"
-								class="flex-1 bg-white border-none rounded-lg p-2 text-xs font-medium shadow-sm">
+				@if (haceEnvios()) {
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+						<div>
+							<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Costo de Envío</label>
+							<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1 border border-transparent focus-within:border-brand-accent/20">
+								<span class="font-bold text-gray-400">$</span>
+								<input type="number" 
+									[ngModel]="costoEnvio()" 
+									(ngModelChange)="costoEnvio.set($event)"
+									class="w-full bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
+							</div>
+						</div>
+
+						<div>
+							<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Envío gratis desde</label>
+							<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1 border border-transparent focus-within:border-brand-accent/20">
+								<span class="font-bold text-gray-400">$</span>
+								<input type="number" 
+									[ngModel]="envioGratisDesde()" 
+									(ngModelChange)="envioGratisDesde.set($event)"
+									placeholder="Ej: 50000"
+									class="w-full bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
+							</div>
+							<p class="text-[9px] text-gray-400 mt-1 ml-1">Dejar vacío si no ofrecés envío gratis.</p>
+						</div>
+					</div>
+				} @else {
+					<div class="flex items-center gap-3 p-4 bg-blue-50 rounded-2xl text-blue-700">
+						<app-icon name="info" classes="size-5" />
+						<p class="text-xs font-medium">Los clientes verán que solo pueden retirar por tu local.</p>
 					</div>
 				}
-			</div>
-		</section>
+			</section>
+		</app-config-section>
 
-		<section class="bg-white rounded-4xl p-6 shadow-sm border border-gray-100">
-			<h3 class="text-sm font-black uppercase tracking-widest text-gray-400 mb-4 ml-1">Medios de Pago aceptados</h3>
-			<div class="flex flex-wrap gap-2">
-				@for (pago of adminStore.catalogo()?.medios_pago; track pago.id) {
-					<div class="flex items-center gap-2 px-4 py-2 bg-brand-bg rounded-xl border border-brand-accent/10">
-						<app-icon name="category" classes="size-4 text-brand-accent" />
-						<span class="text-xs font-bold text-brand-text">{{ pago.nombre }}</span>
-					</div>
-				}
-				<button class="px-4 py-2 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 text-xs font-bold hover:border-brand-accent hover:text-brand-accent transition-all">
-					+ Gestionar Pagos
-				</button>
-			</div>
-		</section>
+		<app-config-section
+			#sectionConfigPagos
+			title="Medios de Pago aceptados" 
+			icon="payment" 
+			[loading]="loading()"
+			(onSave)="guardarCambios(sectionConfigPagos)"
+			(onCancel)="resetearValores()">
+			<section class="pt-3 border-t border-brand-accent/20">
+				<div class="flex flex-wrap gap-2">
+					@for (pago of adminStore.catalogo()?.medios_pago; track pago.id) {
+						<div class="flex items-center gap-2 px-4 py-2 bg-brand-bg rounded-xl border border-brand-accent/10">
+							<app-icon name="category" classes="size-4 text-brand-accent" />
+							<span class="text-xs font-bold text-brand-text">{{ pago.nombre }}</span>
+						</div>
+					}
+					<button class="px-4 py-2 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 text-xs font-bold hover:border-brand-accent hover:text-brand-accent transition-all">
+						+ Gestionar Pagos
+					</button>
+				</div>
+			</section>
+		</app-config-section>
 	</div>
 </main>
 

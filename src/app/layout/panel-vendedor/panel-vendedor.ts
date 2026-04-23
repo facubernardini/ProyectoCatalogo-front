@@ -6,6 +6,7 @@ import { Toast } from "@shared/toast/toast";
 import { CategoryForm } from "@shared/dialogs/category-form/category-form";
 import { ConfirmDialog } from "@shared/dialogs/confirm-dialog/confirm-dialog";
 import { ProductPreview } from "@shared/dialogs/product-preview/product-preview";
+import { SearchProducts } from "@shared/dialogs/search-products/search-products";
 
 @Component({
   selector: 'app-panel-vendedor',

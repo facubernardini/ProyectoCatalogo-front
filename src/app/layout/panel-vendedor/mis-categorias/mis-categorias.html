@@ -79,10 +79,46 @@
                     </div>
                 </div>
 
-                <button (click)="onEditCategory(cat)" 
-                        class="p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
-                    <app-icon name="edit" classes="size-4.5 fill-current" />
-                </button>
+                <div class="flex items-center gap-2">
+                    <button (click)="onEditCategory(cat)" 
+                            class="p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                        <app-icon name="edit" classes="size-4.5 fill-current" />
+                    </button>
+
+                    <div class="relative">
+                        <button (click)="toggleMenu(cat.id, $event)" 
+                                class="p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                            <app-icon name="options" classes="size-4.5 fill-current" />
+                        </button>
+
+                        @if (activeMenuId() === cat.id) {
+                            <div class="absolute right-0 top-full mt-2 z-50 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 animate-in fade-in zoom-in duration-200"
+                                (click)="$event.stopPropagation()">
+                                
+                                <button (click)="onToggleEspecial(cat); activeMenuId.set(null)"
+                                        class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
+                                    <app-icon [name]="cat.especial ? 'star-filled' : 'star'" 
+                                            [classes]="'size-4 fill-current ' + (cat.especial ? 'text-yellow-400' : 'text-gray-400')" />
+                                    {{ cat.especial ? 'Quitar destacada' : 'Destacar categoría' }}
+                                </button>
+
+                                <button (click)="onToggleActiva(cat); activeMenuId.set(null)"
+                                        class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
+                                    <app-icon [name]="cat.activo ? 'pause' : 'play'" classes="size-4 fill-current text-gray-400" />
+                                    {{ cat.activo ? 'Pausar categoría' : 'Reanudar categoría' }}
+                                </button>
+
+                                <div class="h-px bg-gray-100 my-1 mx-2"></div>
+
+                                <button (click)="onEliminar(cat); activeMenuId.set(null)"
+                                        class="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+                                    <app-icon name="trash" classes="size-4 fill-current" />
+                                    Eliminar categoría
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         } @empty {
             <div class="text-center py-20 opacity-40">

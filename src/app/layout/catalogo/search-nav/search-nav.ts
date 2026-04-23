@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CartService } from 'src/app/core/services/cart.service';
+import { MenuLateralService } from 'src/app/core/services/menu-lateral.service';
 import { SearchService } from 'src/app/core/services/search.service';
 
 @Component({
@@ -14,6 +15,7 @@ export class SearchNav implements AfterViewInit{
 
   public searchService = inject(SearchService);
   public cartService = inject(CartService);
+  public menuService = inject(MenuLateralService);
 
   isStuck = signal(false);
 

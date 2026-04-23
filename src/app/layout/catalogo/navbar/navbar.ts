@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { MenuService } from 'src/app/core/services/menu.service';
+import { InfoService } from 'src/app/core/services/info.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,5 +11,5 @@ import { MenuService } from 'src/app/core/services/menu.service';
 })
 export class Navbar {
   public adminStore = inject(AdminStoreService);
-  public menuService = inject(MenuService);
+  public menuService = inject(InfoService);
 }

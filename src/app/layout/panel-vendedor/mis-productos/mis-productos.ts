@@ -19,6 +19,8 @@ export class MisProductos {
   private adminStore = inject(AdminStoreService);
   private productoBackend = inject(ProductoService);
   private toastService = inject(ToastService);
+  private location = inject(Location);
+  private productFormService = inject(ProductFormService);
   
   public productPreviewService = inject(ProductPreviewService);
   public confirmService = inject(ConfirmService);
@@ -28,9 +30,6 @@ export class MisProductos {
 
   categoriaSeleccionada = signal<string>('todos');
   activeMenuId = signal<number | null>(null);
-
-  private location = inject(Location);
-  productFormService = inject(ProductFormService);
 
   productosFiltrados = computed(() => {
     const seleccion = this.categoriaSeleccionada();
@@ -84,7 +83,7 @@ export class MisProductos {
     this.activeMenuId.set(null);
   }
 
-  async delete(producto: Producto) {
+  async onEliminar(producto: Producto) {
     const confirmacion = await this.confirmService.ask({
       title: '¿Eliminar producto?',
       message: `¿Estás seguro de que querés eliminar "${producto.nombre}"? Esta acción no se puede deshacer.`,
@@ -109,7 +108,7 @@ export class MisProductos {
     });
   }
   
-  async onToggleStatus(producto: Producto) {
+  async onToggleActivo(producto: Producto) {
     const estaActivo = producto.activo;
 
     const confirmacion = await this.confirmService.ask({
