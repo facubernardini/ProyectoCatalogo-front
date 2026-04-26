@@ -1,6 +1,6 @@
 import { Component, computed, HostListener, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Producto } from 'src/app/core/models/producto.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductFormService } from 'src/app/core/services/product-form.service';
@@ -8,10 +8,11 @@ import { ProductPreviewService } from 'src/app/core/services/product-preview.ser
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ProductoService } from 'src/app/core/services-backend/productos.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-mis-productos',
-  imports: [Icon],
+  imports: [Icon, CommonModule, FormsModule],
   templateUrl: './mis-productos.html',
   styleUrl: './mis-productos.css',
 })
@@ -31,17 +32,30 @@ export class MisProductos {
   categoriaSeleccionada = signal<string>('todos');
   activeMenuId = signal<number | null>(null);
 
+  filtro = signal<string>('');
+
   productosFiltrados = computed(() => {
     const seleccion = this.categoriaSeleccionada();
-    const listaOriginal = this.adminStore.productos();
+    const term = this.filtro().toLowerCase();
+    
+    // Partimos de la lista original
+    let lista = this.adminStore.productos();
 
-    if (seleccion === 'todos') {
-      return listaOriginal;
+    // A. Filtramos por Categoría primero
+    if (seleccion !== 'todos') {
+      lista = lista.filter(prod => 
+        prod.categorias?.some(c => c.nombre === seleccion)
+      );
     }
 
-    return listaOriginal.filter(prod => 
-      prod.categorias?.some(c => c.nombre === seleccion)
-    );
+    // B. Luego filtramos por el texto del buscador
+    if (term) {
+      lista = lista.filter(prod => 
+        prod.nombre.toLowerCase().includes(term)
+      );
+    }
+
+    return lista;
   });
 
   categoriasOrdenadas = computed(() => {

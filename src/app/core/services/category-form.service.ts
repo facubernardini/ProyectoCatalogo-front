@@ -67,7 +67,7 @@ export class CategoryFormService {
       },
       error: (err) => {
         console.error('Error al guardar categoría:', err);
-        // Aquí podrías disparar un toast de error si tenés uno
+        this.toastService.show(`Error al guardar categoría`);
       }
     });
   }

@@ -93,6 +93,40 @@ export class AdminStoreService {
     this.productos.update(prods => prods.filter(p => p.id !== id));
   }
 
+  moverProductosACategoria(catOrigenId: number, catDestinoId: number) {
+    // Buscamos el objeto completo de la nueva categoría para asignarlo
+    const nuevaCategoria = this.categorias().find(c => c.id === catDestinoId);
+    if (!nuevaCategoria) return;
+
+    this.productos.update(productos => productos.map(p => {
+      // Verificamos si este producto tiene la categoría que estamos eliminando
+      const tieneCategoriaVieja = p.categorias?.some(c => c.id === catOrigenId);
+      
+      if (tieneCategoriaVieja) {
+        // Filtramos la categoría vieja
+        const categoriasRestantes = p.categorias!.filter(c => c.id !== catOrigenId);
+        
+        // Añadimos la nueva categoría solo si no la tenía ya
+        if (!categoriasRestantes.some(c => c.id === catDestinoId)) {
+          categoriasRestantes.push(nuevaCategoria);
+        }
+
+        // Retornamos el producto actualizado
+        return { ...p, categorias: categoriasRestantes };
+      }
+      
+      // Si no estaba afectado, lo devolvemos igual
+      return p;
+    }));
+  }
+
+  eliminarProductosPorCategoria(categoriaId: number) {
+    // Filtramos y quitamos de la lista los productos que SOLO tenían esta categoría
+    this.productos.update(productos => productos.filter(p => 
+      !(p.categorias?.length === 1 && p.categorias[0].id === categoriaId)
+    ));
+  }
+
   // --- MÉTODOS PARA CATEGORÍAS ---
 
   agregarCategoriaALista(nueva: CategoriaVendedor) {

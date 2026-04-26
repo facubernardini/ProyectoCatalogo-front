@@ -33,13 +33,18 @@ export class ProductForm {
 
   constructor() {
     effect(() => {
+      const isOpen = this.productFormService.isOpen();
+      
       const editing = this.productFormService.editingProduct();
-      if (editing) {
-        const p = JSON.parse(JSON.stringify(editing));
 
-        p.categorias_ids = editing.categorias?.map((c: any) => c.id) || [];
-
-        this.producto = p;
+      if (isOpen) {
+        if (editing) {
+          const p = JSON.parse(JSON.stringify(editing));
+          p.categorias_ids = editing.categorias?.map((c: any) => c.id) || [];
+          this.producto = p;
+        } else {
+          this.resetForm();
+        }
       } else {
         this.resetForm();
       }

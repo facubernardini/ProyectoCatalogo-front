@@ -29,7 +29,17 @@ export class CategoriaService {
         return this.http.patch<CategoriaVendedor>(`${this.API_URL}/seller/categorias/${id}`, data);
     }
 
-    deleteCategoria(id: number): Observable<any> {
-        return this.http.delete<any>(`${this.API_URL}/seller/categorias/${id}`);
+    deleteCategoria(id: number, accion?: 'mover' | 'eliminar', destinoId?: number): Observable<any> {
+        let params = new HttpParams();
+
+        if (accion) {
+            params = params.set('accion', accion);
+        }
+        
+        if (destinoId) {
+            params = params.set('destinoId', destinoId.toString());
+        }
+
+        return this.http.delete<any>(`${this.API_URL}/seller/categorias/${id}`, { params });
     }
 }

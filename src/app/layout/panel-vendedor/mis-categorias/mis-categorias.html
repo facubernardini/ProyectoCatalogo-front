@@ -27,13 +27,24 @@
             </div>
             <input 
                 type="text" 
-                [(ngModel)]="filtro"
+                [ngModel]="filtro()" 
+                (ngModelChange)="filtro.set($event)"
                 placeholder="Buscar categorías..."
-                class="w-full pl-11 pr-4 py-3 bg-white border border-gray-100 rounded-xl 
-                        text-brand-text placeholder:text-gray-400
-                        focus:outline-none focus:ring-4 focus:ring-brand-accent/5 focus:border-brand-accent 
-                        transition-all duration-300 shadow-sm"
+                class="w-full pl-11 pr-12 py-3 bg-white border border-gray-100 rounded-xl 
+                    text-brand-text placeholder:text-gray-400
+                    focus:outline-none focus:ring-4 focus:ring-brand-accent/5 focus:border-brand-accent 
+                    transition-all duration-300 shadow-sm"
             >
+
+            @if (filtro().length > 0) {
+                <button 
+                    (click)="filtro.set('')"
+                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-brand-accent transition-colors duration-200 active:scale-90 focus:outline-none"
+                    aria-label="Borrar búsqueda"
+                >
+                    <app-icon name="close" classes="size-5 fill-current" />
+                </button>
+            }
         </div>
     </div>
 

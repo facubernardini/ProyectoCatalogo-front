@@ -64,12 +64,14 @@ export class ProductFormService {
       next: (res) => {
         if (currentProduct) {
           this.adminStore.updateProductoEnLista(res);
-          this.adminStore.refrescarCategorias();
           this.toastService.show(`Producto actualizado`);
         } else {
           this.adminStore.agregarProductoALista(res);
           this.toastService.show(`Producto creado con éxito`);
         }
+        this.adminStore.refrescarCategorias();
+
+        this.close();
       },
       error: (err) => console.error('Error:', err)
     });

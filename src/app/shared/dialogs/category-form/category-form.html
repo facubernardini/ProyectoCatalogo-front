@@ -86,22 +86,6 @@
                     </div>
                 </section>
             }
-
-            @if (categoryFormService.editingCategory()) {
-                <section class="pt-8 border-t border-red-50">
-                    <p class="text-[12px] text-red-400 uppercase font-black tracking-widest mb-4">Zona de peligro</p>
-                    <button (click)="eliminar()"
-                            [disabled]="categoryFormService.loading()"
-                            class="w-full flex items-center justify-center gap-2 p-4 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-2xl border border-red-100 transition-all font-bold text-sm active:scale-95">
-                        <app-icon name="trash" classes="size-5 fill-current" />
-                        Eliminar categoría permanentemente
-                    </button>
-                    <p class="text-[10px] text-red-400 mt-2 text-center font-medium italic">
-                        * Los productos asociados no se borrarán, pero quedarán sin categoría.
-                    </p>
-                </section>
-            }
-
         </div>
     </div>
 </div>
