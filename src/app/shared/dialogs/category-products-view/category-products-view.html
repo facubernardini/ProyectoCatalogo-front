@@ -1,0 +1,109 @@
+@if (viewService.isOpen()) {
+  <div class="fixed inset-0 z-100 bg-gray-50 flex flex-col animate-in slide-in-from-bottom-8 fade-in duration-300">
+    
+    <header class="bg-white px-4 pt-4 pb-3 flex flex-col gap-4 shadow-sm shrink-0 relative z-10 border-b border-gray-100">
+       
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <button (click)="volverAlMenu()" class="p-2 -ml-2 text-gray-500 hover:text-brand-text active:scale-90 transition-transform rounded-full">
+                    <app-icon name="back" classes="size-6 fill-current" />
+                </button>
+                <h2 class="text-xl font-black text-brand-text capitalize tracking-tight line-clamp-1">
+                    {{ viewService.categoria() }}
+                </h2>
+            </div>
+            
+            <button (click)="viewService.close()" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 hover:text-brand-text active:scale-90 transition-all duration-200">
+                <app-icon name="close" classes="size-5 fill-current" />
+            </button>
+       </div>
+
+        <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <app-icon name="search" classes="size-5 fill-current text-brand-accent" />
+            </div>
+           
+            <input type="text" 
+                [ngModel]="busquedaRaw()" 
+                (ngModelChange)="onSearchChange($event)"
+                placeholder="Buscar en esta categoría..."
+                class="w-full bg-gray-50 border border-gray-100 rounded-2xl py-3 pl-11 pr-12 text-sm text-brand-text outline-none focus:bg-white focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all duration-300 shadow-inner">
+
+            @if (isBuscando()) {
+                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <svg class="animate-spin size-5 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+            } @else if (busquedaRaw().length > 0) {
+                <button (click)="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-brand-accent transition-colors duration-200 focus:outline-none">
+                    <app-icon name="close" classes="size-5 fill-current" />
+                </button>
+            }
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+      
+        @if (!isBuscando() && resultados().length === 0 && filtro().length >= 2) {
+            <div class="text-center py-20 animate-in fade-in duration-500">
+                <div class="size-20 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <app-icon name="search-off" classes="size-8 fill-current text-gray-400" />
+                </div>
+                <p class="text-gray-500 font-bold text-lg">No hay resultados</p>
+                <p class="text-gray-400 text-sm mt-1">No encontramos nada para "{{ filtro() }}"</p>
+            </div>
+        }
+        @else if (resultados().length > 0) {
+            <div class="grid grid-cols-1 gap-3 transition-opacity duration-300" 
+                [class.opacity-40]="isBuscando()" 
+                [class.pointer-events-none]="isBuscando()">
+                
+                @for (prod of resultados(); track prod.id) {
+                    <div (click)="abrirProducto(prod)" 
+                        class="flex items-center gap-4 p-2 bg-white rounded-2xl active:scale-[0.98] transition-all border border-gray-100 shadow-sm hover:shadow-md cursor-pointer">
+                        
+                        <div class="relative size-16 rounded-xl bg-gray-50 overflow-hidden shrink-0 border border-gray-100/50">
+                            <img [src]="prod.imagen || 'assets/img/placeholder.png'" class="w-full h-full object-cover">
+                            @if (tieneOfertas(prod.presentaciones)) {
+                                <div class="absolute top-0 left-0 bg-green-600 text-white p-1 rounded-br-lg">
+                                    <app-icon name="discount" classes="size-3 fill-current" />
+                                </div>
+                            }
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-brand-text truncate leading-tight">{{ prod.nombre }}</h4>
+                            
+                            <div class="flex items-center gap-1.5 mt-1">
+                                @if (prod.presentaciones.length > 1) {
+                                    <span class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">Desde</span>
+                                    <p class="text-sm text-brand-accent font-black">${{ getPrecioDesde(prod.presentaciones) }}</p>
+                                    <span class="text-[10px] text-gray-400 font-medium ml-1">• {{ prod.presentaciones.length }} opciones</span>
+                                } 
+                                @else {
+                                    @let pres = prod.presentaciones[0];
+                                    <div class="flex items-center gap-2">
+                                        @if (pres?.precio_descuento) {
+                                            <p class="text-sm text-brand-accent font-black">${{ pres.precio_descuento }}</p>
+                                            <span class="text-[11px] text-gray-400 line-through font-medium">${{ pres.precio }}</span>
+                                        } @else {
+                                            <p class="text-sm text-brand-accent font-black">${{ pres?.precio }}</p>
+                                        }
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tight ml-1">• {{ pres?.unidad_venta }}</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="pr-2">
+                            <app-icon name="chevron-right" classes="size-5 fill-gray-300" />
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </main>
+  </div>
+}

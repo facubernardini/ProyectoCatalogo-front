@@ -13,6 +13,7 @@ import { Carrito } from "@shared/dialogs/carrito/carrito";
 import { MenuInfo } from "@shared/dialogs/menu-info/menu-info";
 import { ProductSelector } from "@shared/dialogs/product-selector/product-selector";
 import { MenuLateral } from "@shared/dialogs/menu-lateral/menu-lateral";
+import { CategoryProductsView } from "@shared/dialogs/category-products-view/category-products-view";
 
 @Component({
   selector: 'app-catalogo',
@@ -21,7 +22,8 @@ import { MenuLateral } from "@shared/dialogs/menu-lateral/menu-lateral";
     CommonModule, Navbar, CarouselDestacados, ListaProductos,
     SearchNav, SearchProducts, Carrito, MenuInfo,
     ProductSelector, CarouselOfertas, Toast,
-    MenuLateral
+    MenuLateral,
+    CategoryProductsView
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',

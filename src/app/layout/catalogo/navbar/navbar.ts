@@ -11,5 +11,5 @@ import { InfoService } from 'src/app/core/services/info.service';
 })
 export class Navbar {
   public adminStore = inject(AdminStoreService);
-  public menuService = inject(InfoService);
+  public infoService = inject(InfoService);
 }
