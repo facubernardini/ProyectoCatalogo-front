@@ -23,13 +23,15 @@ export class AdminStoreService {
 
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
 
+  /*
   constructor() {
     const vendedorData = this.authService.getVendedorLocalStorage();
     if (vendedorData?.catalogo) {
       this.catalogo.set(vendedorData.catalogo);
     }
   }
-
+  */
+ 
   cargarDatosPublicos(slug: string) {
     this.cargado.set(false);
     

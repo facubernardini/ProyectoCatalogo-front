@@ -23,16 +23,19 @@ export class ProductFormService {
   openCreate() {
     this.editingProduct.set(null);
     this.isOpen.set(true);
+    document.body.style.overflow = 'hidden';
   }
 
   openEdit(producto: Producto) {
     this.editingProduct.set({ ...producto });
     this.isOpen.set(true);
+    document.body.style.overflow = 'hidden';
   }
 
   close() {
     this.isOpen.set(false);
     this.editingProduct.set(null);
+    document.body.style.overflow = 'auto';
   }
 
   save(productData: any) {
