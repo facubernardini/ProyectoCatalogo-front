@@ -19,12 +19,13 @@
   </div>
 </header>
 
-<main class="min-h-screen bg-gray-50 p-2">
-	<div class="max-w-2xl mx-auto pb-20 p-4 space-y-4">
+<main class="min-h-screen bg-gray-50 p-4">
+	<div class="max-w-2xl mx-auto pb-20 space-y-4">
 		
 		<app-config-section
 			#sectionConfigPrincipal
-			title="Configuración Principal" 
+			title="Configuración Principal"
+			description="Datos de contacto, logo de tu tienda, etc"
 			icon="store" 
 			[loading]="loading()"
 			(onSave)="guardarCambios(sectionConfigPrincipal)"
@@ -81,7 +82,8 @@
 
 		<app-config-section
 			#sectionConfigHorarios
-			title="Horarios de atención" 
+			title="Horarios de Atención"
+			description="Para retiro de productos o visitas a tu tienda"
 			icon="time" 
 			[loading]="loading()"
 			(onSave)="guardarCambios(sectionConfigHorarios)"
@@ -101,7 +103,8 @@
 
 		<app-config-section
 			#sectionEnvios
-			title="Entregas y Envíos" 
+			title="Entregas y Envíos"
+			description="Indica si ofreces envíos y su costo"
 			icon="delivery" 
 			[loading]="loading()"
 			(onSave)="guardarCambios(sectionEnvios)"
@@ -161,7 +164,8 @@
 
 		<app-config-section
 			#sectionConfigPagos
-			title="Medios de Pago aceptados" 
+			title="Medios de Pago"
+			description="Formas de pago para tus clientes"
 			icon="payment" 
 			[loading]="loading()"
 			(onSave)="guardarCambios(sectionConfigPagos)"

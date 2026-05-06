@@ -244,11 +244,27 @@
                 }
 
                 @if (cartService.discountAmount() > 0) {
-                <div class="flex items-center gap-2 text-sm text-green-600 animate-in slide-in-from-right duration-300">
-                    <span class="font-bold whitespace-nowrap">Descuento</span>
-                    <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
-                    <span class="font-black whitespace-nowrap">-${{ cartService.discountAmount() }}</span>
-                </div>
+                    <div class="flex flex-col gap-1 animate-in slide-in-from-right duration-300">
+                        <div class="flex items-center gap-2 text-sm text-green-600">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-bold whitespace-nowrap">Descuento</span>
+                                
+                                <!-- Badge de tope alcanzado -->
+                                @if (cartService.isDiscountCapped()) {
+                                    <span class="flex items-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-[10px] font-black uppercase tracking-tighter rounded-md animate-pulse">
+                                        <app-icon name="info" classes="size-3 fill-current" />
+                                        Tope Máx.
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
+                            
+                            <div class="flex flex-col items-end">
+                                <span class="font-black whitespace-nowrap">-${{ cartService.discountAmount() }}</span>
+                            </div>
+                        </div>
+                    </div>
                 }
 
                 @if (cartService.deliveryMethod() === 'envio') {

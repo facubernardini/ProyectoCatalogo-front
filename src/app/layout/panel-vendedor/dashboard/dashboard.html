@@ -1,4 +1,4 @@
-<header class="pt-8 bg-brand-bg border-b border-blue-200 shadow-sm">
+<header class="sticky top-0 z-50 pt-8 bg-brand-bg border-b border-blue-200 shadow-sm">
   <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
     
     <button (click)="onLogout()" 
@@ -67,6 +67,33 @@
                         </span>
                         <span class="text-brand-text-sec text-xs sm:text-sm">
                             Organiza tus productos en categorías
+                        </span>
+                    </div>
+                </div>
+
+                <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+            </button>
+        </div>
+
+        <div class="w-full"> 
+            <button [routerLink]="['../mis-cupones']"
+                class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
+                >
+                <div class="flex items-center gap-4">
+                    <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
+                        <app-icon name="gift" classes="size-6 fill-current text-brand-accent" />
+                    </div>
+                    
+                    <div class="flex flex-col items-start text-left">
+                        <span class="text-brand-text font-bold text-lg leading-tight">
+                            Mis cupones
+                        </span>
+                        <span class="text-brand-text-sec text-xs sm:text-sm">
+                            Crea cupones de descuento para tus clientes
                         </span>
                     </div>
                 </div>

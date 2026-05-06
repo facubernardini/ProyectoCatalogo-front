@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, input, Input, output, Output, signal } from "@angular/core";
+import { Component, input, output, signal } from "@angular/core";
 import { Icon } from "@shared/components/icon";
 
 @Component({
@@ -11,20 +11,25 @@ import { Icon } from "@shared/components/icon";
 })
 export class ConfigSection {
   title = input.required<string>();
+  description = input<string>('');
   icon = input<string>('settings');
   loading = input<boolean>(false);
   
   onSave = output<void>();
   onCancel = output<void>();
   
+  // Actúa como el estado de expansión/edición
   editando = signal(false);
 
   toggleEdit() {
-    if (this.editando()) {
-      this.onSave.emit();
-    } else {
-      this.editando.set(true);
-    }
+    this.editando.set(!this.editando());
+  }
+
+  save() {
+    this.onSave.emit();
+    // La responsabilidad de cerrar el bloque (this.editando.set(false))
+    // generalmente recae en el componente padre cuando termina el 'loading',
+    // o puedes usar this.forceClose() desde afuera.
   }
 
   cancel() {

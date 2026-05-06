@@ -37,11 +37,31 @@ export class CartService {
   discountAmount = computed(() => {
     const cupon = this.appliedCupon();
     const subtotal = this.subtotalPrice();
+
     if (!cupon || subtotal === 0) return 0;
 
-    return cupon.es_porcentaje
-      ? subtotal * (cupon.descuento / 100)
-      : cupon.descuento;
+    if (cupon.es_porcentaje) {
+      // Calculamos el descuento base por porcentaje
+      const baseDiscount = subtotal * (Number(cupon.descuento) / 100);
+
+      // Si tiene tope, aplicamos el menor entre el cálculo y el tope
+      return cupon.tope_descuento 
+        ? Math.min(baseDiscount, Number(cupon.tope_descuento)) 
+        : baseDiscount;
+    }
+
+    // Si no es porcentaje, es monto fijo
+    return Number(cupon.descuento);
+  });
+
+  isDiscountCapped = computed(() => {
+    const cupon = this.appliedCupon();
+    const subtotal = this.subtotalPrice();
+    
+    if (!cupon || !cupon.es_porcentaje || !cupon.tope_descuento) return false;
+
+    const theoreticalDiscount = subtotal * (Number(cupon.descuento) / 100);
+    return theoreticalDiscount >= Number(cupon.tope_descuento);
   });
 
   // Precio después de cupones (pero antes de envío)

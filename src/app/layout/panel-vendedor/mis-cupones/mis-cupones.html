@@ -1,0 +1,109 @@
+<header class="sticky top-0 z-50 pt-8 bg-brand-bg border-b border-blue-200 shadow-sm">
+    <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
+        
+        <button
+            (click)="volverAtras()"
+            class="p-2 text-brand-accent active:scale-95 transition-transform"
+            aria-label="Volver atrás">
+            <app-icon name="back" classes="size-7 fill-current" />
+        </button>
+
+        <div class="flex-1 text-center px-2 overflow-hidden">
+            <h1 class="text-brand-accentfont-bold text-base truncate">
+                Mis cupones
+            </h1>
+        </div>
+
+        <div class="w-11"></div>
+
+    </div>
+</header>
+
+<main class="min-h-screen bg-gray-50 p-4">
+    <!-- Buscador -->
+    <div class="relative w-full max-w-md mx-auto group mb-4">
+        <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <app-icon name="search" classes="size-6 fill-current text-brand-accent" />
+        </div>
+        <input type="text" [ngModel]="filtro()" (ngModelChange)="filtro.set($event)"
+            placeholder="Buscar cupón por código..."
+            class="w-full pl-11 pr-12 py-3 bg-white border border-gray-100 rounded-xl text-brand-text transition-all duration-300 shadow-sm focus:border-brand-accent focus:outline-none">
+        </div>
+    </div>
+
+    <!-- Filtros rápidos -->
+    <div class="flex gap-2 overflow-x-auto no-scrollbar py-2 mb-4">
+        @for (estado of ['todos', 'activos', 'pausados', 'expirados']; track estado) {
+        <button (click)="estadoFiltro.set(estado)"
+            [class]="estadoFiltro() === estado ? 'bg-brand-accent text-white' : 'bg-white text-brand-text border border-gray-100'"
+            class="px-5 py-2 rounded-full text-sm font-bold capitalize whitespace-nowrap transition-all active:scale-95">
+            {{ estado }}
+        </button>
+        }
+    </div>
+
+    <!-- Lista de Cupones -->
+    <div class="flex flex-col gap-3">
+        @for (cupon of cuponesFiltrados(); track cupon.id) {
+        <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-gray-100 shadow-xs relative overflow-hidden">
+            
+            <!-- Icono/Indicador de Tipo -->
+            <div class="shrink-0 w-12 h-12 bg-brand-bg rounded-xl flex items-center justify-center text-brand-accent border border-blue-50">
+                <app-icon name="gift" classes="size-6 fill-current" />
+            </div>
+
+            <!-- Info del Cupón -->
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                    <h3 class="text-brand-text font-black text-sm uppercase tracking-wider">{{ cupon.codigo }}</h3>
+                    <span [class]="cupon.activo ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'"
+                        class="text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase">
+                    {{ cupon.activo ? 'Activo' : 'Pausado' }}
+                    </span>
+                </div>
+                
+                <div class="flex flex-wrap gap-x-3 gap-y-1 mt-1">
+                    <span class="text-xs font-bold text-brand-accent">
+                        {{ cupon.es_porcentaje  ? cupon.descuento + '%' : '$' + cupon.descuento }}
+                        @if(cupon.tope_descuento) { <span class="text-[10px] text-gray-400 font-normal">(Tope ${{cupon.tope_descuento}})</span> }
+                    </span>
+                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                        <app-icon name="calendar" classes="size-3 fill-current" />
+                        {{ cupon.fecha_expiracion || 'Sin límite' }}
+                    </span>
+                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                        <app-icon name="user" classes="size-3 fill-current" />
+                        {{ cupon.usos_actuales }} / {{ cupon.limite_usos || '∞' }} usos
+                    </span>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex items-center gap-1">
+                <button (click)="onEdit(cupon)" 
+                    class="p-2 text-brand-accent hover:bg-brand-bg rounded-full transition-colors active:scale-90">
+                    <app-icon name="edit" classes="size-5 fill-current" />
+                </button>
+                <button (click)="onDelete(cupon.id)" 
+                    class="p-2 text-red-400 hover:bg-red-50 rounded-full transition-colors active:scale-90">
+                    <app-icon name="trash" classes="size-5 fill-current" />
+                </button>
+            </div>
+        </div>
+        } @empty {
+        <div class="text-center py-20 opacity-50">
+            <app-icon name="empty" classes="size-16 mx-auto mb-4 opacity-20" />
+            <p>No hay cupones que coincidan.</p>
+        </div>
+        }
+    </div>
+
+    <div class="fixed bottom-8 right-6 z-50">
+        <button (click)="onAdd()"
+            class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 hover:scale-105 transition-all duration-200 group"
+            aria-label="Agregar cupon">
+            <app-icon name="add-producto" classes="size-6 fill-current" />
+        </button>
+    </div>
+</main>

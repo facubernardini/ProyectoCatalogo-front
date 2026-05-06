@@ -10,6 +10,7 @@ import { Dashboard } from '@layout/panel-vendedor/dashboard/dashboard';
 import { MisCategorias } from '@layout/panel-vendedor/mis-categorias/mis-categorias';
 import { MiTienda } from '@layout/panel-vendedor/mi-tienda/mi-tienda';
 import { Perfil } from '@layout/panel-vendedor/perfil/perfil';
+import { MisCupones } from '@layout/panel-vendedor/mis-cupones/mis-cupones';
 
 export const routes: Routes = [
 	{ path: '', component: CatalogoPublico },
@@ -22,6 +23,7 @@ export const routes: Routes = [
 			{ path: 'inicio', component: Dashboard },
             { path: 'mis-productos', component: MisProductos },
             { path: 'mis-categorias', component: MisCategorias },
+            { path: 'mis-cupones', component: MisCupones },
             { path: 'mi-tienda', component: MiTienda },
             { path: 'perfil', component: Perfil },
         ]
