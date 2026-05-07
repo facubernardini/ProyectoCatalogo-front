@@ -4,9 +4,11 @@ export interface MedioPago {
   icono: string | null;
 }
 
-export interface HorarioSemana {
-  dia: string;
-  horas: string;
+export interface HorarioDia {
+  dia: 'Lunes' | 'Martes' | 'Miércoles' | 'Jueves' | 'Viernes' | 'Sábado' | 'Domingo';
+  abierto: boolean;
+  apertura: string; // Formato "HH:mm" (ej: "09:00")
+  cierre: string;   // Formato "HH:mm" (ej: "18:00")
 }
 
 export interface Catalogo {
@@ -25,7 +27,7 @@ export interface Catalogo {
   costo_envio: number | null;
   envio_gratis_desde: number | null;
 
-  horarios: HorarioSemana[];
+  horarios: HorarioDia[];
   
   medios_pago: MedioPago[];
 }

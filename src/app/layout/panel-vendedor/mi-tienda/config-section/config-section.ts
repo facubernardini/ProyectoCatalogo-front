@@ -18,7 +18,6 @@ export class ConfigSection {
   onSave = output<void>();
   onCancel = output<void>();
   
-  // Actúa como el estado de expansión/edición
   editando = signal(false);
 
   toggleEdit() {
@@ -27,9 +26,6 @@ export class ConfigSection {
 
   save() {
     this.onSave.emit();
-    // La responsabilidad de cerrar el bloque (this.editando.set(false))
-    // generalmente recae en el componente padre cuando termina el 'loading',
-    // o puedes usar this.forceClose() desde afuera.
   }
 
   cancel() {
