@@ -46,52 +46,90 @@
     <!-- Lista de Cupones -->
     <div class="flex flex-col gap-3">
         @for (cupon of cuponesFiltrados(); track cupon.id) {
-        <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-gray-100 shadow-xs relative overflow-hidden">
-            
-            <!-- Icono/Indicador de Tipo -->
-            <div class="shrink-0 w-12 h-12 bg-brand-bg rounded-xl flex items-center justify-center text-brand-accent border border-blue-50">
-                <app-icon name="gift" classes="size-6 fill-current" />
-            </div>
-
-            <!-- Info del Cupón -->
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                    <h3 class="text-brand-text font-black text-sm uppercase tracking-wider">{{ cupon.codigo }}</h3>
-                    <span [class]="cupon.activo ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'"
-                        class="text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase">
-                    {{ cupon.activo ? 'Activo' : 'Pausado' }}
-                    </span>
-                </div>
+            <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border border-gray-100 shadow-xs relative">
                 
-                <div class="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-                    <span class="text-xs font-bold text-brand-accent">
-                        {{ cupon.es_porcentaje  ? cupon.descuento + '%' : '$' + cupon.descuento }}
-                        @if(cupon.tope_descuento) { <span class="text-[10px] text-gray-400 font-normal">(Tope ${{cupon.tope_descuento}})</span> }
-                    </span>
-                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
-                        <app-icon name="calendar" classes="size-3 fill-current" />
-                        {{ cupon.fecha_expiracion || 'Sin límite' }}
-                    </span>
-                    <span class="text-[10px] text-gray-400 flex items-center gap-1">
-                        <app-icon name="user" classes="size-3 fill-current" />
-                        {{ cupon.usos_actuales }} / {{ cupon.limite_usos || '∞' }} usos
-                    </span>
+                <div class="shrink-0 w-14 h-14 bg-brand-bg/60 rounded-xl flex flex-col items-center justify-center text-brand-accent border border-brand-accent/20 px-1 text-center">
+                    @if (cupon.es_porcentaje) {
+                        <span class="text-lg font-black leading-none">{{ cupon.descuento }}%</span>
+                    } @else {
+                        <span class="text-[11px] font-black leading-none tracking-tighter">${{ cupon.descuento }}</span>
+                    }
+                    <span class="text-[8px] font-bold uppercase tracking-widest mt-0.5 opacity-80">OFF</span>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="text-brand-text font-black text-sm uppercase tracking-wider truncate">{{ cupon.codigo_cupon }}</h3>
+                        
+                        @if (!cupon.activo) {
+                            <span class="bg-gray-100 text-gray-400 text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wide shrink-0">
+                                Pausado
+                            </span>
+                        } @else if (isVencido(cupon.fecha_expiracion)) {
+                            <span class="bg-red-50 text-red-500 border border-red-100 text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wide shrink-0">
+                                Expirado
+                            </span>
+                        } @else {
+                            <span class="bg-green-100 text-green-600 text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wide shrink-0">
+                                Activo
+                            </span>
+                        }
+                    </div>
+                    
+                    <div class="flex flex-col gap-1 mt-1">
+                        @if(cupon.tope_descuento) { 
+                            <span class="text-[10px] text-gray-500 font-medium">
+                                Tope máximo: <b class="text-brand-text">${{ cupon.tope_descuento }}</b>
+                            </span> 
+                        }
+                        <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                            <app-icon name="calendar" classes="size-3 fill-current" />
+                            @if (cupon.fecha_expiracion) {
+                                Vence el: {{ cupon.fecha_expiracion | date:'dd/MM/yyyy' }}
+                            } @else {
+                                Sin vencimiento
+                            }
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <button (click)="onEdit(cupon)" 
+                            class="p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                        <app-icon name="edit" classes="size-4.5 fill-current" />
+                    </button>
+
+                    <div class="relative">
+                        <button (click)="toggleMenu(cupon.id, $event)" 
+                                class="p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                            <app-icon name="options" classes="size-4.5 fill-current" />
+                        </button>
+
+                        @if (activeMenuId() === cupon.id) {
+                            <div class="absolute right-0 top-full mt-2 z-50 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 animate-in fade-in zoom-in duration-200"
+                                (click)="$event.stopPropagation()">
+                                
+                                @if (!isVencido(cupon.fecha_expiracion)) {
+                                    <button (click)="onToggleActivo(cupon); activeMenuId.set(null)"
+                                            class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
+                                        <app-icon [name]="cupon.activo ? 'pause' : 'play'" classes="size-4 fill-current text-gray-400" />
+                                        {{ cupon.activo ? 'Pausar cupón' : 'Reanudar cupón' }}
+                                    </button>
+
+                                    <div class="h-px bg-gray-100 my-1 mx-2"></div>
+                                }
+
+                                <button (click)="onDelete(cupon.id); activeMenuId.set(null)"
+                                        class="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+                                    <app-icon name="trash" classes="size-4 fill-current" />
+                                    Eliminar cupón
+                                </button>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-
-            <!-- Acciones -->
-            <div class="flex items-center gap-1">
-                <button (click)="onEdit(cupon)" 
-                    class="p-2 text-brand-accent hover:bg-brand-bg rounded-full transition-colors active:scale-90">
-                    <app-icon name="edit" classes="size-5 fill-current" />
-                </button>
-                <button (click)="onDelete(cupon.id)" 
-                    class="p-2 text-red-400 hover:bg-red-50 rounded-full transition-colors active:scale-90">
-                    <app-icon name="trash" classes="size-5 fill-current" />
-                </button>
-            </div>
-        </div>
-        } @empty {
+        }@empty {
         <div class="text-center py-20 opacity-50">
             <app-icon name="empty" classes="size-16 mx-auto mb-4 opacity-20" />
             <p>No hay cupones que coincidan.</p>

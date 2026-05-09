@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { CuponVerificado } from '../models/cupon.model';
+import { Cupon, CuponVerificado } from '../models/cupon.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,5 +16,21 @@ export class CuponServiceBackend {
             codigo: codigo.toUpperCase().trim(),
             catalogo_id
         });
+    }
+
+    getCuponesByCatalogo(catalogo_id: number) {
+        return this.http.get<Cupon[]>(`${this.apiUrl}/seller/cupones/${catalogo_id}`);
+    }
+
+    createCupon(payload: Partial<Cupon>) {
+        return this.http.post<Cupon>(`${this.apiUrl}/seller/cupones`, payload);
+    }
+
+    updateCupon(id: number, payload: Partial<Cupon>) {
+        return this.http.put<Cupon>(`${this.apiUrl}/seller/cupones/${id}`, payload);
+    }
+
+    deleteCupon(id: number) {
+        return this.http.delete<void>(`${this.apiUrl}/seller/cupones/${id}`);
     }
 }

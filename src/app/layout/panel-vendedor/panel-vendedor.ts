@@ -7,10 +7,11 @@ import { CategoryForm } from "@shared/dialogs/category-form/category-form";
 import { ConfirmDialog } from "@shared/dialogs/confirm-dialog/confirm-dialog";
 import { ProductPreview } from "@shared/dialogs/product-preview/product-preview";
 import { CategoryDelete } from "@shared/dialogs/category-delete/category-delete";
+import { CuponForm } from "@shared/dialogs/cupon-form/cupon-form";
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete],
+  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })

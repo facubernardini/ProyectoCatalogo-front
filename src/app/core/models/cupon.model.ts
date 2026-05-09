@@ -9,12 +9,12 @@ export interface CuponVerificado {
 
 export interface Cupon {
     id: number;
-    codigo: string,
+    codigo_cupon: string;
     descuento: number;
     es_porcentaje: boolean;
-    tope_descuento: number;
-    fecha_expiracion: number;
+    tope_descuento: number | null; 
+    fecha_expiracion: string | null; 
     usos_actuales: number;
-    limite_usos: number;
+    limite_usos: number | null; 
     activo: boolean;
 }

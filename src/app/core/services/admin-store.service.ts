@@ -7,17 +7,21 @@ import { CategoriaVendedor } from "../models/categoriaVendedor.model";
 import { Catalogo } from "../models/catalogo.model";
 import { CatalogoService } from "../services-backend/catalogo.ServiceBackend";
 import { AuthService } from "../services-backend/auth.ServiceBackend";
+import { Cupon } from "../models/cupon.model";
+import { CuponServiceBackend } from "../services-backend/cupones.ServiceBackend";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
-  private authService = inject(AuthService);
+  //private authService = inject(AuthService);
   private productoService = inject(ProductoService);
   private categoriaService = inject(CategoriaService);
   private catalogoService = inject(CatalogoService);
+  private cuponService = inject(CuponServiceBackend);
 
   catalogo = signal<Catalogo | null>(null);
   categorias = signal<CategoriaVendedor[]>([]);
   productos = signal<Producto[]>([]);
+  cupones = signal<Cupon[]>([]);
   
   cargado = signal(false);
 
@@ -56,12 +60,14 @@ export class AdminStoreService {
     forkJoin({
       catalogo: this.catalogoService.getCatalogoById(catalogoId),
       prods: this.productoService.getProductosByCatalogo(catalogoId),
-      cats: this.categoriaService.getCategoriasByCatalogo(catalogoId)
+      cats: this.categoriaService.getCategoriasByCatalogo(catalogoId),
+      cupons: this.cuponService.getCuponesByCatalogo(catalogoId),
     }).subscribe({
-      next: ({ catalogo, prods, cats }) => {
+      next: ({ catalogo, prods, cats, cupons }) => {
         this.catalogo.set(catalogo);
         this.productos.set(prods);
         this.categorias.set(cats);
+        this.cupones.set(cupons);
         this.cargado.set(true);
       },
       error: (err) => console.error('Error cargando el panel', err)
@@ -145,5 +151,27 @@ export class AdminStoreService {
 
   eliminarCategoriaDeLista(id: number) {
     this.categorias.update(list => list.filter(c => c.id !== id));
+  }
+
+  // --- MÉTODOS PARA GESTIÓN DE CUPONES ---
+
+  agregarCuponALista(nuevoCupon: Cupon) {
+    this.cupones.update(cuponesActuales => {
+      return [nuevoCupon, ...cuponesActuales];
+    });
+  }
+
+  updateCuponEnLista(cuponActualizado: Cupon) {
+    this.cupones.update(cuponesActuales => 
+      cuponesActuales.map(cupon => 
+        cupon.id === cuponActualizado.id ? cuponActualizado : cupon
+      )
+    );
+  }
+
+  eliminarCuponDeLista(idCupon: number) {
+    this.cupones.update(cuponesActuales => 
+      cuponesActuales.filter(cupon => cupon.id !== idCupon)
+    );
   }
 }
