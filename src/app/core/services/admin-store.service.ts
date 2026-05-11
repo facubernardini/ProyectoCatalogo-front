@@ -4,11 +4,12 @@ import { CategoriaService } from "../services-backend/categorias.ServiceBackend"
 import { Producto } from "../models/producto.model";
 import { forkJoin } from "rxjs";
 import { CategoriaVendedor } from "../models/categoriaVendedor.model";
-import { Catalogo } from "../models/catalogo.model";
+import { Catalogo, MedioPago } from "../models/catalogo.model";
 import { CatalogoService } from "../services-backend/catalogo.ServiceBackend";
 import { AuthService } from "../services-backend/auth.ServiceBackend";
 import { Cupon } from "../models/cupon.model";
 import { CuponServiceBackend } from "../services-backend/cupones.ServiceBackend";
+import { MediosPagoServiceBackend } from "../services-backend/medios-pago.ServiceBackend";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
@@ -17,11 +18,13 @@ export class AdminStoreService {
   private categoriaService = inject(CategoriaService);
   private catalogoService = inject(CatalogoService);
   private cuponService = inject(CuponServiceBackend);
+  private mediosPagoService = inject(MediosPagoServiceBackend);
 
   catalogo = signal<Catalogo | null>(null);
   categorias = signal<CategoriaVendedor[]>([]);
   productos = signal<Producto[]>([]);
   cupones = signal<Cupon[]>([]);
+  mediosPago = signal<MedioPago[]>([]);
   
   cargado = signal(false);
 
@@ -62,12 +65,14 @@ export class AdminStoreService {
       prods: this.productoService.getProductosByCatalogo(catalogoId),
       cats: this.categoriaService.getCategoriasByCatalogo(catalogoId),
       cupons: this.cuponService.getCuponesByCatalogo(catalogoId),
+      mediosPago: this.mediosPagoService.getMediosDePago(),
     }).subscribe({
-      next: ({ catalogo, prods, cats, cupons }) => {
+      next: ({ catalogo, prods, cats, cupons, mediosPago }) => {
         this.catalogo.set(catalogo);
         this.productos.set(prods);
         this.categorias.set(cats);
         this.cupones.set(cupons);
+        this.mediosPago.set(mediosPago);
         this.cargado.set(true);
       },
       error: (err) => console.error('Error cargando el panel', err)

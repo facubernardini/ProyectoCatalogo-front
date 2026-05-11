@@ -90,6 +90,10 @@ export class CuponFormService {
 			this.toastService.show('Ingresá un valor de descuento válido', 'error');
 			return;
     }
+    if (data.es_porcentaje && data.descuento > 100) {
+      this.toastService.show('El porcentaje de descuento no puede ser mayor a 100%', 'error');
+      return;
+    }
 
     this.loading.set(true);
     const current = this.editingCupon();
@@ -127,24 +131,25 @@ export class CuponFormService {
     });
   }
 
-  async delete(id: number) {
+  async delete(cupon: Cupon) {
     const confirmacion = await this.confirmService.ask({
-        title: '¿Eliminar cupón?',
-        message: `Estás por borrar el cupón "${this.formData().codigo_cupon}". Esta acción no se puede deshacer.`,
-        confirmText: 'Sí, eliminar',
-        cancelText: 'Volver',
-        icon: 'trash',
-        type: 'danger'
-      });
+      title: '¿Eliminar cupón?',
+      message: `Estás por borrar el cupón "${cupon.codigo_cupon}". Esta acción no se puede deshacer.`,
+      confirmText: 'Sí, eliminar',
+      cancelText: 'Volver',
+      icon: 'trash',
+      type: 'danger'
+    });
 
     if (confirmacion) {
       this.loading.set(true);
-      this.cuponBackend.deleteCupon(id).pipe(
+      this.cuponBackend.deleteCupon(cupon.id).pipe(
         finalize(() => this.loading.set(false))
       ).subscribe({
         next: () => {
-          this.adminStore.eliminarCuponDeLista(id);
+          this.adminStore.eliminarCuponDeLista(cupon.id);
           this.close();
+          this.toastService.show(`Cupón eliminado`);
         },
         error: (err) => console.error('Error al eliminar cupón:', err)
       });

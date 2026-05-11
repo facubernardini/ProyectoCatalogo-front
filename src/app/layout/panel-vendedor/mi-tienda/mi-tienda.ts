@@ -7,10 +7,11 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { Catalogo, HorarioDia } from 'src/app/core/models/catalogo.model';
 import { FormsModule } from '@angular/forms';
 import { ConfigSection } from "./config-section/config-section";
+import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 
 @Component({
   selector: 'app-mi-tienda',
-  imports: [Icon, FormsModule, CommonModule, ConfigSection],
+  imports: [Icon, FormsModule, CommonModule, ConfigSection, SafeHtmlPipe],
   templateUrl: './mi-tienda.html',
   styleUrl: './mi-tienda.css',
 })
@@ -41,6 +42,7 @@ export class MiTienda {
       if (!copia.horarios || !Array.isArray(copia.horarios) || copia.horarios.length === 0) {
         copia.horarios = this.getHorariosBase();
       }
+      copia.medios_pago = copia.medios_pago || [];
       
       this.catalogo.set(copia);
     }
@@ -54,6 +56,28 @@ export class MiTienda {
       apertura: '09:00',
       cierre: '18:00'
     }));
+  }
+
+  isMedioSeleccionado(id: number): boolean {
+    return this.catalogo()?.medios_pago?.some(m => m.id === id) ?? false;
+  }
+
+  toggleMedioPago(id: number) {
+    this.catalogo.update(cat => {
+      if (!cat) return cat;
+      
+      const seleccionado = cat.medios_pago.some(m => m.id === id);
+      
+      if (seleccionado) {
+        cat.medios_pago = cat.medios_pago.filter(m => m.id !== id);
+      } else {
+        const medioGlobal = this.adminStore.mediosPago().find(m => m.id === id);
+        if (medioGlobal) {
+          cat.medios_pago = [...cat.medios_pago, medioGlobal];
+        }
+      }
+      return { ...cat };
+    });
   }
 
   async guardarCambios(section: ConfigSection) {
@@ -81,7 +105,12 @@ export class MiTienda {
     
     this.loading.set(true);
     
-    this.catalogoService.updateCatalogo(this.adminStore.catalogoId(), dataActual).subscribe({
+    const payload = {
+      ...dataActual,
+      medios_pago_ids: dataActual.medios_pago.map(m => m.id)
+    };
+    
+    this.catalogoService.updateCatalogo(this.adminStore.catalogoId(), payload).subscribe({
       next: (res) => {
         this.adminStore.catalogo.set(res);
         this.catalogo.set(structuredClone(res));

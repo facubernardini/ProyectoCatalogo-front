@@ -16,7 +16,7 @@
                 </button>
 
                 @if (formService.editingCupon()) {
-                    <button (click)="formService.delete(formService.editingCupon()!.id)"
+                    <button (click)="formService.delete(formService.editingCupon()!)"
                             class="group p-2 bg-red-50 hover:bg-red-100 rounded-full transition-all duration-300 active:scale-90 border border-red-100/50">
                         <app-icon name="trash" classes="size-5 text-red-500 fill-current" />
                     </button>

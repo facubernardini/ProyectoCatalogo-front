@@ -118,8 +118,8 @@ export class MisCupones {
     this.cuponFormService.openEdit(cupon);
   }
 
-  async onDelete(id: number) {
-    // Lógica para eliminar
+  async onDelete(cupon: Cupon) {
+    this.cuponFormService.delete(cupon);
   }
 
   volverAtras() {

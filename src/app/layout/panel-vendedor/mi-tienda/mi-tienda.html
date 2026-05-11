@@ -235,18 +235,42 @@
 			[loading]="loading()"
 			(onSave)="guardarCambios(sectionConfigPagos)"
 			(onCancel)="resetearValores()">
-			<section class="pt-3 border-t border-brand-bg">
-				<div class="flex flex-wrap gap-2">
-					@for (pago of catalogo()!.medios_pago; track pago.id) {
-						<div class="flex items-center gap-2 px-4 py-2 bg-brand-bg rounded-xl border border-brand-accent/10">
-							<app-icon name="category" classes="size-4 text-brand-accent" />
-							<span class="text-xs font-bold text-brand-text">{{ pago.nombre }}</span>
+			
+			<section class="pt-4 border-t border-brand-bg">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+					@for (medio of adminStore.mediosPago(); track medio.id) {
+						<div [class]="isMedioSeleccionado(medio.id) ? 'border-brand-accent/30 bg-brand-accent/2' : 'border-gray-100 bg-white'"
+							class="flex items-center justify-between p-3 rounded-2xl border transition-all duration-300">
+							
+							<div class="flex items-center gap-3">
+								<div class="size-12 bg-gray-100 text-gray-400 rounded-xl flex items-center justify-center transition-colors">
+									<div [innerHTML]="medio.icono | safeHtml" 
+										class="size-12 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
+									</div>
+								</div>
+								<div>
+									<p class="text-sm font-black text-brand-text">{{ medio.nombre }}</p>
+									<p class="text-[10px] font-bold uppercase tracking-tight"
+										[class]="isMedioSeleccionado(medio.id) ? 'text-green-500' : 'text-red-500'">
+										{{ isMedioSeleccionado(medio.id) ? 'Habilitado' : 'Deshabilitado' }}
+									</p>
+								</div>
+							</div>
+
+							<label class="relative inline-flex items-center cursor-pointer">
+								<input type="checkbox" 
+									[checked]="isMedioSeleccionado(medio.id)"
+									(change)="toggleMedioPago(medio.id)"
+									class="sr-only peer">
+								<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
+							</label>
 						</div>
 					}
-					<button class="px-4 py-2 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 text-xs font-bold hover:border-brand-accent hover:text-brand-accent transition-all">
-						+ Gestionar Pagos
-					</button>
 				</div>
+				
+				@if (adminStore.mediosPago().length === 0) {
+					<p class="text-xs text-center text-gray-400 mt-4 italic">No hay medios de pago disponibles.</p>
+				}
 			</section>
 		</app-config-section>
 	</div>
