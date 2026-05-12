@@ -9,6 +9,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { CategoriaService } from 'src/app/core/services-backend/categorias.ServiceBackend';
 import { CategoryDeleteService } from 'src/app/core/services/category-delete.service';
 import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
+import { CategoryPreviewService } from 'src/app/core/services/category-preview.service';
 
 @Component({
   selector: 'app-mis-categorias',
@@ -22,8 +23,10 @@ export class MisCategorias {
   private toastService = inject(ToastService);
   private categoriaBackend = inject(CategoriaService);
   private categoryDeleteService = inject(CategoryDeleteService);
-  public confirmService = inject(ConfirmService);
   private location = inject(Location);
+  private confirmService = inject(ConfirmService);
+  
+  public categoryPreview = inject(CategoryPreviewService);
 
   filtro = signal('');
   activeMenuId = signal<number | null>(null);

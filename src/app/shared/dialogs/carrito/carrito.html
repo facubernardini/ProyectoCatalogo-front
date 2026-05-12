@@ -76,35 +76,38 @@
             <div class="mt-8">
                 <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Cómo lo recibís?</h3>
                 @if (catalogo()?.ofrece_envio) {
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <button (click)="seleccionarMetodo('retiro', seccionCupon)"
-                        [class.border-brand-accent]="cartService.deliveryMethod() === 'retiro'"
-                        [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'retiro'"
-                        class="p-4 border-2 border-gray-100 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
-                        <app-icon name="store" [class.text-brand-accent]="cartService.deliveryMethod() === 'retiro'"
-                            classes="size-7 fill-current text-gray-400" />
-                        <div class="text-center">
-                            <span class="block font-bold text-sm text-brand-text">Retiro en local</span>
-                            <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
-                        </div>
-                    </button>
-                    <button (click)="seleccionarMetodo('envio', seccionCupon)"
-                        [class.border-brand-accent]="cartService.deliveryMethod() === 'envio'"
-                        [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'envio'"
-                        class="p-4 border-2 border-gray-100 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
-                        <app-icon name="delivery" [class.text-brand-accent]="cartService.deliveryMethod() === 'envio'"
-                            classes="size-7 fill-current text-gray-400" />
-                        <div class="text-center">
-                            <span class="block font-bold text-sm text-brand-text">Envío a domicilio</span>
-                            @if (cartService.esEnvioGratis()) {
-                            <span class="text-[10px] text-green-500 uppercase font-bold">¡Gratis!</span>
-                            } @else {
-                            <span class="text-[10px] text-brand-accent uppercase font-bold">+${{ catalogo()?.costo_envio
-                                }}</span>
-                            }
-                        </div>
-                    </button>
-                </div>
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <button (click)="seleccionarMetodo('retiro', seccionCupon)"
+                            [class.border-brand-accent]="cartService.deliveryMethod() === 'retiro'"
+                            [class.border-gray-100]="cartService.deliveryMethod() !== 'retiro'"
+                            [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'retiro'"
+                            class="p-4 border-2 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
+                            <app-icon name="store" [class.text-brand-accent]="cartService.deliveryMethod() === 'retiro'"
+                                classes="size-7 fill-current text-gray-400" />
+                            <div class="text-center">
+                                <span class="block font-bold text-sm text-brand-text">Retiro en local</span>
+                                <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
+                            </div>
+                        </button>
+                        <button (click)="seleccionarMetodo('envio', seccionCupon)"
+                            [class.border-brand-accent]="cartService.deliveryMethod() === 'envio'"
+                            [class.border-gray-100]="cartService.deliveryMethod() !== 'envio'"
+                            [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'envio'"
+                            class="p-4 border-2 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
+                            <app-icon name="delivery" [class.text-brand-accent]="cartService.deliveryMethod() === 'envio'"
+                                classes="size-7 fill-current text-gray-400" />
+                            <div class="text-center">
+                                <span class="block font-bold text-sm text-brand-text">Envío a domicilio</span>
+                                @if (cartService.esEnvioGratis()) {
+                                    <span class="text-[10px] text-green-500 uppercase font-bold">¡Gratis!</span>
+                                } @else {
+                                <span class="text-[10px] text-brand-accent uppercase font-bold">
+                                    +${{ catalogo()?.costo_envio}}
+                                </span>
+                                }
+                            </div>
+                        </button>
+                    </div>
                 } @else {
                 <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center gap-3">
                     <app-icon name="info" classes="size-5 text-blue-500 fill-current" />
@@ -157,18 +160,21 @@
             <div class="mt-8">
                 <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Elegí como pagar</h3>
                 <div class="grid grid-cols-3 gap-3">
-                    @for (mp of catalogo()?.medios_pago; track mp.id) {
-                    <button (click)="seleccionarPago(mp, seccionDatos)"
-                        [class.border-brand-accent]="cartService.selectedPaymentMethod()?.id === mp.id"
-                        [class.bg-brand-accent/5]="cartService.selectedPaymentMethod()?.id === mp.id"
-                        class="flex flex-col items-center gap-2 p-3 border-2 border-gray-100 rounded-2xl transition-all active:scale-95">
-                        <img [src]="mp.icono" class="size-10 rounded-xl object-cover">
-                        <span class="text-[9px] font-black uppercase text-center leading-tight"
-                            [class.text-brand-accent]="cartService.selectedPaymentMethod()?.id === mp.id"
-                            [class.text-gray-500]="cartService.selectedPaymentMethod()?.id !== mp.id">
-                            {{ mp.nombre }}
-                        </span>
-                    </button>
+                    @for (pago of catalogo()?.medios_pago; track pago.id) {
+                        <button (click)="seleccionarPago(pago, seccionDatos)"
+                            [class.border-brand-accent]="cartService.selectedPaymentMethod()?.id === pago.id"
+                            [class.border-gray-100]="cartService.selectedPaymentMethod()?.id !== pago.id"
+                            [class.bg-brand-accent/10]="cartService.selectedPaymentMethod()?.id === pago.id"
+                            class="flex flex-col items-center gap-2 p-3 border-2 rounded-2xl transition-all active:scale-95">
+                            <div [innerHTML]="pago.icono | safeHtml" 
+                                class="size-15 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
+                            </div>
+                            <span class="text-[9px] font-black uppercase text-center leading-tight"
+                                [class.text-brand-accent]="cartService.selectedPaymentMethod()?.id === pago.id"
+                                [class.text-gray-500]="cartService.selectedPaymentMethod()?.id !== pago.id">
+                                {{ pago.nombre }}
+                            </span>
+                        </button>
                     }
                 </div>
             </div>

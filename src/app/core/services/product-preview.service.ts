@@ -25,6 +25,7 @@ export class ProductPreviewService {
 
   close() {
     this.isOpen.set(false);
+    this.loading.set(false);
     this.selectedProduct.set(null);
     document.body.style.overflow = 'auto';
   }
@@ -34,7 +35,6 @@ export class ProductPreviewService {
 
     this.loading.set(true);
 
-    // Extraemos categorias y tags (y cualquier otra relación compleja) para no enviarlas al update
     const { categorias, tags, ...datosRestantes } = producto;
 
     const productoFormateado = {
