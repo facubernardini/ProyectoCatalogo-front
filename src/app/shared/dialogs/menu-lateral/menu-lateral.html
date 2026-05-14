@@ -21,17 +21,17 @@
             </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
-            <button class="w-full flex items-center gap-3 p-3 rounded-2xl font-bold transition-all">
+        <div class="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar flex flex-col">
+            <button class="w-full flex items-center gap-3 p-3 rounded-2xl font-bold transition-all shrink-0">
                 <app-icon name="category" classes="size-5 fill-current" />
                 Categorías
             </button>
 
-            <div class="h-px bg-gray-50 mx-4 my-2"></div>
+            <div class="h-px bg-gray-50 mx-4 my-2 shrink-0"></div>
 
             @for (cat of categoriasOrdenadas(); track cat.id) {
                 <button (click)="seleccionarYFechar(cat.nombre)"
-                        class="w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden"
+                        class="w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden shrink-0"
                         [class]="selected() === cat.nombre ? 'bg-brand-accent/10 text-brand-accent shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-brand-text'">
                     
                     <div class="flex items-center gap-3 min-w-0">
@@ -48,6 +48,26 @@
 
                     <app-icon name="chevron-right" classes="size-4 opacity-30" />
                 </button>
+            }
+
+            @if (adminStore.catalogo()?.direccion && adminStore.catalogo()?.ciudad) {
+                <div class="mt-auto pt-6 pb-2 shrink-0">
+                    <button (click)="menuService.close(); mapDialogService.open()"
+                            class="w-full flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 hover:border-brand-accent/30 hover:bg-brand-accent/5 transition-all group">
+                        
+                        <div class="flex items-center gap-3 overflow-hidden">
+                            <div class="size-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-accent shrink-0 group-hover:scale-110 transition-transform">
+                                <app-icon name="location" classes="size-4 fill-current" />
+                            </div>
+                            <div class="text-left min-w-0">
+                                <p class="text-sm font-bold text-brand-text truncate">Ubicación del local</p>
+                                <p class="text-[10px] font-semibold text-gray-500 truncate">{{ adminStore.catalogo()?.direccion }}, {{ adminStore.catalogo()?.ciudad }}</p>
+                            </div>
+                        </div>
+                        
+                        <app-icon name="chevron-right" classes="size-4 text-gray-300 group-hover:text-brand-accent transition-colors" />
+                    </button>
+                </div>
             }
         </div>
 

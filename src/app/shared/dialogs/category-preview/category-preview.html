@@ -13,10 +13,17 @@
                 
                 <div class="mb-6 shrink-0">
                     <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Nombre de la Categoría</label>
-                    <input type="text" 
-                           [(ngModel)]="cat.nombre" 
-                           placeholder="Ej: Promociones"
-                           class="w-full mt-1 bg-gray-50 border-none rounded-2xl p-4 text-xl font-black text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all">
+                    
+                    <div class="relative mt-1 w-full">
+                        <input type="text" 
+                            [(ngModel)]="cat.nombre" 
+                            placeholder="Ej: Promociones"
+                            class="w-full bg-gray-50 border-none rounded-2xl py-4 pl-4 pr-12 text-xl font-black text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all">
+                        
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                            <app-icon name="edit" classes="size-5 fill-current" />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-between mb-3 shrink-0">

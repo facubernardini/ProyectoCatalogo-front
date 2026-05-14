@@ -14,6 +14,8 @@ import { MenuInfo } from "@shared/dialogs/menu-info/menu-info";
 import { ProductSelector } from "@shared/dialogs/product-selector/product-selector";
 import { MenuLateral } from "@shared/dialogs/menu-lateral/menu-lateral";
 import { CategoryProductsView } from "@shared/dialogs/category-products-view/category-products-view";
+import { BannerInfo } from "./banner-info/banner-info";
+import { MapDialog } from "@shared/dialogs/map-dialog/map-dialog";
 
 @Component({
   selector: 'app-catalogo',
@@ -23,7 +25,9 @@ import { CategoryProductsView } from "@shared/dialogs/category-products-view/cat
     SearchNav, SearchProducts, Carrito, MenuInfo,
     ProductSelector, CarouselOfertas, Toast,
     MenuLateral,
-    CategoryProductsView
+    CategoryProductsView,
+    BannerInfo,
+    MapDialog
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',

@@ -9,21 +9,33 @@
     
         <div class="mb-6 h-1.5 w-12 rounded-full bg-zinc-200"></div>
 
-        <div class="mb-6 flex flex-col items-center text-center">
-            <div class="mb-3 size-24 overflow-hidden rounded-3xl border-4 border-zinc-50 shadow-md">
-                <img [src]="catalogo()?.logo_tienda || 'assets/img/placeholder-logo.png'" 
+        <div class="mb-6 flex items-center gap-5">
+            <div class="shrink-0 size-24 overflow-hidden rounded-3xl border-4 border-zinc-50 shadow-md">
+                <img [src]="catalogo()?.logo_tienda" 
                     class="h-full w-full object-cover">
             </div>
-            <h2 class="text-2xl font-black text-brand-accent">{{ catalogo()?.nombre_tienda }}</h2>
-            
-            @if (catalogo()?.ciudad || catalogo()?.direccion) {
-                <div class="mt-1 flex items-center gap-1 text-zinc-500">
-                    <app-icon name="location" classes="size-3.5 fill-current" />
-                    <p class="text-sm font-bold">
-                        {{ catalogo()?.direccion }}{{ catalogo()?.direccion && catalogo()?.ciudad ? ',' : '' }} {{ catalogo()?.ciudad }}
-                    </p>
-                </div>
-            }
+
+            <div class="flex flex-col min-w-0">
+                <h2 class="text-2xl font-black text-brand-accent leading-tight line-clamp-2">
+                    {{ catalogo()?.nombre_tienda }}
+                </h2>
+                
+                @if (catalogo()?.ciudad || catalogo()?.direccion) {
+                    <div class="mt-1.5 flex flex-col items-start">
+                        
+                        <p class="text-sm font-bold text-zinc-500 leading-tight">
+                            {{ catalogo()?.direccion }}{{ catalogo()?.direccion && catalogo()?.ciudad ? ',' : '' }} {{ catalogo()?.ciudad }}
+                        </p>
+                        
+                        <button (click)="infoService.close(); mapDialogService.open()" 
+                                class="mt-2 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-brand-accent bg-brand-accent/10 hover:bg-brand-accent/20 px-3 py-1.5 rounded-xl transition-all active:scale-95">
+                            <app-icon name="location" classes="size-3.5 fill-current" />
+                            Ver mapa
+                        </button>
+                        
+                    </div>
+                }
+            </div>
         </div>
 
         <div class="w-full space-y-3 overflow-y-auto no-scrollbar">
@@ -31,7 +43,7 @@
             @if (catalogo()?.wpp_numero) {
                 <a [href]="'https://wa.me/' + catalogo()?.wpp_numero" 
                     target="_blank"
-                    class="flex w-full items-center gap-4 rounded-2xl bg-green-50 p-4 text-green-700 transition-all active:scale-95 shadow-sm border border-green-100/50">
+                    class="flex w-full items-center gap-4 rounded-2xl bg-green-50 p-4 text-green-700 transition-active active:scale-95 shadow-sm">
                     <app-icon name="whatsapp" classes="size-6 fill-current" />
                     <div class="flex flex-1 flex-col">
                         <span class="text-[10px] font-black uppercase tracking-widest opacity-60">WhatsApp</span>
@@ -43,7 +55,7 @@
 
             @if (catalogo()?.instagram_usuario) {
                 <a [href]="'https://instagram.com/' + catalogo()?.instagram_usuario" target="_blank"
-                class="flex w-full items-center gap-4 rounded-2xl bg-pink-50 p-4 text-pink-700 transition-active active:scale-95">
+                class="flex w-full items-center gap-4 rounded-2xl bg-pink-50 p-4 text-pink-700 transition-active active:scale-95 shadow-sm">
                     <app-icon name="instagram" classes="size-6 fill-current" />
                     <div class="flex flex-1 flex-col">
                         <span class="text-xs font-bold uppercase tracking-wider opacity-60">Instagram</span>
@@ -54,7 +66,7 @@
             }
 
             @if (catalogo()?.horarios?.length) {
-                <div class="w-full rounded-3xl border border-zinc-100 bg-zinc-50/50 p-5">
+                <div class="w-full rounded-3xl border border-zinc-200 bg-zinc-50 p-5">
                     <div class="mb-3 flex items-center gap-2 text-zinc-400">
                         <app-icon name="time" classes="size-4 fill-current" />
                         <h3 class="text-[10px] font-black uppercase tracking-widest">Horarios de atención</h3>
@@ -83,13 +95,13 @@
                 </div>
             }
 
-            <div class="grid grid-cols-2 gap-3 pt-2">
-                <div class="rounded-2xl border border-zinc-100 bg-zinc-50/50 p-4 text-center flex flex-col justify-center">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="rounded-2xl border border-zinc-100 bg-zinc-50 p-3 text-center flex flex-col justify-center">
                     <p class="text-[10px] font-bold uppercase text-zinc-400 tracking-tighter">Mínimo compra</p>
                     <p class="font-black text-base text-brand-accent">${{ catalogo()?.minimo_compra }}</p>
                 </div>
 
-                <div class="rounded-2xl border border-zinc-100 bg-zinc-50/50 p-4 text-center flex flex-col items-center justify-center">
+                <div class="rounded-2xl border border-zinc-100 bg-zinc-50 p-3 text-center flex flex-col items-center justify-center">
                     <p class="text-[10px] font-bold uppercase text-zinc-400 tracking-tighter">Costo envío</p>
                     
                     @if (catalogo()?.ofrece_envio) {
@@ -109,7 +121,7 @@
         </div>
 
         <button (click)="infoService.close()" 
-                class="mt-2 w-full rounded-2xl pt-2 font-black text-zinc-400 hover:bg-zinc-50 transition-colors">
+                class="my-3 w-full rounded-2xl pt-2 font-black text-zinc-400 hover:bg-zinc-50 transition-colors">
             Cerrar información
         </button>
     </div>

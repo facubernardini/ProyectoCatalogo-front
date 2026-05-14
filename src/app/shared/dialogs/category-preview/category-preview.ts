@@ -6,10 +6,11 @@ import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 import { Producto } from 'src/app/core/models/producto.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CategoryPreviewService } from 'src/app/core/services/category-preview.service';
+import { Icon } from "@shared/components/icon";
 
 @Component({
   selector: 'app-category-preview',
-  imports: [CommonModule, FormsModule, SwipeDownDirective],
+  imports: [CommonModule, FormsModule, SwipeDownDirective, Icon],
   templateUrl: './category-preview.html',
   styleUrl: './category-preview.css',
 })

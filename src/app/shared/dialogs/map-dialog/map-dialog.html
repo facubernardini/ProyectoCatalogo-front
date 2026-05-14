@@ -1,0 +1,51 @@
+<div class="fixed inset-0 z-100 flex items-center justify-center p-4 transition-all duration-150 ease-in-out"
+    [class.opacity-0]="!mapDialogService.isOpen()"
+    [class.invisible]="!mapDialogService.isOpen()"
+    [class.opacity-100]="mapDialogService.isOpen()"
+    [class.visible]="mapDialogService.isOpen()">
+    
+    <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" (click)="mapDialogService.close()"></div>
+
+    <div class="relative w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/20 transition-all duration-300 ease-out transform"
+        [class.translate-y-4]="!mapDialogService.isOpen()"
+        [class.scale-95]="!mapDialogService.isOpen()"
+        [class.translate-y-0]="mapDialogService.isOpen()"
+        [class.scale-100]="mapDialogService.isOpen()">
+            
+        <button (click)="mapDialogService.close()" 
+                class="absolute top-4 right-4 z-10 size-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all text-gray-500 hover:text-brand-text border border-gray-100">
+            <app-icon name="close" classes="size-5 fill-current" />
+        </button>
+
+        <div class="w-full aspect-square sm:aspect-video bg-gray-100 relative">
+            @if (mapUrl()) {
+                <iframe
+                    [src]="mapUrl()"
+                    class="w-full h-full border-0"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            } @else {
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+                    <app-icon name="location" classes="size-8 fill-current mb-2 opacity-50" />
+                    <p class="text-sm font-bold">Ubicación no disponible</p>
+                </div>
+            }
+        </div>
+
+        <div class="p-6 bg-white flex items-center gap-4">
+            <div class="size-12 bg-brand-accent/10 rounded-2xl flex items-center justify-center shrink-0">
+                <app-icon name="location" classes="size-6 fill-brand-accent" />
+            </div>
+
+            <div class="flex flex-col">
+                <h3 class="font-black text-brand-text text-lg leading-tight">Ubicación del local</h3>
+                <p class="text-gray-500 font-bold text-sm mt-0.5">
+                    {{ adminStore.catalogo()?.direccion }}, {{ adminStore.catalogo()?.ciudad }}
+                </p>
+            </div>
+        </div>
+        
+    </div>
+</div>

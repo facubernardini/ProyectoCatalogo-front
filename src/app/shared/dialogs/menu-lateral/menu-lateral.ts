@@ -4,6 +4,7 @@ import { MenuLateralService } from 'src/app/core/services/menu-lateral.service';
 import { Icon } from "@shared/components/icon";
 import { InfoService } from 'src/app/core/services/info.service';
 import { CategoryViewService } from 'src/app/core/services/category-view.service';
+import { MapDialogService } from 'src/app/core/services/map.service';
 
 @Component({
   selector: 'app-menu-lateral',
@@ -15,6 +16,7 @@ export class MenuLateral {
   public adminStore = inject(AdminStoreService);
   public menuService = inject(MenuLateralService);
   public infoService = inject(InfoService);
+  public mapDialogService = inject(MapDialogService);
   private categoryViewService = inject(CategoryViewService);
 
   categorias = this.adminStore.categorias;

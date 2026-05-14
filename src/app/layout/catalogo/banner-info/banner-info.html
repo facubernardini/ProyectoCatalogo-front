@@ -1,0 +1,26 @@
+@if (anunciosBanner().length > 0) {
+    <div class="w-full bg-brand-accent text-white overflow-hidden py-2 text-[10px] font-black uppercase tracking-widest border-b border-brand-accent/20">
+        
+        <div class="animate-marquee flex w-max">
+            
+            <div class="flex gap-8 px-4">
+                @for (msg of anunciosBanner(); track $index) {
+                    <span class="flex items-center gap-1.5 whitespace-nowrap">
+                        <app-icon [name]="msg.icono" classes="size-3 fill-current"></app-icon>
+                        {{ msg.texto }}
+                    </span>
+                }
+            </div>
+
+            <div class="flex gap-8 px-4" aria-hidden="true">
+                @for (msg of anunciosBanner(); track $index) {
+                    <span class="flex items-center gap-1.5 whitespace-nowrap">
+                        <app-icon [name]="msg.icono" classes="size-3 fill-current"></app-icon>
+                        {{ msg.texto }}
+                    </span>
+                }
+            </div>
+            
+        </div>
+    </div>
+}

@@ -26,6 +26,8 @@ export interface Catalogo {
   ofrece_envio: boolean;
   costo_envio: number | null;
   envio_gratis_desde: number | null;
+  
+  descuento_en_efectivo: number;
 
   horarios: HorarioDia[];
   
