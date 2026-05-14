@@ -1,7 +1,7 @@
 import { inject, Injectable, signal, computed } from "@angular/core";
 import { ProductoService } from "../services-backend/productos.ServiceBackend";
 import { CategoriaService } from "../services-backend/categorias.ServiceBackend";
-import { Producto } from "../models/producto.model";
+import { Producto, Tag } from "../models/producto.model";
 import { forkJoin } from "rxjs";
 import { CategoriaVendedor } from "../models/categoriaVendedor.model";
 import { Catalogo, MedioPago } from "../models/catalogo.model";
@@ -10,6 +10,7 @@ import { AuthService } from "../services-backend/auth.ServiceBackend";
 import { Cupon } from "../models/cupon.model";
 import { CuponServiceBackend } from "../services-backend/cupones.ServiceBackend";
 import { MediosPagoServiceBackend } from "../services-backend/medios-pago.ServiceBackend";
+import { TagService } from "../services-backend/tags.ServiceBackend";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
@@ -19,12 +20,14 @@ export class AdminStoreService {
   private catalogoService = inject(CatalogoService);
   private cuponService = inject(CuponServiceBackend);
   private mediosPagoService = inject(MediosPagoServiceBackend);
+  private tagsService = inject(TagService);
 
   catalogo = signal<Catalogo | null>(null);
   categorias = signal<CategoriaVendedor[]>([]);
   productos = signal<Producto[]>([]);
   cupones = signal<Cupon[]>([]);
   mediosPago = signal<MedioPago[]>([]);
+  tags = signal<Tag[]>([]);
   
   cargado = signal(false);
 
@@ -44,13 +47,14 @@ export class AdminStoreService {
     
     forkJoin({
       catalogo: this.catalogoService.getCatalogoBySlug(slug),
-      prods: this.productoService.getProductosBySlug(slug),
-      cats: this.categoriaService.getCategoriasBySlug(slug) 
+      productos: this.productoService.getProductosBySlug(slug),
+      categorias: this.categoriaService.getCategoriasBySlug(slug) 
     }).subscribe({
-      next: ({ catalogo, prods, cats }) => {
+      next: ({ catalogo, productos, categorias }) => {
         this.catalogo.set(catalogo);
-        this.productos.set(prods);
-        this.categorias.set(cats);
+        this.productos.set(productos);
+        this.categorias.set(categorias);
+        
         this.cargado.set(true);
       },
       error: (err) => console.error('Error cargando catálogo público', err)
@@ -62,17 +66,20 @@ export class AdminStoreService {
     
     forkJoin({
       catalogo: this.catalogoService.getCatalogoById(catalogoId),
-      prods: this.productoService.getProductosByCatalogo(catalogoId),
-      cats: this.categoriaService.getCategoriasByCatalogo(catalogoId),
-      cupons: this.cuponService.getCuponesByCatalogo(catalogoId),
+      productos: this.productoService.getProductosByCatalogo(catalogoId),
+      categorias: this.categoriaService.getCategoriasByCatalogo(catalogoId),
+      cupones: this.cuponService.getCuponesByCatalogo(catalogoId),
       mediosPago: this.mediosPagoService.getMediosDePago(),
+      tags: this.tagsService.getTagsByCatalogo(catalogoId),
     }).subscribe({
-      next: ({ catalogo, prods, cats, cupons, mediosPago }) => {
+      next: ({ catalogo, productos, categorias, cupones, mediosPago, tags }) => {
         this.catalogo.set(catalogo);
-        this.productos.set(prods);
-        this.categorias.set(cats);
-        this.cupones.set(cupons);
+        this.productos.set(productos);
+        this.categorias.set(categorias);
+        this.cupones.set(cupones);
         this.mediosPago.set(mediosPago);
+        this.tags.set(tags);
+
         this.cargado.set(true);
       },
       error: (err) => console.error('Error cargando el panel', err)

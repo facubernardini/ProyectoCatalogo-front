@@ -13,7 +13,6 @@ export class ProductFormService {
   private toastService = inject(ToastService);
   public confirmService = inject(ConfirmService);
 
-  // Estados de la UI
   isOpen = signal(false);
   loading = signal(false);
   

@@ -7,6 +7,7 @@ export interface CategoriaSimplificada {
 
 export interface Tag {
   id: number;
+  rubro_id: number;
   nombre: string;
 }
 

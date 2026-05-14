@@ -26,6 +26,7 @@ export class ProductForm {
     imagen: '',
     destacado: false,
     categorias_ids: [] as number[],
+    tags_ids: [] as number[], // <-- Agregado para los tags
     presentaciones: [
       { unidad_venta: '', precio: null, precio_descuento: null, activo: true }
     ]
@@ -41,6 +42,8 @@ export class ProductForm {
         if (editing) {
           const p = JSON.parse(JSON.stringify(editing));
           p.categorias_ids = editing.categorias?.map((c: any) => c.id) || [];
+          // Mapeamos los IDs de los tags al abrir el modo edición
+          p.tags_ids = editing.tags?.map((t: any) => t.id) || []; 
           this.producto = p;
         } else {
           this.resetForm();
@@ -50,6 +53,8 @@ export class ProductForm {
       }
     });
   }
+
+  // --- LÓGICA DE CATEGORÍAS ---
 
   toggleCategoria(id: number) {
     if (!this.producto.categorias_ids) {
@@ -68,6 +73,27 @@ export class ProductForm {
     return this.producto.categorias_ids?.includes(id) || false;
   }
 
+  // --- LÓGICA DE TAGS (NUEVA) ---
+
+  toggleTag(id: number) {
+    if (!this.producto.tags_ids) {
+      this.producto.tags_ids = [];
+    }
+    
+    const index = this.producto.tags_ids.indexOf(id);
+    if (index > -1) {
+      this.producto.tags_ids.splice(index, 1);
+    } else {
+      this.producto.tags_ids.push(id);
+    }
+  }
+
+  isTagSelected(id: number): boolean {
+    return this.producto.tags_ids?.includes(id) || false;
+  }
+
+  // --- RESTO DEL COMPONENTE ---
+
   resetForm() {
     this.producto = {
       nombre: '',
@@ -75,6 +101,7 @@ export class ProductForm {
       imagen: '',
       destacado: false,
       categorias_ids: [],
+      tags_ids: [], // Limpiamos los tags al resetear
       presentaciones: [{ unidad_venta: '', precio: null, precio_descuento: null, activo: true }]
     };
   }
@@ -113,7 +140,6 @@ export class ProductForm {
       });
   
       if (confirmacion) {
-  
         if (this.producto.presentaciones.length > 1) {
           this.producto.presentaciones.splice(index, 1);
           this.productFormService.save(this.producto);
@@ -135,6 +161,8 @@ export class ProductForm {
     // 2. Validar que tenga al menos una categoría
     const sinCategorias = !this.producto.categorias_ids || this.producto.categorias_ids.length === 0;
     if (sinCategorias) return true;
+
+    // Nota: No validamos tags_ids porque generalmente los tags son opcionales.
 
     // 3. Validar presentaciones
     return this.producto.presentaciones.some(pres => {

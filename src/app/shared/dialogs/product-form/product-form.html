@@ -72,18 +72,20 @@
 
             <section class="space-y-4">
                 <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">General</p>
+                
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-gray-600 ml-1">Nombre</label>
                     <input type="text" [(ngModel)]="producto.nombre" 
-                           [class.border-red-300]="!producto.nombre || producto.nombre.trim().length === 0"
-                           class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300" 
-                           placeholder="Ej: Pizza Napolitana">
+                        [class.border-red-300]="!producto.nombre || producto.nombre.trim().length === 0"
+                        class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300" 
+                        placeholder="Ej: Pizza Napolitana">
                 </div>
+                
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-gray-600 ml-1">Descripción</label>
                     <textarea [(ngModel)]="producto.descripcion" rows="3" 
-                              class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300 resize-none" 
-                              placeholder="Breve detalle del producto..."></textarea>
+                            class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300 resize-none" 
+                            placeholder="Breve detalle del producto..."></textarea>
                 </div>
 
                 <div class="pt-2">
@@ -113,6 +115,37 @@
                             
                             @if (adminStore.categorias().length === 0) {
                                 <p class="text-xs text-gray-400 italic">No hay categorías creadas todavía.</p>
+                            }
+                        </div>
+                    </section>
+                </div>
+
+                <div class="pt-2 border-t border-gray-100 mt-2"> <section class="space-y-3 mt-4">
+                        <div class="flex items-center justify-between">
+                            <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Etiquetas (Tags)</p>
+                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
+                                {{ producto.tags_ids.length || 0 }} seleccionada(s)
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            @for (tag of adminStore.tags(); track tag.id) {
+                                <button type="button"
+                                        (click)="toggleTag(tag.id)"
+                                        [class]="isTagSelected(tag.id) 
+                                            ? 'bg-brand-accent text-white border-brand-accent shadow-md shadow-brand-accent/20 scale-105' 
+                                            : 'bg-gray-50 text-gray-500 border-gray-100 hover:border-gray-200'"
+                                        class="px-4 py-2 rounded-xl border text-xs font-bold transition-all duration-200 active:scale-95 flex items-center gap-2">
+                                    
+                                    @if (isTagSelected(tag.id)) {
+                                        <app-icon name="check" classes="size-3 fill-current" />
+                                    }
+                                    {{ tag.nombre }}
+                                </button>
+                            }
+                            
+                            @if (adminStore.tags().length === 0) {
+                                <p class="text-xs text-gray-400 italic">No hay etiquetas disponibles para tu rubro.</p>
                             }
                         </div>
                     </section>
