@@ -11,9 +11,12 @@ import { MisCategorias } from '@layout/panel-vendedor/mis-categorias/mis-categor
 import { MiTienda } from '@layout/panel-vendedor/mi-tienda/mi-tienda';
 import { Perfil } from '@layout/panel-vendedor/perfil/perfil';
 import { MisCupones } from '@layout/panel-vendedor/mis-cupones/mis-cupones';
+import { Home } from '@layout/home/home';
+import { Register } from '@layout/home/register/register';
 
 export const routes: Routes = [
-	{ path: '', component: CatalogoPublico },
+	{ path: '', component: Home },
+    { path: 'register', component: Register },
 	{ path: 'login', component: Login },
 	{ 
         path: 'panel-vendedor', 

@@ -7,3 +7,9 @@ export interface Vendedor {
   admin: boolean;
   catalogo?: Catalogo | null;
 }
+
+export interface RegistroVendedorRequest {
+  nombre_apellido: string;
+  correo: string;
+  password: string;
+}

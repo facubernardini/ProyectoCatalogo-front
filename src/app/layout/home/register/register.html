@@ -1,0 +1,127 @@
+<div class="max-w-2xl mx-auto p-6 sm:p-8 bg-white rounded-4xl shadow-sm border border-gray-100 my-10 overflow-hidden">
+    
+    <div class="mb-6 text-center">
+        <h1 class="text-3xl font-black text-brand-accent mb-2">Registrá tu Tienda</h1>
+        <p class="text-sm font-bold text-gray-400">Completá tus datos para empezar a vender</p>
+    </div>
+
+    <div class="flex items-center justify-center gap-2 mb-8">
+        <div class="h-2 w-16 rounded-full transition-all duration-300" 
+             [class]="pasoActual() === 1 ? 'bg-brand-accent' : 'bg-gray-200'"></div>
+        <div class="h-2 w-16 rounded-full transition-all duration-300"
+             [class]="pasoActual() === 2 ? 'bg-brand-accent' : 'bg-gray-200'"></div>
+    </div>
+
+    <form class="space-y-6" (ngSubmit)="registrarTienda()">
+        
+        @if (pasoActual() === 1) {
+            <section class="animate-in fade-in slide-in-from-left-4 duration-500">
+                <div class="flex items-center gap-3 mb-5 border-b border-gray-50 pb-3">
+                    <div class="size-8 bg-brand-accent/10 rounded-xl flex items-center justify-center shrink-0">
+                        <app-icon name="profile" classes="size-4 fill-brand-accent" />
+                    </div>
+                    <h2 class="text-lg font-black text-brand-text">Datos Personales</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Nombre</label>
+                        <input type="text" name="nombre" [(ngModel)]="nombre"
+                               class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Apellido</label>
+                        <input type="text" name="apellido" [(ngModel)]="apellido"
+                               class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text">
+                    </div>
+
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Correo Electrónico</label>
+                        <input type="email" name="correo" [(ngModel)]="vendedorReq.correo" placeholder="tu@email.com" 
+                               class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Contraseña</label>
+                        <input type="password" name="password" [(ngModel)]="vendedorReq.password" placeholder="Mínimo 8 caracteres" 
+                               class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Repetir Contraseña</label>
+                        <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" 
+                               class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text">
+                    </div>
+                </div>
+
+                <div class="pt-4 mt-8 border-t border-gray-50">
+                    <button type="button" (click)="avanzarPaso()"
+                            class="w-full py-4 bg-brand-accent text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-brand-accent/90 active:scale-[0.98] transition-all shadow-md shadow-brand-accent/20">
+                        Siguiente Paso
+                    </button>
+                </div>
+            </section>
+        }
+
+        @if (pasoActual() === 2) {
+            <section class="animate-in fade-in slide-in-from-right-4 duration-500">
+                <div class="flex items-center gap-3 mb-5 border-b border-gray-50 pb-3">
+                    <div class="size-8 bg-brand-accent/10 rounded-xl flex items-center justify-center shrink-0">
+                        <app-icon name="store" classes="size-4 fill-brand-accent" />
+                    </div>
+                    <h2 class="text-lg font-black text-brand-text">Datos de la Tienda</h2>
+                </div>
+
+                <div class="grid grid-cols-1 gap-5">
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Nombre de tu Negocio</label>
+                        <input type="text" name="nombre_tienda" [(ngModel)]="catalogo.nombre_tienda" placeholder="Ej: Dietética Natural" 
+                               class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Rubro Comercial</label>
+                        
+                        <div class="flex gap-2 overflow-x-auto no-scrollbar snap-x py-1">
+                            @for (rubro of rubros(); track rubro.id) {
+                                <button type="button" 
+                                        (click)="seleccionarRubro(rubro.id)"
+                                        className="snap-center shrink-0 px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all border active:scale-95"
+                                        [class]="catalogo.rubro_id === rubro.id 
+                                            ? 'bg-brand-accent text-white border-brand-accent shadow-sm shadow-brand-accent/20' 
+                                            : 'bg-gray-50 text-brand-text border-gray-100 hover:bg-gray-100'">
+                                    {{ rubro.nombre }}
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Enlace de tu Tienda (Slug)</label>
+                        <div class="relative flex items-center">
+                            <span class="absolute left-3 text-sm font-bold text-gray-400 pointer-events-none">miapp.com/</span>
+                            <input type="text" name="slug" [(ngModel)]="catalogo.slug" placeholder="mi-tienda" 
+                                   class="w-full p-3 pl-22 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-accent">
+                        </div>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1.5 ml-1">Este será el link público de tu catálogo.</p>
+                    </div>
+                </div>
+
+                <div class="pt-4 mt-8 border-t border-gray-50 flex gap-3">
+                    <button type="button" (click)="volverPaso()" [disabled]="loading()"
+                            class="w-1/3 py-4 bg-gray-100 text-gray-500 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-gray-200 active:scale-[0.98] transition-all disabled:opacity-50">
+                        Volver
+                    </button>
+                    <button type="submit" [disabled]="loading()"
+                            class="w-2/3 py-4 bg-brand-accent text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-brand-accent/90 active:scale-[0.98] transition-all shadow-md shadow-brand-accent/20 disabled:opacity-50">
+                        {{ loading() ? 'Creando...' : 'Crear Cuenta' }}
+                    </button>
+                </div>
+            </section>
+        }
+    </form>
+</div>
+
+<!-- Toast -->
+<app-toast/>

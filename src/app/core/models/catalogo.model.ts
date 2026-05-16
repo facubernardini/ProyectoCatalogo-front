@@ -11,10 +11,16 @@ export interface HorarioDia {
   cierre: string;   // Formato "HH:mm" (ej: "18:00")
 }
 
+export interface Rubro {
+  id: number;
+  nombre: string;
+}
+
 export interface Catalogo {
   id: number;
   nombre_tienda: string;
   slug: string;
+  rubro_id: number;
   logo_tienda: string;
   wpp_numero: string | null;
   instagram_usuario: string | null;
