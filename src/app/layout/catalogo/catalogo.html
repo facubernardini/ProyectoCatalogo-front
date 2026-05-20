@@ -1,19 +1,23 @@
-<!-- Layout -->
-<app-navbar/>
-<app-banner-info/>
-<app-search-nav/>
-<app-carousel-destacados/>
-<app-carousel-ofertas/>
-<app-lista-productos/>
+@if (adminStore.isLoading()) {
+    <app-loading-spinner/>
+} @else {
+    <!-- Layout -->
+    <app-navbar/>
+    <app-banner-info/>
+    <app-search-nav/>
+    <app-carousel-destacados/>
+    <app-carousel-ofertas/>
+    <app-lista-productos/>
 
-<!-- Dialogs emergentes -->
-<app-search-products/>
-<app-carrito/>
-<app-menu-info/>
-<app-product-selector/>
-<app-menu-lateral/>
-<app-category-products-view/>
-<app-map-dialog/>
+    <!-- Dialogs emergentes -->
+    <app-search-products/>
+    <app-carrito/>
+    <app-menu-info/>
+    <app-product-selector/>
+    <app-menu-lateral/>
+    <app-category-products-view/>
+    <app-map-dialog/>
 
-<!-- Toast -->
-<app-toast/>
+    <!-- Toast -->
+    <app-toast/>
+}

@@ -16,6 +16,7 @@ import { MenuLateral } from "@shared/dialogs/menu-lateral/menu-lateral";
 import { CategoryProductsView } from "@shared/dialogs/category-products-view/category-products-view";
 import { BannerInfo } from "./banner-info/banner-info";
 import { MapDialog } from "@shared/dialogs/map-dialog/map-dialog";
+import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinner";
 
 @Component({
   selector: 'app-catalogo',
@@ -27,7 +28,8 @@ import { MapDialog } from "@shared/dialogs/map-dialog/map-dialog";
     MenuLateral,
     CategoryProductsView,
     BannerInfo,
-    MapDialog
+    MapDialog,
+    LoadingSpinner
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
@@ -40,6 +42,9 @@ export class CatalogoPublico implements OnInit {
     const slug = this.route.snapshot.paramMap.get('slug');
     if (slug) {
       this.adminStore.cargarDatosPublicos(slug);
+    }
+    else {
+      this.adminStore.isLoading.set(false);
     }
   }
 }

@@ -26,6 +26,8 @@ export class Register {
   public pasoActual = signal<1 | 2>(1);
 
   public rubros = signal<Rubro[]>([]);
+  public isRubroDropdownOpen = signal(false);
+  public rubroSeleccionadoNombre = signal<string | null>(null);
 
   public nombre = '';
   public apellido = '';
@@ -60,9 +62,14 @@ export class Register {
     });
   }
 
-  // Método para seleccionar un rubro desde la lista deslizable
-  seleccionarRubro(id: number) {
-    this.catalogo.rubro_id = id;
+  toggleRubroDropdown() {
+    this.isRubroDropdownOpen.update(val => !val);
+  }
+
+  seleccionarRubroCustom(rubro: Rubro) {
+    this.catalogo.rubro_id = rubro.id;
+    this.rubroSeleccionadoNombre.set(rubro.nombre);
+    this.isRubroDropdownOpen.set(false);
   }
 
   avanzarPaso() {
@@ -95,6 +102,21 @@ export class Register {
   volverPaso() {
     this.pasoActual.set(1);
     history.back(); 
+  }
+
+  generarSlug() {
+    if (!this.catalogo.nombre_tienda) {
+      this.catalogo.slug = '';
+      return;
+    }
+
+    this.catalogo.slug = this.catalogo.nombre_tienda
+      .toLowerCase() // 1. Convertir todo a minúsculas
+      .normalize('NFD') // 2. Separar las letras de sus acentos (ej: "é" pasa a ser "e" + "´")
+      .replace(/[\u0300-\u036f]/g, '') // 3. Eliminar los acentos sueltos
+      .replace(/[^a-z0-9\s-]/g, '') // 4. Borrar caracteres raros (dejar solo letras, números, espacios y guiones)
+      .trim() // 5. Quitar espacios en blanco al principio y al final
+      .replace(/\s+/g, '-'); // 6. Reemplazar uno o más espacios por un guion medio
   }
 
   @HostListener('window:popstate', ['$event'])

@@ -48,11 +48,8 @@ export class ProductPreview {
     if (!producto || !producto.presentaciones || producto.presentaciones.length === 0) return true;
     
     return producto.presentaciones.some(p => 
-      // Falla si no tiene nombre la presentación
       !p.unidad_venta || p.unidad_venta.toString().trim() === '' ||
-      // Falla si el precio base está vacío, no es un número o es menor/igual a 0
       p.precio === null || p.precio === undefined || p.precio.toString().trim() === '' || Number(p.precio) <= 0 ||
-      // Falla si la oferta es mayor al precio base
       (p.precio_descuento !== null && p.precio_descuento !== undefined && p.precio_descuento !== '' as any && Number(p.precio_descuento) > Number(p.precio))
     );
   }

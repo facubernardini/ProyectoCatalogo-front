@@ -1,4 +1,4 @@
-<div class="max-w-2xl mx-auto p-6 sm:p-8 bg-white rounded-4xl shadow-sm border border-gray-100 my-10 overflow-hidden">
+<div class="max-w-2xl mx-auto p-6 sm:p-8 bg-white rounded-4xl shadow-sm border border-gray-100 my-10">
     
     <div class="mb-6 text-center">
         <h1 class="text-3xl font-black text-brand-accent mb-2">Registrá tu Tienda</h1>
@@ -76,25 +76,12 @@
                 <div class="grid grid-cols-1 gap-5">
                     <div>
                         <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Nombre de tu Negocio</label>
-                        <input type="text" name="nombre_tienda" [(ngModel)]="catalogo.nombre_tienda" placeholder="Ej: Dietética Natural" 
-                               class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text">
-                    </div>
-
-                    <div>
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Rubro Comercial</label>
-                        
-                        <div class="flex gap-2 overflow-x-auto no-scrollbar snap-x py-1">
-                            @for (rubro of rubros(); track rubro.id) {
-                                <button type="button" 
-                                        (click)="seleccionarRubro(rubro.id)"
-                                        className="snap-center shrink-0 px-5 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all border active:scale-95"
-                                        [class]="catalogo.rubro_id === rubro.id 
-                                            ? 'bg-brand-accent text-white border-brand-accent shadow-sm shadow-brand-accent/20' 
-                                            : 'bg-gray-50 text-brand-text border-gray-100 hover:bg-gray-100'">
-                                    {{ rubro.nombre }}
-                                </button>
-                            }
-                        </div>
+                        <input type="text" 
+                            name="nombre_tienda" 
+                            [(ngModel)]="catalogo.nombre_tienda" 
+                            (ngModelChange)="generarSlug()" 
+                            placeholder="Ej: Dietética Saludable" 
+                            class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text">
                     </div>
 
                     <div>
@@ -105,6 +92,56 @@
                                    class="w-full p-3 pl-22 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-accent">
                         </div>
                         <p class="text-[10px] font-bold text-gray-400 mt-1.5 ml-1">Este será el link público de tu catálogo.</p>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Rubro Comercial</label>
+                        
+                        <div class="relative">
+                            
+                            <button type="button" 
+                                    (click)="toggleRubroDropdown()"
+                                    class="w-full p-3 flex justify-between items-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all hover:bg-gray-100/50"
+                                    [class.ring-2]="isRubroDropdownOpen()"
+                                    [class.ring-brand-accent]="isRubroDropdownOpen()"
+                                    [class.border-brand-accent]="isRubroDropdownOpen()">
+                                
+                                <span class="text-sm font-bold truncate" 
+                                    [class.text-brand-text]="catalogo.rubro_id"
+                                    [class.text-gray-400]="!catalogo.rubro_id">
+                                    {{ rubroSeleccionadoNombre() || 'Seleccioná el rubro de tu negocio...' }}
+                                </span>
+
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-300" 
+                                    [class.rotate-180]="isRubroDropdownOpen()"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            @if (isRubroDropdownOpen()) {
+                                <div class="fixed inset-0 z-40" (click)="isRubroDropdownOpen.set(false)"></div>
+                            }
+
+                            @if (isRubroDropdownOpen()) {
+                                <ul class="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
+                                    @for (rubro of rubros(); track rubro.id) {
+                                        <li>
+                                            <button type="button" 
+                                                    (click)="seleccionarRubroCustom(rubro)"
+                                                    class="w-full text-left px-4 py-3 text-sm font-bold transition-colors"
+                                                    [class.bg-brand-accent]="catalogo.rubro_id === rubro.id"
+                                                    [class.text-white]="catalogo.rubro_id === rubro.id"
+                                                    [class.text-brand-text-sec]="catalogo.rubro_id !== rubro.id"
+                                                    [class.hover:bg-gray-50]="catalogo.rubro_id !== rubro.id"
+                                                    [class.hover:text-brand-text]="catalogo.rubro_id !== rubro.id">
+                                                {{ rubro.nombre }}
+                                            </button>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
                     </div>
                 </div>
 

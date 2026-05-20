@@ -7,8 +7,8 @@ export interface MedioPago {
 export interface HorarioDia {
   dia: 'Lunes' | 'Martes' | 'Miércoles' | 'Jueves' | 'Viernes' | 'Sábado' | 'Domingo';
   abierto: boolean;
-  apertura: string; // Formato "HH:mm" (ej: "09:00")
-  cierre: string;   // Formato "HH:mm" (ej: "18:00")
+  apertura: string;
+  cierre: string;
 }
 
 export interface Rubro {

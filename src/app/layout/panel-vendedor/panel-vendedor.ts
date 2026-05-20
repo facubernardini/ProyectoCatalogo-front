@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductForm } from "@shared/dialogs/product-form/product-form";
@@ -9,15 +9,16 @@ import { ProductPreview } from "@shared/dialogs/product-preview/product-preview"
 import { CategoryDelete } from "@shared/dialogs/category-delete/category-delete";
 import { CuponForm } from "@shared/dialogs/cupon-form/cupon-form";
 import { CategoryPreview } from "@shared/dialogs/category-preview/category-preview";
+import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinner";
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview],
+  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })
 export class PanelVendedor {
-  private adminStore = inject(AdminStoreService);
+  public adminStore = inject(AdminStoreService);
 
   ngOnInit() {
     const data = localStorage.getItem('vendedor');
@@ -25,7 +26,11 @@ export class PanelVendedor {
       const { catalogo } = JSON.parse(data);
       if (catalogo?.id) {
         this.adminStore.cargarDatosPanelVendedor(catalogo.id);
+      } else {
+        this.adminStore.isLoading.set(false);
       }
+    } else {
+      this.adminStore.isLoading.set(false);
     }
   }
 }

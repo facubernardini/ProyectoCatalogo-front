@@ -29,7 +29,7 @@ export class AdminStoreService {
   mediosPago = signal<MedioPago[]>([]);
   tags = signal<Tag[]>([]);
   
-  cargado = signal(false);
+  public isLoading = signal(false);
 
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
 
@@ -43,7 +43,7 @@ export class AdminStoreService {
   */
  
   cargarDatosPublicos(slug: string) {
-    this.cargado.set(false);
+    this.isLoading.set(true);
     
     forkJoin({
       catalogo: this.catalogoService.getCatalogoBySlug(slug),
@@ -55,14 +55,14 @@ export class AdminStoreService {
         this.productos.set(productos);
         this.categorias.set(categorias);
         
-        this.cargado.set(true);
+        this.isLoading.set(false);
       },
       error: (err) => console.error('Error cargando catálogo público', err)
     });
   }
 
   cargarDatosPanelVendedor(catalogoId: number) {
-    this.cargado.set(false);
+    this.isLoading.set(true);
     
     forkJoin({
       catalogo: this.catalogoService.getCatalogoById(catalogoId),
@@ -80,7 +80,7 @@ export class AdminStoreService {
         this.mediosPago.set(mediosPago);
         this.tags.set(tags);
 
-        this.cargado.set(true);
+        this.isLoading.set(false);
       },
       error: (err) => console.error('Error cargando el panel', err)
     });

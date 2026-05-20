@@ -1,13 +1,19 @@
-<router-outlet/>
+@if (adminStore.isLoading()) {
+    <app-loading-spinner/>
+} @else {
+    <div class="animate-in fade-in duration-500">
+        <router-outlet/>
+    </div>
 
-<!-- Dialogs emergentes -->
-<app-product-preview/>
-<app-product-form/>
-<app-category-delete/>
-<app-category-form/>
-<app-category-preview/>
-<app-confirm-dialog/>
-<app-cupon-form/>
+    <!-- Dialogs emergentes -->
+    <app-product-preview/>
+    <app-product-form/>
+    <app-category-delete/>
+    <app-category-form/>
+    <app-category-preview/>
+    <app-confirm-dialog/>
+    <app-cupon-form/>
 
-<!-- Toast -->
-<app-toast/>
+    <!-- Toast -->
+    <app-toast/>
+}
