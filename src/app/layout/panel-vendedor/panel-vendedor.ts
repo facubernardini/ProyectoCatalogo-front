@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductForm } from "@shared/dialogs/product-form/product-form";

@@ -1,9 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { CategoriaVendedor } from '../models/categoriaVendedor.model';
-import { ToastService } from './toast.service';
-import { AdminStoreService } from './admin-store.service';
-import { CategoriaService } from '../services-backend/categorias.ServiceBackend';
 import { finalize } from 'rxjs';
+import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
+import { CategoriaService } from 'src/app/core/services-backend/categorias.ServiceBackend';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({
   providedIn: 'root'

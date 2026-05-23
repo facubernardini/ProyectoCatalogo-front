@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { Producto } from 'src/app/core/models/producto.model';
-import { ProductPreviewService } from 'src/app/core/services/product-preview.service';
 import { Icon } from "@shared/components/icon";
+import { ProductPreviewService } from '@shared/services/product-preview.service';
 
 @Component({
   selector: 'app-product-preview',

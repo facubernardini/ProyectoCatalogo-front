@@ -1,11 +1,11 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
-import { Producto } from '../models/producto.model';
-import { CartItem } from '../models/cartItem.model';
-import { Presentacion } from '../models/presentacion.model';
-import { MedioPago } from '../models/catalogo.model';
-import { ToastService } from './toast.service';
-import { CuponServiceBackend } from '../services-backend/cupones.ServiceBackend';
-import { CuponVerificado } from '../models/cupon.model';
+import { CartItem } from 'src/app/core/models/cartItem.model';
+import { MedioPago } from 'src/app/core/models/catalogo.model';
+import { CuponVerificado } from 'src/app/core/models/cupon.model';
+import { Presentacion } from 'src/app/core/models/presentacion.model';
+import { Producto } from 'src/app/core/models/producto.model';
+import { CuponServiceBackend } from 'src/app/core/services-backend/cupones.ServiceBackend';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {

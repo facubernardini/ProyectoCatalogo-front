@@ -3,12 +3,10 @@ import { Icon } from "@shared/components/icon";
 import { CommonModule, Location } from '@angular/common';
 import { Producto } from 'src/app/core/models/producto.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { ProductFormService } from 'src/app/core/services/product-form.service';
-import { ProductPreviewService } from 'src/app/core/services/product-preview.service';
-import { ConfirmService } from 'src/app/core/services/confirm.service';
-import { ProductoService } from 'src/app/core/services-backend/productos.ServiceBackend';
-import { ToastService } from 'src/app/core/services/toast.service';
+import { ProductoManagerService } from 'src/app/core/services/producto-manager.service';
 import { FormsModule } from '@angular/forms';
+import { ProductFormService } from '@shared/services/product-form.service';
+import { ProductPreviewService } from '@shared/services/product-preview.service';
 
 @Component({
   selector: 'app-mis-productos',
@@ -18,41 +16,31 @@ import { FormsModule } from '@angular/forms';
 })
 export class MisProductos {
   private adminStore = inject(AdminStoreService);
-  private productoBackend = inject(ProductoService);
-  private toastService = inject(ToastService);
   private location = inject(Location);
   private productFormService = inject(ProductFormService);
   
+  public productManager = inject(ProductoManagerService); 
   public productPreviewService = inject(ProductPreviewService);
-  public confirmService = inject(ConfirmService);
 
   productos = this.adminStore.productos; 
   categorias = this.adminStore.categorias;
 
   categoriaSeleccionada = signal<string>('todos');
   activeMenuId = signal<number | null>(null);
-
   filtro = signal<string>('');
 
   productosFiltrados = computed(() => {
     const seleccion = this.categoriaSeleccionada();
     const term = this.filtro().toLowerCase();
     
-    // Partimos de la lista original
     let lista = this.adminStore.productos();
 
-    // A. Filtramos por Categoría primero
     if (seleccion !== 'todos') {
-      lista = lista.filter(prod => 
-        prod.categorias?.some(c => c.nombre === seleccion)
-      );
+      lista = lista.filter(prod => prod.categorias?.some(c => c.nombre === seleccion));
     }
 
-    // B. Luego filtramos por el texto del buscador
     if (term) {
-      lista = lista.filter(prod => 
-        prod.nombre.toLowerCase().includes(term)
-      );
+      lista = lista.filter(prod => prod.nombre.toLowerCase().includes(term));
     }
 
     return lista;
@@ -60,15 +48,8 @@ export class MisProductos {
 
   categoriasOrdenadas = computed(() => {
     const lista = this.adminStore.categorias();
-    
-    return [...lista].sort((a, b) => {
-      return Number(b.especial) - Number(a.especial);
-    });
+    return [...lista].sort((a, b) => Number(b.especial) - Number(a.especial));
   });
-
-  abrirFiltros() {
-    throw new Error('Method not implemented.');
-  }
 
   seleccionarCategoria(nombre: string) {
     this.categoriaSeleccionada.set(nombre);
@@ -97,90 +78,21 @@ export class MisProductos {
     this.activeMenuId.set(null);
   }
 
-  async onEliminar(producto: Producto) {
-    const confirmacion = await this.confirmService.ask({
-      title: '¿Eliminar producto?',
-      message: `¿Estás seguro de que querés eliminar "${producto.nombre}"? Esta acción no se puede deshacer.`,
-      confirmText: 'Eliminar',
-      cancelText: 'Cancelar',
-      icon: 'trash',
-      type: 'danger'
-    });
+  // --- MÉTODOS DELEGADOS AL MANAGER ---
 
-    if (!confirmacion) return;
-
-    this.productoBackend.deleteProducto(producto.id).subscribe({
-      next: () => {
-        this.adminStore.eliminarProductoDeLista(producto.id);
-        
-        this.toastService.show('Producto eliminado definitivamente');
-      },
-      error: (err) => {
-        console.error('Error al eliminar:', err);
-        this.toastService.show('Hubo un error al intentar eliminar el producto', 'error');
-      }
-    });
+  onEliminar(producto: Producto) {
+    this.productManager.eliminar(producto);
   }
   
-  async onToggleActivo(producto: Producto) {
-    const estaActivo = producto.activo;
-
-    const confirmacion = await this.confirmService.ask({
-      title: estaActivo ? '¿Pausar venta del producto?' : '¿Activar venta del producto?',
-      message: estaActivo 
-        ? 'Tus clientes no podrán ver ni comprar este producto hasta que lo actives de nuevo.' 
-        : 'El producto volverá a estar visible para todos tus clientes.',
-      confirmText: estaActivo ? 'Pausar' : 'Activar',
-      cancelText: 'Volver',
-      icon: estaActivo ? 'pause' : 'play',
-      type: estaActivo ? 'warning' : 'info'
-    });
-
-    if (!confirmacion) return;
-
-    this.productoBackend.updateProducto(producto.id, { activo: !estaActivo }).subscribe({
-      next: (productoActualizado) => {
-        this.adminStore.updateProductoEnLista(productoActualizado);
-        
-        this.toastService.show(
-          estaActivo ? 'Producto pausado' : '¡Producto activado para la venta!'
-        );
-      },
-      error: (err) => {
-        console.error('Error al cambiar estado:', err);
-        this.toastService.show('No se pudo cambiar el estado del producto', 'error');
-      }
-    });
+  onToggleActivo(producto: Producto) {
+    this.productManager.toggleActivo(producto);
   }
 
-  async onDestacar(producto: Producto) {
-    const esDestacado = producto.destacado;
+  onDestacar(producto: Producto) {
+    this.productManager.toggleDestacado(producto);
+  }
 
-    const confirmacion = await this.confirmService.ask({
-      title: esDestacado ? '¿Quitar destacado?' : '¿Destacar producto?',
-      message: esDestacado 
-        ? 'El producto dejará de aparecer en la sección principal del catálogo.' 
-        : 'Este producto aparecerá en los primeros lugares para tus clientes.',
-      confirmText: esDestacado ? 'Quitar' : 'Destacar',
-      cancelText: 'Volver',
-      icon: 'star',
-      type: esDestacado ? 'warning' : 'info'
-    });
-
-    if (!confirmacion) return;
-
-    this.productoBackend.updateProducto(producto.id, { destacado: !esDestacado }).subscribe({
-      next: (productoActualizado) => {
-        this.adminStore.updateProductoEnLista(productoActualizado);
-        
-        this.toastService.show(
-          esDestacado ? 'Se quitó de destacados' : '¡Producto destacado con éxito!'
-        );
-      },
-      error: (err) => {
-        console.error('Error al actualizar destacado:', err);
-        this.toastService.show('No se pudo actualizar el estado', 'error');
-      }
-    });
+  onDuplicar(producto: Producto) {
+    this.productManager.duplicar(producto);
   }
 }

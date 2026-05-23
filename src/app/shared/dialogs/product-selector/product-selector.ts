@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { Presentacion } from 'src/app/core/models/presentacion.model';
-import { ProductSelectorService } from 'src/app/core/services/product-selector.service';
 import { Icon } from "@shared/components/icon";
+import { ProductSelectorService } from '@shared/services/product-selector.service';
 
 @Component({
   selector: 'app-product-selector',

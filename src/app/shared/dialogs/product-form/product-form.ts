@@ -1,11 +1,11 @@
 import { Component, effect, inject } from '@angular/core';
-import { ProductFormService } from 'src/app/core/services/product-form.service';
 import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
+import { ProductFormService } from '@shared/services/product-form.service';
 
 @Component({
   selector: 'app-product-form',
@@ -26,7 +26,7 @@ export class ProductForm {
     imagen: '',
     destacado: false,
     categorias_ids: [] as number[],
-    tags_ids: [] as number[], // <-- Agregado para los tags
+    tags_ids: [] as number[],
     presentaciones: [
       { unidad_venta: '', precio: null, precio_descuento: null, activo: true }
     ]
@@ -161,8 +161,6 @@ export class ProductForm {
     // 2. Validar que tenga al menos una categoría
     const sinCategorias = !this.producto.categorias_ids || this.producto.categorias_ids.length === 0;
     if (sinCategorias) return true;
-
-    // Nota: No validamos tags_ids porque generalmente los tags son opcionales.
 
     // 3. Validar presentaciones
     return this.producto.presentaciones.some(pres => {

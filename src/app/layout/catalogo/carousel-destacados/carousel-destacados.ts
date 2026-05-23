@@ -1,9 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Icon } from "@shared/components/icon";
-import { ProductSelectorService } from 'src/app/core/services/product-selector.service';
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ProductSelectorService } from '@shared/services/product-selector.service';
 
 @Component({
   selector: 'app-carousel-destacados',

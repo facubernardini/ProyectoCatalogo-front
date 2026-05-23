@@ -1,10 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { MenuLateralService } from 'src/app/core/services/menu-lateral.service';
 import { Icon } from "@shared/components/icon";
-import { InfoService } from 'src/app/core/services/info.service';
-import { CategoryViewService } from 'src/app/core/services/category-view.service';
-import { MapDialogService } from 'src/app/core/services/map.service';
+import { MenuLateralService } from '@shared/services/menu-lateral.service';
+import { InfoService } from '@shared/services/info.service';
+import { MapDialogService } from '@shared/services/map.service';
+import { CategoryViewService } from '@shared/services/category-view.service';
 
 @Component({
   selector: 'app-menu-lateral',

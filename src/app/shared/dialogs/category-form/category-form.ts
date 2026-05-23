@@ -1,8 +1,8 @@
 import { Component, effect, inject } from '@angular/core';
-import { CategoryFormService } from 'src/app/core/services/category-form.service';
 import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CategoryFormService } from '@shared/services/category-form.service';
 
 @Component({
   selector: 'app-category-form',

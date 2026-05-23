@@ -3,13 +3,13 @@ import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Icon } from "@shared/components/icon";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { CategoryFormService } from 'src/app/core/services/category-form.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { CategoriaService } from 'src/app/core/services-backend/categorias.ServiceBackend';
-import { CategoryDeleteService } from 'src/app/core/services/category-delete.service';
 import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
-import { CategoryPreviewService } from 'src/app/core/services/category-preview.service';
+import { CategoryDeleteService } from '@shared/services/category-delete.service';
+import { CategoryFormService } from '@shared/services/category-form.service';
+import { CategoryPreviewService } from '@shared/services/category-preview.service';
 
 @Component({
   selector: 'app-mis-categorias',

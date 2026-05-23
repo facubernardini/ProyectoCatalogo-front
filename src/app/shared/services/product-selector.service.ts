@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Producto } from '../models/producto.model';
-import { Presentacion } from '../models/presentacion.model';
 import { CartService } from './cart.service';
+import { Producto } from 'src/app/core/models/producto.model';
+import { Presentacion } from 'src/app/core/models/presentacion.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProductSelectorService {

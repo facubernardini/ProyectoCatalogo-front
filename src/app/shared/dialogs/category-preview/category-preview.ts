@@ -5,8 +5,8 @@ import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive
 import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 import { Producto } from 'src/app/core/models/producto.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { CategoryPreviewService } from 'src/app/core/services/category-preview.service';
 import { Icon } from "@shared/components/icon";
+import { CategoryPreviewService } from '@shared/services/category-preview.service';
 
 @Component({
   selector: 'app-category-preview',

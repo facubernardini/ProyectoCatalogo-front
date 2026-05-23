@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { CartService } from 'src/app/core/services/cart.service';
-import { MenuLateralService } from 'src/app/core/services/menu-lateral.service';
-import { SearchService } from 'src/app/core/services/search.service';
+import { CartService } from '@shared/services/cart.service';
+import { MenuLateralService } from '@shared/services/menu-lateral.service';
+import { SearchService } from '@shared/services/search.service';
 
 @Component({
   selector: 'app-search-nav',

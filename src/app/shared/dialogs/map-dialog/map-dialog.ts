@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from '@shared/components/icon';
-import { MapDialogService } from 'src/app/core/services/map.service';
+import { MapDialogService } from '@shared/services/map.service';
 
 @Component({
   selector: 'app-map-dialog',

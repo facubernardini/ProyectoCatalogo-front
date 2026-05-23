@@ -1,10 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { Producto } from 'src/app/core/models/producto.model';
-import { ProductSelectorService } from 'src/app/core/services/product-selector.service';
-import { SearchService } from 'src/app/core/services/search.service';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ProductSelectorService } from '@shared/services/product-selector.service';
+import { SearchService } from '@shared/services/search.service';
 
 @Component({
   selector: 'app-search-products',

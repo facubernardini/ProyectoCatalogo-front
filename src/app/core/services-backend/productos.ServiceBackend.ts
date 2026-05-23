@@ -22,12 +22,10 @@ export class ProductoService {
 
 	// -- POST --
 	createProducto(producto: Producto): Observable<Producto> {
-		// Enviamos el objeto producto completo al endpoint de creación
 		return this.http.post<Producto>(`${this.API_URL}/seller/productos`, producto);
 	}
 
 	updateProducto(id: number, productoNuevo: Partial<Producto>): Observable<Producto> {
-		// Usamos PATCH para actualizaciones parciales y concatenamos el ID en la URL
 		return this.http.patch<Producto>(`${this.API_URL}/seller/productos/${id}`, productoNuevo);
 	}
 

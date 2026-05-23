@@ -1,10 +1,10 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
-import { AdminStoreService } from './admin-store.service';
-import { CategoriaService } from '../services-backend/categorias.ServiceBackend';
-import { CategoriaVendedor } from '../models/categoriaVendedor.model';
-import { ToastService } from './toast.service';
-import { ConfirmService } from './confirm.service';
+import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
+import { CategoriaService } from 'src/app/core/services-backend/categorias.ServiceBackend';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ConfirmService } from 'src/app/core/services/confirm.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryFormService {

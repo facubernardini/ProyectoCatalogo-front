@@ -4,10 +4,9 @@ import { Icon } from "@shared/components/icon";
 import { Cupon } from 'src/app/core/models/cupon.model';
 import { FormsModule } from '@angular/forms';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { CuponForm } from '@shared/dialogs/cupon-form/cupon-form';
-import { CuponFormService } from 'src/app/core/services/cupon-form.service';
 import { CuponServiceBackend } from 'src/app/core/services-backend/cupones.ServiceBackend';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
+import { CuponFormService } from '@shared/services/cupon-form.service';
 
 @Component({
   selector: 'app-mis-cupones',

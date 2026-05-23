@@ -91,7 +91,7 @@
             <div class="absolute right-0 top-0 bottom-0 z-10 w-3 bg-linear-to-l from-gray-50 via-white/40 to-transparent pointer-events-none"></div>
         </div>
         <button 
-            (click)="abrirFiltros()"
+            (click)="false"
             class="shrink-0 p-2.5 bg-white border border-gray-200 rounded-xl text-brand-accent shadow-sm active:scale-90 transition-transform">
             <app-icon name="filter" classes="size-6 fill-current" />
         </button>
@@ -153,13 +153,19 @@
                                         class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
                                     <app-icon [name]="producto.destacado ? 'star-filled' : 'star'" 
                                             [classes]="'size-4 fill-current ' + (producto.destacado ? 'text-yellow-400' : 'text-gray-400')" />
-                                    {{ producto.destacado ? 'Quitar destacado' : 'Destacar producto' }}
+                                    {{ producto.destacado ? 'Quitar destacado' : 'Destacar' }}
                                 </button>
 
                                 <button (click)="onToggleActivo(producto); activeMenuId.set(null)"
                                         class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
                                     <app-icon [name]="producto.activo ? 'pause' : 'play'" classes="size-4 fill-current text-gray-400" />
-                                    {{ producto.activo ? 'Pausar producto' : 'Reanudar producto' }}
+                                    {{ producto.activo ? 'Pausar' : 'Reanudar' }}
+                                </button>
+
+                                <button (click)="onDuplicar(producto); activeMenuId.set(null)"
+                                        class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
+                                    <app-icon name="copy" classes="size-4 fill-current text-gray-400" />
+                                    Duplicar
                                 </button>
 
                                 <div class="h-px bg-gray-100 my-1 mx-2"></div>
@@ -167,7 +173,7 @@
                                 <button (click)="onEliminar(producto); activeMenuId.set(null)"
                                         class="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors">
                                     <app-icon name="trash" classes="size-4 fill-current" />
-                                    Eliminar producto
+                                    Eliminar
                                 </button>
                             </div>
                         }

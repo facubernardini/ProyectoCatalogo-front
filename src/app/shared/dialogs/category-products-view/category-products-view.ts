@@ -2,13 +2,13 @@ import { Component, computed, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { CategoryViewService } from 'src/app/core/services/category-view.service';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
-import { MenuLateralService } from 'src/app/core/services/menu-lateral.service';
 import { Producto } from 'src/app/core/models/producto.model';
-import { ProductSelectorService } from 'src/app/core/services/product-selector.service';
+import { CategoryViewService } from '@shared/services/category-view.service';
+import { MenuLateralService } from '@shared/services/menu-lateral.service';
+import { ProductSelectorService } from '@shared/services/product-selector.service';
 
 @Component({
   selector: 'app-category-products-view',

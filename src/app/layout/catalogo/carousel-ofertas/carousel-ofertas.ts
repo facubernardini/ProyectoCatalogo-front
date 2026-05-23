@@ -1,10 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
-import { ProductSelectorService } from 'src/app/core/services/product-selector.service';
 import { Presentacion } from 'src/app/core/models/presentacion.model';
-import { CartService } from 'src/app/core/services/cart.service';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { CartService } from '@shared/services/cart.service';
+import { ProductSelectorService } from '@shared/services/product-selector.service';
 
 @Component({
   selector: 'app-carousel-ofertas',

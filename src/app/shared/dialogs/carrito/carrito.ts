@@ -1,9 +1,9 @@
 import { Component, computed, inject, signal, effect } from '@angular/core';
 import { Icon } from "@shared/components/icon";
+import { CartService } from '@shared/services/cart.service';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { CartService } from 'src/app/core/services/cart.service';
 
 @Component({
   selector: 'app-carrito',

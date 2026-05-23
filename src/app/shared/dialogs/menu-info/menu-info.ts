@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { InfoService } from 'src/app/core/services/info.service';
+import { InfoService } from '@shared/services/info.service';
+import { MapDialogService } from '@shared/services/map.service';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { MapDialogService } from 'src/app/core/services/map.service';
 
 @Component({
   selector: 'app-menu-info',
