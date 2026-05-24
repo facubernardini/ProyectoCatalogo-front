@@ -11,7 +11,7 @@
 
             @if (productSelectorService.selectedProduct(); as prod) {
                 <div class="flex gap-4 mb-8">
-                    <div class="relative w-20 h-20 bg-brand-bg rounded-2xl overflow-hidden shrink-0 shadow-sm">
+                    <div class="relative w-25 h-25 bg-brand-bg rounded-2xl overflow-hidden shrink-0 shadow-sm">
                         <img [src]="prod.imagen || 'https://placehold.co/200x200?text=%F0%9F%93%A6'" 
                             class="w-full h-full object-cover">
 
@@ -32,7 +32,12 @@
                         @if (prod.tags.length > 0) {
                             <div class="flex flex-wrap gap-1.5 mt-3">
                                 @for (tag of prod.tags; track tag.id) {
-                                    <span class="text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/4 px-2 py-1 rounded-lg border border-brand-accent/10">
+                                    <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/4 px-1.5 py-0.5 rounded-lg border border-brand-accent/10">
+                                        
+                                        @if (tag.icono) {
+                                            <div [innerHTML]="tag.icono | safeHtml" class="size-6 flex items-center justify-center shrink-0"></div>
+                                        }
+                                        
                                         {{ tag.nombre }}
                                     </span>
                                 }

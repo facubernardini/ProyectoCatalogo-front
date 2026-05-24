@@ -3,10 +3,11 @@ import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { Icon } from "@shared/components/icon";
 import { ProductSelectorService } from '@shared/services/product-selector.service';
+import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 
 @Component({
   selector: 'app-product-selector',
-  imports: [SwipeDownDirective, Icon],
+  imports: [SwipeDownDirective, Icon, SafeHtmlPipe],
   templateUrl: './product-selector.html',
   styleUrl: './product-selector.css',
 })

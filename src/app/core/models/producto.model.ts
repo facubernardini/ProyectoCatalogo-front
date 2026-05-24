@@ -9,6 +9,7 @@ export interface Tag {
   id: number;
   rubro_id: number;
   nombre: string;
+  icono: string;
 }
 
 export interface Producto {

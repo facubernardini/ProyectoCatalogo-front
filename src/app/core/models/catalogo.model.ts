@@ -19,6 +19,7 @@ export interface Rubro {
 export interface Catalogo {
   id: number;
   nombre_tienda: string;
+  frase_eslogan: string | null;
   slug: string;
   rubro_id: number;
   logo_tienda: string;

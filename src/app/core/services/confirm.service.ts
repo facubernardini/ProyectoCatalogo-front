@@ -8,13 +8,14 @@ export class ConfirmService {
   title = signal('');
   message = signal('');
   
-  // Nuevos parámetros de personalización
   confirmText = signal('Aceptar');
   cancelText = signal('Cancelar');
   icon = signal('trash');
   type = signal<ConfirmType>('danger');
 
   private resolve: (value: boolean) => void = () => {};
+  
+  private previousOverflow = '';
 
   ask(options: { 
     title: string, 
@@ -31,20 +32,23 @@ export class ConfirmService {
     this.icon.set(options.icon || 'trash');
     this.type.set(options.type || 'danger');
     
+    this.previousOverflow = document.body.style.overflow;
+    
     this.isOpen.set(true);
     document.body.style.overflow = 'hidden';
+    
     return new Promise((res) => { this.resolve = res; });
   }
 
   confirm() { 
     this.isOpen.set(false);
     this.resolve(true);
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = this.previousOverflow;
   }
 
   cancel() { 
     this.isOpen.set(false);
     this.resolve(false);
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = this.previousOverflow;
   }
 }

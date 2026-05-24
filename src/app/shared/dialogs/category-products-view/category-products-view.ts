@@ -117,7 +117,6 @@ export class CategoryProductsView implements OnDestroy {
   }
 
   abrirProducto(producto: Producto) {
-    this.viewService.close();
     this.selectorService.open(producto);
   }
 }

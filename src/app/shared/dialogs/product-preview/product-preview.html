@@ -32,6 +32,16 @@
                                 </span>
                             }
                         </div>
+
+                        @if (prod.tags && prod.tags.length > 0) {
+                            <div class="flex flex-wrap gap-1.5 mt-2">
+                                @for (tag of prod.tags; track tag.id) {
+                                    <span class="text-[10px] bg-gray-100 text-gray-500 font-bold uppercase px-2 py-1 rounded-md border border-gray-200/50">
+                                        {{ tag.nombre }}
+                                    </span>
+                                }
+                            </div>
+                        }
                     </div>
                 </div>
 
