@@ -1,20 +1,15 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { finalize } from 'rxjs';
 import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
-import { CategoriaService } from 'src/app/core/services-backend/categorias.ServiceBackend';
-import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { ConfirmService } from 'src/app/core/services/confirm.service';
-import { ToastService } from 'src/app/core/services/toast.service';
+import { CategoriaManagerService } from 'src/app/core/services/categoria-manager.service';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryFormService {
-  private categoriaBackend = inject(CategoriaService);
-  private adminStore = inject(AdminStoreService);
-  private toastService = inject(ToastService);
-  public confirmService = inject(ConfirmService);
+  private categoriaManager = inject(CategoriaManagerService);
 
   isOpen = signal(false);
-  loading = signal(false);
+  
+  // Vinculamos la señal de carga directamente a la del manager
+  loading = this.categoriaManager.isLoading;
 
   nombre = signal('');
   editingCategory = signal<CategoriaVendedor | null>(null);
@@ -40,59 +35,7 @@ export class CategoryFormService {
   save(datos: Partial<CategoriaVendedor>) {
     if (!datos.nombre?.trim()) return;
 
-    this.loading.set(true);
-    const currentCategory = this.editingCategory();
-    
-    const payload = {
-      ...datos,
-      catalogo_id: this.adminStore.catalogoId()
-    };
-
-    const request = currentCategory
-      ? this.categoriaBackend.updateCategoria(currentCategory.id, payload)
-      : this.categoriaBackend.createCategoria(payload);
-
-    request.pipe(
-      finalize(() => this.loading.set(false))
-    ).subscribe({
-      next: (res) => {
-        if (currentCategory) {
-          this.adminStore.updateCategoriaEnLista(res);
-          this.toastService.show(`Categoría actualizada`);
-        } else {
-          this.adminStore.agregarCategoriaALista(res);
-          this.toastService.show(`Categoría creada con éxito`);
-        }
-        this.close();
-      },
-      error: (err) => {
-        console.error('Error al guardar categoría:', err);
-        this.toastService.show(`Error al guardar categoría`);
-      }
-    });
-  }
-
-  async delete(id: number) {
-    const confirmacion = await this.confirmService.ask({
-        title: '¿Eliminar categoría?',
-        message: `Estás por borrar "${this.editingCategory()?.nombre}".`,
-        confirmText: 'Sí, eliminar',
-        cancelText: 'Volver',
-        icon: 'trash',
-        type: 'danger'
-      });
-
-    if (confirmacion) {
-      this.loading.set(true);
-      this.categoriaBackend.deleteCategoria(id).pipe(
-        finalize(() => this.loading.set(false))
-      ).subscribe({
-        next: () => {
-          this.adminStore.eliminarCategoriaDeLista(id);
-          this.close();
-        },
-        error: (err) => console.error('Error al eliminar categoría:', err)
-      });
-    }
+    this.categoriaManager.guardar(datos, this.editingCategory() ?? undefined);
+    this.close();
   }
 }

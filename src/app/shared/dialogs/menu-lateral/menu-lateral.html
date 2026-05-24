@@ -22,13 +22,6 @@
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar flex flex-col">
-            <button class="w-full flex items-center gap-3 p-3 rounded-2xl font-bold transition-all shrink-0">
-                <app-icon name="category" classes="size-5 fill-current" />
-                Categorías
-            </button>
-
-            <div class="h-px bg-gray-50 mx-4 my-2 shrink-0"></div>
-
             @for (cat of categoriasOrdenadas(); track cat.id) {
                 <button (click)="seleccionarYFechar(cat.nombre)"
                         class="w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden shrink-0"

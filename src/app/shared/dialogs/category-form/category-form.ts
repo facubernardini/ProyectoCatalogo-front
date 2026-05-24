@@ -49,11 +49,4 @@ export class CategoryForm {
     
     this.categoryFormService.save(this.categoria);
   }
-
-  eliminar() {
-    const cat = this.categoryFormService.editingCategory();
-    if (cat) {
-      this.categoryFormService.delete(cat.id);
-    }
-  }
 }

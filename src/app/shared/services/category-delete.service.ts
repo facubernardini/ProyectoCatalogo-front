@@ -46,7 +46,6 @@ export class CategoryDeleteService {
   }
 
   confirm() {
-    // 3. 👈 Agregamos el aviso visual para el vendedor
     if (this.accionHuerfanos() === 'mover' && !this.categoriaDestinoId()) {
       this.toastService.show('Por favor, seleccioná una categoría de destino', 'error');
       return; 
@@ -57,7 +56,6 @@ export class CategoryDeleteService {
     if (this.resolveFn) {
       this.resolveFn({
         accion: this.accionHuerfanos(),
-        // 4. 👈 Nos aseguramos de que siempre devuelva un número válido
         categoriaDestinoId: this.categoriaDestinoId() ? Number(this.categoriaDestinoId()) : undefined
       });
       this.resolveFn = null;

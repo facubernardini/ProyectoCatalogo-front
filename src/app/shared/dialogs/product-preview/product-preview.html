@@ -59,16 +59,21 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto custom-scrollbar">
+                <div class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto custom-scrollbar pt-2">
                     @for (pres of prod.presentaciones; track $index) {
                         
                         <div [class]="pres.activo !== false ? 'bg-gray-50/30 border-gray-50' : 'bg-gray-100 border-gray-200 opacity-60 grayscale-[0.5]'"
-                             class="flex items-center justify-between p-3 rounded-2xl border-2 transition-all">
+                             class="relative flex items-center justify-between p-3 rounded-2xl border-2 transition-all">
                             
+                            @if (pres.activo === false) {
+                                <span class="absolute -top-2 left-3 bg-gray-500 text-white px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest shadow-sm z-10">
+                                    Pausado
+                                </span>
+                            }
+
                             <div class="shrink-0 mr-2 flex-1">
                                 <input type="text" 
-                                    [(ngModel)]="pres.unidad_venta" 
-                                    placeholder="Ej: 1 Kg" 
+                                    [(ngModel)]="pres.unidad_venta"
                                     class="w-full bg-white border rounded-lg py-1.5 px-3 text-sm font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-gray-300"
                                     [class.border-gray-200]="pres.unidad_venta"
                                     [class.border-red-500]="!pres.unidad_venta">
@@ -97,8 +102,8 @@
                                 </div>
 
                                 <div class="flex items-center gap-0.5 ml-1">
-                                    
-                                    <button (click)="pres.activo = !pres.activo" 
+    
+                                    <button (click)="onToggleActivoPresentacion(prod, $index)" 
                                             [class]="pres.activo !== false ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50' : 'text-orange-500 bg-orange-50 hover:bg-orange-100'"
                                             class="p-1.5 rounded-lg transition-colors"
                                             [title]="pres.activo !== false ? 'Pausar variante' : 'Reanudar variante'">
@@ -106,7 +111,7 @@
                                     </button>
 
                                     <button (click)="eliminarPresentacion(prod, $index)" 
-                                            class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                             title="Eliminar variante">
                                         <app-icon name="trash" classes="size-4 fill-current" />
                                     </button>

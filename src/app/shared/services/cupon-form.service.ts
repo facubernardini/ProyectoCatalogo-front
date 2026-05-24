@@ -1,20 +1,17 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { finalize } from 'rxjs';
 import { Cupon } from 'src/app/core/models/cupon.model';
-import { CuponServiceBackend } from 'src/app/core/services-backend/cupones.ServiceBackend';
-import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { ConfirmService } from 'src/app/core/services/confirm.service';
+import { CuponManagerService } from 'src/app/core/services/cupones-manager.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class CuponFormService {
-  private cuponBackend = inject(CuponServiceBackend);
-  private adminStore = inject(AdminStoreService);
+  private cuponManager = inject(CuponManagerService);
   private toastService = inject(ToastService);
-  public confirmService = inject(ConfirmService);
 
   isOpen = signal(false);
-  loading = signal(false);
+  
+  loading = this.cuponManager.isLoading;
+  
   editingCupon = signal<Cupon | null>(null);
 
   formData = signal({
@@ -31,7 +28,7 @@ export class CuponFormService {
     this.editingCupon.set(null);
     this.resetForm();
     this.isOpen.set(true);
-		document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
   }
 
   openEdit(cupon: Cupon) {
@@ -47,7 +44,8 @@ export class CuponFormService {
     }
 
     this.formData.set({
-      codigo_cupon: cupon.codigo_cupon || (cupon as any).codigo || '',
+      // Consideramos ambos nombres de propiedad por si acaso
+      codigo_cupon: (cupon as any).codigo_cupon || (cupon as any).codigo || '',
       es_porcentaje: cupon.es_porcentaje,
       descuento: Number(cupon.descuento),
       tiene_tope: cupon.tope_descuento !== null && cupon.tope_descuento > 0,
@@ -57,14 +55,14 @@ export class CuponFormService {
     });
 
     this.isOpen.set(true);
-		document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
   }
 
   close() {
     this.isOpen.set(false);
     this.editingCupon.set(null);
     this.resetForm();
-		document.body.style.overflow = 'auto';
+    document.body.style.overflow = 'auto';
   }
 
   private resetForm() {
@@ -82,81 +80,50 @@ export class CuponFormService {
   save() {
     const data = this.formData();
     
+    // 1. Validaciones del lado del Frontend
     if (!data.codigo_cupon?.trim()) {
-			this.toastService.show('El código del cupón es obligatorio', 'error');
-			return;
+      this.toastService.show('El código del cupón es obligatorio', 'error');
+      return;
     }
     if (!data.descuento || data.descuento <= 0) {
-			this.toastService.show('Ingresá un valor de descuento válido', 'error');
-			return;
+      this.toastService.show('Ingresá un valor de descuento válido', 'error');
+      return;
     }
     if (data.es_porcentaje && data.descuento > 100) {
       this.toastService.show('El porcentaje de descuento no puede ser mayor a 100%', 'error');
       return;
     }
 
-    this.loading.set(true);
-    const current = this.editingCupon();
-    
+    // 2. Armamos el payload final
     const payload = {
-      catalogo_id: this.adminStore.catalogoId(),
-      codigo_cupon: data.codigo_cupon.toUpperCase().trim(),
+      // Nota: No pasamos el catalogo_id acá, el Manager ya se encarga de eso.
+      codigo: data.codigo_cupon, // Lo unificamos al nombre que usa el manager ('codigo')
       es_porcentaje: data.es_porcentaje,
       descuento: data.descuento,
       tope_descuento: (data.es_porcentaje && data.tiene_tope) ? data.tope_descuento : null,
       fecha_expiracion: data.tiene_vencimiento && data.fecha_expiracion ? new Date(data.fecha_expiracion).toISOString() : null
     };
 
-    const request = current
-      ? this.cuponBackend.updateCupon(current.id, payload)
-      : this.cuponBackend.createCupon(payload);
-
-    request.pipe(
-      finalize(() => this.loading.set(false))
-    ).subscribe({
-      next: (res) => {
-        if (current) {
-          this.adminStore.updateCuponEnLista(res);
-          this.toastService.show(`Cupón actualizado`);
-        } else {
-          this.adminStore.agregarCuponALista(res);
-          this.toastService.show(`Cupón creado con éxito`);
-        }
-        this.close();
-      },
-      error: (err) => {
-        console.error('Error al guardar cupón:', err);
-        this.toastService.show(`Error al guardar el cupón`, 'error');
-      }
+    // 3. Delegamos al Manager pasando el callback de cierre
+    this.cuponManager.guardar(payload, this.editingCupon() ?? undefined, () => {
+      this.close();
     });
   }
 
-  async delete(cupon: Cupon) {
-    const confirmacion = await this.confirmService.ask({
-      title: '¿Eliminar cupón?',
-      message: `Estás por borrar el cupón "${cupon.codigo_cupon}". Esta acción no se puede deshacer.`,
-      confirmText: 'Sí, eliminar',
-      cancelText: 'Volver',
-      icon: 'trash',
-      type: 'danger'
-    });
-
-    if (confirmacion) {
-      this.loading.set(true);
-      this.cuponBackend.deleteCupon(cupon.id).pipe(
-        finalize(() => this.loading.set(false))
-      ).subscribe({
-        next: () => {
-          this.adminStore.eliminarCuponDeLista(cupon.id);
-          this.close();
-          this.toastService.show(`Cupón eliminado`);
-        },
-        error: (err) => console.error('Error al eliminar cupón:', err)
+  delete(cupon: Cupon) {
+    const currentCupon = this.editingCupon();
+    
+    // Verificamos por seguridad que el ID coincida (o si lo llamaron directamente desde la tabla)
+    const cuponABorrar = cupon || currentCupon;
+    
+    if (cuponABorrar) {
+      this.cuponManager.eliminar(cuponABorrar, () => {
+        this.close();
       });
     }
   }
 
-	cambiarTipoDescuento(esPorcentaje: boolean) {
+  cambiarTipoDescuento(esPorcentaje: boolean) {
     const dataActual = this.formData();
     
     if (dataActual.es_porcentaje !== esPorcentaje) {

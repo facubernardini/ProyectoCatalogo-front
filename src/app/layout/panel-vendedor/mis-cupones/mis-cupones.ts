@@ -4,9 +4,8 @@ import { Icon } from "@shared/components/icon";
 import { Cupon } from 'src/app/core/models/cupon.model';
 import { FormsModule } from '@angular/forms';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { CuponServiceBackend } from 'src/app/core/services-backend/cupones.ServiceBackend';
-import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { CuponFormService } from '@shared/services/cupon-form.service';
+import { CuponManagerService } from 'src/app/core/services/cupones-manager.service';
 
 @Component({
   selector: 'app-mis-cupones',
@@ -17,11 +16,10 @@ import { CuponFormService } from '@shared/services/cupon-form.service';
 })
 export class MisCupones {
   private location = inject(Location);
-  private cuponBackend = inject(CuponServiceBackend);
-
+  
   public adminStore = inject(AdminStoreService);
   public cuponFormService = inject(CuponFormService);
-  private confirmService = inject(ConfirmService);
+  public cuponManager = inject(CuponManagerService);
 
   filtro = signal('');
   estadoFiltro = signal('todos');
@@ -35,8 +33,7 @@ export class MisCupones {
 
     // 1. Filtrado por texto (Buscador)
     let filtrados = listaCupones.filter(c => {
-      // Usamos el nombre de propiedad exacto de tu DTO/Schema
-      const codigo = c.codigo_cupon || ''; 
+      const codigo = (c as any).codigo_cupon || (c as any).codigo || ''; 
       return codigo.toLowerCase().includes(textoBusqueda);
     });
 
@@ -46,12 +43,14 @@ export class MisCupones {
         c.activo && (!c.fecha_expiracion || new Date(c.fecha_expiracion) > ahora)
       );
     }
-    
     else if (this.estadoFiltro() === 'pausados') {
-      filtrados = filtrados.filter(c => !c.activo);
+      // Solo mostramos los pausados que NO estén expirados
+      filtrados = filtrados.filter(c => 
+        !c.activo && (!c.fecha_expiracion || new Date(c.fecha_expiracion) > ahora)
+      );
     }
-    
     else if (this.estadoFiltro() === 'expirados') {
+      // Atrapa todos los que pasaron la fecha (estén pausados o no)
       filtrados = filtrados.filter(c => 
         c.fecha_expiracion && new Date(c.fecha_expiracion) <= ahora
       );
@@ -75,38 +74,8 @@ export class MisCupones {
     this.activeMenuId.set(null);
   }
 
-  // 4. Función para cambiar el estado (Pausar/Reanudar)
-  async onToggleActivo(cupon: Cupon) {
-    // Definimos los textos dependiendo de si lo estamos pausando o activando
-    const accion = cupon.activo ? 'Pausar' : 'Reanudar';
-    const icono = cupon.activo ? 'pause' : 'play';
-    const mensaje = cupon.activo 
-        ? `¿Pausar el cupón "${cupon.codigo_cupon}"? Los clientes ya no podrán utilizarlo.`
-        : `¿Reanudar el cupón "${cupon.codigo_cupon}"? Volverá a estar disponible para tus clientes.`;
-
-    const confirmacion = await this.confirmService.ask({
-        title: `¿${accion} cupón?`,
-        message: mensaje,
-        confirmText: `Sí, ${accion.toLowerCase()}`,
-        cancelText: 'Volver',
-        icon: icono,
-        type: cupon.activo ? 'warning' : 'info' // Podés ajustar el color según los tipos de tu ConfirmService
-    });
-
-    if (confirmacion) {
-        const nuevoEstado = !cupon.activo;
-        
-        this.cuponBackend.updateCupon(cupon.id, { activo: nuevoEstado }).subscribe({
-          next: (res) => {
-            this.adminStore.updateCuponEnLista(res);
-            // Opcional: Si tenés el toastService inyectado, podés mostrar un mensajito de éxito acá
-            // this.toastService.show(`Cupón ${accion.toLowerCase()}do con éxito`);
-          },
-          error: (err) => {
-            console.error(`Error al ${accion.toLowerCase()} el cupón:`, err);
-          }
-        });
-    }
+  volverAtras() {
+    this.location.back();
   }
 
   onAdd() {
@@ -117,11 +86,15 @@ export class MisCupones {
     this.cuponFormService.openEdit(cupon);
   }
 
-  async onDelete(cupon: Cupon) {
-    this.cuponFormService.delete(cupon);
+  onToggleActivo(cupon: Cupon) {
+    this.cuponManager.toggleActivo(cupon);
   }
 
-  volverAtras() {
-    this.location.back();
+  onDelete(cupon: Cupon) {
+    this.cuponManager.eliminar(cupon);
+  }
+
+  onDuplicar(cupon: Cupon) {
+    this.cuponManager.duplicar(cupon);
   }
 }

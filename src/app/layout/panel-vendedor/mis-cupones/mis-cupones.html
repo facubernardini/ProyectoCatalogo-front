@@ -112,9 +112,15 @@
                                         <app-icon [name]="cupon.activo ? 'pause' : 'play'" classes="size-4 fill-current text-gray-400" />
                                         {{ cupon.activo ? 'Pausar cupón' : 'Reanudar cupón' }}
                                     </button>
-
-                                    <div class="h-px bg-gray-100 my-1 mx-2"></div>
                                 }
+
+                                <button (click)="onDuplicar(cupon); activeMenuId.set(null)"
+                                        class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
+                                    <app-icon name="copy" classes="size-4 fill-current text-gray-400" />
+                                    Duplicar cupón
+                                </button>
+
+                                <div class="h-px bg-gray-100 my-1 mx-2"></div>
 
                                 <button (click)="onDelete(cupon); activeMenuId.set(null)"
                                         class="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors">

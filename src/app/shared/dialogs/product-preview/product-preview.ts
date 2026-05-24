@@ -4,6 +4,9 @@ import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive
 import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { ProductPreviewService } from '@shared/services/product-preview.service';
+import { ConfirmService } from 'src/app/core/services/confirm.service';
+import { ToastService } from 'src/app/core/services/toast.service';
+import { ProductoManagerService } from 'src/app/core/services/producto-manager.service'; // <-- INYECTAMOS EL MANAGER
 
 @Component({
   selector: 'app-product-preview',
@@ -13,6 +16,10 @@ import { ProductPreviewService } from '@shared/services/product-preview.service'
 })
 export class ProductPreview {
   public productPreviewService = inject(ProductPreviewService);
+  public productoManager = inject(ProductoManagerService); // <-- MANAGER
+  
+  private confirmService = inject(ConfirmService);
+  private toastService = inject(ToastService);
 
   preciosInvalidos(producto: Producto): boolean {
     if (!producto || !producto.presentaciones) return false;
@@ -40,8 +47,56 @@ export class ProductPreview {
     });
   }
 
-  eliminarPresentacion(producto: Producto, index: number) {
-    producto.presentaciones.splice(index, 1);
+  // --- NUEVO: PAUSAR / REANUDAR CON AUTO-GUARDADO ---
+  async onToggleActivoPresentacion(producto: Producto, index: number) {
+    const pres = producto.presentaciones[index];
+    const estaActiva = pres.activo;
+    const nombreVariante = pres.unidad_venta || 'esta variante';
+
+    const confirmacion = await this.confirmService.ask({
+      title: estaActiva ? '¿Pausar variante?' : '¿Reanudar variante?',
+      message: estaActiva 
+        ? `Tus clientes ya no podrán comprar "${nombreVariante}".` 
+        : `La variante "${nombreVariante}" volverá a estar disponible para la venta.`,
+      confirmText: estaActiva ? 'Pausar' : 'Reanudar',
+      cancelText: 'Cancelar',
+      icon: estaActiva ? 'pause' : 'play',
+      type: estaActiva ? 'warning' : 'info'
+    });
+
+    if (confirmacion) {
+      // 1. Cambiamos el estado localmente
+      pres.activo = !estaActiva;
+      
+      // 2. Guardamos en el backend silenciosamente (sin cerrar el modal)
+      this.productoManager.guardar(producto, producto);
+    }
+  }
+
+  // --- ACTUALIZADO: ELIMINAR CON AUTO-GUARDADO ---
+  async eliminarPresentacion(producto: Producto, index: number) {
+    if (producto.presentaciones.length <= 1) {
+      this.toastService.show('El producto debe tener al menos una variante.', 'error');
+      return;
+    }
+
+    const presAEliminar = producto.presentaciones[index];
+    const nombrePresentacion = presAEliminar.unidad_venta || 'Nueva presentación';
+
+    const confirmacion = await this.confirmService.ask({
+      title: '¿Eliminar presentación?',
+      message: `Estás por borrar "${nombrePresentacion}" de "${producto.nombre}".`,
+      confirmText: 'Sí, eliminar',
+      cancelText: 'Volver',
+      icon: 'trash',
+      type: 'danger'
+    });
+
+    if (confirmacion) {
+      producto.presentaciones.splice(index, 1);
+      
+      this.productoManager.guardar(producto, producto);
+    }
   }
 
   datosInvalidos(producto: Producto): boolean {
@@ -56,7 +111,6 @@ export class ProductPreview {
 
   onGuardar(prod: Producto) {
     if (this.preciosInvalidos(prod)) return;
-    
     this.productPreviewService.onGuardar(prod);
   }
 }
