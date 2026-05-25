@@ -6,7 +6,6 @@ import { forkJoin } from "rxjs";
 import { CategoriaVendedor } from "../models/categoriaVendedor.model";
 import { Catalogo, MedioPago } from "../models/catalogo.model";
 import { CatalogoService } from "../services-backend/catalogo.ServiceBackend";
-import { AuthService } from "../services-backend/auth.ServiceBackend";
 import { Cupon } from "../models/cupon.model";
 import { CuponServiceBackend } from "../services-backend/cupones.ServiceBackend";
 import { MediosPagoServiceBackend } from "../services-backend/medios-pago.ServiceBackend";
@@ -14,7 +13,6 @@ import { TagService } from "../services-backend/tags.ServiceBackend";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
-  //private authService = inject(AuthService);
   private productoService = inject(ProductoService);
   private categoriaService = inject(CategoriaService);
   private catalogoService = inject(CatalogoService);
@@ -32,15 +30,6 @@ export class AdminStoreService {
   public isLoading = signal(false);
 
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
-
-  /*
-  constructor() {
-    const vendedorData = this.authService.getVendedorLocalStorage();
-    if (vendedorData?.catalogo) {
-      this.catalogo.set(vendedorData.catalogo);
-    }
-  }
-  */
  
   cargarDatosPublicos(slug: string) {
     this.isLoading.set(true);

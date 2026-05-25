@@ -13,7 +13,6 @@ export class ProductoManagerService {
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
 
-  // Señal opcional por si querés mostrar un spinner global mientras el manager trabaja
   public isLoading = signal(false);
 
   // --- ELIMINAR ---

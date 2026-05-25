@@ -105,9 +105,17 @@
                 <div 
                     (click)="productPreviewService.open(producto)"
                     class="relative shrink-0 w-12 h-12 bg-gray-50 rounded-lg overflow-hidden border border-gray-100">
-                    <img [src]="producto.imagen || 'https://placehold.co/200x200?text=📦'" 
-                        class="object-cover w-full h-full"
-                        [class.grayscale]="!producto.activo">
+                    
+                    @if (producto.imagen) {
+                        <img [src]="producto.imagen" 
+                            class="object-cover w-full h-full transition-all"
+                            [class.grayscale]="!producto.activo">
+                    } @else {
+                        <div class="w-full h-full flex items-center justify-center text-gray-300"
+                            [class.grayscale]="!producto.activo">
+                            <app-icon name="photo" classes="size-5 fill-current" />
+                        </div>
+                    }
 
                     @if (producto.destacado) {
                         <div [class]="producto.activo ? 'bg-yellow-400' : 'bg-gray-400 grayscale'"
@@ -119,7 +127,7 @@
                     }
                     
                     <div [class]="producto.activo ? 'bg-green-500' : 'bg-gray-300'" 
-                        class="absolute bottom-0.5 right-0.5 size-2.5 rounded-full border-2 border-white shadow-sm">
+                        class="absolute bottom-0.5 right-0.5 size-2.5 rounded-full border-2 border-white shadow-sm transition-colors">
                     </div>
                 </div>
                 
@@ -127,9 +135,19 @@
                     (click)="productPreviewService.open(producto)"
                     class="flex-1 min-w-0">
                     <h3 class="text-brand-text font-bold text-sm truncate">{{ producto.nombre }}</h3>
-                    <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium mt-0.5">
-                        <app-icon name="layers" classes="size-3 fill-current" />
-                        {{ producto.presentaciones.length }} {{ producto.presentaciones.length === 1 ? 'variante' : 'variantes' }}
+                    
+                    <div class="flex items-center gap-2 text-[10px] text-gray-400 font-medium mt-0.5">
+                        <div class="flex items-center gap-1">
+                            <app-icon name="layers" classes="size-3 fill-current" />
+                            {{ producto.presentaciones.length }} {{ producto.presentaciones.length === 1 ? 'variante' : 'variantes' }}
+                        </div>
+
+                        @if (!producto.activo) {
+                            <span class="flex items-center gap-1 text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded-full font-bold">
+                                <app-icon name="pause" classes="size-2.5 fill-current" />
+                                Pausado
+                            </span>
+                        }
                     </div>
                 </div>
 

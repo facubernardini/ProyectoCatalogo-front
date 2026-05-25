@@ -23,14 +23,10 @@ export class PanelVendedor {
   ngOnInit() {
     const data = localStorage.getItem('vendedor');
     if (data) {
-      const { catalogo } = JSON.parse(data);
-      if (catalogo?.id) {
-        this.adminStore.cargarDatosPanelVendedor(catalogo.id);
-      } else {
-        this.adminStore.isLoading.set(false);
+      const vendedor = JSON.parse(data);
+      if (vendedor.catalogoId) {
+        this.adminStore.cargarDatosPanelVendedor(vendedor.catalogoId);
       }
-    } else {
-      this.adminStore.isLoading.set(false);
     }
   }
 }

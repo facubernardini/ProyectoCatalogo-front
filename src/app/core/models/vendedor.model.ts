@@ -1,11 +1,10 @@
-import { Catalogo } from "./catalogo.model";
-
 export interface Vendedor {
   id: number;
   nombre: string;
   correo: string;
+  last_login?: Date | null;
   admin: boolean;
-  catalogo?: Catalogo | null;
+  catalogoId: number;
 }
 
 export interface RegistroVendedorRequest {
