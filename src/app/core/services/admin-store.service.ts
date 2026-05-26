@@ -13,6 +13,8 @@ import { TagService } from "../services-backend/tags.ServiceBackend";
 import { VendedorBackoffice } from "../models/backoffice/vendedorBackoffice.model";
 import { VendedorService } from "../services-backend/vendedores.ServiceBackend";
 import { CatalogoBackoffice } from "../models/backoffice/catalogoBackoffice.mode";
+import { HistorialSuscripcion } from "../models/backoffice/suscripcion.model";
+import { SuscripcionesService } from "../services-backend/suscripciones.ServiceBackend";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
@@ -20,6 +22,7 @@ export class AdminStoreService {
   private categoriaService = inject(CategoriaService);
   private catalogoService = inject(CatalogoService);
   private vendedorService = inject(VendedorService);
+  private suscripcionService = inject(SuscripcionesService);
   private cuponService = inject(CuponServiceBackend);
   private mediosPagoService = inject(MediosPagoServiceBackend);
   private tagsService = inject(TagService);
@@ -35,6 +38,7 @@ export class AdminStoreService {
   // BACKOFFICE
   vendedoresBackoffice = signal<VendedorBackoffice[]>([]);
   catalogosBackoffice = signal<CatalogoBackoffice[]>([]);
+  suscripcionesHistorialBackoffice = signal<HistorialSuscripcion[]>([]);
   
   public isLoading = signal(false);
 
@@ -89,11 +93,13 @@ export class AdminStoreService {
     
     forkJoin({
       vendedores: this.vendedorService.getVendedores(),
-      catalogos: this.catalogoService.getCatalogos()
+      catalogos: this.catalogoService.getCatalogos(),
+      historialSuscripciones: this.suscripcionService.getHistorialSuscripciones(),
     }).subscribe({
-      next: ({ vendedores, catalogos }) => {
+      next: ({ vendedores, catalogos, historialSuscripciones }) => {
         this.vendedoresBackoffice.set(vendedores);
         this.catalogosBackoffice.set(catalogos);
+        this.suscripcionesHistorialBackoffice.set(historialSuscripciones);
         
         this.isLoading.set(false);
       },
