@@ -3,23 +3,26 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { ToastService } from 'src/app/core/services/toast.service';
+import { Toast } from "@shared/toast/toast";
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, Toast],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
-  loginForm: FormGroup;
-  
+  private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  
+  loginForm: FormGroup;
 
   constructor() {
     this.loginForm = this.fb.group({
-      correo: ['vendedor@test.com', [Validators.required, Validators.email]],
+      correo: ['admin@test.com', [Validators.required, Validators.email]],
       password: ['password123', [Validators.required, Validators.minLength(6)]]
     });
   }
@@ -31,14 +34,13 @@ export class Login {
       next: (res) => {
         console.log("Login: ", res);
         if (res.vendedor.admin) {
-          this.router.navigate(['/backoffice']);
+          this.router.navigate(['/backoffice/inicio']);
         } else {
           this.router.navigate(['/panel-vendedor/inicio']);
         }
       },
       error: (err) => {
-        console.error('Error en login', err);
-        alert('Credenciales incorrectas o error de servidor');
+        this.toastService.show('Correo o contraseña incorrectos.', 'error');
       }
     });
   }

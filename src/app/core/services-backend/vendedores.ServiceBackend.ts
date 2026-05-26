@@ -1,15 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Vendedor } from '../models/vendedor.model';
 import { environment } from 'src/environments/environment.development';
+import { VendedorBackoffice } from '../models/backoffice/vendedorBackoffice.model';
 
 @Injectable({ providedIn: 'root' })
 export class VendedorService {
-  private http = inject(HttpClient);
-  private API_URL = `${environment.apiUrl}/falta`;
+	private http = inject(HttpClient);
+	private API_URL = environment.apiUrl;
 
-  getVendedores(): Observable<Vendedor[]> {
-    return this.http.get<Vendedor[]>(this.API_URL);
-  }
+	getVendedores(): Observable<VendedorBackoffice[]> {
+		return this.http.get<VendedorBackoffice[]>(`${this.API_URL}/admin/vendedores`);
+	}
 }

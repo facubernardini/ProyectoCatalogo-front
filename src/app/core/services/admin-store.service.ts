@@ -10,22 +10,31 @@ import { Cupon } from "../models/cupon.model";
 import { CuponServiceBackend } from "../services-backend/cupones.ServiceBackend";
 import { MediosPagoServiceBackend } from "../services-backend/medios-pago.ServiceBackend";
 import { TagService } from "../services-backend/tags.ServiceBackend";
+import { VendedorBackoffice } from "../models/backoffice/vendedorBackoffice.model";
+import { VendedorService } from "../services-backend/vendedores.ServiceBackend";
+import { CatalogoBackoffice } from "../models/backoffice/catalogoBackoffice.mode";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
   private productoService = inject(ProductoService);
   private categoriaService = inject(CategoriaService);
   private catalogoService = inject(CatalogoService);
+  private vendedorService = inject(VendedorService);
   private cuponService = inject(CuponServiceBackend);
   private mediosPagoService = inject(MediosPagoServiceBackend);
   private tagsService = inject(TagService);
 
+  // PUBLIC & SELLER
   catalogo = signal<Catalogo | null>(null);
   categorias = signal<CategoriaVendedor[]>([]);
   productos = signal<Producto[]>([]);
   cupones = signal<Cupon[]>([]);
   mediosPago = signal<MedioPago[]>([]);
   tags = signal<Tag[]>([]);
+
+  // BACKOFFICE
+  vendedoresBackoffice = signal<VendedorBackoffice[]>([]);
+  catalogosBackoffice = signal<CatalogoBackoffice[]>([]);
   
   public isLoading = signal(false);
 
@@ -72,6 +81,26 @@ export class AdminStoreService {
         this.isLoading.set(false);
       },
       error: (err) => console.error('Error cargando el panel', err)
+    });
+  }
+
+  cargarDatosPanelBackoffice() {
+    this.isLoading.set(true);
+    
+    forkJoin({
+      vendedores: this.vendedorService.getVendedores(),
+      catalogos: this.catalogoService.getCatalogos()
+    }).subscribe({
+      next: ({ vendedores, catalogos }) => {
+        this.vendedoresBackoffice.set(vendedores);
+        this.catalogosBackoffice.set(catalogos);
+        
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error cargando el backoffice', err);
+        this.isLoading.set(false);
+      }
     });
   }
 

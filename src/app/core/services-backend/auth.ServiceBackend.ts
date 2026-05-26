@@ -23,5 +23,6 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('vendedor');
+    window.location.href = '/login';
   }
 }

@@ -1,0 +1,119 @@
+<header class="sticky top-0 z-50 pt-8 bg-brand-bg border-b border-blue-200 shadow-sm">
+	<div class="flex items-center px-4 h-16 max-w-5xl mx-auto">
+		<div class="flex-1 text-center px-2 overflow-hidden">
+			<h1 class="text-brand-accentfont-bold text-base truncate">
+				Vendedores
+			</h1>
+		</div>
+	</div>
+</header>
+
+<main class="min-h-screen bg-gray-50 p-4 pb-20">
+    <div class="flex flex-col gap-2 max-w-5xl mx-auto w-full">
+        <div class="flex flex-col gap-3">
+            @for (vendedor of vendedores(); track vendedor.id) {
+                <div class="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col gap-3">
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
+                        
+                        <div class="flex items-center gap-3">
+                            <div class="shrink-0 size-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-brand-accent font-black text-lg">
+                                {{ vendedor.nombre_apellido.charAt(0) | uppercase }}
+                            </div>
+                            
+                            <div class="flex flex-col">
+                                <span class="font-bold text-brand-text text-base leading-tight">{{ vendedor.nombre_apellido }}</span>
+                                <span class="text-xs font-medium text-gray-500 mt-0.5">{{ vendedor.correo }}</span>
+                                
+                                @if (!vendedor.activo) {
+                                    <span class="text-[10px] text-red-500 font-bold uppercase tracking-wide mt-1 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">
+                                          <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd" />
+                                        </svg>
+                                        Cuenta Suspendida
+                                    </span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:items-end gap-1.5 border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100 w-full sm:w-auto">
+                            
+                            <div class="flex items-center justify-between sm:justify-end gap-2 w-full">
+                                <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider"
+                                      [class.bg-blue-100]="vendedor.suscripcion?.plan?.toLowerCase() === 'prueba'"
+                                      [class.text-blue-700]="vendedor.suscripcion?.plan?.toLowerCase() === 'prueba'"
+                                      [class.bg-gray-200]="vendedor.suscripcion?.plan?.toLowerCase() === 'base'"
+                                      [class.text-gray-700]="vendedor.suscripcion?.plan?.toLowerCase() === 'base'"
+                                      [class.bg-purple-100]="vendedor.suscripcion?.plan?.toLowerCase() === 'premium'"
+                                      [class.text-purple-700]="vendedor.suscripcion?.plan?.toLowerCase() === 'premium'"
+                                      [class.bg-gray-100]="!vendedor.suscripcion"
+                                      [class.text-gray-500]="!vendedor.suscripcion">
+                                    {{ vendedor.suscripcion?.plan || 'Sin Plan' }}
+                                </span>
+
+                                @if (vendedor.suscripcion?.estado === 'CANCELADA') {
+                                    <span class="text-[10px] bg-red-100 text-red-700 font-bold px-2 py-1 rounded-md uppercase">
+                                        Cancelada
+                                    </span>
+                                } @else if (vendedor.suscripcion?.estado === 'PENDIENTE_PAGO') {
+                                    <span class="text-[10px] bg-yellow-100 text-yellow-700 font-bold px-2 py-1 rounded-md uppercase">
+                                        Pendiente
+                                    </span>
+                                } @else if (vendedor.suscripcion?.estado === 'ACTIVA') {
+                                    <span class="text-[10px] bg-green-100 text-green-700 font-bold px-2 py-1 rounded-md uppercase">
+                                        Activa
+                                    </span>
+                                }
+                            </div>
+
+                            <span class="text-xs font-semibold mt-1 flex justify-between sm:justify-end w-full"
+                                  [class.text-red-500]="vendedor.suscripcion?.estado === 'CANCELADA'"
+                                  [class.text-gray-500]="vendedor.suscripcion?.estado !== 'CANCELADA'">
+                                <span>Vencimiento:</span>
+                                <span class="ml-1">
+                                    @if (vendedor.suscripcion?.fecha_fin) {
+                                        {{ vendedor.suscripcion?.fecha_fin | date:'dd/MM/yyyy':'UTC' }}
+                                    } @else {
+                                        No definida
+                                    }
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-3 mt-1 border-t border-gray-100 text-[11px] text-gray-400">
+                        
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-medium">Registrado:</span> 
+                            <span class="text-gray-600">{{ vendedor.creado_el | date:'dd/MM/yyyy' }}</span>
+                        </div>
+                        
+                        <div class="flex items-center gap-1.5 sm:justify-center">
+                            <span class="font-medium">Últ. acceso:</span>
+                            <span class="text-gray-600">
+                                @if (vendedor.ultimo_ingreso) {
+                                    {{ vendedor.ultimo_ingreso | date:'dd/MM/yyyy HH:mm' }} hs
+                                } @else {
+                                    Nunca
+                                }
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+            } @empty {
+                <div class="flex flex-col items-center justify-center p-8 bg-white border border-dashed border-gray-300 rounded-2xl">
+                    <div class="p-3 bg-gray-50 rounded-full mb-3 text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                        </svg>
+                    </div>
+                    <p class="text-brand-text font-bold text-center">No hay vendedores registrados</p>
+                    <p class="text-sm text-gray-500 text-center mt-1">Aún no se ha registrado ninguna tienda en la plataforma.</p>
+                </div>
+            }
+        </div>
+        
+    </div>
+</main>

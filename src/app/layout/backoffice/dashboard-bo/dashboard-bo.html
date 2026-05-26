@@ -1,0 +1,155 @@
+<header class="sticky top-0 z-50 pt-8 bg-brand-bg border-b border-blue-200 shadow-sm">
+    <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
+        
+        <button (click)="onLogout()" 
+                class="p-2 text-brand-accent active:scale-95 transition-transform"
+                aria-label="Cerrar sesión">
+            <app-icon name="logout" classes="size-7 fill-current rotate-180" />
+        </button>
+
+        <div class="flex-1 text-center px-2 overflow-hidden">
+            <p class="text-brand-text text-sm font-medium leading-none mb-1">Panel Administrativo</p>
+        </div>
+
+        <button [routerLink]="['../perfil']"
+            class="p-2 text-brand-accent active:scale-95 transition-transform"
+            aria-label="Mi perfil">
+            <app-icon name="profile" classes="size-7 fill-current" />
+        </button>
+
+    </div>
+</header>
+
+<main class="min-h-svh bg-gray-50 p-4">
+    <div class="flex flex-col gap-4 w-full"> 
+        
+        <div class="bg-white border border-brand-bg p-5 rounded-2xl shadow-sm shadow-blue-100/50">
+            <h2 class="text-brand-text font-bold text-sm mb-4 flex items-center gap-2">
+                <app-icon name="profile" classes="size-4 fill-brand-accent" />
+                Resumen de Vendedores
+            </h2>
+            
+            <div class="grid grid-cols-3 gap-2 divide-x divide-gray-200">
+                <div class="flex flex-col items-center justify-center">
+                    <span class="text-2xl font-black text-brand-text">{{ totalVendedores() }}</span>
+                    <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Registrados</span>
+                </div>
+                
+                <div class="flex flex-col items-center justify-center">
+                    <span class="text-2xl font-black text-green-500">{{ vendedoresActivos() }}</span>
+                    <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Activos</span>
+                </div>
+                
+                <div class="flex flex-col items-center justify-center">
+                    <span class="text-2xl font-black text-orange-500">{{ vendedoresInactivos() }}</span>
+                    <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1 text-center leading-tight">Inactivos<br>(> 7 días)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-brand-bg p-5 rounded-2xl shadow-sm shadow-blue-100/50">
+            <h2 class="text-brand-text font-bold text-sm mb-4 flex items-center gap-2">
+                <app-icon name="star" classes="size-4 fill-brand-accent" /> Planes de Suscripción
+            </h2>
+            
+            <div class="grid grid-cols-3 gap-2 divide-x divide-gray-200">
+                <div class="flex flex-col items-center justify-center">
+                    <span class="text-2xl font-black text-blue-500">{{ totalPrueba() }}</span>
+                    <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Prueba</span>
+                </div>
+                
+                <div class="flex flex-col items-center justify-center">
+                    <span class="text-2xl font-black text-brand-text">{{ totalBase() }}</span>
+                    <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Base</span>
+                </div>
+                
+                <div class="flex flex-col items-center justify-center">
+                    <span class="text-2xl font-black text-purple-600">{{ totalPremium() }}</span>
+                    <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Premium</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-brand-bg p-5 rounded-2xl shadow-sm shadow-blue-100/50">
+            <h2 class="text-brand-text font-bold text-sm mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5 text-orange-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                Próximos Vencimientos
+            </h2>
+
+            <div class="flex flex-col gap-3">
+                @if (vendedoresPorVencer().length === 0) {
+                    <p class="text-center text-brand-text-sec text-sm py-4 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                        No hay suscripciones próximas a vencer.
+                    </p>
+                } @else {
+                    @for (vendedor of vendedoresPorVencer(); track vendedor.id) {
+                        <div class="flex items-center justify-between p-3 bg-orange-50/50 border border-orange-100 rounded-xl">
+                            
+                            <div class="flex flex-col">
+                                <span class="text-brand-text font-bold text-sm">{{ vendedor.nombre_apellido }}</span>
+                                <span class="text-brand-text-sec text-xs">{{ vendedor.correo }}</span>
+                            </div>
+                            
+                            <div class="flex flex-col items-end text-right">
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
+                                      [class.bg-blue-100]="vendedor.suscripcion?.plan?.toLowerCase() === 'prueba'"
+                                      [class.text-blue-700]="vendedor.suscripcion?.plan?.toLowerCase() === 'prueba'"
+                                      [class.bg-gray-200]="vendedor.suscripcion?.plan?.toLowerCase() === 'base'"
+                                      [class.text-gray-700]="vendedor.suscripcion?.plan?.toLowerCase() === 'base'"
+                                      [class.bg-purple-100]="vendedor.suscripcion?.plan?.toLowerCase() === 'premium'"
+                                      [class.text-purple-700]="vendedor.suscripcion?.plan?.toLowerCase() === 'premium'">
+                                    {{ vendedor.suscripcion?.plan }}
+                                </span>
+                                
+                                <span class="text-orange-600 font-bold text-xs mt-1 flex items-center gap-1">
+                                    Vence: {{ vendedor.suscripcion?.fecha_fin | date:'dd/MM':'UTC' }}
+                                </span>
+                            </div>
+
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="bg-white border border-brand-bg p-5 rounded-2xl shadow-sm shadow-blue-100/50">
+            <h2 class="text-brand-text font-bold text-sm mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5 text-green-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                </svg>
+                Últimos Logueos
+            </h2>
+
+            <div class="flex flex-col gap-3">
+                @if (ultimosLogueos().length === 0) {
+                    <p class="text-center text-brand-text-sec text-sm py-4 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                        Nadie ha iniciado sesión aún.
+                    </p>
+                } @else {
+                    @for (vendedor of ultimosLogueos(); track vendedor.id) {
+                        <div class="flex items-center justify-between p-3 bg-gray-50 border border-gray-100 rounded-xl">
+                            
+                            <div class="flex flex-col">
+                                <span class="text-brand-text font-bold text-sm">{{ vendedor.nombre_apellido }}</span>
+                                <span class="text-brand-text-sec text-xs">{{ vendedor.correo }}</span>
+                            </div>
+                            
+                            <div class="flex flex-col items-end text-right">
+                                <span class="text-gray-700 font-bold text-xs">
+                                    {{ vendedor.ultimo_ingreso | date:'dd/MM HH:mm':'-0300' }} hs
+                                </span>
+                                <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">
+                                    Conexión
+                                </span>
+                            </div>
+
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+    </div>
+</main>

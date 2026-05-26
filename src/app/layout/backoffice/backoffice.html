@@ -1,1 +1,15 @@
-<p>backoffice works!</p>
+@if (adminStore.isLoading()) {
+    <app-loading-spinner/>
+} @else {
+    <div class="animate-in fade-in duration-500">
+        <router-outlet/>
+    </div>
+    
+    <app-menu-inferior-bo/>
+
+    <!-- Dialogs emergentes -->
+    <app-confirm-dialog/>
+
+    <!-- Toast -->
+    <app-toast/>
+}

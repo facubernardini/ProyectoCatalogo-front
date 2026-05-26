@@ -13,6 +13,9 @@ import { Perfil } from '@layout/panel-vendedor/perfil/perfil';
 import { MisCupones } from '@layout/panel-vendedor/mis-cupones/mis-cupones';
 import { Home } from '@layout/home/home';
 import { Register } from '@layout/home/register/register';
+import { DashboardBO } from '@layout/backoffice/dashboard-bo/dashboard-bo';
+import { Vendedores } from '@layout/backoffice/vendedores/vendedores';
+import { Catalogos } from '@layout/backoffice/catalogos/catalogos';
 
 export const routes: Routes = [
 	{ path: '', component: Home },
@@ -31,7 +34,15 @@ export const routes: Routes = [
             { path: 'perfil', component: Perfil },
         ]
     },
-	{ path: 'backoffice', component: Backoffice, canActivate: [authGuard, adminGuard] },
+	{ path: 'backoffice', 
+        component: Backoffice, 
+        canActivate: [authGuard, adminGuard] ,
+        children: [
+			{ path: 'inicio', component: DashboardBO },
+            { path: 'vendedores', component: Vendedores },
+            { path: 'catalogos', component: Catalogos },
+        ]
+    },
     { path: ':slug', component: CatalogoPublico },
 	{ path: '**', redirectTo: '' },
 ];

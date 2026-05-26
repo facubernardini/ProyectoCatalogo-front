@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Catalogo } from '../models/catalogo.model';
+import { CatalogoBackoffice } from '../models/backoffice/catalogoBackoffice.mode';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,10 @@ export class CatalogoService {
 	getCatalogoById(id: number): Observable<Catalogo> {
         return this.http.get<Catalogo>(`${this.API_URL}/seller/catalogos/${id}`);
     }
+
+	getCatalogos(): Observable<CatalogoBackoffice[]> {
+		return this.http.get<CatalogoBackoffice[]>(`${this.API_URL}/admin/catalogos`);
+	}
 
 	updateCatalogo(id: number, datosActualizados: Partial<Catalogo>): Observable<Catalogo> {
         return this.http.patch<Catalogo>(`${this.API_URL}/seller/catalogos/${id}`, datosActualizados);
