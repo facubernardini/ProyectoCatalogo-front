@@ -5,10 +5,11 @@ import { RouterOutlet } from "@angular/router";
 import { Toast } from "@shared/toast/toast";
 import { ConfirmDialog } from "@shared/dialogs/confirm-dialog/confirm-dialog";
 import { MenuInferiorBO } from "./menu-inferior-bo/menu-inferior-bo";
+import { HistorialSuscripciones } from "@shared/dialogs/historial-suscripciones/historial-suscripciones";
 
 @Component({
   selector: 'app-backoffice',
-  imports: [LoadingSpinner, RouterOutlet, Toast, ConfirmDialog, MenuInferiorBO],
+  imports: [LoadingSpinner, RouterOutlet, Toast, ConfirmDialog, MenuInferiorBO, HistorialSuscripciones],
   templateUrl: './backoffice.html',
   styleUrl: './backoffice.css',
 })

@@ -91,7 +91,7 @@ export class MiTienda {
     dataActual.minimo_compra = dataActual.minimo_compra || 0;
     dataActual.descuento_en_efectivo = dataActual.descuento_en_efectivo || 0;
 
-    if (dataActual.descuento_en_efectivo < 5 || dataActual.descuento_en_efectivo > 80) {
+    if (dataActual.descuento_en_efectivo !== 0 && (dataActual.descuento_en_efectivo < 5 || dataActual.descuento_en_efectivo > 80)) {
       this.toastService.show('El descuento en efectivo debe ser un porcentaje entre 5 y 80.', 'error');
       return;
     }

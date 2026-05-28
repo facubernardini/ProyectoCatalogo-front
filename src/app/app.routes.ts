@@ -16,6 +16,7 @@ import { Register } from '@layout/home/register/register';
 import { DashboardBO } from '@layout/backoffice/dashboard-bo/dashboard-bo';
 import { Vendedores } from '@layout/backoffice/vendedores/vendedores';
 import { Catalogos } from '@layout/backoffice/catalogos/catalogos';
+import { ErrorView } from '@layout/error/error';
 
 export const routes: Routes = [
 	{ path: '', component: Home },
@@ -43,6 +44,7 @@ export const routes: Routes = [
             { path: 'catalogos', component: Catalogos },
         ]
     },
+    { path: 'error', component: ErrorView },
     { path: ':slug', component: CatalogoPublico },
 	{ path: '**', redirectTo: '' },
 ];

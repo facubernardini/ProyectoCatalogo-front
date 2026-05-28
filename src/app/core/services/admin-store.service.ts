@@ -13,11 +13,14 @@ import { TagService } from "../services-backend/tags.ServiceBackend";
 import { VendedorBackoffice } from "../models/backoffice/vendedorBackoffice.model";
 import { VendedorService } from "../services-backend/vendedores.ServiceBackend";
 import { CatalogoBackoffice } from "../models/backoffice/catalogoBackoffice.mode";
-import { HistorialSuscripcion } from "../models/backoffice/suscripcion.model";
+import { HistorialSuscripcion, SuscripcionEstado } from "../models/backoffice/suscripcion.model";
 import { SuscripcionesService } from "../services-backend/suscripciones.ServiceBackend";
+import { HttpErrorResponse } from "@angular/common/http";
+import { Router } from "@angular/router";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
+  private router = inject(Router);
   private productoService = inject(ProductoService);
   private categoriaService = inject(CategoriaService);
   private catalogoService = inject(CatalogoService);
@@ -59,7 +62,21 @@ export class AdminStoreService {
         
         this.isLoading.set(false);
       },
-      error: (err) => console.error('Error cargando catálogo público', err)
+      error: (err: HttpErrorResponse) => {
+        this.isLoading.set(false);
+        console.error('Error cargando catálogo público', err);
+
+        // Tienda suspendida
+        if (err.status === 403 && err.error?.code === 'TIENDA_SUSPENDIDA') {
+            this.router.navigate(['/error']);
+        } else if (err.status === 404) {
+            // La tienda no existe
+            this.router.navigate(['/error']); 
+        } else {
+            // Error de servidor (500) o sin conexión
+            this.router.navigate(['/error']);
+        }
+      }
     });
   }
 
@@ -208,6 +225,30 @@ export class AdminStoreService {
   eliminarCuponDeLista(idCupon: number) {
     this.cupones.update(cuponesActuales => 
       cuponesActuales.filter(cupon => cupon.id !== idCupon)
+    );
+  }
+
+  // --- MÉTODOS PARA VENDEDORES (BACKOFFICE) ---
+
+  updateVendedorEnLista(vendedorActualizado: Partial<VendedorBackoffice>) {
+    this.vendedoresBackoffice.update(vendedores => 
+      vendedores.map(vendedor => {
+        if (vendedor.id !== vendedorActualizado.id) {
+          return vendedor;
+        }
+
+        const vendedorModificado = { ...vendedor, ...vendedorActualizado } as VendedorBackoffice;
+
+        if (vendedorActualizado.activo !== undefined && vendedor.suscripcion) {
+          
+          vendedorModificado.suscripcion = {
+            ...vendedor.suscripcion,
+            estado: vendedorActualizado.activo ? SuscripcionEstado.ACTIVA : SuscripcionEstado.CANCELADA
+          } as any; 
+        }
+
+        return vendedorModificado;
+      })
     );
   }
 }

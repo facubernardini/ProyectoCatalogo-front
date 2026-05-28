@@ -40,7 +40,19 @@ export class Login {
         }
       },
       error: (err) => {
-        this.toastService.show('Correo o contraseña incorrectos.', 'error');
+        // Cuenta suspendida
+        if (err.status === 403) {
+            const mensajeSuspendido = err.error?.error || 'Tu cuenta ha sido suspendida. Por favor, comunícate con soporte.';
+            this.toastService.show(mensajeSuspendido, 'error');
+        } 
+        // Credenciales inválidas
+        else if (err.status === 401) {
+            this.toastService.show('Correo o contraseña incorrectos.', 'error');
+        } 
+        // Error de Servidor
+        else {
+            this.toastService.show('Ocurrió un problema al intentar iniciar sesión.', 'error');
+        }
       }
     });
   }

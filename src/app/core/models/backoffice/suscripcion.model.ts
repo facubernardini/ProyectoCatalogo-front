@@ -1,5 +1,15 @@
-export type SuscripcionEstado = 'ACTIVA' | 'PENDIENTE_PAGO' | 'CANCELADA';
-export type SuscripcionAccion = 'ALTA' | 'UPGRADE' | 'RENOVACION' | 'CANCELACION';
+export enum SuscripcionEstado {
+    ACTIVA = 'ACTIVA',
+    PENDIENTE_PAGO = 'PENDIENTE_PAGO',
+    CANCELADA = 'CANCELADA',
+}
+
+export enum SuscripcionAccion {
+    ALTA = 'ALTA',
+    UPGRADE = 'UPGRADE',
+    RENOVACION = 'RENOVACION',
+    CANCELACION = 'CANCELACION'
+}
 
 export interface Suscripcion {
     id: number;
