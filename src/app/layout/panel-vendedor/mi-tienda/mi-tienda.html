@@ -193,8 +193,7 @@
 								<span class="font-bold text-gray-400">$</span>
 								<input type="number"
 									(wheel)="$event.preventDefault()"
-									[(ngModel)]="this.catalogo()!.envio_gratis_desde" 
-									placeholder="Ej: 50000"
+									[(ngModel)]="this.catalogo()!.envio_gratis_desde"
 									class="w-full bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
 							</div>
 							<p class="text-[9px] text-gray-400 mt-1 ml-1">Dejar vacío si no ofrecés envío gratis.</p>
@@ -223,8 +222,7 @@
 					<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1 border border-transparent focus-within:border-brand-accent/20 transition-all">
 						<app-icon name="location" classes="size-5 text-brand-accent/60" />
 						<input type="text" 
-							[(ngModel)]="catalogo()!.direccion" 
-							placeholder="Ej: Av. Alem 1234"
+							[(ngModel)]="catalogo()!.direccion"
 							class="flex-1 bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
 					</div>
 				</div>
@@ -234,8 +232,7 @@
 					<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1 border border-transparent focus-within:border-brand-accent/20 transition-all">
 						<app-icon name="map" classes="size-5 text-brand-accent/60" />
 						<input type="text" 
-							[(ngModel)]="catalogo()!.ciudad" 
-							placeholder="Ej: Bahía Blanca"
+							[(ngModel)]="catalogo()!.ciudad"
 							class="flex-1 bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
 					</div>
 				</div>

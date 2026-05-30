@@ -96,8 +96,7 @@ export class CuponFormService {
 
     // 2. Armamos el payload final
     const payload = {
-      // Nota: No pasamos el catalogo_id acá, el Manager ya se encarga de eso.
-      codigo: data.codigo_cupon, // Lo unificamos al nombre que usa el manager ('codigo')
+      codigo_cupon: data.codigo_cupon,
       es_porcentaje: data.es_porcentaje,
       descuento: data.descuento,
       tope_descuento: (data.es_porcentaje && data.tiene_tope) ? data.tope_descuento : null,

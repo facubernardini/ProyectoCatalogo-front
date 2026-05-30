@@ -18,9 +18,9 @@ export class CartService {
   selectedPaymentMethod = signal<MedioPago | null>(null);
   deliveryMethod = signal<'envio' | 'retiro' | null>(null);
   isOpen = signal(false);
+  umbralMontoFaltanteEnvioGratis = 70;
 
-  // Nueva signal para la configuración dinámica del catálogo
-  catalogConfig = signal<{ costoEnvio: number; envioGratisDesde: number } | null>(null);
+  catalogConfig = signal<{ costoEnvio: number; envioGratisDesde: number; descuentoEfectivo: number } | null>(null);
 
   items = computed(() => this.cartItems());
 
@@ -28,12 +28,10 @@ export class CartService {
     this.cartItems().reduce((acc, item) => acc + item.cantidad, 0)
   );
 
-  // Suma bruta de productos
   subtotalPrice = computed(() =>
     this.cartItems().reduce((acc, item) => acc + (item.precio * item.cantidad), 0)
   );
 
-  // Valor del descuento aplicado
   discountAmount = computed(() => {
     const cupon = this.appliedCupon();
     const subtotal = this.subtotalPrice();
@@ -41,57 +39,70 @@ export class CartService {
     if (!cupon || subtotal === 0) return 0;
 
     if (cupon.es_porcentaje) {
-      // Calculamos el descuento base por porcentaje
       const baseDiscount = subtotal * (Number(cupon.descuento) / 100);
-
-      // Si tiene tope, aplicamos el menor entre el cálculo y el tope
       return cupon.tope_descuento 
         ? Math.min(baseDiscount, Number(cupon.tope_descuento)) 
         : baseDiscount;
     }
-
-    // Si no es porcentaje, es monto fijo
     return Number(cupon.descuento);
   });
 
   isDiscountCapped = computed(() => {
     const cupon = this.appliedCupon();
     const subtotal = this.subtotalPrice();
-    
     if (!cupon || !cupon.es_porcentaje || !cupon.tope_descuento) return false;
 
     const theoreticalDiscount = subtotal * (Number(cupon.descuento) / 100);
     return theoreticalDiscount >= Number(cupon.tope_descuento);
   });
 
-  // Precio después de cupones (pero antes de envío)
-  priceAfterDiscount = computed(() => {
+  priceAfterCoupon = computed(() => {
     const final = this.subtotalPrice() - this.discountAmount();
     return final > 0 ? final : 0;
   });
 
+  isCashPayment = computed(() => {
+    const method = this.selectedPaymentMethod();
+    if (!method) return false;
+    
+    return method.nombre.toLowerCase().includes('efectivo');
+  });
+
+  cashDiscountAmount = computed(() => {
+    const config = this.catalogConfig();
+    if (!config || !config.descuentoEfectivo || !this.isCashPayment()) return 0;
+    
+    const discount = this.priceAfterCoupon() * (config.descuentoEfectivo / 100);
+    return Number(discount.toFixed(2));
+  });
+
+  priceAfterAllDiscounts = computed(() => {
+    const final = this.priceAfterCoupon() - this.cashDiscountAmount();
+    return final > 0 ? final : 0;
+  });
+
   // --- Lógica de Envío Gratis ---
+  // Ahora usamos priceAfterAllDiscounts para evaluar si llega al envío gratis
   esEnvioGratis = computed(() => {
     const threshold = this.catalogConfig()?.envioGratisDesde;
     if (!threshold || threshold <= 0) return false;
-    // Comparamos contra el precio con descuento aplicado
-    return this.priceAfterDiscount() >= threshold;
+    return this.priceAfterAllDiscounts() >= threshold;
   });
 
   faltanteEnvioGratis = computed(() => {
     const threshold = this.catalogConfig()?.envioGratisDesde ?? 0;
-    return Math.max(0, threshold - this.priceAfterDiscount());
+    return Math.max(0, threshold - this.priceAfterAllDiscounts());
   });
 
   porcentajeEnvioGratis = computed(() => {
     const threshold = this.catalogConfig()?.envioGratisDesde ?? 0;
     if (threshold <= 0) return 0;
-    return Math.min(100, (this.priceAfterDiscount() / threshold) * 100);
+    return Math.min(100, (this.priceAfterAllDiscounts() / threshold) * 100);
   });
 
   // --- TOTAL FINAL ---
   totalFinal = computed(() => {
-    const base = this.priceAfterDiscount();
+    const base = this.priceAfterAllDiscounts();
     const config = this.catalogConfig();
 
     if (this.deliveryMethod() === 'envio' && !this.esEnvioGratis() && config) {
@@ -106,9 +117,8 @@ export class CartService {
     });
   }
 
-  // --- Métodos de Acción ---
-  setCatalogConfig(costoEnvio: number, envioGratisDesde: number) {
-    this.catalogConfig.set({ costoEnvio, envioGratisDesde });
+  setCatalogConfig(costoEnvio: number, envioGratisDesde: number, descuentoEfectivo: number = 0) {
+    this.catalogConfig.set({ costoEnvio, envioGratisDesde, descuentoEfectivo });
   }
 
   agregarProducto(producto: Producto, pres: Presentacion) {

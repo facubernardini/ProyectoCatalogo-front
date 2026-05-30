@@ -5,312 +5,341 @@
         class="absolute bottom-0 w-full max-h-[90vh] bg-white rounded-t-[40px] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300"
         (click)="$event.stopPropagation()">
 
-        <div class="p-6 pb-2 border-b border-gray-100">
+        <div class="p-6 pb-2 border-b border-gray-100 touch-none cursor-grab active:cursor-grabbing shrink-0">
             <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4"></div>
             <div class="flex justify-between items-center">
                 <h2 class="flex items-center gap-3 text-2xl font-black text-brand-text">
-                    <div
-                        class="flex items-center justify-center size-10 bg-brand-accent/10 text-brand-accent rounded-xl shrink-0">
+                    <div class="flex items-center justify-center size-10 bg-brand-accent/10 text-brand-accent rounded-xl shrink-0">
                         <app-icon name="receipt" classes="size-6 fill-current" />
                     </div>
                     <span>Mi Pedido</span>
                 </h2>
-                <button (click)="cartService.limpiarCarrito(); cartService.close()"
-                    class="text-xs font-bold text-red-500 uppercase tracking-wider">
-                    Vaciar
+                @if (cartService.items().length > 0){
+                    <button (click)="cartService.limpiarCarrito(); cartService.close()"
+                        class="text-xs font-bold text-red-500 uppercase tracking-wider">
+                        Vaciar
+                    </button>
+                } @else {
+                    <button (click)="cartService.close()"
+                        class="text-xs font-bold text-gray-400 hover:text-red-500 uppercase tracking-wider transition-colors">
+                        Cerrar
+                    </button>
+                }
+            </div>
+        </div>
+
+        @if (cartService.items().length === 0) {
+            
+            <div class="flex-1 flex flex-col justify-center items-center p-6 min-h-[30vh]">
+                <div class="size-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                    <app-icon name="receipt" classes="size-10 text-gray-300 fill-current" />
+                </div>
+                <h3 class="text-xl font-black text-brand-text mb-2">Tu carrito está vacío</h3>
+                <p class="text-sm text-gray-400 text-center max-w-62.5 font-medium">
+                    ¡Explorá nuestra tienda y agregá tus productos favoritos!
+                </p>
+            </div>
+
+            <div class="p-6 bg-gray-50 rounded-t-4xl border-t border-gray-100 shrink-0">
+                <button (click)="cartService.close()" 
+                    class="relative overflow-hidden w-full py-4 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all active:scale-[0.98]">
+                    Ir a agregar productos
                 </button>
             </div>
-        </div>
 
-        <div class="flex-1 overflow-y-auto p-6 no-scrollbar">
-            <div class="flex flex-col gap-4">
-                @for (item of cartService.items(); track item.presentacionId) {
-                <div class="flex items-center gap-3">
-                    <div class="relative shrink-0">
-                        <img [src]="item.imagen || 'https://placehold.co/100x100?text=%F0%9F%93%A6'"
-                            class="size-14 rounded-xl object-cover bg-brand-bg">
-                        @if (item.precio < item.precio_base) { @let ahorro = getPorcentaje(item.precio_base, item.precio);
-                            <span
-                            class="absolute -top-1.5 -left-1.5 bg-green-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg shadow-sm border border-white">
-                            {{ ahorro }}%
-                            </span>
+        } @else {
+            
+            <div class="flex-1 overflow-y-auto p-6 no-scrollbar">
+                 
+                <div class="flex flex-col gap-4">
+                    @for (item of cartService.items(); track item.presentacionId) {
+                    <div class="flex items-center gap-3">
+                        <div class="relative shrink-0">
+                            <img [src]="item.imagen || 'https://placehold.co/100x100?text=%F0%9F%93%A6'"
+                                class="size-14 rounded-xl object-cover bg-brand-bg">
+                            @if (item.precio < item.precio_base) { 
+                                @let ahorro = getPorcentaje(item.precio_base, item.precio);
+                                <span class="absolute -top-1.5 -left-1.5 bg-green-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg shadow-sm border border-white">
+                                    {{ ahorro }}%
+                                </span>
                             }
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-brand-text truncate leading-tight">{{ item.nombre }}</h4>
-                        <p class="text-[10px] text-gray-400">{{ item.unidad }}</p>
-                        <div class="flex items-center gap-1.5 mt-0.5">
-                            @if (item.precio < item.precio_base) { <span class="text-[12px] text-gray-400 line-through">
-                                ${{ item.precio_base }}</span>
-                                <span class="text-sm font-bold text-brand-accent">${{ item.precio }}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-brand-text truncate leading-tight">{{ item.nombre }}</h4>
+                            <p class="text-[10px] text-gray-400">{{ item.unidad }}</p>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                @if (item.precio < item.precio_base) { 
+                                    <span class="text-[12px] text-gray-400 line-through">${{ item.precio_base }}</span>
+                                    <span class="text-sm font-bold text-brand-accent">${{ item.precio }}</span>
                                 } @else {
-                                <span class="text-sm font-bold text-brand-accent">${{ item.precio }}</span>
+                                    <span class="text-sm font-bold text-brand-accent">${{ item.precio }}</span>
                                 }
                                 <span class="text-xs text-gray-400">c/u</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3 bg-gray-100 p-1 rounded-xl">
-                        <button (click)="cartService.restarUno(item.presentacionId)"
-                            class="size-8 flex items-center justify-center bg-white rounded-lg shadow-sm active:scale-90 transition-transform">
-                            @if (item.cantidad === 1) {
-                            <app-icon name="trash"
-                                classes="size-4 fill-current text-red-500 animate-in zoom-in duration-200" />
-                            } @else {
-                            <app-icon name="remove" classes="size-4 fill-current text-brand-text" />
-                            }
-                        </button>
-                        <span class="font-black text-brand-text min-w-5 text-center">{{ item.cantidad }}</span>
-                        <button (click)="cartService.sumarUno(item.presentacionId)"
-                            class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-transform text-white">
-                            <app-icon name="add-producto" classes="size-4 fill-current" />
-                        </button>
-                    </div>
-                </div>
-                } @empty {
-                <div class="py-10 text-center">
-                    <p class="text-gray-400 font-medium">Tu carrito está vacío</p>
-                </div>
-                }
-            </div>
-
-            <div class="mt-8">
-                <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Cómo lo recibís?</h3>
-                @if (catalogo()?.ofrece_envio) {
-                    <div class="grid grid-cols-2 gap-3 mb-6">
-                        <button (click)="seleccionarMetodo('retiro', seccionCupon)"
-                            [class.border-brand-accent]="cartService.deliveryMethod() === 'retiro'"
-                            [class.border-gray-100]="cartService.deliveryMethod() !== 'retiro'"
-                            [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'retiro'"
-                            class="p-4 border-2 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
-                            <app-icon name="store" [class.text-brand-accent]="cartService.deliveryMethod() === 'retiro'"
-                                classes="size-7 fill-current text-gray-400" />
-                            <div class="text-center">
-                                <span class="block font-bold text-sm text-brand-text">Retiro en local</span>
-                                <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
                             </div>
-                        </button>
-                        <button (click)="seleccionarMetodo('envio', seccionCupon)"
-                            [class.border-brand-accent]="cartService.deliveryMethod() === 'envio'"
-                            [class.border-gray-100]="cartService.deliveryMethod() !== 'envio'"
-                            [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'envio'"
-                            class="p-4 border-2 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
-                            <app-icon name="delivery" [class.text-brand-accent]="cartService.deliveryMethod() === 'envio'"
-                                classes="size-7 fill-current text-gray-400" />
-                            <div class="text-center">
-                                <span class="block font-bold text-sm text-brand-text">Envío a domicilio</span>
-                                @if (cartService.esEnvioGratis()) {
-                                    <span class="text-[10px] text-green-500 uppercase font-bold">¡Gratis!</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-gray-100 p-1 rounded-xl">
+                            <button (click)="cartService.restarUno(item.presentacionId)"
+                                class="size-8 flex items-center justify-center bg-white rounded-lg shadow-sm active:scale-90 transition-transform">
+                                @if (item.cantidad === 1) {
+                                    <app-icon name="trash" classes="size-4 fill-current text-red-500 animate-in zoom-in duration-200" />
                                 } @else {
-                                <span class="text-[10px] text-brand-accent uppercase font-bold">
-                                    +${{ catalogo()?.costo_envio}}
-                                </span>
+                                    <app-icon name="remove" classes="size-4 fill-current text-brand-text" />
                                 }
-                            </div>
-                        </button>
-                    </div>
-                } @else {
-                <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center gap-3">
-                    <app-icon name="info" classes="size-5 text-blue-500 fill-current" />
-                    <p class="text-sm text-blue-700 font-medium">Esta tienda solo opera con <b>Retiro en el Local</b>.
-                    </p>
-                </div>
-                }
-            </div>
-
-            <div class="mt-8" #seccionCupon>
-                <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Tenés un cupón?</h3>
-                @if (!cartService.appliedCupon()) {
-                <div class="flex gap-2">
-                    <input type="text" #cuponInput placeholder="Ej: BIENVENIDA20"
-                        class="flex-1 p-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold uppercase placeholder:capitalize placeholder:font-medium">
-                    <button (click)="cartService.aplicarCupon(cuponInput.value, catalogo()?.id || 0)"
-                        class="px-6 bg-brand-accent text-white font-bold rounded-2xl active:scale-95 transition-transform">
-                        Aplicar
-                    </button>
-                </div>
-                } @else {
-                <div
-                    class="p-4 bg-green-50 border-2 border-dashed border-green-200 rounded-2xl flex items-center justify-between animate-in zoom-in-95 duration-200">
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="size-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-sm">
-                            <app-icon name="check" classes="size-5 fill-current" />
+                            </button>
+                            <span class="font-black text-brand-text min-w-5 text-center">{{ item.cantidad }}</span>
+                            <button (click)="cartService.sumarUno(item.presentacionId)"
+                                class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-transform text-white">
+                                <app-icon name="add-producto" classes="size-4 fill-current" />
+                            </button>
                         </div>
-                        <div>
-                            <p class="text-[10px] font-black text-green-600 uppercase tracking-tighter leading-none mb-1">
-                                Cupón activo</p>
-                            <p class="text-xs font-black text-brand-text uppercase flex items-center gap-1">
-                                {{ cartService.appliedCupon()?.mensaje || 'Descuento aplicado' }}
-                                @if (cartService.appliedCupon()?.es_porcentaje) {
-                                <span class="bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded-lg text-[11px]">
-                                    {{ cartService.appliedCupon()?.descuento }}% OFF
-                                </span>
-                                }
-                            </p>
-                        </div>
-                    </div>
-                    <button (click)="cartService.removerCupon()"
-                        class="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                        <app-icon name="trash" classes="size-5 fill-current" />
-                    </button>
-                </div>
-                }
-            </div>
-
-            <div class="mt-8">
-                <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Elegí como pagar</h3>
-                <div class="grid grid-cols-3 gap-3">
-                    @for (pago of catalogo()?.medios_pago; track pago.id) {
-                        <button (click)="seleccionarPago(pago, seccionDatos)"
-                            [class.border-brand-accent]="cartService.selectedPaymentMethod()?.id === pago.id"
-                            [class.border-gray-100]="cartService.selectedPaymentMethod()?.id !== pago.id"
-                            [class.bg-brand-accent/10]="cartService.selectedPaymentMethod()?.id === pago.id"
-                            class="flex flex-col items-center gap-2 p-3 border-2 rounded-2xl transition-all active:scale-95">
-                            <div [innerHTML]="pago.icono | safeHtml" 
-                                class="size-15 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
-                            </div>
-                            <span class="text-[9px] font-black uppercase text-center leading-tight"
-                                [class.text-brand-accent]="cartService.selectedPaymentMethod()?.id === pago.id"
-                                [class.text-gray-500]="cartService.selectedPaymentMethod()?.id !== pago.id">
-                                {{ pago.nombre }}
-                            </span>
-                        </button>
-                    }
-                </div>
-            </div>
-
-            <div class="mt-8" #seccionDatos>
-                <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Tus datos</h3>
-                <div class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-bold text-gray-400 ml-1 uppercase">Nombre y Apellido</label>
-                        <input type="text" [value]="nombreCliente()"
-                            (input)="nombreCliente.set($any($event.target).value)"
-                            class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium">
-                    </div>
-                    @if (cartService.deliveryMethod() === 'envio') {
-                    <div class="flex flex-col gap-1.5 animate-in slide-in-from-top-2 duration-300">
-                        <label class="text-xs font-bold text-gray-400 ml-1 uppercase">Dirección de envío</label>
-                        <input type="text" [value]="direccionEnvio()"
-                            (input)="direccionEnvio.set($any($event.target).value)"
-                            placeholder="Calle, número, departamento..."
-                            class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium">
                     </div>
                     }
                 </div>
-            </div>
-        </div>
 
-        <div class="p-6 bg-gray-50 rounded-t-4xl border-t border-gray-100">
-            
-            @if (montoFaltante() > 0 && cartService.totalItems() > 0) {
-            <div class="mb-4 p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-center gap-2 animate-pulse">
-                <app-icon name="alert" classes="size-4 text-amber-500 fill-current" />
-                <p class="text-xs text-amber-700 font-bold">Te faltan ${{ montoFaltante() }} para el mínimo (${{
-                    catalogo()?.minimo_compra }})</p>
-            </div>
-            }
-
-            @if (catalogo()?.envio_gratis_desde && cartService.totalItems() > 0) {
-            <div class="mb-5 p-4 rounded-2xl border transition-all duration-500"
-                [class]="cartService.esEnvioGratis() ? 'bg-green-50 border-green-100' : 'bg-blue-50 border-blue-100'">
-                
-                <div class="flex items-center justify-between mb-2.5">
-                    <div class="flex items-center gap-2">
-                        <app-icon [name]="cartService.esEnvioGratis() ? 'check' : 'delivery'" 
-                                [classes]="'size-4 fill-current ' + (cartService.esEnvioGratis() ? 'text-green-500' : 'text-blue-500')" />
-                        
-                        <p class="text-[11px] font-bold uppercase tracking-tight" 
-                            [class]="cartService.esEnvioGratis() ? 'text-green-700' : 'text-blue-700'">
-                            @if (cartService.esEnvioGratis()) {
-                                ¡Llegaste! Tenés envío gratis 🚀
-                            } @else {
-                                Te faltan <span class="text-sm font-black">${{ cartService.faltanteEnvioGratis() }}</span> para el envío gratis
-                            }
-                        </p>
-                    </div>
+                <div class="mt-8">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Cómo lo recibís?</h3>
+                    @if (catalogo()?.ofrece_envio) {
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <button (click)="seleccionarMetodo('retiro', seccionCupon)"
+                                [class.border-brand-accent]="cartService.deliveryMethod() === 'retiro'"
+                                [class.border-gray-100]="cartService.deliveryMethod() !== 'retiro'"
+                                [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'retiro'"
+                                class="p-4 border-2 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
+                                <app-icon name="store" [class.text-brand-accent]="cartService.deliveryMethod() === 'retiro'" classes="size-7 fill-current text-gray-400" />
+                                <div class="text-center">
+                                    <span class="block font-bold text-sm text-brand-text">Retiro en local</span>
+                                    <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
+                                </div>
+                            </button>
+                            <button (click)="seleccionarMetodo('envio', seccionCupon)"
+                                [class.border-brand-accent]="cartService.deliveryMethod() === 'envio'"
+                                [class.border-gray-100]="cartService.deliveryMethod() !== 'envio'"
+                                [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'envio'"
+                                class="p-4 border-2 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95">
+                                <app-icon name="delivery" [class.text-brand-accent]="cartService.deliveryMethod() === 'envio'" classes="size-7 fill-current text-gray-400" />
+                                <div class="text-center">
+                                    <span class="block font-bold text-sm text-brand-text">Envío a domicilio</span>
+                                    @if (cartService.esEnvioGratis()) {
+                                        <span class="text-[10px] text-green-500 uppercase font-bold">¡Gratis!</span>
+                                    } @else {
+                                        <span class="text-[10px] text-brand-accent uppercase font-bold">+${{ catalogo()?.costo_envio}}</span>
+                                    }
+                                </div>
+                            </button>
+                        </div>
+                    } @else {
+                        <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center gap-3">
+                            <app-icon name="info" classes="size-5 text-blue-500 fill-current" />
+                            <p class="text-sm text-blue-700 font-medium">Esta tienda solo opera con <b>Retiro en el Local</b>.</p>
+                        </div>
+                    }
                 </div>
 
-                <div class="relative h-1.5 w-full bg-gray-200/50 rounded-full overflow-hidden">
-                    <div class="absolute top-0 left-0 h-full transition-all duration-700 ease-out rounded-full shadow-[0_0_8px_rgba(59,130,246,0.3)]"
-                        [style.width.%]="cartService.porcentajeEnvioGratis()"
-                        [class]="cartService.esEnvioGratis() ? 'bg-green-500' : 'bg-brand-accent'">
-                    </div>
+                <div class="mt-8" #seccionCupon>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Tenés un cupón?</h3>
+                    @if (!cartService.appliedCupon()) {
+                        <div class="flex gap-2">
+                            <input type="text" #cuponInput placeholder="Ej: BIENVENIDA20"
+                                class="flex-1 p-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold uppercase placeholder:capitalize placeholder:font-medium">
+                            <button (click)="cartService.aplicarCupon(cuponInput.value, catalogo()?.id || 0)"
+                                class="px-6 bg-brand-accent text-white font-bold rounded-2xl active:scale-95 transition-transform">
+                                Aplicar
+                            </button>
+                        </div>
+                    } @else {
+                        <div class="p-4 bg-green-50 border-2 border-dashed border-green-200 rounded-2xl flex items-center justify-between animate-in zoom-in-95 duration-200">
+                            <div class="flex items-center gap-3">
+                                <div class="size-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-sm">
+                                    <app-icon name="check" classes="size-5 fill-current" />
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-green-600 uppercase tracking-tighter leading-none mb-1">Cupón activo</p>
+                                    <p class="text-xs font-black text-brand-text uppercase flex items-center gap-1">
+                                        {{ cartService.appliedCupon()?.mensaje || 'Descuento aplicado' }}
+                                        @if (cartService.appliedCupon()?.es_porcentaje) {
+                                            <span class="bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded-lg text-[11px]">
+                                                {{ cartService.appliedCupon()?.descuento }}% OFF
+                                            </span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                            <button (click)="cartService.removerCupon()" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                                <app-icon name="trash" classes="size-5 fill-current" />
+                            </button>
+                        </div>
+                    }
                 </div>
-            </div>
-            }
 
-            <div class="space-y-3 mb-6 px-2">
-                @if (cartService.deliveryMethod() === 'envio' || cartService.appliedCupon()) {
-                <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
-                    <span class="text-gray-500 font-bold whitespace-nowrap">Subtotal</span>
-                    <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
-                    <span class="font-bold text-brand-text whitespace-nowrap">${{ cartService.subtotalPrice() }}</span>
-                </div>
-                }
-
-                @if (cartService.discountAmount() > 0) {
-                    <div class="flex flex-col gap-1 animate-in slide-in-from-right duration-300">
-                        <div class="flex items-center gap-2 text-sm text-green-600">
-                            <div class="flex items-center gap-1.5">
-                                <span class="font-bold whitespace-nowrap">Descuento</span>
+                <div class="mt-8">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Elegí como pagar</h3>
+                    <div class="grid grid-cols-3 gap-3">
+                        @for (pago of catalogo()?.medios_pago; track pago.id) {
+                            <button (click)="seleccionarPago(pago, seccionDatos)"
+                                [class.border-brand-accent]="cartService.selectedPaymentMethod()?.id === pago.id"
+                                [class.border-gray-100]="cartService.selectedPaymentMethod()?.id !== pago.id"
+                                [class.bg-brand-accent/10]="cartService.selectedPaymentMethod()?.id === pago.id"
+                                class="relative flex flex-col items-center gap-2 p-3 border-2 rounded-2xl transition-all active:scale-95">
                                 
-                                <!-- Badge de tope alcanzado -->
-                                @if (cartService.isDiscountCapped()) {
-                                    <span class="flex items-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-[10px] font-black uppercase tracking-tighter rounded-md animate-pulse">
-                                        <app-icon name="info" classes="size-3 fill-current" />
-                                        Tope Máx.
+                                @if (catalogo()!.descuento_en_efectivo > 0 && pago.nombre.toLowerCase().includes('efectivo')) {
+                                    <span class="absolute -top-2.5 -right-2.5 bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md z-10 animate-bounce">
+                                        -{{ catalogo()!.descuento_en_efectivo }}%
                                     </span>
                                 }
-                            </div>
 
-                            <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
-                            
-                            <div class="flex flex-col items-end">
-                                <span class="font-black whitespace-nowrap">-${{ cartService.discountAmount() }}</span>
+                                <div [innerHTML]="pago.icono | safeHtml" class="size-15 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full"></div>
+                                
+                                <span class="text-[9px] font-black uppercase text-center leading-tight transition-colors"
+                                    [class.text-brand-accent]="cartService.selectedPaymentMethod()?.id === pago.id"
+                                    [class.text-gray-500]="cartService.selectedPaymentMethod()?.id !== pago.id">
+                                    {{ pago.nombre }}
+                                </span>
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <div class="mt-8" #seccionDatos>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Tus datos</h3>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-bold text-gray-400 ml-1 uppercase">Nombre y Apellido</label>
+                            <input type="text" [value]="nombreCliente()"
+                                (input)="nombreCliente.set($any($event.target).value)"
+                                class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium">
+                        </div>
+                        @if (cartService.deliveryMethod() === 'envio') {
+                            <div class="flex flex-col gap-1.5 animate-in slide-in-from-top-2 duration-300">
+                                <label class="text-xs font-bold text-gray-400 ml-1 uppercase">Dirección de envío</label>
+                                <input type="text" [value]="direccionEnvio()"
+                                    (input)="direccionEnvio.set($any($event.target).value)"
+                                    placeholder="Calle, número, departamento..."
+                                    class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 bg-gray-50 rounded-t-4xl border-t border-gray-100 shrink-0">
+                
+                @if (montoFaltante() > 0 && cartService.totalItems() > 0) {
+                    <div class="mb-4 p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-center gap-2 animate-pulse">
+                        <app-icon name="alert" classes="size-4 text-amber-500 fill-current" />
+                        <p class="text-xs text-amber-700 font-bold">Te faltan ${{ montoFaltante() }} para el mínimo (${{ catalogo()?.minimo_compra }})</p>
+                    </div>
+                }
+
+                @if (catalogo()?.envio_gratis_desde && cartService.totalItems() > 0 && cartService.porcentajeEnvioGratis() >= cartService.umbralMontoFaltanteEnvioGratis) {
+                    <div class="mb-5 p-4 rounded-2xl border transition-all duration-500 animate-in fade-in slide-in-from-bottom-4"
+                        [class]="cartService.esEnvioGratis() ? 'bg-green-50 border-green-100' : 'bg-blue-50 border-blue-100'">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <div class="flex items-center gap-2">
+                                <app-icon [name]="cartService.esEnvioGratis() ? 'check' : 'delivery'" 
+                                        [classes]="'size-4 fill-current ' + (cartService.esEnvioGratis() ? 'text-green-500' : 'text-blue-500')" />
+                                <p class="text-[11px] font-bold uppercase tracking-tight" 
+                                    [class]="cartService.esEnvioGratis() ? 'text-green-700' : 'text-blue-700'">
+                                    @if (cartService.esEnvioGratis()) {
+                                        ¡Llegaste! Tenés envío gratis 🚀
+                                    } @else {
+                                        Te faltan <span class="text-sm font-black">${{ cartService.faltanteEnvioGratis() }}</span> para el envío gratis
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                        <div class="relative h-1.5 w-full bg-gray-200/50 rounded-full overflow-hidden">
+                            <div class="absolute top-0 left-0 h-full transition-all duration-700 ease-out rounded-full shadow-[0_0_8px_rgba(59,130,246,0.3)]"
+                                [style.width.%]="cartService.porcentajeEnvioGratis()"
+                                [class]="cartService.esEnvioGratis() ? 'bg-green-500' : 'bg-brand-accent'">
                             </div>
                         </div>
                     </div>
                 }
 
-                @if (cartService.deliveryMethod() === 'envio') {
-                <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
-                    <span class="text-gray-500 font-bold whitespace-nowrap">Costo de envío</span>
-                    <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
-                    
-                    @if (cartService.esEnvioGratis()) {
-                    <div class="flex items-center gap-2 whitespace-nowrap">
-                        <span class="text-gray-400 line-through text-xs">${{ catalogo()?.costo_envio }}</span>
-                        <span class="font-bold text-green-500">Gratis</span>
-                    </div>
-                    } @else {
-                    <span class="font-bold text-brand-accent whitespace-nowrap">+${{ catalogo()?.costo_envio }}</span>
+                <div class="space-y-3 mb-6 px-2">
+                    @if (cartService.deliveryMethod() === 'envio' || cartService.appliedCupon() || cartService.cashDiscountAmount() > 0) {
+                        <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
+                            <span class="text-gray-500 font-bold whitespace-nowrap">Subtotal</span>
+                            <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
+                            <span class="font-bold text-brand-text whitespace-nowrap">${{ cartService.subtotalPrice() }}</span>
+                        </div>
                     }
-                </div>
-                }
 
-                <div class="flex justify-between items-center pt-3 border-t-2 border-dashed border-gray-100 mt-2">
-                    <span class="text-lg font-bold text-brand-text">Total</span>
-                    <span class="text-3xl font-black text-brand-accent">${{ cartService.totalFinal() }}</span>
+                    @if (cartService.discountAmount() > 0) {
+                        <div class="flex flex-col gap-1 animate-in slide-in-from-right duration-300">
+                            <div class="flex items-center gap-2 text-sm text-green-600">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="font-bold whitespace-nowrap">Descuento cupón</span>
+                                    @if (cartService.appliedCupon()?.es_porcentaje) {
+                                        <span class="bg-green-100 text-green-700 px-1.5 py-0.5 rounded-lg text-[11px] font-black tracking-tight">
+                                            {{ cartService.appliedCupon()?.descuento }}% OFF
+                                        </span>
+                                    }
+                                    @if (cartService.isDiscountCapped()) {
+                                        <span class="flex items-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-[10px] font-black uppercase tracking-tighter rounded-md animate-pulse">
+                                            <app-icon name="info" classes="size-3 fill-current" /> Tope Máx.
+                                        </span>
+                                    }
+                                </div>
+                                <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
+                                <div class="flex flex-col items-end">
+                                    <span class="font-black whitespace-nowrap">-${{ cartService.discountAmount() }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (cartService.cashDiscountAmount() > 0) {
+                        <div class="flex flex-col gap-1 animate-in slide-in-from-right duration-300">
+                            <div class="flex items-center gap-2 text-sm text-green-600">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="font-bold whitespace-nowrap">Pago en Efectivo</span>
+                                    <span class="bg-green-100 text-green-700 px-1.5 py-0.5 rounded-lg text-[11px] font-black tracking-tight">
+                                        {{ cartService.catalogConfig()?.descuentoEfectivo }}% OFF
+                                    </span>
+                                </div>
+                                <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
+                                <div class="flex flex-col items-end">
+                                    <span class="font-black whitespace-nowrap">-${{ cartService.cashDiscountAmount() }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (cartService.deliveryMethod() === 'envio') {
+                        <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
+                            <span class="text-gray-500 font-bold whitespace-nowrap">Costo de envío</span>
+                            <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
+                            @if (cartService.esEnvioGratis()) {
+                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                    <span class="text-gray-400 line-through text-xs">${{ catalogo()?.costo_envio }}</span>
+                                    <span class="font-bold text-green-500">Gratis</span>
+                                </div>
+                            } @else {
+                                <span class="font-bold text-brand-accent whitespace-nowrap">+${{ catalogo()?.costo_envio }}</span>
+                            }
+                        </div>
+                    }
+
+                    <div class="flex justify-between items-center pt-3 border-t-2 border-dashed border-gray-100 mt-2">
+                        <span class="text-lg font-bold text-brand-text">Total</span>
+                        <span class="text-3xl font-black text-brand-accent">${{ cartService.totalFinal() }}</span>
+                    </div>
                 </div>
+
+                <button (click)="finalizarPedido()" 
+                        [disabled]="!puedeFinalizar()"
+                        class="relative overflow-hidden w-full py-4 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed group active:scale-[0.98]">
+                    @if (puedeFinalizar()) {
+                        <div class="absolute inset-0 h-full bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-shimmer pointer-events-none"></div>
+                    }
+                    <div class="relative z-10 flex items-center justify-center gap-3">
+                        <app-icon name="whatsapp" classes="size-6 fill-current" />
+                        <span>Confirmar por WhatsApp</span>
+                    </div>
+                </button>
             </div>
-
-            <button (click)="finalizarPedido()" 
-                    [disabled]="!puedeFinalizar()"
-                    class="relative overflow-hidden w-full py-4 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all 
-                        disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed group active:scale-[0.98]">
-                
-                @if (puedeFinalizar()) {
-                    <div class="absolute inset-0 h-full bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-shimmer pointer-events-none"></div>
-                }
-
-                <div class="relative z-10 flex items-center justify-center gap-3">
-                    <app-icon name="whatsapp" classes="size-6 fill-current" />
-                    <span>Confirmar por WhatsApp</span>
-                </div>
-            </button>
-        </div>
-
+        }
     </div>
 </div>
 }

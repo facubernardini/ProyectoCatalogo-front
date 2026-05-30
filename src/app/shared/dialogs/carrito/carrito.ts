@@ -27,7 +27,8 @@ export class Carrito {
       if (cat) {
         this.cartService.setCatalogConfig(
           Number(cat.costo_envio ?? 0),
-          Number(cat.envio_gratis_desde ?? 0)
+          Number(cat.envio_gratis_desde ?? 0),
+          Number(cat.descuento_en_efectivo),
         );
       }
     });
@@ -36,13 +37,13 @@ export class Carrito {
   // Comparamos el mínimo contra el precio de los productos (con descuento de cupón)
   montoFaltante = computed(() => {
     const minimo = Number(this.catalogo()?.minimo_compra ?? 0);
-    const precioProductos = this.cartService.priceAfterDiscount();
+    const precioProductos = this.cartService.priceAfterAllDiscounts();
     return Math.max(0, minimo - precioProductos);
   });
 
   puedeFinalizar = computed(() => {
     const tieneItems = this.cartService.totalItems() > 0;
-    const cumpleMinimo = this.cartService.priceAfterDiscount() >= (this.catalogo()?.minimo_compra ?? 0);
+    const cumpleMinimo = this.cartService.priceAfterAllDiscounts() >= (this.catalogo()?.minimo_compra ?? 0);
     
     const tieneEntrega = this.cartService.deliveryMethod() !== null;
     const tienePago = this.cartService.selectedPaymentMethod() !== null;
