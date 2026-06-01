@@ -28,15 +28,11 @@
                         [class]="selected() === cat.nombre ? 'bg-brand-accent/10 text-brand-accent shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-brand-text'">
                     
                     <div class="flex items-center gap-3 min-w-0">
-                        @if (cat.especial) {
-                            <app-icon name="star-filled" classes="size-4 shrink-0 fill-current text-yellow-400 drop-shadow-sm" />
-                        } @else {
-                            <div class="size-1.5 shrink-0 rounded-full transition-colors duration-300"
-                                [class]="selected() === cat.nombre ? 'bg-brand-accent' : 'bg-gray-300 group-hover:bg-brand-accent/50'">
-                            </div>
-                        }
+                        <div class="size-1.5 shrink-0 rounded-full transition-colors duration-300"
+                            [class]="cat.especial ? 'bg-gray-500 group-hover:bg-brand-accent/50' : 'bg-gray-300 group-hover:bg-brand-accent/50'">
+                        </div>
                         
-                        <span class="capitalize truncate">{{ cat.nombre }}</span>
+                        <span class="capitalize truncate" [class.font-black]="cat.especial">{{ cat.nombre }}</span>
                     </div>
 
                     <app-icon name="chevron-right" classes="size-4 opacity-30" />

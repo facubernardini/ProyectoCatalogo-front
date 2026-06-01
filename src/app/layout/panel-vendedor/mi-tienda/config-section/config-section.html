@@ -52,7 +52,7 @@
 
                     <button type="button" 
                             (click)="save()"
-                            [disabled]="loading()"
+                            [disabled]="loading() || deshabilitarGuardar()"
                             class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-accent text-white shadow-lg shadow-brand-accent/20 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50">
                         
                         @if (loading()) {

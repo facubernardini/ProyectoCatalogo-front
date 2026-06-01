@@ -17,6 +17,8 @@ export class ConfigSection {
   
   onSave = output<void>();
   onCancel = output<void>();
+
+  deshabilitarGuardar = input<boolean>(false);
   
   editando = signal(false);
 

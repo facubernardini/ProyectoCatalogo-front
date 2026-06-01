@@ -98,7 +98,12 @@
             <div class="grid grid-cols-2 gap-3">
                 <div class="rounded-2xl border border-zinc-100 bg-zinc-50 p-3 text-center flex flex-col justify-center">
                     <p class="text-[10px] font-bold uppercase text-zinc-400 tracking-tighter">Mínimo compra</p>
-                    <p class="font-black text-base text-brand-accent">${{ catalogo()?.minimo_compra }}</p>
+                    
+                    @if (catalogo()?.minimo_compra) {
+                        <p class="font-black text-base text-brand-accent">${{ catalogo()?.minimo_compra }}</p>
+                    } @else {
+                        <p class="font-black text-sm text-zinc-500">Sin mínimo</p>
+                    }
                 </div>
 
                 <div class="rounded-2xl border border-zinc-100 bg-zinc-50 p-3 text-center flex flex-col items-center justify-center">

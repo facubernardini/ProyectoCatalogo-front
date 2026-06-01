@@ -28,6 +28,7 @@
 			description="Datos de contacto, logo de tu tienda, etc"
 			icon="store" 
 			[loading]="loading()"
+			[deshabilitarGuardar]="!this.catalogo()?.nombre_tienda?.trim() || !this.catalogo()?.slug?.trim()"
 			(onSave)="guardarCambios(sectionConfigPrincipal)"
 			(onCancel)="resetearValores()">
 			<section class="pt-3 border-t border-brand-bg space-y-5">
@@ -42,66 +43,90 @@
                     <div class="flex-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Nombre Público</label>
                         <input type="text" [(ngModel)]="catalogo()!.nombre_tienda"
-                            class="w-full bg-gray-50 border-none rounded-xl p-3 font-bold text-brand-text">
+    						class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold">
                     </div>
                 </div>
                 
                 <div class="w-full">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">URL de tu tienda</label>
-                    <div class="flex items-center bg-gray-50 rounded-xl overflow-hidden mt-1 border border-transparent focus-within:border-brand-accent/20 transition-all">
-                        <span class="pl-4 py-3 text-sm font-bold text-gray-400 whitespace-nowrap select-none">
-                            mitienda.com/
-                        </span>
-                        <input type="text" 
-                            [(ngModel)]="catalogo()!.slug"
-                            placeholder="tu-tienda"
-                            class="w-full bg-transparent border-none p-3 pl-1 font-bold text-brand-text focus:ring-0">
-                    </div>
-                    <p class="text-[10px] text-brand-text/60 mt-1 ml-1">Tus clientes accederán usando este enlace personalizado.</p>
-                </div>
+					<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">URL de tu tienda</label>
+					
+					<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
+						<span class="pl-4 py-4 text-sm font-bold text-gray-400 whitespace-nowrap select-none">
+							mitienda.com/
+						</span>
+						
+						<input type="text" 
+							[(ngModel)]="catalogo()!.slug"
+							placeholder="tu-tienda"
+							class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
+					</div>
+					
+					<p class="text-[12px] text-brand-text/60 mt-1 ml-1">Tus clientes accederán usando este enlace personalizado.</p>
+				</div>
 
                 <div class="w-full">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Eslogan o Frase Corta (Opcional)</label>
-                    <div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
-                        <input type="text" 
-                            [(ngModel)]="catalogo()!.frase_eslogan"
-                            placeholder="Ej: Tu tienda de confianza"
-                            maxlength="50"
-                            class="w-full bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0 placeholder:text-gray-400 placeholder:font-semibold">
-                    </div>
-                    <p class="text-[10px] text-brand-text/60 mt-1 ml-1">Aparecerá debajo del nombre de tu tienda.</p>
-                </div>
+					<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Eslogan o Frase Corta (Opcional)</label>
+					
+					<input type="text" 
+						[(ngModel)]="catalogo()!.frase_eslogan"
+						placeholder="Ej: Tu tienda de confianza"
+						maxlength="50"
+						class="w-full mt-1 p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium placeholder:text-gray-400 placeholder:font-medium">
+						
+					<p class="text-[12px] text-brand-text/60 mt-1 ml-1">Aparecerá debajo del nombre de tu tienda.</p>
+				</div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">WhatsApp</label>
-                        <div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
-                            <app-icon name="whatsapp" classes="size-5 text-green-500" />
-                            <input type="text" [(ngModel)]="catalogo()!.wpp_numero"
-                                    class="flex-1 bg-transparent border-none p-3 font-bold focus:ring-0">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Instagram</label>
-                        <div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
-                            <app-icon name="instagram" classes="size-5 text-pink-500" />
-                            <input type="text" [(ngModel)]="catalogo()!.instagram_usuario"
-                                    class="flex-1 bg-transparent border-none p-3 font-bold focus:ring-0">
-                        </div>
-                    </div>
-                </div>
+					<div>
+						<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">WhatsApp</label>
+						
+						<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
+							<app-icon name="whatsapp" classes="size-5 text-green-500 ml-4 shrink-0" />
+							<input type="tel" 
+								[(ngModel)]="catalogo()!.wpp_numero"
+								(input)="$any($event.target).value = $any($event.target).value.replace(/[^0-9]/g, '')"
+								placeholder="Ej: 549112345678"
+								class="flex-1 bg-transparent border-none py-4 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
+						</div>
+					</div>
+					
+					<div>
+						<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Instagram</label>
+						
+						<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
+							<app-icon name="instagram" classes="size-5 text-pink-500 ml-4 shrink-0" />
+							
+							<span class="pl-3 py-4 text-sm font-bold text-gray-400 select-none">
+								@
+							</span>
+							
+							<input type="text" 
+								[(ngModel)]="catalogo()!.instagram_usuario"
+								placeholder="mitienda.ok"
+								class="flex-1 bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
+						</div>
+					</div>
+				</div>
 
                 <div class="w-full">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Mínimo de compra</label>
-                    <div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1">
-                        <span class="text-gray-400 font-bold">$</span>
-                        <input type="number" min="0" 
-                            (wheel)="$event.preventDefault()"
-                            [(ngModel)]="catalogo()!.minimo_compra" placeholder="(Opcional)"
-                            class="flex-1 bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
-                    </div>
-                    <p class="text-[10px] text-brand-text/60 mt-1 ml-1">Dejalo en blanco o en 0 si no exigís un monto mínimo por pedido.</p>
-                </div>
+					<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Mínimo de compra</label>
+					
+					<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
+						
+						<span class="pl-4 py-4 text-sm font-bold text-gray-400 select-none">
+							$
+						</span>
+						
+						<input type="number" min="0" 
+							(wheel)="$event.preventDefault()"
+							[(ngModel)]="catalogo()!.minimo_compra" 
+							placeholder="(Opcional)"
+							class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0 placeholder:text-gray-400 placeholder:font-medium">
+							
+					</div>
+					
+					<p class="text-[10px] text-brand-text/60 mt-1 ml-1">Dejalo en blanco o en 0 si no exigís un monto mínimo por pedido.</p>
+				</div>
             </section>
 		</app-config-section>
 
@@ -155,6 +180,7 @@
 			description="Indica si ofreces envíos y su costo"
 			icon="delivery" 
 			[loading]="loading()"
+			[deshabilitarGuardar]="(this.catalogo()?.ofrece_envio ?? false) && ((this.catalogo()?.costo_envio ?? 0) <= 0)"
 			(onSave)="guardarCambios(sectionEnvios)"
 			(onCancel)="resetearValores()">
 			
@@ -174,29 +200,49 @@
 					</button>
 				</div>
 
-				@if (this.catalogo()!.ofrece_envio) {
+				@if (this.catalogo()?.ofrece_envio) {
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
 						<div>
-							<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Costo de Envío</label>
-							<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1 border border-transparent focus-within:border-brand-accent/20">
-								<span class="font-bold text-gray-400">$</span>
+							<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1"
+								[class.text-red-500]="(this.catalogo()?.costo_envio ?? 0) <= 0">
+								Costo de Envío
+							</label>
+							
+							<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden"
+								[class.!border-red-500]="(this.catalogo()?.costo_envio ?? 0) <= 0"
+								[class.bg-red-50]="(this.catalogo()?.costo_envio ?? 0) <= 0">
+								
+								<span class="pl-4 py-4 text-sm font-bold select-none" 
+									[class.text-red-400]="(this.catalogo()?.costo_envio ?? 0) <= 0"
+									[class.text-gray-400]="(this.catalogo()?.costo_envio ?? 0) > 0">$</span>
+									
 								<input type="number"
 									(wheel)="$event.preventDefault()"
 									[(ngModel)]="this.catalogo()!.costo_envio"
-									class="w-full bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
+									class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-bold focus:ring-0">
 							</div>
+							
+							@if ((this.catalogo()?.costo_envio ?? 0) <= 0) {
+								<p class="text-[12px] font-bold text-red-500 mt-1.5 ml-1 animate-in slide-in-from-top-1">
+									Debe ingresar un monto mayor a $0.
+								</p>
+							}
 						</div>
 
 						<div>
 							<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Envío gratis desde</label>
-							<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1 border border-transparent focus-within:border-brand-accent/20">
-								<span class="font-bold text-gray-400">$</span>
+							
+							<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
+								
+								<span class="pl-4 py-4 text-sm font-bold text-gray-400 select-none">$</span>
+								
 								<input type="number"
 									(wheel)="$event.preventDefault()"
 									[(ngModel)]="this.catalogo()!.envio_gratis_desde"
-									class="w-full bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
+									class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-bold focus:ring-0">
 							</div>
-							<p class="text-[9px] text-gray-400 mt-1 ml-1">Dejar vacío si no ofrecés envío gratis.</p>
+							
+							<p class="text-[12px] text-gray-400 mt-1 ml-1">Dejar vacío si no ofrecés envío gratis.</p>
 						</div>
 					</div>
 				} @else {
@@ -219,21 +265,25 @@
 			<section class="pt-3 border-t border-brand-bg">
 				<div class="w-full">
 					<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Dirección (Calle y número)</label>
-					<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1 border border-transparent focus-within:border-brand-accent/20 transition-all">
-						<app-icon name="location" classes="size-5 text-brand-accent/60" />
+					
+					<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
+						<app-icon name="location" classes="size-5 text-brand-accent/60 ml-4 shrink-0" />
+						
 						<input type="text" 
 							[(ngModel)]="catalogo()!.direccion"
-							class="flex-1 bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
+							class="flex-1 bg-transparent border-none py-4 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
 					</div>
 				</div>
 
 				<div class="w-full">
 					<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Ciudad / Localidad</label>
-					<div class="flex items-center bg-gray-50 rounded-xl px-3 mt-1 border border-transparent focus-within:border-brand-accent/20 transition-all">
-						<app-icon name="map" classes="size-5 text-brand-accent/60" />
+					
+					<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
+						<app-icon name="map" classes="size-5 text-brand-accent/60 ml-4 shrink-0" />
+						
 						<input type="text" 
 							[(ngModel)]="catalogo()!.ciudad"
-							class="flex-1 bg-transparent border-none p-3 font-bold text-brand-text focus:ring-0">
+							class="flex-1 bg-transparent border-none py-4 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
 					</div>
 				</div>
 			</section>
