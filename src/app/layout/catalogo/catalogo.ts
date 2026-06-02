@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DOCUMENT, effect, inject, OnInit, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -34,9 +34,22 @@ import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinn
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
-export class CatalogoPublico implements OnInit {  
+export class CatalogoPublico implements OnInit {
   private route = inject(ActivatedRoute);
   public adminStore = inject(AdminStoreService);
+
+  private renderer = inject(Renderer2);
+  private document = inject(DOCUMENT);
+
+  constructor() {
+    effect(() => {
+      const catalogo = this.adminStore.catalogo();
+      
+      const tema = catalogo?.tema?.toLowerCase() ?? 'midnight';
+      
+      this.renderer.setAttribute(this.document.documentElement, 'data-theme', tema);
+    });
+  }
 
   ngOnInit() {
     const slug = this.route.snapshot.paramMap.get('slug');

@@ -4,7 +4,7 @@ import { CommonModule, Location } from '@angular/common';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CatalogoService } from 'src/app/core/services-backend/catalogo.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { Catalogo, HorarioDia } from 'src/app/core/models/catalogo.model';
+import { Catalogo, HorarioDia, TemaCatalogo } from 'src/app/core/models/catalogo.model';
 import { FormsModule } from '@angular/forms';
 import { ConfigSection } from "./config-section/config-section";
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
@@ -24,6 +24,19 @@ export class MiTienda {
   
   catalogo = signal<Catalogo | null>(null);
   loading = signal(false);
+
+  temasDisponibles = [
+    { id: TemaCatalogo.MIDNIGHT, nombre: 'Midnight', bg: '#D1E9F6', accent: '#2E5A88' },
+    { id: TemaCatalogo.ZAFIRO, nombre: 'Zafiro', bg: '#F8FAFC', accent: '#0EA5E9' },
+    { id: TemaCatalogo.SUNSET, nombre: 'Sunset', bg: '#FFF7ED', accent: '#F97316' },
+    { id: TemaCatalogo.FOREST, nombre: 'Forest', bg: '#F0FDF4', accent: '#16A34A' },
+    { id: TemaCatalogo.SAKURA, nombre: 'Sakura', bg: '#FFF5F8', accent: '#F2A0AC' },
+    { id: TemaCatalogo.MATCHA, nombre: 'Matcha', bg: '#F9FBF7', accent: '#A3B18A' },
+    { id: TemaCatalogo.LAVANDA, nombre: 'Lavanda', bg: '#F8F7FF', accent: '#BDB2FF' },
+    { id: TemaCatalogo.MINIMAL, nombre: 'Minimal', bg: '#FFFFFF', accent: '#171717' },
+    { id: TemaCatalogo.TERRACOTA, nombre: 'Terracota', bg: '#FCF8F5', accent: '#D47A6A' },
+    { id: TemaCatalogo.AQUA, nombre: 'Aqua', bg: '#F0FDFB', accent: '#2DD4BF' }
+  ];
 
   constructor() {
     effect(() => {
@@ -77,6 +90,13 @@ export class MiTienda {
         }
       }
       return { ...cat };
+    });
+  }
+
+  cambiarTema(nuevoTema: TemaCatalogo) {
+    this.catalogo.update(cat => {
+        if (!cat) return cat;
+        return { ...cat, tema: nuevoTema };
     });
   }
 

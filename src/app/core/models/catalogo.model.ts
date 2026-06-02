@@ -1,3 +1,16 @@
+export enum TemaCatalogo {
+  MIDNIGHT = 'MIDNIGHT',
+  SUNSET = 'SUNSET',
+  ZAFIRO = 'ZAFIRO',
+  FOREST = 'FOREST',
+  SAKURA = 'SAKURA',
+  MATCHA = 'MATCHA',
+  LAVANDA = 'LAVANDA',
+  MINIMAL = 'MINIMAL',
+  TERRACOTA = 'TERRACOTA',
+  AQUA = 'AQUA'
+}
+
 export interface MedioPago {
   id: number;
   nombre: string;
@@ -23,6 +36,7 @@ export interface Catalogo {
   slug: string;
   rubro_id: number;
   logo_tienda: string;
+  tema: TemaCatalogo;
   wpp_numero: string | null;
   instagram_usuario: string | null;
   

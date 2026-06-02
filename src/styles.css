@@ -1,16 +1,92 @@
 @import 'tailwindcss';
 @plugin "tailwindcss-animate";
 
+/* 1. Le decimos a Tailwind que genere las clases usando variables dinámicas */
 @theme {
-  --color-brand-bg: #D1E9F6;
-  --color-brand-accent: #2E5A88;
-  --color-brand-text: #0A1929;
-  --color-brand-text-sec: #546E7A;
+  --color-brand-bg: var(--theme-bg);
+  --color-brand-accent: var(--theme-accent);
+  --color-brand-text: var(--theme-text);
+  --color-brand-text-sec: var(--theme-text-sec);
+}
+
+/* 2. Definimos los colores reales de cada paleta */
+@layer base {
+  
+  :root, :root[data-theme="midnight" i] {
+    --theme-bg: #D1E9F6;
+    --theme-accent: #2E5A88;
+    --theme-text: #0A1929;
+    --theme-text-sec: #546E7A;
+  }
+
+  :root[data-theme="sunset" i] {
+    --theme-bg: #FFF7ED;
+    --theme-accent: #F97316;
+    --theme-text: #431407;
+    --theme-text-sec: #9A3412;
+  }
+
+  :root[data-theme="zafiro" i] {
+    --theme-bg: #F8FAFC; 
+    --theme-accent: #0EA5E9;
+    --theme-text: #0F172A;
+    --theme-text-sec: #64748B;
+  }
+
+  :root[data-theme="forest" i] {
+    --theme-bg: #F0FDF4;
+    --theme-accent: #16A34A;
+    --theme-text: #14532D;
+    --theme-text-sec: #166534;
+  }
+
+  :root[data-theme="sakura" i] {
+    --theme-bg: #FFF5F8;
+    --theme-accent: #F2A0AC;
+    --theme-text: #4A4045;
+    --theme-text-sec: #9D8189;
+  }
+
+  :root[data-theme="matcha" i] {
+    --theme-bg: #F9FBF7;
+    --theme-accent: #A3B18A;
+    --theme-text: #344E41;
+    --theme-text-sec: #588157;
+  }
+
+  :root[data-theme="lavanda" i] {
+    --theme-bg: #F8F7FF;
+    --theme-accent: #BDB2FF;
+    --theme-text: #2B2D42;
+    --theme-text-sec: #6C757D;
+  }
+
+  :root[data-theme="minimal" i] {
+    --theme-bg: #FFFFFF;
+    --theme-accent: #171717;
+    --theme-text: #0A0A0A;
+    --theme-text-sec: #737373;
+  }
+
+  :root[data-theme="terracota" i] {
+    --theme-bg: #FCF8F5;
+    --theme-accent: #D47A6A;
+    --theme-text: #4A332F;
+    --theme-text-sec: #9E746F;
+  }
+
+  :root[data-theme="aqua" i] {
+    --theme-bg: #F0FDFB;
+    --theme-accent: #2DD4BF;
+    --theme-text: #134E4A;
+    --theme-text-sec: #0F766E;
+  }
+
 }
 
 body {
   background-color: var(--color-brand-bg);
-  color: var(--color-cat-text);
+  color: var(--color-brand-text);
   font-family: ui-sans-serif, system-ui, sans-serif;
   
   /* Aseguramos que el contenido fluya bien sobre el fondo */

@@ -68,6 +68,9 @@
               "buildTarget": "proyecto-catalogo:build:development"
             }
           },
+          "options": {
+            "allowedHosts": ["imitate-hardy-unsuited.ngrok-free.dev"]
+          },
           "defaultConfiguration": "development"
         },
         "test": {
