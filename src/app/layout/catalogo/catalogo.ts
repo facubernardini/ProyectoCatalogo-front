@@ -17,6 +17,8 @@ import { CategoryProductsView } from "@shared/dialogs/category-products-view/cat
 import { BannerInfo } from "./banner-info/banner-info";
 import { MapDialog } from "@shared/dialogs/map-dialog/map-dialog";
 import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinner";
+import { ProductosDestacados } from "@shared/dialogs/productos-destacados/productos-destacados";
+import { ProductosOfertas } from "@shared/dialogs/productos-ofertas/productos-ofertas";
 
 @Component({
   selector: 'app-catalogo',
@@ -29,7 +31,9 @@ import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinn
     CategoryProductsView,
     BannerInfo,
     MapDialog,
-    LoadingSpinner
+    LoadingSpinner,
+    ProductosDestacados,
+    ProductosOfertas
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',

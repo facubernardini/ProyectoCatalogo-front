@@ -5,6 +5,7 @@ import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CartService } from '@shared/services/cart.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
+import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
 
 @Component({
   selector: 'app-carousel-ofertas',
@@ -14,6 +15,7 @@ import { ProductSelectorService } from '@shared/services/product-selector.servic
 })
 export class CarouselOfertas {
   public adminStore = inject(AdminStoreService);
+  public productosOfertasService = inject(ProductosOfertasService);
   public productSelectorService = inject(ProductSelectorService);
   private cartService = inject(CartService);
 

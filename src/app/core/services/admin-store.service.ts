@@ -17,6 +17,7 @@ import { HistorialSuscripcion, SuscripcionEstado } from "../models/backoffice/su
 import { SuscripcionesService } from "../services-backend/suscripciones.ServiceBackend";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
+import { Vendedor } from "../models/vendedor.model";
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
@@ -34,6 +35,9 @@ export class AdminStoreService {
   catalogo = signal<Catalogo | null>(null);
   categorias = signal<CategoriaVendedor[]>([]);
   productos = signal<Producto[]>([]);
+
+  // ONLY SELLER
+  vendedor = signal<Vendedor | null>(this.obtenerVendedorGuardado());
   cupones = signal<Cupon[]>([]);
   mediosPago = signal<MedioPago[]>([]);
   tags = signal<Tag[]>([]);
@@ -47,6 +51,18 @@ export class AdminStoreService {
 
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
  
+  private obtenerVendedorGuardado(): Vendedor | null {
+    const data = localStorage.getItem('vendedor');
+    if (data && data !== 'undefined' && data !== 'null') {
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
   cargarDatosPublicos(slug: string) {
     this.isLoading.set(true);
     
@@ -68,13 +84,13 @@ export class AdminStoreService {
 
         // Tienda suspendida
         if (err.status === 403 && err.error?.code === 'TIENDA_SUSPENDIDA') {
-            this.router.navigate(['/error']);
+            this.router.navigate(['/404']);
         } else if (err.status === 404) {
             // La tienda no existe
-            this.router.navigate(['/error']); 
+            this.router.navigate(['/404']); 
         } else {
             // Error de servidor (500) o sin conexión
-            this.router.navigate(['/error']);
+            this.router.navigate(['/404']);
         }
       }
     });

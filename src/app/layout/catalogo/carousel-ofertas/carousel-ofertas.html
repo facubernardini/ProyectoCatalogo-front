@@ -1,8 +1,17 @@
 @if (productosOferta().length > 0) {
     <section class="mt-4">
-        <h2 class="px-4 mb-3 text-lg font-bold text-brand-text flex items-center gap-2">
-            Ofertas Imperdibles <span class="animate-pulse">🏷️</span>
-        </h2>
+        <div class="px-4 mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-bold text-brand-text flex items-center gap-2">
+                Ofertas Imperdibles <span class="animate-pulse">🏷️</span>
+            </h2>
+            
+            <button 
+                (click)="productosOfertasService.open()"
+                class="text-xs font-extrabold text-brand-accent bg-brand-accent/10 px-2.5 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1">
+                Ver todo
+                <app-icon name="chevron-right" classes="size-4 fill-brand-accent" />
+            </button>
+        </div>
         
         <div class="relative">
             <div class="absolute left-0 top-0 bottom-0 z-10 w-5 bg-linear-to-r from-brand-bg via-brand-bg/50 to-transparent pointer-events-none"></div>

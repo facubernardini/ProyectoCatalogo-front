@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { Toast } from "@shared/toast/toast";
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ import { Toast } from "@shared/toast/toast";
   styleUrl: './login.css',
 })
 export class Login {
+  private adminStore = inject(AdminStoreService);
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -36,22 +38,23 @@ export class Login {
         if (res.vendedor.admin) {
           this.router.navigate(['/backoffice/inicio']);
         } else {
+          this.adminStore.vendedor.set(res.vendedor);
           this.router.navigate(['/panel-vendedor/inicio']);
         }
       },
       error: (err) => {
         // Cuenta suspendida
         if (err.status === 403) {
-            const mensajeSuspendido = err.error?.error || 'Tu cuenta ha sido suspendida. Por favor, comunícate con soporte.';
-            this.toastService.show(mensajeSuspendido, 'error');
+          const mensajeSuspendido = err.error?.error || 'Tu cuenta ha sido suspendida. Por favor, comunícate con soporte.';
+          this.toastService.show(mensajeSuspendido, 'error');
         } 
         // Credenciales inválidas
         else if (err.status === 401) {
-            this.toastService.show('Correo o contraseña incorrectos.', 'error');
+          this.toastService.show('Correo o contraseña incorrectos.', 'error');
         } 
         // Error de Servidor
         else {
-            this.toastService.show('Ocurrió un problema al intentar iniciar sesión.', 'error');
+          this.toastService.show('Ocurrió un problema al intentar iniciar sesión.', 'error');
         }
       }
     });

@@ -44,7 +44,7 @@ export const routes: Routes = [
             { path: 'catalogos', component: Catalogos },
         ]
     },
-    { path: 'error', component: ErrorView },
+    { path: '404', component: ErrorView },
     { path: ':slug', component: CatalogoPublico },
 	{ path: '**', redirectTo: '' },
 ];

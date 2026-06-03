@@ -1,10 +1,14 @@
+import { Suscripcion } from "./backoffice/suscripcion.model";
+
 export interface Vendedor {
   id: number;
-  nombre: string;
+  nombre_apellido: string;
   correo: string;
-  last_login?: Date | null;
+  fecha_registro: Date;
   admin: boolean;
   catalogoId: number;
+
+  suscripcion: Suscripcion | null;
 }
 
 export interface RegistroVendedorRequest {

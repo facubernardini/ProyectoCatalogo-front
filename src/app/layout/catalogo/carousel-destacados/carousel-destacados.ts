@@ -4,6 +4,7 @@ import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
+import { ProductosDestacadosService } from '@shared/services/productos-destacados.service';
 
 @Component({
   selector: 'app-carousel-destacados',
@@ -13,6 +14,7 @@ import { ProductSelectorService } from '@shared/services/product-selector.servic
 })
 export class CarouselDestacados {
   public adminStore = inject(AdminStoreService);
+  public productosDestacadosService = inject(ProductosDestacadosService);
 
   productosDestacados = computed(() => 
     this.adminStore.productos().filter(p => p.destacado)

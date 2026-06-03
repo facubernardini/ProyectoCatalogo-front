@@ -1,9 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { Icon } from "@shared/components/icon";
 
 @Component({
   selector: 'app-error',
-  imports: [],
+  imports: [Icon],
   templateUrl: './error.html',
   styleUrl: './error.css',
 })
-export class ErrorView {}
+export class ErrorView {
+  private router = inject(Router);
+
+  volverAlInicio() {
+    this.router.navigate(['/']); 
+  }
+}

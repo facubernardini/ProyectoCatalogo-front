@@ -5,6 +5,8 @@ import { MenuLateralService } from '@shared/services/menu-lateral.service';
 import { InfoService } from '@shared/services/info.service';
 import { MapDialogService } from '@shared/services/map.service';
 import { CategoryViewService } from '@shared/services/category-view.service';
+import { ProductosDestacadosService } from '@shared/services/productos-destacados.service';
+import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
 
 @Component({
   selector: 'app-menu-lateral',
@@ -13,12 +15,15 @@ import { CategoryViewService } from '@shared/services/category-view.service';
   styleUrl: './menu-lateral.css',
 })
 export class MenuLateral {
+  private categoryViewService = inject(CategoryViewService);
+  private productosDestacadosService = inject(ProductosDestacadosService);
+  public productosOfertasService = inject(ProductosOfertasService);
+
   public adminStore = inject(AdminStoreService);
   public menuService = inject(MenuLateralService);
   public infoService = inject(InfoService);
   public mapDialogService = inject(MapDialogService);
-  private categoryViewService = inject(CategoryViewService);
-
+  
   categorias = this.adminStore.categorias;
 
   categoriasOrdenadas = computed(() => {
@@ -37,5 +42,15 @@ export class MenuLateral {
     this.menuService.close(); 
 
     this.categoryViewService.open(nombre);
+  }
+
+  abrirDestacados(){
+    this.menuService.close();
+    this.productosDestacadosService.open();
+  }
+
+  abrirOfertas(){
+    this.menuService.close();
+    this.productosOfertasService.open();
   }
 }

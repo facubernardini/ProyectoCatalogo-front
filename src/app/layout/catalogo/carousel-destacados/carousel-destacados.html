@@ -1,8 +1,17 @@
 @if (productosDestacados().length > 0) {
     <section class="mt-2">
-        <h2 class="px-4 mb-4 text-xl font-black text-brand-text flex items-center gap-2">
-            Lo más pedido <span class="animate-pulse">🔥</span>
-        </h2>
+        <div class="px-4 mb-4 flex items-center justify-between">
+            <h2 class="text-xl font-black text-brand-text flex items-center gap-2">
+                Lo más pedido <span class="animate-pulse">🔥</span>
+            </h2>
+            
+            <button 
+                (click)="productosDestacadosService.open()"
+                class="text-xs font-extrabold text-brand-accent bg-brand-accent/10 px-2.5 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1">
+                Ver todo
+                <app-icon name="chevron-right" classes="size-4 fill-brand-accent" />
+            </button>
+        </div>
         
         <div class="relative">
             <div class="absolute left-0 top-0 bottom-0 z-10 w-5 bg-linear-to-r from-brand-bg via-brand-bg/50 to-transparent pointer-events-none"></div>
