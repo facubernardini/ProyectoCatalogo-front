@@ -7,12 +7,12 @@ import { LoginResponse } from 'src/app/core/models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/login`;
+  private API_URL = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 
   login(credentials: any): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.apiUrl, credentials).pipe(
+    return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`, credentials).pipe(
       tap((res: any) => {
         localStorage.setItem('token', res.token);
         localStorage.setItem('vendedor', JSON.stringify(res.vendedor));
@@ -24,5 +24,25 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('vendedor');
     window.location.href = '/login';
+  }
+
+  solicitarCodigo(email: string): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/auth/solicitar-codigo`, { email });
+  }
+
+  solicitarCodigoRecuperacion(email: string): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/auth/solicitar-codigo-recuperacion`, { email });
+  }
+
+  verificarCodigo(email: string, codigo: string): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/auth/verificar-codigo`, { email, codigo });
+  }
+
+  cambiarPassword(passwords: { actual: string, nueva: string }): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/auth/cambiar-password`, passwords);
+  }
+
+  resetearPassword(payload: { email: string, codigoOTP: string, nuevaPassword: string }): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/auth/reset-password`, payload);
   }
 }

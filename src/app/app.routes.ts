@@ -17,11 +17,13 @@ import { DashboardBO } from '@layout/backoffice/dashboard-bo/dashboard-bo';
 import { Vendedores } from '@layout/backoffice/vendedores/vendedores';
 import { Catalogos } from '@layout/backoffice/catalogos/catalogos';
 import { ErrorView } from '@layout/error/error';
+import { RecoveryPassword } from '@layout/login/recovery-password/recovery-password';
 
 export const routes: Routes = [
 	{ path: '', component: Home },
     { path: 'register', component: Register },
 	{ path: 'login', component: Login },
+    { path: 'recovery', component: RecoveryPassword },
 	{ 
         path: 'panel-vendedor', 
         component: PanelVendedor,

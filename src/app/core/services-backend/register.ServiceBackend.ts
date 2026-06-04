@@ -6,18 +6,18 @@ import { RegistroVendedorRequest } from '../models/vendedor.model';
 import { Catalogo } from '../models/catalogo.model';
 
 export interface RegistroPayload {
-    vendedor: RegistroVendedorRequest;
-    catalogo: Partial<Catalogo>;
+	vendedor: RegistroVendedorRequest;
+	catalogo: Partial<Catalogo>;
 }
 
 @Injectable({
-    providedIn: 'root'
+	providedIn: 'root'
 })
 export class RegisterService {
-    private http = inject(HttpClient);
+	private http = inject(HttpClient);
 	private API_URL = environment.apiUrl;
 
-    register(payload: RegistroPayload): Observable<any> {
-        return this.http.post<any>(`${this.API_URL}/public/register`, payload);
-    }
+	register(payload: RegistroPayload): Observable<any> {
+		return this.http.post<any>(`${this.API_URL}/register/registrar-tienda`, payload);
+	}
 }

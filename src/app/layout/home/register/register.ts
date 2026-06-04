@@ -8,6 +8,7 @@ import { RegisterService } from 'src/app/core/services-backend/register.ServiceB
 import { ToastService } from 'src/app/core/services/toast.service';
 import { Toast } from "@shared/toast/toast";
 import { RubroService } from 'src/app/core/services-backend/rubros.ServiceBackend';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 
 @Component({
   selector: 'app-register',
@@ -17,13 +18,15 @@ import { RubroService } from 'src/app/core/services-backend/rubros.ServiceBacken
 })
 export class Register {
   private registroService = inject(RegisterService);
+  private authService = inject(AuthService);
   private rubroService = inject(RubroService);
   private toastService = inject(ToastService);
   private router = inject(Router);
   
   public loading = signal(false);
   
-  public pasoActual = signal<1 | 2>(1);
+  // Ahora soportamos 3 pasos
+  public pasoActual = signal<1 | 2 | 3>(1);
 
   public rubros = signal<Rubro[]>([]);
   public isRubroDropdownOpen = signal(false);
@@ -32,6 +35,9 @@ export class Register {
   public nombre = '';
   public apellido = '';
   public confirmPassword = '';
+  
+  // Variable nueva para atar al input de 6 dígitos
+  public codigoOTP = '';
 
   public vendedorReq: RegistroVendedorRequest = {
     nombre_apellido: '',
@@ -100,7 +106,11 @@ export class Register {
   }
 
   volverPaso() {
-    this.pasoActual.set(1);
+    if (this.pasoActual() === 3) {
+      this.pasoActual.set(2);
+    } else {
+      this.pasoActual.set(1);
+    }
     history.back(); 
   }
 
@@ -111,23 +121,24 @@ export class Register {
     }
 
     this.catalogo.slug = this.catalogo.nombre_tienda
-      .toLowerCase() // 1. Convertir todo a minúsculas
-      .normalize('NFD') // 2. Separar las letras de sus acentos (ej: "é" pasa a ser "e" + "´")
-      .replace(/[\u0300-\u036f]/g, '') // 3. Eliminar los acentos sueltos
-      .replace(/[^a-z0-9\s-]/g, '') // 4. Borrar caracteres raros (dejar solo letras, números, espacios y guiones)
-      .trim() // 5. Quitar espacios en blanco al principio y al final
-      .replace(/\s+/g, '-'); // 6. Reemplazar uno o más espacios por un guion medio
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-');
   }
 
   @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {
-    if (this.pasoActual() === 2) {
+    if (this.pasoActual() === 3) {
+      this.pasoActual.set(2);
+    } else if (this.pasoActual() === 2) {
       this.pasoActual.set(1);
     }
   }
 
-  registrarTienda() {
-
+  solicitarCodigo() {
     if (!this.catalogo.nombre_tienda || !this.catalogo.slug) {
       this.toastService.show('Por favor, completá los datos de tu negocio.', 'error');
       return;
@@ -140,6 +151,43 @@ export class Register {
 
     this.loading.set(true);
 
+    this.authService.solicitarCodigo(this.vendedorReq.correo).subscribe({
+      next: (res) => {
+        this.loading.set(false);
+        this.toastService.show(res.mensaje || 'Te enviamos el código a tu correo.');
+        
+        this.pasoActual.set(3);
+        history.pushState({ paso: 3 }, '', '');
+      },
+      error: (err) => {
+        this.loading.set(false);
+        const mensajeError = err.error?.error || 'Error al enviar el código de verificación.';
+        this.toastService.show(mensajeError, 'error');
+      }
+    });
+  }
+
+  verificarYRegistrar() {
+    if (this.codigoOTP.length !== 6) {
+      this.toastService.show('El código debe tener exactamente 6 dígitos.', 'error');
+      return;
+    }
+
+    this.loading.set(true);
+
+    this.authService.verificarCodigo(this.vendedorReq.correo, this.codigoOTP).subscribe({
+      next: (res) => {
+        this.ejecutarRegistroDefinitivo();
+      },
+      error: (err) => {
+        this.loading.set(false);
+        const mensajeError = err.error?.error || 'El código es incorrecto o expiró.';
+        this.toastService.show(mensajeError, 'error');
+      }
+    });
+  }
+
+  private ejecutarRegistroDefinitivo() {
     this.vendedorReq.nombre_apellido = `${this.nombre.trim()} ${this.apellido.trim()}`;
     this.catalogo.slug = this.catalogo.slug?.toLowerCase().replace(/\s+/g, '-');
 
@@ -148,12 +196,10 @@ export class Register {
       catalogo: this.catalogo
     };
 
-    console.log('Payload validado:', payloadFinal);
-
     this.registroService.register(payloadFinal).subscribe({
       next: (res) => {
         this.loading.set(false);
-        this.toastService.show(res.mensaje);
+        this.toastService.show(res.mensaje || '¡Tienda creada con éxito!');
         
         this.router.navigate(['/login']); 
       },
