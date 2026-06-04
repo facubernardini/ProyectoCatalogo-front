@@ -9,6 +9,7 @@ import { CategoryDeleteService } from '@shared/services/category-delete.service'
 import { CategoryFormService } from '@shared/services/category-form.service';
 import { CategoryPreviewService } from '@shared/services/category-preview.service';
 import { CategoriaManagerService } from 'src/app/core/services/categoria-manager.service'; // <-- Nuevo Manager
+import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mis-categorias',
@@ -26,8 +27,14 @@ export class MisCategorias {
   public categoriaManager = inject(CategoriaManagerService);
   public categoryPreview = inject(CategoryPreviewService);
 
+  busquedaRaw = signal('');
   filtro = signal('');
+  isBuscando = signal(false);
+
   activeMenuId = signal<number | null>(null);
+
+  private searchSubject = new Subject<string>();
+  private searchSubscription!: Subscription;
   
   categoriasFiltradas = computed(() => {
     const term = this.filtro().toLowerCase();
@@ -35,6 +42,41 @@ export class MisCategorias {
     if (!term) return lista;
     return lista.filter(c => c.nombre.toLowerCase().includes(term));
   });
+
+  ngOnInit() {
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(valor => {
+      this.filtro.set(valor);
+      this.isBuscando.set(false);
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
+  onSearchInput(valor: string) {
+    this.busquedaRaw.set(valor);
+    
+    if (valor.trim().length > 0) {
+      this.isBuscando.set(true);
+    } else {
+      this.isBuscando.set(false);
+    }
+
+    this.searchSubject.next(valor);
+  }
+
+  limpiarBusqueda() {
+    this.busquedaRaw.set('');
+    this.filtro.set('');
+    this.isBuscando.set(false);
+    this.searchSubject.next('');
+  }
 
   onAddCategory() {
     this.categoryFormService.openCreate();

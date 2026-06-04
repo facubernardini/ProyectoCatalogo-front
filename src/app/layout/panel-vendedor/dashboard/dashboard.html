@@ -1,152 +1,154 @@
-<header class="sticky top-0 z-50 pt-8 bg-brand-bg border-b border-blue-200 shadow-sm">
-    <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
-        
-        <button (click)="onLogout()" 
-                class="p-2 text-brand-accent active:scale-95 transition-transform"
-                aria-label="Cerrar sesión">
-            <app-icon name="logout" classes="size-7 fill-current rotate-180" />
-        </button>
-
-        <div class="flex-1 text-center px-2 overflow-hidden">
-            <p class="text-brand-text text-sm font-medium leading-none mb-1">Hola,</p>
-            <h1 class="text-brand-accentfont-bold text-base truncate">
-                {{ adminStore.catalogo()?.nombre_tienda || 'Tu Tienda' }}!
-            </h1>
-        </div>
-
-        <button [routerLink]="['../perfil']"
-            class="p-2 text-brand-accent active:scale-95 transition-transform"
-            aria-label="Mi perfil">
-            <app-icon name="profile" classes="size-7 fill-current" />
-        </button>
-
-    </div>
-</header>
-
-<main class="min-h-svh bg-gray-50 p-4">
-    <div class="flex flex-col space-y-4">
-        <button [routerLink]="['../mis-productos']"
-            class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
-            >
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                    <app-icon name="shop-bag" classes="size-6 fill-current text-brand-accent" />
-                </div>
-                
-                <div class="flex flex-col items-start text-left">
-                    <span class="text-brand-text font-bold text-lg leading-tight">
-                        Mis productos
-                    </span>
-                    <span class="text-brand-text-sec text-xs sm:text-sm">
-                        Agrega, elimina o edita tus productos
-                    </span>
-                </div>
-            </div>
-
-            <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-            </div>
-        </button>
-
-        <button [routerLink]="['../mis-categorias']"
-            class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
-            >
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                    <app-icon name="shop-tag" classes="size-6 fill-current text-brand-accent" />
-                </div>
-                
-                <div class="flex flex-col items-start text-left">
-                    <span class="text-brand-text font-bold text-lg leading-tight">
-                        Mis categorías
-                    </span>
-                    <span class="text-brand-text-sec text-xs sm:text-sm">
-                        Organiza tus productos en categorías
-                    </span>
-                </div>
-            </div>
-
-            <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-            </div>
-        </button>
-
-        <button [routerLink]="['../mis-cupones']"
-            class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
-            >
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                    <app-icon name="gift" classes="size-6 fill-current text-brand-accent" />
-                </div>
-                
-                <div class="flex flex-col items-start text-left">
-                    <span class="text-brand-text font-bold text-lg leading-tight">
-                        Mis cupones
-                    </span>
-                    <span class="text-brand-text-sec text-xs sm:text-sm">
-                        Crea cupones de descuento para tus clientes
-                    </span>
-                </div>
-            </div>
-
-            <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-            </div>
-        </button>
-
-        <button [routerLink]="['../mi-tienda']"
-            class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
-            >
-            <div class="flex items-center gap-4">
-                <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                    <app-icon name="shop" classes="size-6 fill-current text-brand-accent" />
-                </div>
-                
-                <div class="flex flex-col items-start text-left">
-                    <span class="text-brand-text font-bold text-lg leading-tight">
-                        Mi tienda
-                    </span>
-                    <span class="text-brand-text-sec text-xs sm:text-sm">
-                        Configura tu catálogo online
-                    </span>
-                </div>
-            </div>
-
-            <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-            </div>
-        </button>
-    </div>
-
-    <div class="py-4">
-        <div class="h-px bg-gray-200 w-full"></div>
-    </div>
-
-    <button (click)="verCatalogoPublico()"
-        class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
-        >
-        <div class="flex items-center gap-4">
-            <div class="shrink-0 p-2 bg-brand-accent rounded-xl text-brand-bg">
-                <app-icon name="web" classes="size-6 fill-current text-brand-bg" />
-            </div>
+<div class="min-h-svh flex flex-col">
+    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
+        <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
             
-            <div class="flex flex-col items-start text-left">
-                <span class="text-brand-text font-bold text-lg leading-tight">
-                    Ver mi catálogo
-                </span>
-                <span class="text-brand-text-sec text-xs sm:text-sm">
-                    Visita la tienda que ven tus clientes
-                </span>
-            </div>
-        </div>
-    </button>
+            <button (click)="onLogout()" 
+                    class="p-2 text-brand-accent active:scale-95 transition-transform"
+                    aria-label="Cerrar sesión">
+                <app-icon name="logout" classes="size-7 fill-current rotate-180" />
+            </button>
 
-</main>
+            <div class="flex-1 text-center px-2 overflow-hidden">
+                <p class="text-brand-text text-sm font-medium leading-none mb-1">Hola,</p>
+                <h1 class="text-brand-accentfont-bold text-base truncate">
+                    {{ adminStore.catalogo()?.nombre_tienda || 'Tu Tienda' }}!
+                </h1>
+            </div>
+
+            <button [routerLink]="['../perfil']"
+                class="p-2 text-brand-accent active:scale-95 transition-transform"
+                aria-label="Mi perfil">
+                <app-icon name="profile" classes="size-7 fill-current" />
+            </button>
+
+        </div>
+    </header>
+
+    <main class="flex-1 bg-gray-50 p-4">
+        <div class="flex flex-col space-y-4">
+            <button [routerLink]="['../mis-productos']"
+                class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
+                >
+                <div class="flex items-center gap-4">
+                    <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
+                        <app-icon name="shop-bag" classes="size-6 fill-current text-brand-accent" />
+                    </div>
+                    
+                    <div class="flex flex-col items-start text-left">
+                        <span class="text-brand-text font-bold text-lg leading-tight">
+                            Mis productos
+                        </span>
+                        <span class="text-brand-text-sec text-xs sm:text-sm">
+                            Agrega, elimina o edita tus productos
+                        </span>
+                    </div>
+                </div>
+
+                <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+            </button>
+
+            <button [routerLink]="['../mis-categorias']"
+                class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
+                >
+                <div class="flex items-center gap-4">
+                    <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
+                        <app-icon name="shop-tag" classes="size-6 fill-current text-brand-accent" />
+                    </div>
+                    
+                    <div class="flex flex-col items-start text-left">
+                        <span class="text-brand-text font-bold text-lg leading-tight">
+                            Mis categorías
+                        </span>
+                        <span class="text-brand-text-sec text-xs sm:text-sm">
+                            Organiza tus productos en categorías
+                        </span>
+                    </div>
+                </div>
+
+                <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+            </button>
+
+            <button [routerLink]="['../mis-cupones']"
+                class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
+                >
+                <div class="flex items-center gap-4">
+                    <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
+                        <app-icon name="gift" classes="size-6 fill-current text-brand-accent" />
+                    </div>
+                    
+                    <div class="flex flex-col items-start text-left">
+                        <span class="text-brand-text font-bold text-lg leading-tight">
+                            Mis cupones
+                        </span>
+                        <span class="text-brand-text-sec text-xs sm:text-sm">
+                            Crea cupones de descuento para tus clientes
+                        </span>
+                    </div>
+                </div>
+
+                <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+            </button>
+
+            <button [routerLink]="['../mi-tienda']"
+                class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
+                >
+                <div class="flex items-center gap-4">
+                    <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
+                        <app-icon name="shop" classes="size-6 fill-current text-brand-accent" />
+                    </div>
+                    
+                    <div class="flex flex-col items-start text-left">
+                        <span class="text-brand-text font-bold text-lg leading-tight">
+                            Mi tienda
+                        </span>
+                        <span class="text-brand-text-sec text-xs sm:text-sm">
+                            Configura tu catálogo online
+                        </span>
+                    </div>
+                </div>
+
+                <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </div>
+            </button>
+        </div>
+
+        <div class="py-4">
+            <div class="h-px bg-gray-200 w-full"></div>
+        </div>
+
+        <button (click)="verCatalogoPublico()"
+            class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] transition-all duration-200 group"
+            >
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 p-2 bg-brand-accent rounded-xl text-brand-bg">
+                    <app-icon name="web" classes="size-6 fill-current text-brand-bg" />
+                </div>
+                
+                <div class="flex flex-col items-start text-left">
+                    <span class="text-brand-text font-bold text-lg leading-tight">
+                        Ver mi catálogo
+                    </span>
+                    <span class="text-brand-text-sec text-xs sm:text-sm">
+                        Visita la tienda que ven tus clientes
+                    </span>
+                </div>
+            </div>
+        </button>
+
+    </main>
+</div>

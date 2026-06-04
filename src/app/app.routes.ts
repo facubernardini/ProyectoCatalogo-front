@@ -18,6 +18,7 @@ import { Vendedores } from '@layout/backoffice/vendedores/vendedores';
 import { Catalogos } from '@layout/backoffice/catalogos/catalogos';
 import { ErrorView } from '@layout/error/error';
 import { RecoveryPassword } from '@layout/login/recovery-password/recovery-password';
+import { NotFound } from '@layout/catalogo/not-found/not-found';
 
 export const routes: Routes = [
 	{ path: '', component: Home },
@@ -47,6 +48,7 @@ export const routes: Routes = [
         ]
     },
     { path: '404', component: ErrorView },
+    { path: 'not-found', component: NotFound },
     { path: ':slug', component: CatalogoPublico },
 	{ path: '**', redirectTo: '' },
 ];

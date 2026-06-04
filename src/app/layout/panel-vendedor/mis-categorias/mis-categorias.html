@@ -1,147 +1,149 @@
-<header class="sticky top-0 z-50 pt-8 bg-brand-bg border-b border-blue-200 shadow-sm">
-    <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
-        <button
-            (click)="volverAtras()"
-            class="p-2 text-brand-accent active:scale-95 transition-transform"
-            aria-label="Volver atrás">
-            <app-icon name="back" classes="size-7 fill-current" />
-        </button>
+<div class="min-h-svh flex flex-col">
+    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
+        <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
+            <button
+                (click)="volverAtras()"
+                class="p-2 text-brand-accent active:scale-95 transition-transform"
+                aria-label="Volver atrás">
+                <app-icon name="back" classes="size-7 fill-current" />
+            </button>
 
-        <div class="flex-1 text-center px-2 overflow-hidden">
-            <h1 class="text-brand-accentfont-bold text-base truncate">
-                Mis categorías
-            </h1>
-        </div>
-        <div class="w-11"></div>
-    </div>
-</header>
-
-<main class="min-h-screen bg-gray-50 p-4">
-    <div class="relative w-full max-w-md mx-auto mb-4 group">
-        <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <app-icon name="search" classes="size-6 fill-current text-brand-accent" />
+            <div class="flex-1 text-center px-2 overflow-hidden">
+                <h1 class="text-brand-accentfont-bold text-base truncate">
+                    Mis categorías
+                </h1>
             </div>
-            <input 
-                type="text" 
-                [ngModel]="filtro()" 
-                (ngModelChange)="filtro.set($event)"
-                placeholder="Buscar categorías..."
-                class="w-full pl-11 pr-12 py-3 bg-white border border-gray-100 rounded-xl 
-                    text-brand-text placeholder:text-gray-400
-                    focus:outline-none focus:ring-4 focus:ring-brand-accent/5 focus:border-brand-accent 
-                    transition-all duration-300 shadow-sm"
-            >
-
-            @if (filtro().length > 0) {
-                <button 
-                    (click)="filtro.set('')"
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-brand-accent transition-colors duration-200 active:scale-90 focus:outline-none"
-                    aria-label="Borrar búsqueda"
-                >
-                    <app-icon name="close" classes="size-5 fill-current" />
-                </button>
-            }
+            <div class="w-11"></div>
         </div>
-    </div>
+    </header>
 
-    <div class="max-w-md mx-auto space-y-3">
-        @for (cat of categoriasFiltradas(); track cat.id) {
-            <div class="flex items-center gap-4 bg-white p-3 rounded-2xl border border-gray-100 hover:border-brand-accent/20 transition-all group shadow-sm"
-                [class.border-l-4]="cat.especial"
-                [class.border-l-amber-400]="cat.especial">
+    <main class="flex-1 bg-gray-50 p-4">
+        <div class="relative w-full max-w-md mx-auto mb-4 group">
+            <div class="relative">
                 
-                <div class="flex flex-1 items-center gap-4 min-w-0"
-                    (click)="categoryPreview.open(cat)"
-                    [class.opacity-50]="!cat.activo">
-                    
-                    <div class="shrink-0 size-12 rounded-xl flex items-center justify-center transition-colors"
-                        [class]="!cat.activo 
-                            ? 'bg-gray-100 text-gray-400' 
-                            : (cat.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/30 text-brand-accent')">
-                        <app-icon [name]="!cat.activo ? 'hidden' : (cat.especial ? 'star' : 'category')" 
-                                classes="size-6 fill-current" />
+                <input type="text" 
+                    [ngModel]="busquedaRaw()" 
+                    (ngModelChange)="onSearchInput($event)" 
+                    placeholder="Buscar categoría..."
+                    class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm">
+                
+                @if (isBuscando()) {
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                        <svg class="animate-spin size-5 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
                     </div>
-                    
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-bold text-sm truncate uppercase tracking-tight"
-                                [class]="!cat.activo ? 'text-gray-400' : 'text-brand-text'">
-                                {{ cat.nombre }}
-                            </h3>
-
-                            @if (!cat.activo) {
-                                <span class="text-[9px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-md font-black uppercase tracking-widest border border-gray-200">
-                                    Pausada
-                                </span>
-                            }
-                        </div>
-
-                        <div class="flex items-center gap-2 mt-0.5">
-                            <span class="text-[10px] px-2 py-0.5 rounded-lg font-black uppercase transition-colors"
-                                [class]="!cat.activo 
-                                    ? 'bg-gray-50 text-gray-300' 
-                                    : (cat.especial ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-500')">
-                                {{ cat.productos_count }} {{ (cat.productos_count === 1) ? 'Producto' : 'Productos' }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <button (click)="onEditCategory(cat)" 
-                            class="p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
-                        <app-icon name="edit" classes="size-4.5 fill-current" />
+                } @else if (busquedaRaw().length > 0) {
+                    <button (click)="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-brand-accent transition-colors duration-200 focus:outline-none">
+                        <app-icon name="close" classes="size-5 fill-current" />
                     </button>
+                } @else {
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                        <app-icon name="search" classes="size-5 text-gray-400 fill-current" />
+                    </div>
+                }
+                
+            </div>
+        </div>
 
-                    <div class="relative">
-                        <button (click)="toggleMenu(cat.id, $event)" 
+        <div class="max-w-md mx-auto space-y-3">
+            @for (cat of categoriasFiltradas(); track cat.id) {
+                <div class="flex items-center gap-4 bg-white p-3 rounded-2xl border border-gray-100 hover:border-brand-accent/20 transition-all group shadow-sm"
+                    [class.border-l-4]="cat.especial"
+                    [class.border-l-amber-400]="cat.especial">
+                    
+                    <div class="flex flex-1 items-center gap-4 min-w-0"
+                        (click)="categoryPreview.open(cat)"
+                        [class.opacity-50]="!cat.activo">
+                        
+                        <div class="shrink-0 size-12 rounded-xl flex items-center justify-center transition-colors"
+                            [class]="!cat.activo 
+                                ? 'bg-gray-100 text-gray-400' 
+                                : (cat.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/30 text-brand-accent')">
+                            <app-icon [name]="!cat.activo ? 'hidden' : (cat.especial ? 'star' : 'category')" 
+                                    classes="size-6 fill-current" />
+                        </div>
+                        
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-sm truncate uppercase tracking-tight"
+                                    [class]="!cat.activo ? 'text-gray-400' : 'text-brand-text'">
+                                    {{ cat.nombre }}
+                                </h3>
+
+                                @if (!cat.activo) {
+                                    <span class="text-[9px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-md font-black uppercase tracking-widest border border-gray-200">
+                                        Pausada
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="text-[10px] px-2 py-0.5 rounded-lg font-black uppercase transition-colors"
+                                    [class]="!cat.activo 
+                                        ? 'bg-gray-50 text-gray-300' 
+                                        : (cat.especial ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-500')">
+                                    {{ cat.productos_count }} {{ (cat.productos_count === 1) ? 'Producto' : 'Productos' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button (click)="onEditCategory(cat)" 
                                 class="p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
-                            <app-icon name="options" classes="size-4.5 fill-current" />
+                            <app-icon name="edit" classes="size-4.5 fill-current" />
                         </button>
 
-                        @if (activeMenuId() === cat.id) {
-                            <div class="absolute right-0 top-full mt-2 z-50 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 animate-in fade-in zoom-in duration-200"
-                                (click)="$event.stopPropagation()">
-                                
-                                <button (click)="onToggleEspecial(cat); activeMenuId.set(null)"
-                                        class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
-                                    <app-icon [name]="cat.especial ? 'star-filled' : 'star'" 
-                                            [classes]="'size-4 fill-current ' + (cat.especial ? 'text-yellow-400' : 'text-gray-400')" />
-                                    {{ cat.especial ? 'Quitar destacada' : 'Destacar categoría' }}
-                                </button>
+                        <div class="relative">
+                            <button (click)="toggleMenu(cat.id, $event)" 
+                                    class="p-2 bg-gray-50 text-brand-accent hover:bg-brand-accent hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                                <app-icon name="options" classes="size-4.5 fill-current" />
+                            </button>
 
-                                <button (click)="onToggleActiva(cat); activeMenuId.set(null)"
-                                        class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
-                                    <app-icon [name]="cat.activo ? 'pause' : 'play'" classes="size-4 fill-current text-gray-400" />
-                                    {{ cat.activo ? 'Pausar categoría' : 'Reanudar categoría' }}
-                                </button>
+                            @if (activeMenuId() === cat.id) {
+                                <div class="absolute right-0 top-full mt-2 z-50 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 animate-in fade-in zoom-in duration-200"
+                                    (click)="$event.stopPropagation()">
+                                    
+                                    <button (click)="onToggleEspecial(cat); activeMenuId.set(null)"
+                                            class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
+                                        <app-icon [name]="cat.especial ? 'star-filled' : 'star'" 
+                                                [classes]="'size-4 fill-current ' + (cat.especial ? 'text-yellow-400' : 'text-gray-400')" />
+                                        {{ cat.especial ? 'Quitar destacada' : 'Destacar categoría' }}
+                                    </button>
 
-                                <div class="h-px bg-gray-100 my-1 mx-2"></div>
+                                    <button (click)="onToggleActiva(cat); activeMenuId.set(null)"
+                                            class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text hover:bg-gray-50 rounded-xl transition-colors">
+                                        <app-icon [name]="cat.activo ? 'pause' : 'play'" classes="size-4 fill-current text-gray-400" />
+                                        {{ cat.activo ? 'Pausar categoría' : 'Reanudar categoría' }}
+                                    </button>
 
-                                <button (click)="onEliminar(cat); activeMenuId.set(null)"
-                                        class="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors">
-                                    <app-icon name="trash" classes="size-4 fill-current" />
-                                    Eliminar categoría
-                                </button>
-                            </div>
-                        }
+                                    <div class="h-px bg-gray-100 my-1 mx-2"></div>
+
+                                    <button (click)="onEliminar(cat); activeMenuId.set(null)"
+                                            class="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+                                        <app-icon name="trash" classes="size-4 fill-current" />
+                                        Eliminar categoría
+                                    </button>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        } @empty {
-            <div class="text-center py-20 opacity-40">
-                <app-icon name="category" classes="size-16 mx-auto mb-2 fill-gray-300" />
-                <p class="text-sm font-bold">No encontramos categorías</p>
-            </div>
-        }
-    </div>
+            } @empty {
+                <div class="text-center py-10 opacity-40">
+                    <p class="text-sm font-bold">No hay categorías con ese nombre</p>
+                </div>
+            }
+        </div>
 
-    <div class="fixed bottom-8 right-6 z-50">
-        <button (click)="onAddCategory()"
-            class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 hover:scale-105 transition-all duration-200"
-            aria-label="Agregar categoría">
-            <app-icon name="add-categoria" classes="size-6 fill-current" />
-        </button>
-    </div>
-</main>
+        <div class="fixed bottom-8 right-6 z-50">
+            <button (click)="onAddCategory()"
+                class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 hover:scale-105 transition-all duration-200"
+                aria-label="Agregar categoría">
+                <app-icon name="add-categoria" classes="size-6 fill-current" />
+            </button>
+        </div>
+    </main>
+</div>

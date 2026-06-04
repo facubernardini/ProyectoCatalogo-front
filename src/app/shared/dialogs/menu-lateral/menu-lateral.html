@@ -28,14 +28,14 @@
             </button>
         </div>
 
-        <div class="px-4 pt-4 flex flex-col shrink-0 bg-white z-10 relative">
+        <div class="px-4 pt-2 flex flex-col shrink-0 bg-white z-10 relative">
             <div class="flex flex-col gap-1 mb-5">
                 <button (click)="abrirDestacados()" class="w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-bold text-gray-700 hover:text-brand-text hover:bg-gray-50 transition-all duration-300 group active:scale-[0.98]">
                     <div class="flex items-center gap-3">
                         <div class="w-5 flex items-center justify-center shrink-0">
                             <span class="text-base animate-pulse">🔥</span>
                         </div>
-                        <span>Productos destacados</span>
+                        <span>Destacados</span>
                     </div>
                 </button>
 
@@ -44,7 +44,7 @@
                         <div class="w-5 flex items-center justify-center shrink-0">
                             <app-icon name="discount" classes="size-4 fill-green-600" />
                         </div>
-                        <span>Ofertas imperdibles</span>
+                        <span>Ofertas</span>
                     </div>
                 </button>
             </div>
@@ -62,10 +62,7 @@
                             [class]="selected() === cat.nombre ? 'bg-brand-accent/10 text-brand-accent shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-brand-text'">
                         
                         <div class="flex items-center gap-3 min-w-0">
-                            <div class="size-1.5 shrink-0 rounded-full transition-colors duration-300"
-                                [class]="cat.especial ? 'bg-gray-500 group-hover:bg-brand-accent/50' : 'bg-gray-300 group-hover:bg-brand-accent/50'">
-                            </div>
-                            
+                            <div class="size-1.5 bg-gray-300 group-hover:bg-brand-accent/50 shrink-0 rounded-full transition-colors duration-300"></div>
                             <span class="capitalize truncate" [class.font-black]="cat.especial">{{ cat.nombre }}</span>
                         </div>
 

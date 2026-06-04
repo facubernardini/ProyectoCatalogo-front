@@ -1,160 +1,162 @@
-<header class="sticky top-0 z-50 pt-8 bg-brand-bg border-b border-blue-200 shadow-sm">
-  <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
-    
-    <button
-        (click)="volverAtras()"
-        class="p-2 text-brand-accent active:scale-95 transition-transform"
-        aria-label="Volver atrás">
-        <app-icon name="back" classes="size-7 fill-current" />
-    </button>
-
-    <div class="flex-1 text-center px-2 overflow-hidden">
-            <h1 class="text-brand-accentfont-bold text-base truncate">
-                Mi perfil
-            </h1>
-        </div>
-    <div class="w-11"></div>
-
-  </div>
-</header>
-
-<main class="bg-gray-50 px-4 pb-8 pt-6 min-h-[calc(100vh-6rem)] flex flex-col">
-    
-    <div class="max-w-md mx-auto w-full flex-1 flex flex-col">
-        
-        <div class="space-y-6">
-            <div class="bg-white rounded-3xl p-5 border border-brand-accent/30 shadow-sm shadow-brand-accent/5 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-brand-accent/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-                
-                <div class="relative flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="size-12 bg-brand-accent text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
-                            <app-icon name="star" classes="size-6 fill-current" />
-                        </div>
-                        <div>
-							<p class="text-[10px] font-black uppercase tracking-widest text-brand-accent">Tu Plan Actual</p>
-							<p class="text-lg font-bold text-brand-text">{{ adminStore.vendedor()?.suscripcion?.plan }}</p>
-							
-							<div class="text-[11px] font-medium text-brand-text-sec mt-0.5 leading-tight flex flex-wrap items-center gap-1">
-								<p>Vence: {{ adminStore.vendedor()?.suscripcion?.fecha_fin | date:'dd/MM/yyyy' }}</p>
-								
-								@if (diasRestantes() !== null) {
-									<span class="font-bold opacity-90" 
-										[class.text-brand-accent]="diasRestantes()! > 5" 
-										[class.text-red-500]="diasRestantes()! <= 5">
-										
-										@if (diasRestantes()! > 0) {
-											(en {{ diasRestantes() }} día{{ diasRestantes() === 1 ? '' : 's' }})
-										} @else if (diasRestantes() === 0) {
-											(vence hoy)
-										} @else {
-											(vencido)
-										}
-									</span>
-								}
-							</div>
-						</div>
-                    </div>
-                    
-                    <button class="px-3 py-2.5 flex flex-row items-center bg-brand-bg text-brand-accent text-xs font-bold rounded-xl active:scale-95 transition-transform border border-brand-accent/20">
-                        <app-icon name="upgrade" classes="size-5 mr-px text-brand-text-sec fill-current" />
-						Mejorar
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                
-                <div class="p-4 border-b border-gray-50 flex items-center gap-4">
-                    <div class="size-10 bg-gray-50 rounded-full flex items-center justify-center shrink-0">
-                        <app-icon name="profile" classes="size-5 text-brand-text-sec fill-current" />
-                    </div>
-                    <div class="flex-1 overflow-hidden">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-brand-text-sec">Nombre completo</label>
-                        <p class="text-sm font-bold text-brand-text truncate">
-                            {{ adminStore.vendedor()?.nombre_apellido }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="p-4 border-b border-gray-50 flex items-center gap-4">
-                    <div class="size-10 bg-gray-50 rounded-full flex items-center justify-center shrink-0">
-                        <app-icon name="mail" classes="size-5 text-brand-text-sec fill-current" />
-                    </div>
-                    <div class="flex-1 overflow-hidden">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-brand-text-sec">Correo registrado</label>
-                        <p class="text-sm font-bold text-brand-text truncate">
-                            {{ adminStore.vendedor()?.correo }}
-                        </p>
-                    </div>
-                </div>
-
-                <button (click)="mostrarCambioPassword.set(!mostrarCambioPassword())" 
-                        class="w-full p-4 flex items-center gap-4 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left focus:outline-none">
-                    <div class="size-10 bg-gray-50 rounded-full flex items-center justify-center shrink-0">
-                        <app-icon name="lock" classes="size-5 text-brand-text-sec fill-current" />
-                    </div>
-                    <div class="flex-1 overflow-hidden">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-brand-text-sec cursor-pointer">Cambiar contraseña</label>
-                        <p class="text-sm font-bold text-brand-text truncate">Protegé tu cuenta</p>
-                    </div>
-                    <div class="shrink-0 transition-transform duration-300" [class.rotate-90]="mostrarCambioPassword()">
-                        <app-icon name="chevron-right" classes="size-5 text-gray-300 fill-current" />
-                    </div>
-                </button>
-
-                @if (mostrarCambioPassword()) {
-                    <div class="p-5 bg-gray-50/50 border-t border-gray-50 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                        
-                        <div>
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Contraseña Actual</label>
-                            <input type="password" [(ngModel)]="passwords.actual" placeholder="Ingresá tu clave actual"
-                                class="w-full p-3 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text shadow-sm">
-                        </div>
-
-                        <div>
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Nueva Contraseña</label>
-                            <input type="password" [(ngModel)]="passwords.nueva" placeholder="Mínimo 8 caracteres"
-                                class="w-full p-3 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text shadow-sm">
-                        </div>
-
-                        <div>
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Repetir Nueva Contraseña</label>
-                            <input type="password" [(ngModel)]="passwords.repetir" placeholder="Confirmá tu nueva clave"
-                                class="w-full p-3 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text shadow-sm">
-                        </div>
-
-                        <div class="pt-2">
-                            <button (click)="guardarNuevaPassword()" [disabled]="loadingPassword()"
-                                    class="w-full py-3.5 bg-brand-accent text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-brand-accent/90 active:scale-[0.98] transition-all shadow-md shadow-brand-accent/20 disabled:opacity-50 flex justify-center items-center gap-2">
-                                
-                                @if (loadingPassword()) {
-                                    <span>Actualizando...</span>
-                                } @else {
-                                    <span>Actualizar contraseña</span>
-                                }
-                                
-                            </button>
-                        </div>
-                    </div>
-                }
-
-            </div>
-        </div>
-
-        <div class="mt-auto pt-8 flex flex-col">
+<div class="min-h-svh flex flex-col">
+    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
+        <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
             
-            <p class="text-xs font-medium text-brand-text-sec text-center mb-4">
-                Miembro desde el {{ adminStore.vendedor()?.fecha_registro | date:'dd/MM/yyyy' }}
-            </p>
-
-            <button 
-                (click)="onLogout()" 
-                class="w-full p-4 rounded-2xl border-2 border-red-100 text-red-500 font-bold bg-white active:bg-red-50 transition-colors flex items-center justify-center gap-3 shadow-sm">
-                <app-icon name="logout" classes="size-5 fill-current" />
-                Cerrar Sesión
+            <button
+                (click)="volverAtras()"
+                class="p-2 text-brand-accent active:scale-95 transition-transform"
+                aria-label="Volver atrás">
+                <app-icon name="back" classes="size-7 fill-current" />
             </button>
-        </div>
 
-    </div>
-</main>
+            <div class="flex-1 text-center px-2 overflow-hidden">
+                    <h1 class="text-brand-accentfont-bold text-base truncate">
+                        Mi perfil
+                    </h1>
+                </div>
+            <div class="w-11"></div>
+
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col bg-gray-50 p-4">
+        
+        <div class="max-w-md mx-auto w-full flex-1 flex flex-col">
+            
+            <div class="space-y-6">
+                <div class="bg-white rounded-3xl p-5 border border-brand-accent/30 shadow-sm shadow-brand-accent/5 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-accent/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+                    
+                    <div class="relative flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="size-12 bg-brand-accent text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                                <app-icon name="star" classes="size-6 fill-current" />
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-brand-accent">Tu Plan Actual</p>
+                                <p class="text-lg font-bold text-brand-text">{{ adminStore.vendedor()?.suscripcion?.plan }}</p>
+                                
+                                <div class="text-[11px] font-medium text-brand-text-sec mt-0.5 leading-tight flex flex-wrap items-center gap-1">
+                                    <p>Vence: {{ adminStore.vendedor()?.suscripcion?.fecha_fin | date:'dd/MM/yyyy' }}</p>
+                                    
+                                    @if (diasRestantes() !== null) {
+                                        <span class="font-bold opacity-90" 
+                                            [class.text-brand-accent]="diasRestantes()! > 5" 
+                                            [class.text-red-500]="diasRestantes()! <= 5">
+                                            
+                                            @if (diasRestantes()! > 0) {
+                                                (en {{ diasRestantes() }} día{{ diasRestantes() === 1 ? '' : 's' }})
+                                            } @else if (diasRestantes() === 0) {
+                                                (vence hoy)
+                                            } @else {
+                                                (vencido)
+                                            }
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="px-3 py-2.5 flex flex-row items-center bg-brand-bg text-brand-accent text-xs font-bold rounded-xl active:scale-95 transition-transform border border-brand-accent/20">
+                            <app-icon name="upgrade" classes="size-5 mr-px text-brand-text-sec fill-current" />
+                            Mejorar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                    
+                    <div class="p-4 border-b border-gray-50 flex items-center gap-4">
+                        <div class="size-10 bg-gray-50 rounded-full flex items-center justify-center shrink-0">
+                            <app-icon name="profile" classes="size-5 text-brand-text-sec fill-current" />
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-brand-text-sec">Nombre completo</label>
+                            <p class="text-sm font-bold text-brand-text truncate">
+                                {{ adminStore.vendedor()?.nombre_apellido }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border-b border-gray-50 flex items-center gap-4">
+                        <div class="size-10 bg-gray-50 rounded-full flex items-center justify-center shrink-0">
+                            <app-icon name="mail" classes="size-5 text-brand-text-sec fill-current" />
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-brand-text-sec">Correo registrado</label>
+                            <p class="text-sm font-bold text-brand-text truncate">
+                                {{ adminStore.vendedor()?.correo }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <button (click)="mostrarCambioPassword.set(!mostrarCambioPassword())" 
+                            class="w-full p-4 flex items-center gap-4 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left focus:outline-none">
+                        <div class="size-10 bg-gray-50 rounded-full flex items-center justify-center shrink-0">
+                            <app-icon name="lock" classes="size-5 text-brand-text-sec fill-current" />
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-brand-text-sec cursor-pointer">Cambiar contraseña</label>
+                            <p class="text-sm font-bold text-brand-text truncate">Protegé tu cuenta</p>
+                        </div>
+                        <div class="shrink-0 transition-transform duration-300" [class.rotate-90]="mostrarCambioPassword()">
+                            <app-icon name="chevron-right" classes="size-5 text-gray-300 fill-current" />
+                        </div>
+                    </button>
+
+                    @if (mostrarCambioPassword()) {
+                        <div class="p-5 bg-gray-50/50 border-t border-gray-50 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                            
+                            <div>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Contraseña Actual</label>
+                                <input type="password" [(ngModel)]="passwords.actual" placeholder="Ingresá tu clave actual"
+                                    class="w-full p-3 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text shadow-sm">
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Nueva Contraseña</label>
+                                <input type="password" [(ngModel)]="passwords.nueva" placeholder="Mínimo 8 caracteres"
+                                    class="w-full p-3 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text shadow-sm">
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Repetir Nueva Contraseña</label>
+                                <input type="password" [(ngModel)]="passwords.repetir" placeholder="Confirmá tu nueva clave"
+                                    class="w-full p-3 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text shadow-sm">
+                            </div>
+
+                            <div class="pt-2">
+                                <button (click)="guardarNuevaPassword()" [disabled]="loadingPassword()"
+                                        class="w-full py-3.5 bg-brand-accent text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-brand-accent/90 active:scale-[0.98] transition-all shadow-md shadow-brand-accent/20 disabled:opacity-50 flex justify-center items-center gap-2">
+                                    
+                                    @if (loadingPassword()) {
+                                        <span>Actualizando...</span>
+                                    } @else {
+                                        <span>Actualizar contraseña</span>
+                                    }
+                                    
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <div class="mt-auto pt-8 flex flex-col">
+                
+                <p class="text-xs font-medium text-brand-text-sec text-center mb-4">
+                    Miembro desde el {{ adminStore.vendedor()?.fecha_registro | date:'dd/MM/yyyy' }}
+                </p>
+
+                <button 
+                    (click)="onLogout()" 
+                    class="w-full p-4 rounded-2xl border-2 border-red-100 text-red-500 font-bold bg-white active:bg-red-50 transition-colors flex items-center justify-center gap-3 shadow-sm">
+                    <app-icon name="logout" classes="size-5 fill-current" />
+                    Cerrar Sesión
+                </button>
+            </div>
+
+        </div>
+    </main>
+</div>

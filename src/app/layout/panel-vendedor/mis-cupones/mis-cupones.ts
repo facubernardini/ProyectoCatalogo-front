@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CuponFormService } from '@shared/services/cupon-form.service';
 import { CuponManagerService } from 'src/app/core/services/cupones-manager.service';
+import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mis-cupones',
@@ -21,9 +22,15 @@ export class MisCupones {
   public cuponFormService = inject(CuponFormService);
   public cuponManager = inject(CuponManagerService);
 
+  busquedaRaw = signal('');
   filtro = signal('');
+  isBuscando = signal(false);
+
   estadoFiltro = signal('todos');
   activeMenuId = signal<number | null>(null);
+
+  private searchSubject = new Subject<string>();
+  private searchSubscription!: Subscription;
 
   cuponesFiltrados = computed(() => {
     const ahora = new Date();
@@ -58,6 +65,41 @@ export class MisCupones {
     
     return filtrados;
   });
+
+  ngOnInit() {
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(valor => {
+      this.filtro.set(valor);
+      this.isBuscando.set(false);
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
+  onSearchInput(valor: string) {
+    this.busquedaRaw.set(valor);
+    
+    if (valor.trim().length > 0) {
+      this.isBuscando.set(true);
+    } else {
+      this.isBuscando.set(false);
+    }
+
+    this.searchSubject.next(valor);
+  }
+
+  limpiarBusqueda() {
+    this.busquedaRaw.set('');
+    this.filtro.set('');
+    this.isBuscando.set(false);
+    this.searchSubject.next('');
+  }
 
   isVencido(fecha: number | string | Date | undefined | null): boolean {
     if (!fecha) return false;

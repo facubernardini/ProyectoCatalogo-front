@@ -23,12 +23,7 @@
                             <div class="absolute inset-0 h-full w-full bg-linear-to-r from-transparent via-brand-accent/15 to-transparent animate-shimmer"></div>
                         }
 
-                        <div class="relative z-10 flex items-center justify-center gap-1.5">
-                            @if (cat.especial) {
-                                <app-icon name="star" 
-                                        [classes]="'size-3.5 transition-colors ' + (categoriaSeleccionada() === cat.nombre ? 'fill-white' : 'fill-brand-accent')" />
-                            }
-                            
+                        <div class="relative z-10 flex items-center justify-center gap-1.5">                           
                             <span [class.text-brand-accent]="cat.especial && categoriaSeleccionada() !== cat.nombre">
                                 {{ cat.nombre }}
                             </span>

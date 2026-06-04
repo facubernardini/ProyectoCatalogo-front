@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 @plugin "tailwindcss-animate";
 
-/* 1. Le decimos a Tailwind que genere las clases usando variables dinámicas */
 @theme {
   --color-brand-bg: var(--theme-bg);
   --color-brand-accent: var(--theme-accent);
@@ -9,7 +8,6 @@
   --color-brand-text-sec: var(--theme-text-sec);
 }
 
-/* 2. Definimos los colores reales de cada paleta */
 @layer base {
   
   :root, :root[data-theme="midnight" i] {
@@ -81,7 +79,6 @@
     --theme-text: #134E4A;
     --theme-text-sec: #0F766E;
   }
-
 }
 
 body {

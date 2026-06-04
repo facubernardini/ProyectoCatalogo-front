@@ -84,10 +84,10 @@ export class AdminStoreService {
 
         // Tienda suspendida
         if (err.status === 403 && err.error?.code === 'TIENDA_SUSPENDIDA') {
-            this.router.navigate(['/404']);
+            this.router.navigate(['/not-found']);
         } else if (err.status === 404) {
             // La tienda no existe
-            this.router.navigate(['/404']); 
+            this.router.navigate(['/not-found']); 
         } else {
             // Error de servidor (500) o sin conexión
             this.router.navigate(['/404']);
