@@ -43,14 +43,11 @@ export class Login {
         }
       },
       error: (err) => {
-        // Cuenta suspendida
-        if (err.status === 403) {
-          const mensajeSuspendido = err.error?.error || 'Tu cuenta ha sido suspendida. Por favor, comunícate con soporte.';
+        console.log(err);
+        // Credenciales inválidas o cuenta suspendida
+        if (err.status === 401) {
+          const mensajeSuspendido = err.error.message
           this.toastService.show(mensajeSuspendido, 'error');
-        } 
-        // Credenciales inválidas
-        else if (err.status === 401) {
-          this.toastService.show('Correo o contraseña incorrectos.', 'error');
         } 
         // Error de Servidor
         else {

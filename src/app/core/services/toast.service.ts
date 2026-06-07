@@ -27,7 +27,7 @@ export class ToastService {
     // 3. A los 2.7s empezamos el fade-out (ponemos visible en false)
     setTimeout(() => {
       this.toasts.update(list => list.map(t => t.id === id ? { ...t, visible: false } : t));
-    }, 2700);
+    }, 3500);
 
     // 4. A los 3s lo borramos definitivamente del DOM
     setTimeout(() => {

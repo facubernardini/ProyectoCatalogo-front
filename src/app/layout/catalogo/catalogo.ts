@@ -1,4 +1,4 @@
-import { Component, DOCUMENT, effect, inject, OnInit, Renderer2 } from '@angular/core';
+import { Component, DOCUMENT, effect, inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -38,7 +38,7 @@ import { ProductosOfertas } from "@shared/dialogs/productos-ofertas/productos-of
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
-export class CatalogoPublico implements OnInit {
+export class CatalogoPublico implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   public adminStore = inject(AdminStoreService);
 
@@ -58,10 +58,15 @@ export class CatalogoPublico implements OnInit {
   ngOnInit() {
     const slug = this.route.snapshot.paramMap.get('slug');
     if (slug) {
+      this.renderer.addClass(this.document.body, 'tema-catalogo');
       this.adminStore.cargarDatosPublicos(slug);
     }
     else {
       this.adminStore.isLoading.set(false);
     }
+  }
+
+  ngOnDestroy() {
+    this.renderer.removeClass(this.document.body, 'tema-catalogo');
   }
 }

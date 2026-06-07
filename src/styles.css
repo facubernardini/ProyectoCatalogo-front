@@ -81,40 +81,33 @@
   }
 }
 
-body {
+body.tema-catalogo {
   background-color: var(--color-brand-bg);
   color: var(--color-brand-text);
   font-family: ui-sans-serif, system-ui, sans-serif;
   
-  /* Aseguramos que el contenido fluya bien sobre el fondo */
   position: relative;
   min-height: 100vh;
   margin: 0;
-  overflow-x: hidden; /* Evita scrolls raros por el desenfoque */
-
+  overflow-x: hidden;
   overscroll-behavior-y: none;
 }
 
-/* Aplicación del Punto 1: Soft Mesh Gradient */
-body::before {
+body.tema-catalogo::before {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1; /* Se queda detrás de todo */
-  pointer-events: none; /* No interfiere con los clicks */
+  z-index: -1;
+  pointer-events: none;
   
   background: 
-    /* Mancha 1: Arriba a la izquierda (Acento de marca muy suave) */
     radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-brand-accent), transparent 92%) 0%, transparent 50%),
-    /* Mancha 2: Abajo a la derecha (Un tono neutro o luz blanca) */
     radial-gradient(circle at 100% 100%, white 0%, transparent 50%),
-    /* Mancha 3: Centro-derecha (Acento de marca casi invisible) */
     radial-gradient(circle at 80% 30%, color-mix(in srgb, var(--color-brand-accent), transparent 95%) 0%, transparent 40%);
   
-  /* Opcional: un toque de desenfoque extra por si los gradientes se notan mucho */
   filter: blur(40px); 
 }
 

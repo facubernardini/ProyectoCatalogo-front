@@ -12,7 +12,7 @@ import { MiTienda } from '@layout/panel-vendedor/mi-tienda/mi-tienda';
 import { Perfil } from '@layout/panel-vendedor/perfil/perfil';
 import { MisCupones } from '@layout/panel-vendedor/mis-cupones/mis-cupones';
 import { Home } from '@layout/home/home';
-import { Register } from '@layout/home/register/register';
+import { Register } from '@layout/register/register';
 import { DashboardBO } from '@layout/backoffice/dashboard-bo/dashboard-bo';
 import { Vendedores } from '@layout/backoffice/vendedores/vendedores';
 import { Catalogos } from '@layout/backoffice/catalogos/catalogos';
