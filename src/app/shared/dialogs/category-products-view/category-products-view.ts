@@ -22,15 +22,12 @@ export class CategoryProductsView implements OnDestroy {
   private adminStore = inject(AdminStoreService);
   private selectorService = inject(ProductSelectorService);
 
-  // 1. Estados de la UI (Gemelos del buscador general)
   busquedaRaw = signal<string>('');
   filtro = signal<string>('');
   isBuscando = signal<boolean>(false);
 
-  // 2. Motor de tiempo RxJS
   private searchSubject = new Subject<string>();
 
-  // 3. Pre-filtramos los productos que pertenecen a esta categoría
   productosDeCategoria = computed(() => {
     const catSeleccionada = this.viewService.categoria();
     if (!catSeleccionada) return [];
@@ -40,20 +37,15 @@ export class CategoryProductsView implements OnDestroy {
     );
   });
 
-  // 4. Aplicamos el filtro de texto sobre los productos de la categoría
   resultados = computed(() => {
     const q = this.filtro().toLowerCase().trim();
     
-    // 1. Agarramos todos los productos de esta categoría
     const lista = this.productosDeCategoria();
 
-    // 2. 
-    // Si no hay texto (o hay 1 sola letra), retornamos la lista COMPLETA, no un array vacío.
     if (q.length < 2) {
       return lista; 
     }
 
-    // 3. Si hay texto, filtramos esa lista
     return lista.filter(p => 
       p.nombre.toLowerCase().includes(q) || 
       (p.descripcion && p.descripcion.toLowerCase().includes(q))
@@ -116,7 +108,7 @@ export class CategoryProductsView implements OnDestroy {
     this.searchSubject.complete();
   }
 
-  abrirProducto(producto: Producto) {
-    this.selectorService.open(producto);
+  abrirProducto(producto: Producto, fromModal: boolean = false) {
+    this.selectorService.open(producto, fromModal);
   }
 }

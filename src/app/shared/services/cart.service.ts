@@ -112,8 +112,16 @@ export class CartService {
   });
 
   constructor() {
+    // Mantengo tu effect del LocalStorage
     effect(() => {
       localStorage.setItem('cart_storage', JSON.stringify(this.cartItems()));
+    });
+
+    // Nuevo: Listener para el gesto de ir hacia atrás en móviles
+    window.addEventListener('popstate', () => {
+      if (this.isOpen() && history.state?.modal !== 'cart-modal') {
+        this.cerrarInterno();
+      }
     });
   }
 
@@ -170,13 +178,16 @@ export class CartService {
     );
   }
 
-  limpiarCarrito() {
+  limpiarCarrito(silent: boolean = false) {
     if (this.cartItems().length > 0) {
       this.cartItems.set([]);
       this.selectedPaymentMethod.set(null);
       this.appliedCupon.set(null);
       this.deliveryMethod.set(null);
-      this.toastService.show('Carrito vaciado con éxito 🗑️', 'success');
+      
+      if (!silent) {
+        this.toastService.show('Carrito vaciado con éxito 🗑️', 'success');
+      }
     }
   }
 
@@ -185,7 +196,7 @@ export class CartService {
     this.cuponServiceBackend.verificarCupon(codigo, catalogoId).subscribe({
       next: (res) => {
         this.appliedCupon.set(res);
-        this.toastService.show(`Cupón "${codigo}" aplicado ✅`, 'success');
+        this.toastService.show(res.mensaje, 'success');
       },
       error: (err) => {
         this.appliedCupon.set(null);
@@ -213,11 +224,25 @@ export class CartService {
   }
 
   open() {
+    if (this.isOpen()) return;
+
     this.isOpen.set(true);
     document.body.style.overflow = 'hidden';
+    
+    history.pushState({ modal: 'cart-modal' }, '');
   }
 
   close() {
+    this.cerrarInterno();
+    
+    if (history.state?.modal === 'cart-modal') {
+      history.back();
+    }
+  }
+
+  private cerrarInterno() {
+    if (!this.isOpen()) return;
+    
     this.isOpen.set(false);
     document.body.style.overflow = 'auto';
   }

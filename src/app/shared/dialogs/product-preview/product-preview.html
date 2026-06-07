@@ -11,27 +11,38 @@
 
             @if (productPreviewService.selectedProduct(); as prod) {
                 <div class="flex gap-4 mb-8">
-                    <div class="relative w-24 h-24 bg-brand-bg rounded-2xl overflow-hidden shrink-0 shadow-sm">
+                    <div class="relative w-24 h-24 bg-brand-bg rounded-2xl overflow-hidden shrink-0 shadow-sm mt-1">
                         <img [src]="prod.imagen || 'https://placehold.co/200x200?text=📦'" 
                             class="w-full h-full object-cover">
                     </div>
 
-                    <div class="flex-1">
-                        <h2 class="text-xl font-black text-brand-text leading-tight">{{ prod.nombre }}</h2>
-                        <p class="text-sm text-gray-500 mt-1">{{ prod.descripcion || 'Sin descripción' }}</p>
+                    <div class="flex-1 flex flex-col justify-center">
                         
-                        <div class="flex gap-2 mt-3">
-                            <span [class]="prod.activo ? 'bg-green-100 text-green-600' : 'bg-red-100 text-orange-600'"
-                                class="text-[10px] font-bold uppercase px-2 py-1 rounded-md">
-                                {{ prod.activo ? 'Activo' : 'Pausado' }}
-                            </span>
+                        <div class="mb-3 shrink-0">                            
+                            <div class="relative w-full">
+                                <input type="text" 
+                                    [(ngModel)]="prod.nombre" 
+                                    placeholder="Nombre del producto"
+                                    (focus)="onFocus($event)" 
+                                    class="w-full bg-gray-50 border-none rounded-2xl py-3 pl-4 pr-12 text-xl font-black text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all"
+                                    [class.border-2]="!prod.nombre"
+                                    [class.border-red-500]="!prod.nombre">
+                                
+                                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                                    <app-icon name="edit" classes="size-5 fill-current" />
+                                </div>
+                            </div>
+                        </div>
 
-                            @if (prod.destacado) {
+                        <p class="text-sm text-gray-500">{{ prod.descripcion || 'Sin descripción' }}</p>
+                        
+                        @if (prod.destacado) {
+                            <div class="flex mt-2">
                                 <span class="text-[10px] bg-yellow-100 text-yellow-600 font-bold uppercase px-2 py-1 rounded-md">
                                     Destacado
                                 </span>
-                            }
-                        </div>
+                            </div>
+                        }
 
                         @if (prod.tags && prod.tags.length > 0) {
                             <div class="flex flex-wrap gap-1.5 mt-2">
@@ -112,7 +123,6 @@
                                 </div>
 
                                 <div class="flex items-center gap-0.5 ml-1">
-    
                                     <button (click)="onToggleActivoPresentacion(prod, $index)" 
                                             [class]="pres.activo !== false ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50' : 'text-orange-500 bg-orange-50 hover:bg-orange-100'"
                                             class="p-1.5 rounded-lg transition-colors"
@@ -125,7 +135,6 @@
                                             title="Eliminar variante">
                                         <app-icon name="trash" classes="size-4 fill-current" />
                                     </button>
-                                    
                                 </div>
                             </div>
                         </div>

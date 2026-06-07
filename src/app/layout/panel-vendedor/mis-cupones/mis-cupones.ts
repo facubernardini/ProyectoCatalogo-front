@@ -28,6 +28,7 @@ export class MisCupones {
 
   estadoFiltro = signal('todos');
   activeMenuId = signal<number | null>(null);
+  isMenuUpward = signal<boolean>(false);
 
   private searchSubject = new Subject<string>();
   private searchSubscription!: Subscription;
@@ -108,12 +109,29 @@ export class MisCupones {
 
   toggleMenu(id: number, event: Event) {
     event.stopPropagation();
+    
+    if (this.activeMenuId() !== id) {
+      const button = event.currentTarget as HTMLElement;
+      const rect = button.getBoundingClientRect();
+      
+      this.isMenuUpward.set(window.innerHeight - rect.bottom < 250);
+    }
+
     this.activeMenuId.update(current => current === id ? null : id);
   }
 
   @HostListener('document:click')
   closeMenu() {
     this.activeMenuId.set(null);
+    this.isMenuUpward.set(false);
+  }
+
+  @HostListener('window:scroll')
+  onScroll() {
+    if (this.activeMenuId() !== null) {
+      this.activeMenuId.set(null);
+      this.isMenuUpward.set(false);
+    }
   }
 
   volverAtras() {

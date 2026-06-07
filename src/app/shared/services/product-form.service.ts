@@ -32,7 +32,6 @@ export class ProductFormService {
 
   save(productData: any) {
     this.productManager.guardar(productData, this.editingProduct());
-    this.close();
   }
 
   delete(id: number) {

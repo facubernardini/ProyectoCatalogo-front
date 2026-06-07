@@ -10,23 +10,47 @@ export class ProductSelectorService {
   selectedProduct = signal<Producto | null>(null);
   isOpen = signal(false);
 
-  open(producto: Producto) {
-    // Si tiene una sola presentación, al carrito directo
-    if (producto.presentaciones.length === 1) {
-      this.cartService.agregarProducto(producto, producto.presentaciones[0]);
-      return;
-    }
+  private preventScrollRestore = signal(false);
+
+  constructor() {
+    window.addEventListener('popstate', () => {
+      if (this.isOpen()) {
+        this.cerrarModalInterno();
+      }
+    });
+  }
+
+  open(producto: Producto, fromModal: boolean = false) {
+    const yaEstabaAbierto = this.isOpen();
     
-    // Si tiene varias, abrimos el "bottom sheet"
     this.selectedProduct.set(producto);
+    this.preventScrollRestore.set(fromModal);
     this.isOpen.set(true);
+
     document.body.style.overflow = 'hidden';
+
+    if (!yaEstabaAbierto) {
+      history.pushState({ modal: 'product-selector' }, '');
+    }
   }
 
   close() {
+    this.cerrarModalInterno();
+
+    if (history.state?.modal === 'product-selector') {
+      history.back();
+    }
+  }
+
+  private cerrarModalInterno() {
+    if (!this.isOpen()) return;
+
     this.isOpen.set(false);
     setTimeout(() => this.selectedProduct.set(null), 300);
-    document.body.style.overflow = 'auto';
+    
+    if (!this.preventScrollRestore()) {
+      document.body.style.overflow = 'auto';
+    }
   }
 
   seleccionarYAgregar(pres: Presentacion) {

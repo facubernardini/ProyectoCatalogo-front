@@ -1,5 +1,5 @@
 @if (searchService.isOpen()) {
-    <div class="fixed inset-0 z-100 bg-white flex flex-col">
+    <div class="fixed inset-0 z-60 bg-white flex flex-col">
         
         <div class="p-4 flex items-center gap-3 border-b border-gray-100">
             <button (click)="searchService.close()" class="p-2 text-gray-400 active:scale-90 transition-transform">
@@ -55,8 +55,8 @@
                         class="col-start-1 row-start-1 transition-opacity duration-300 ease-in-out">
                         
                         @for (prod of resultados(); track prod.id) {
-                            <div (click)="abrirProducto(prod)" 
-                                class="flex items-center gap-4 p-2 bg-white rounded-2xl active:scale-[0.98] transition-all border border-gray-100 shadow-sm hover:shadow-md cursor-pointer">
+                            <div (click)="abrirProducto(prod, true)" 
+                                class="mb-3 flex items-center gap-4 p-2 bg-white rounded-2xl active:scale-[0.98] transition-all border border-gray-100 shadow-sm hover:shadow-md cursor-pointer">
                                 
                                 <div class="relative size-16 rounded-xl bg-gray-50 overflow-hidden shrink-0 border border-gray-100/50">
                                     <img [src]="prod.imagen || 'assets/img/placeholder.png'" class="w-full h-full object-cover">

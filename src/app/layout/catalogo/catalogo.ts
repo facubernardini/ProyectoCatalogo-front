@@ -16,9 +16,10 @@ import { MenuLateral } from "@shared/dialogs/menu-lateral/menu-lateral";
 import { CategoryProductsView } from "@shared/dialogs/category-products-view/category-products-view";
 import { BannerInfo } from "./banner-info/banner-info";
 import { MapDialog } from "@shared/dialogs/map-dialog/map-dialog";
-import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinner";
 import { ProductosDestacados } from "@shared/dialogs/productos-destacados/productos-destacados";
 import { ProductosOfertas } from "@shared/dialogs/productos-ofertas/productos-ofertas";
+import { Skeleton } from "./skeleton/skeleton";
+import { PedidoRealizado } from "@shared/dialogs/pedido-realizado/pedido-realizado";
 
 @Component({
   selector: 'app-catalogo',
@@ -31,9 +32,10 @@ import { ProductosOfertas } from "@shared/dialogs/productos-ofertas/productos-of
     CategoryProductsView,
     BannerInfo,
     MapDialog,
-    LoadingSpinner,
     ProductosDestacados,
-    ProductosOfertas
+    ProductosOfertas,
+    Skeleton,
+    PedidoRealizado
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
@@ -48,10 +50,16 @@ export class CatalogoPublico implements OnInit, OnDestroy {
   constructor() {
     effect(() => {
       const catalogo = this.adminStore.catalogo();
-      
       const tema = catalogo?.tema?.toLowerCase() ?? 'midnight';
-      
       this.renderer.setAttribute(this.document.documentElement, 'data-theme', tema);
+    });
+
+    effect(() => {
+      if (this.adminStore.isLoading()) {
+        this.renderer.addClass(this.document.body, 'overflow-hidden');
+      } else {
+        this.renderer.removeClass(this.document.body, 'overflow-hidden');
+      }
     });
   }
 

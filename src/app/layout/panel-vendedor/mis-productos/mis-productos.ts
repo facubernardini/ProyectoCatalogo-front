@@ -33,6 +33,7 @@ export class MisProductos {
   isCategoriaDropdownOpen = signal<boolean>(false);
   categoriaSeleccionada = signal<string>('todos');
   activeMenuId = signal<number | null>(null);
+  isMenuUpward = signal<boolean>(false);
   
   busquedaRaw = signal<string>('');
   filtro = signal<string>('');
@@ -122,16 +123,35 @@ export class MisProductos {
 
   toggleMenu(id: number, event: Event) {
     event.stopPropagation();
-    this.activeMenuId.set(this.activeMenuId() === id ? null : id);
+    
+    if (this.activeMenuId() === id) {
+      this.activeMenuId.set(null);
+      return;
+    }
+
+    const button = event.currentTarget as HTMLElement;
+    const rect = button.getBoundingClientRect();
+    
+    this.isMenuUpward.set(window.innerHeight - rect.bottom < 250);
+    
+    this.activeMenuId.set(id);
   }
 
   @HostListener('document:click')
   closeMenu() {
     this.activeMenuId.set(null);
+    this.isMenuUpward.set(false); 
+  }
+
+  @HostListener('window:scroll')
+  onScroll() {
+    if (this.activeMenuId() !== null) {
+      this.activeMenuId.set(null);
+      this.isMenuUpward.set(false);
+    }
   }
 
   async exportarPDF() {
-    // Obtenemos los datos desde el AdminStore
     const categorias = this.categoriasOrdenadas(); 
     const todosLosProductos = this.adminStore.productos();
     const catalogo = this.adminStore.catalogo();

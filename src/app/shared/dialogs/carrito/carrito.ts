@@ -1,9 +1,11 @@
 import { Component, computed, inject, signal, effect } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CartService } from '@shared/services/cart.service';
+import { PedidoRealizadoService } from '@shared/services/pedido-realizado.service';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-carrito',
@@ -15,6 +17,8 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 export class Carrito {
   public adminStore = inject(AdminStoreService);
   public cartService = inject(CartService);
+  private pedidoRealizadoService = inject(PedidoRealizadoService);
+  private toastService = inject(ToastService);
 
   catalogo = this.adminStore.catalogo;
 
@@ -34,7 +38,6 @@ export class Carrito {
     });
   }
 
-  // Comparamos el mínimo contra el precio de los productos (con descuento de cupón)
   montoFaltante = computed(() => {
     const minimo = Number(this.catalogo()?.minimo_compra ?? 0);
     const precioProductos = this.cartService.priceAfterAllDiscounts();
@@ -76,6 +79,40 @@ export class Carrito {
   }
 
   finalizarPedido() {
+    if (this.cartService.totalItems() === 0) {
+      this.toastService.show('El carrito está vacío', 'error');
+      return;
+    }
+
+    if (this.cartService.priceAfterAllDiscounts() < (this.catalogo()?.minimo_compra ?? 0)) {
+      this.toastService.show('No superaste el mínimo de compra', 'error');
+      return;
+    }
+
+    if (!this.cartService.deliveryMethod()) {
+      this.toastService.show('Seleccioná un método de entrega', 'error');
+      document.getElementById('seccion-entrega')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!this.cartService.selectedPaymentMethod()) {
+      this.toastService.show('Seleccioná un método de pago', 'error');
+      document.getElementById('seccion-pago')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (this.nombreCliente().trim().length <= 3) {
+      this.toastService.show('Ingresá tu nombre y apellido', 'error');
+      document.getElementById('seccion-datos')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (this.cartService.deliveryMethod() === 'envio' && this.direccionEnvio().trim().length <= 5) {
+      this.toastService.show('Ingresá la dirección de envío', 'error');
+      document.getElementById('seccion-datos')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     const items = this.cartService.items();
     const envio = this.cartService.deliveryMethod() === 'envio';
     const pago = this.cartService.selectedPaymentMethod()?.nombre;
@@ -85,7 +122,7 @@ export class Carrito {
     mensaje += `*Cliente:* ${this.nombreCliente()}\n`;
 
     if (envio) {
-        mensaje += `*Dirección:* ${this.direccionEnvio()}\n`;
+      mensaje += `*Dirección:* ${this.direccionEnvio()}\n`;
     }
 
     mensaje += `\n--------------------------\n`;
@@ -119,5 +156,20 @@ export class Carrito {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
     
     window.open(url, '_blank');
+
+    const metodo = this.cartService.deliveryMethod() || 'retiro';
+
+    window.open(url, '_blank');
+
+    this.cartService.limpiarCarrito(true);
+
+    this.nombreCliente.set('');
+    this.direccionEnvio.set('');
+
+    this.cartService.close();
+
+    setTimeout(() => {
+      this.pedidoRealizadoService.open(metodo, url);
+    }, 500);
   }
 }

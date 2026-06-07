@@ -42,7 +42,7 @@
 
     <div class="pb-12"> 
         <div class="flex flex-col gap-3">
-            @for (producto of productos(); track producto.id) {
+            @for (producto of productosVisibles(); track producto.id) {
                 <app-product-card [producto]="producto"></app-product-card>
             } @empty {
                 <div class="flex flex-col items-center justify-center py-20 text-center">
@@ -53,6 +53,12 @@
                 </div>
             }
         </div>
+        
+        @if (productosVisibles().length < productos().length) {
+            <div class="py-6 flex justify-center">
+                <div class="size-6 border-2 border-brand-accent border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        }
     </div>
 </div>
 

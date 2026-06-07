@@ -52,7 +52,7 @@
 
                     <div>
                         <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 block mb-1">Repetir Contraseña</label>
-                        <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" 
+                        <input type="password"name="confirmPassword" [(ngModel)]="confirmPassword" (paste)="$event.preventDefault()"
                                class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text">
                     </div>
                 </div>
@@ -140,37 +140,59 @@
         }
 
         @if (pasoActual() === 3) {
-            <section class="animate-in fade-in slide-in-from-right-4 duration-500">
-                <div class="flex items-center gap-3 mb-5 border-b border-gray-50 pb-3">
-                    <div class="size-8 bg-brand-accent/10 rounded-xl flex items-center justify-center shrink-0">
-                        <span class="font-bold text-brand-accent">✓</span> 
+    <section class="animate-in fade-in slide-in-from-right-4 duration-500">
+        <div class="flex items-center gap-3 mb-5 border-b border-gray-50 pb-3">
+            <div class="size-8 bg-brand-accent/10 rounded-xl flex items-center justify-center shrink-0">
+                <span class="font-bold text-brand-accent">✓</span> 
+            </div>
+            <h2 class="text-lg font-black text-brand-text">Verificar Correo</h2>
+        </div>
+
+        <div class="text-center mb-8">
+            <p class="text-sm font-bold text-gray-400">Te enviamos un código de 6 dígitos a <br>
+                <span class="text-brand-text">{{vendedorReq.correo}}</span>
+            </p>
+        </div>
+
+        <div class="relative mb-8 group">
+            
+            <div class="flex justify-between gap-2 px-2">
+                @for (i of [0, 1, 2, 3, 4, 5]; track i) {
+                    <div [class.border-brand-accent]="codigoOTP.length === i"
+                         [class.ring-4]="codigoOTP.length === i"
+                         [class.ring-brand-accent/20]="codigoOTP.length === i"
+                         [class.border-gray-200]="codigoOTP.length !== i"
+                         class="relative w-12 h-14 sm:w-14 sm:h-16 flex items-center justify-center border-2 rounded-2xl text-2xl font-black text-brand-text bg-gray-50 transition-all pointer-events-none shadow-sm overflow-hidden">
+                        
+                        {{ codigoOTP[i] ? codigoOTP[i] : '' }}
+
+                        @if (codigoOTP.length === i) {
+                            <div class="absolute w-0.5 h-1/2 bg-brand-accent animate-pulse hidden group-focus-within:block rounded-full"></div>
+                        }
                     </div>
-                    <h2 class="text-lg font-black text-brand-text">Verificar Correo</h2>
-                </div>
+                }
+            </div>
+            
+            <input type="text" 
+                   name="codigoOTP" 
+                   [(ngModel)]="codigoOTP" 
+                   (ngModelChange)="codigoOTP.length === 6 ? otpInput.blur() : null"
+                   (keypress)="$event.charCode >= 48 && $event.charCode <= 57" 
+                   maxlength="6"
+                   inputmode="numeric" 
+                   pattern="[0-9]*"
+                   #otpInput
+                   class="absolute inset-0 w-full h-full opacity-0 cursor-text text-transparent caret-transparent bg-transparent outline-none">
+        </div>
 
-                <div class="text-center mb-6">
-                    <p class="text-sm font-bold text-gray-400">Te enviamos un código de 6 dígitos a <br>
-                        <span class="text-brand-text">{{vendedorReq.correo}}</span>
-                    </p>
-                </div>
-
-                <div class="mb-2">
-                    <input type="text" name="codigoOTP" [(ngModel)]="codigoOTP" maxlength="6" placeholder="000000"
-                           class="w-full text-center tracking-[1em] text-3xl py-4 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 font-black text-brand-text">
-                </div>
-
-                <div class="pt-4 mt-8 border-t border-gray-50 flex gap-3">
-                    <button type="button" (click)="volverPaso()" [disabled]="loading()"
-                            class="w-1/3 py-4 bg-gray-100 text-gray-500 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-gray-200 active:scale-[0.98] transition-all disabled:opacity-50">
-                        Volver
-                    </button>
-                    <button type="button" (click)="verificarYRegistrar()" [disabled]="loading() || codigoOTP.length !== 6"
-                            class="w-2/3 py-4 bg-brand-accent text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-brand-accent/90 active:scale-[0.98] transition-all shadow-md shadow-brand-accent/20 disabled:opacity-50">
-                        {{ loading() ? 'Creando...' : 'Verificar y Crear' }}
-                    </button>
-                </div>
-            </section>
-        }
+        <div class="pt-4 border-t border-gray-50">
+            <button type="button" (click)="verificarYRegistrar()" [disabled]="loading() || codigoOTP.length !== 6"
+                    class="w-full py-4 bg-brand-accent text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-brand-accent/90 active:scale-[0.98] transition-all shadow-lg shadow-brand-accent/20 disabled:opacity-50 disabled:shadow-none disabled:active:scale-100 disabled:cursor-not-allowed">
+                {{ loading() ? 'Creando...' : 'Verificar y Crear' }}
+            </button>
+        </div>
+    </section>
+}
     </form>
 </div>
 

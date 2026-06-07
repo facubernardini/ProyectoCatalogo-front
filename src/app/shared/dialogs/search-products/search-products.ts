@@ -35,9 +35,8 @@ export class SearchProducts {
     this.searchService.query.set(val);
   }
 
-  abrirProducto(producto: Producto) {
-    this.searchService.close();
-    this.selectorService.open(producto);
+  abrirProducto(producto: Producto, fromModal: boolean = false) {
+    this.selectorService.open(producto, fromModal);
   }
 
   getPrecioDesde(presentaciones: Presentacion[]): number {

@@ -6,7 +6,7 @@ import { Icon } from "@shared/components/icon";
 import { ProductPreviewService } from '@shared/services/product-preview.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { ProductoManagerService } from 'src/app/core/services/producto-manager.service'; // <-- INYECTAMOS EL MANAGER
+import { ProductoManagerService } from 'src/app/core/services/producto-manager.service';
 
 @Component({
   selector: 'app-product-preview',
@@ -16,7 +16,7 @@ import { ProductoManagerService } from 'src/app/core/services/producto-manager.s
 })
 export class ProductPreview {
   public productPreviewService = inject(ProductPreviewService);
-  public productoManager = inject(ProductoManagerService); // <-- MANAGER
+  public productoManager = inject(ProductoManagerService);
   
   private confirmService = inject(ConfirmService);
   private toastService = inject(ToastService);
@@ -47,6 +47,16 @@ export class ProductPreview {
     });
   }
 
+  onFocus(event: FocusEvent) {
+    const input = event.target as HTMLInputElement;
+  
+  // Usamos requestAnimationFrame para asegurar que el DOM 
+  // ya haya procesado el enfoque antes de mover el cursor
+  requestAnimationFrame(() => {
+    input.setSelectionRange(input.value.length, input.value.length);
+  });
+  }
+
   // --- NUEVO: PAUSAR / REANUDAR CON AUTO-GUARDADO ---
   async onToggleActivoPresentacion(producto: Producto, index: number) {
     const pres = producto.presentaciones[index];
@@ -65,10 +75,7 @@ export class ProductPreview {
     });
 
     if (confirmacion) {
-      // 1. Cambiamos el estado localmente
       pres.activo = !estaActiva;
-      
-      // 2. Guardamos en el backend silenciosamente (sin cerrar el modal)
       this.productoManager.guardar(producto, producto);
     }
   }

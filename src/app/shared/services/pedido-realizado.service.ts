@@ -1,32 +1,36 @@
 import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
-export class MenuLateralService {
+export class PedidoRealizadoService {
   isOpen = signal(false);
 
-  categoriaSeleccionada = signal<string>('todos');
+	metodoEntrega = signal<'envio' | 'retiro' | null>(null);
+  whatsappUrl = signal<string>('');
 
-  constructor() {
+	constructor() {
     window.addEventListener('popstate', () => {
-      if (this.isOpen() && history.state?.modal !== 'menu-lateral') {
+      if (this.isOpen() && history.state?.modal !== 'pedido-realizado') {
         this.cerrarInterno();
       }
     });
   }
 
-  open() { 
+  open(metodo: 'envio' | 'retiro', url: string) { 
     if (this.isOpen()) return;
+
+    this.metodoEntrega.set(metodo);
+    this.whatsappUrl.set(url);
 
     this.isOpen.set(true); 
     document.body.style.overflow = 'hidden';
 
-    history.pushState({ modal: 'menu-lateral' }, '');
+    history.pushState({ modal: 'pedido-realizado' }, '');
   }
-
+  
   close() { 
     this.cerrarInterno();
 
-    if (history.state?.modal === 'menu-lateral') {
+    if (history.state?.modal === 'pedido-realizado') {
       history.back();
     }
   }
@@ -34,12 +38,7 @@ export class MenuLateralService {
   private cerrarInterno() {
     if (!this.isOpen()) return;
 
-    this.isOpen.set(false);
+    this.isOpen.set(false); 
     document.body.style.overflow = 'auto';
-  }
-
-  seleccionar(nombre: string) {
-    this.categoriaSeleccionada.set(nombre);
-    this.close();
   }
 }

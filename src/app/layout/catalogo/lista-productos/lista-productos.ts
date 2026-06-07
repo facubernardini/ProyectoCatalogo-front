@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, signal, HostListener } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { ProductCard } from "./product-card/product-card";
@@ -21,6 +21,9 @@ export class ListaProductos {
   categoriaSeleccionada = signal<string>('todos');
   ordenSeleccionado = signal<OrdenCriterio>('default');
   mostrarModalFiltros = signal(false);
+
+  paginaActual = signal(1);
+  itemsPorPagina = 10;
 
   productos = computed(() => {
     const cat = this.categoriaSeleccionada();
@@ -46,6 +49,13 @@ export class ListaProductos {
     });
   });
 
+  productosVisibles = computed(() => {
+    const todosLosProductos = this.productos();
+    const limite = this.paginaActual() * this.itemsPorPagina;
+    
+    return todosLosProductos.slice(0, limite);
+  });
+
   categoriasOrdenadas = computed(() => {
     const lista = this.categorias();
     
@@ -56,23 +66,63 @@ export class ListaProductos {
     });
   });
 
+  @HostListener('window:scroll')
+  onScroll() {
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const scrollThreshold = document.documentElement.scrollHeight - 200;
+
+    if (scrollPosition >= scrollThreshold) {
+      this.cargarMas();
+    }
+  }
+
+  cargarMas() {
+    const totalMostrados = this.paginaActual() * this.itemsPorPagina;
+    const totalDisponibles = this.productos().length;
+
+    if (totalMostrados < totalDisponibles) {
+      this.paginaActual.update(p => p + 1);
+    }
+  }
+
+  @HostListener('window:popstate')
+  onPopState() {
+    if (this.mostrarModalFiltros() && history.state?.modal !== 'filtros-modal') {
+      this.cerrarFiltrosInterno();
+    }
+  }
+
   seleccionarCategoria(nombre: string) {
     this.categoriaSeleccionada.set(nombre);
-  }
-
-  abrirFiltros() {
-    this.mostrarModalFiltros.set(true);
-    document.body.style.overflow = 'hidden';
-  }
-
-  cerrarFiltros() {
-    this.mostrarModalFiltros.set(false);
-    document.body.style.overflow = 'auto';
+    this.paginaActual.set(1);
   }
 
   aplicarOrden(criterio: OrdenCriterio) {
     this.ordenSeleccionado.set(criterio);
+    this.paginaActual.set(1);
     this.cerrarFiltros();
   }
 
+  abrirFiltros() {
+    if (this.mostrarModalFiltros()) return;
+
+    this.mostrarModalFiltros.set(true);
+    document.body.style.overflow = 'hidden';
+    history.pushState({ modal: 'filtros-modal' }, '');
+  }
+
+  cerrarFiltros() {
+    this.cerrarFiltrosInterno();
+
+    if (history.state?.modal === 'filtros-modal') {
+      history.back();
+    }
+  }
+
+  private cerrarFiltrosInterno() {
+    if (!this.mostrarModalFiltros()) return;
+
+    this.mostrarModalFiltros.set(false);
+    document.body.style.overflow = 'auto';
+  }
 }

@@ -4,22 +4,47 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class SearchService {
-    isOpen = signal(false);
-    query = signal('');
+  isOpen = signal(false);
+  query = signal('');
 
-    debouncedQuery = toSignal(
-        toObservable(this.query).pipe(
-            debounceTime(350), 
-            distinctUntilChanged()
-        ),
-        { initialValue: '' }
-    );
+  debouncedQuery = toSignal(
+    toObservable(this.query).pipe(
+      debounceTime(350), 
+      distinctUntilChanged()
+    ),
+    { initialValue: '' }
+  );
 
-    open() { 
-        this.isOpen.set(true); 
+  constructor() {
+    window.addEventListener('popstate', () => {
+      if (this.isOpen() && history.state?.modal !== 'search-modal') {
+        this.cerrarInterno();
+      }
+    });
+  }
+
+  open() {
+		if (this.isOpen()) return;
+    this.isOpen.set(true);
+
+		document.body.style.overflow = 'hidden';
+
+    history.pushState({ modal: 'search-modal' }, '');
+  }
+
+  close() { 
+    this.cerrarInterno();
+    
+    if (history.state?.modal === 'search-modal') {
+      history.back();
     }
-    close() { 
-        this.isOpen.set(false);
-        this.query.set('');
-    }
+  }
+
+  private cerrarInterno() {
+    if (!this.isOpen()) return;
+    this.isOpen.set(false);
+    this.query.set('');
+
+		document.body.style.overflow = 'auto';
+  }
 }

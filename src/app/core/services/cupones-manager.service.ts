@@ -99,11 +99,13 @@ export class CuponManagerService {
     // Extraemos los datos base, ignorando ID y fechas
     const { id, createdAt, updatedAt, ...datosBase } = cupon as any;
 
+    const nuevoCodigo = `${cupon.codigo_cupon}-${this.generarCodigoAleatorio()}`;
+
     const cuponDuplicado = {
       ...datosBase,
       catalogo_id: catalogoId,
-      codigo_cupon: `${cupon.codigo_cupon}-COPIA`,
-      activo: false, // Por seguridad lo creamos pausado
+      codigo_cupon: nuevoCodigo,
+      activo: false,
     };
 
     this.isLoading.set(true);
@@ -119,6 +121,15 @@ export class CuponManagerService {
         this.toastService.show('Hubo un error al intentar duplicar el cupón', 'error');
       }
     });
+  }
+
+  private generarCodigoAleatorio(): string {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let resultado = '';
+    for (let i = 0; i < 3; i++) {
+      resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    return resultado;
   }
 
   // --- CREAR O EDITAR ---

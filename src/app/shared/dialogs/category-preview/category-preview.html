@@ -11,10 +11,8 @@
 
             @if (categoryPreviewService.selectedCategory(); as cat) {
                 
-                <div class="mb-6 shrink-0">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Nombre de la Categoría</label>
-                    
-                    <div class="relative mt-1 w-full">
+                <div class="mb-6 shrink-0">                    
+                    <div class="relative w-full">
                         <input type="text" 
                             [(ngModel)]="cat.nombre" 
                             placeholder="Ej: Promociones"

@@ -96,11 +96,11 @@
                     }
                 </div>
 
-                <div class="mt-8">
+                <div class="mt-8" id="seccion-entrega">
                     <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Cómo lo recibís?</h3>
                     @if (catalogo()?.ofrece_envio) {
                         <div class="grid grid-cols-2 gap-3 mb-6">
-                            <button (click)="seleccionarMetodo('retiro', seccionCupon)"
+                            <button (click)="seleccionarMetodo('retiro', seccionPago)"
                                 [class.border-brand-accent]="cartService.deliveryMethod() === 'retiro'"
                                 [class.border-gray-100]="cartService.deliveryMethod() !== 'retiro'"
                                 [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'retiro'"
@@ -111,7 +111,7 @@
                                     <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
                                 </div>
                             </button>
-                            <button (click)="seleccionarMetodo('envio', seccionCupon)"
+                            <button (click)="seleccionarMetodo('envio', seccionPago)"
                                 [class.border-brand-accent]="cartService.deliveryMethod() === 'envio'"
                                 [class.border-gray-100]="cartService.deliveryMethod() !== 'envio'"
                                 [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'envio'"
@@ -135,43 +135,7 @@
                     }
                 </div>
 
-                <div class="mt-8" #seccionCupon>
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Tenés un cupón?</h3>
-                    @if (!cartService.appliedCupon()) {
-                        <div class="flex gap-2">
-                            <input type="text" #cuponInput placeholder="Ej: BIENVENIDA20"
-                                class="flex-1 p-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold uppercase placeholder:capitalize placeholder:font-medium">
-                            <button (click)="cartService.aplicarCupon(cuponInput.value, catalogo()?.id || 0)"
-                                class="px-6 bg-brand-accent text-white font-bold rounded-2xl active:scale-95 transition-transform">
-                                Aplicar
-                            </button>
-                        </div>
-                    } @else {
-                        <div class="p-4 bg-green-50 border-2 border-dashed border-green-200 rounded-2xl flex items-center justify-between animate-in zoom-in-95 duration-200">
-                            <div class="flex items-center gap-3">
-                                <div class="size-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-sm">
-                                    <app-icon name="check" classes="size-5 fill-current" />
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-black text-green-600 uppercase tracking-tighter leading-none mb-1">Cupón activo</p>
-                                    <p class="text-xs font-black text-brand-text uppercase flex items-center gap-1">
-                                        {{ cartService.appliedCupon()?.mensaje || 'Descuento aplicado' }}
-                                        @if (cartService.appliedCupon()?.es_porcentaje) {
-                                            <span class="bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded-lg text-[11px]">
-                                                {{ cartService.appliedCupon()?.descuento }}% OFF
-                                            </span>
-                                        }
-                                    </p>
-                                </div>
-                            </div>
-                            <button (click)="cartService.removerCupon()" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                                <app-icon name="trash" classes="size-5 fill-current" />
-                            </button>
-                        </div>
-                    }
-                </div>
-
-                <div class="mt-8">
+                <div class="mt-8" #seccionPago id="seccion-pago">
                     <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Elegí como pagar</h3>
                     <div class="grid grid-cols-3 gap-3">
                         @for (pago of catalogo()?.medios_pago; track pago.id) {
@@ -199,7 +163,7 @@
                     </div>
                 </div>
 
-                <div class="mt-8" #seccionDatos>
+                <div class="mt-8" #seccionDatos id="seccion-datos">
                     <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Tus datos</h3>
                     <div class="flex flex-col gap-4">
                         <div class="flex flex-col gap-1.5">
@@ -218,6 +182,44 @@
                             </div>
                         }
                     </div>
+                </div>
+
+                <div class="mt-8" #seccionCupon>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Tenés un cupón?</h3>
+                    @if (!cartService.appliedCupon()) {
+                        <div class="flex gap-2">
+                            <input type="text" #cuponInput (input)="0" placeholder="Ej: BIENVENIDA20"
+                                class="flex-1 p-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold uppercase placeholder:capitalize placeholder:font-medium">
+                            
+                            <button (click)="cartService.aplicarCupon(cuponInput.value, catalogo()?.id || 0)"
+                                [disabled]="!cuponInput.value.trim()"
+                                class="px-6 bg-brand-accent text-white font-bold rounded-2xl active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100">
+                                Aplicar
+                            </button>
+                        </div>
+                    } @else {
+                        <div class="p-4 bg-green-50 border-2 border-dashed border-green-200 rounded-2xl flex items-center justify-between animate-in zoom-in-95 duration-200">
+                            <div class="flex items-center gap-3">
+                                <div class="size-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-sm">
+                                    <app-icon name="check" classes="size-5 fill-current" />
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-green-600 uppercase tracking-tighter leading-none mb-1">Cupón activo</p>
+                                    <p class="text-xs font-black text-brand-text uppercase flex items-center gap-1">
+                                        {{ cartService.appliedCupon()?.mensaje || 'Descuento aplicado' }}
+                                        @if (cartService.appliedCupon()?.es_porcentaje) {
+                                            <span class="bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded-lg text-[11px]">
+                                                {{ cartService.appliedCupon()?.descuento }}% OFF
+                                            </span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                            <button (click)="cartService.removerCupon()" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                                <app-icon name="trash" classes="size-5 fill-current" />
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -328,11 +330,12 @@
                 </div>
 
                 <button (click)="finalizarPedido()" 
-                        [disabled]="!puedeFinalizar()"
-                        class="relative overflow-hidden w-full py-4 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed group active:scale-[0.98]">
+                    class="relative overflow-hidden w-full py-4 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all group active:scale-[0.98]">
+                    
                     @if (puedeFinalizar()) {
                         <div class="absolute inset-0 h-full bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-shimmer pointer-events-none"></div>
                     }
+                    
                     <div class="relative z-10 flex items-center justify-center gap-3">
                         <app-icon name="whatsapp" classes="size-6 fill-current" />
                         <span>Confirmar por WhatsApp</span>

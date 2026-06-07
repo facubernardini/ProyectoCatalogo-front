@@ -61,7 +61,7 @@
                     [class.pointer-events-none]="isBuscando()">
                     
                     @for (prod of resultados(); track prod.id) {
-                        <div (click)="abrirProducto(prod)" 
+                        <div (click)="abrirProducto(prod, true)" 
                             class="flex items-center gap-4 p-2 bg-white rounded-2xl active:scale-[0.98] transition-all border border-gray-100 shadow-sm hover:shadow-md cursor-pointer">
                             
                             <div class="relative size-16 rounded-xl bg-gray-50 overflow-hidden shrink-0 border border-gray-100/50">
