@@ -34,9 +34,12 @@
 				(onCancel)="resetearValores()">
 				<section class="pt-3 border-t border-brand-bg space-y-5">
 					<div class="flex items-center gap-4">
-						<div class="size-20 bg-brand-bg rounded-3xl overflow-hidden border-2 border-gray-100 flex items-center justify-center shrink-0">
-							@if (catalogo()?.logo_tienda) {
-								<img [src]="catalogo()?.logo_tienda" class="w-full h-full object-cover">
+						<input type="file" #fileInput (change)="onLogoChange($event)" accept="image/*" class="hidden">
+						<div class="size-20 bg-brand-bg rounded-3xl overflow-hidden border-2 border-gray-100 flex items-center justify-center shrink-0 cursor-pointer hover:opacity-80"
+							(click)="fileInput.click()">
+							
+							@if (logoPreview || catalogo()?.logo_tienda) {
+								<img [src]="logoPreview || catalogo()?.logo_tienda" class="w-full h-full object-cover">
 							} @else {
 								<app-icon name="store" classes="size-8 text-brand-accent/40" />
 							}

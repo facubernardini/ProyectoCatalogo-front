@@ -8,6 +8,7 @@ import { Catalogo, HorarioDia, TemaCatalogo } from 'src/app/core/models/catalogo
 import { FormsModule } from '@angular/forms';
 import { ConfigSection } from "./config-section/config-section";
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
+import { Observable, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-mi-tienda',
@@ -24,6 +25,11 @@ export class MiTienda {
   
   catalogo = signal<Catalogo | null>(null);
   loading = signal(false);
+
+  logoPreview: string | null = null;
+  imagenLogoPendiente: File | null = null;
+
+  MAX_SIZE_MB = 10;
 
   temasDisponibles = [
     { id: TemaCatalogo.MIDNIGHT, nombre: 'Midnight', bg: '#D1E9F6', accent: '#2E5A88' },
@@ -100,6 +106,24 @@ export class MiTienda {
     });
   }
 
+  onLogoChange(event: any) {
+    const file = event.target.files[0];
+    
+    if (!file) return;
+
+    const MAX_SIZE_BYTES = this.MAX_SIZE_MB * 1024 * 1024;
+
+    if (file.size > MAX_SIZE_BYTES) {
+      this.toastService.show(`La imagen es demasiado grande. Máximo ${this.MAX_SIZE_MB}MB.`, 'error');
+    
+      event.target.value = ''; 
+      return;
+    }
+
+    this.imagenLogoPendiente = file;
+    this.logoPreview = URL.createObjectURL(file);
+  }
+
   async guardarCambios(section: ConfigSection) {
     const dataActual = this.catalogo();
 
@@ -130,21 +154,40 @@ export class MiTienda {
     }
     
     this.loading.set(true);
-    
-    const payload = {
-      ...dataActual,
-      medios_pago_ids: dataActual.medios_pago.map(m => m.id)
-    };
-    
-    this.catalogoService.updateCatalogo(this.adminStore.catalogoId(), payload).subscribe({
-      next: (res) => {
+
+    const upload$: Observable<{ url: string | null }> = this.imagenLogoPendiente 
+      ? this.catalogoService.uploadLogoTienda(this.imagenLogoPendiente, dataActual.nombre_tienda) 
+      : of({ url: null });
+
+    upload$.pipe(
+      switchMap((res: { url: string | null }) => {
+        if (res.url) {
+          dataActual.logo_tienda = res.url;
+        }
+
+        const payload = {
+          ...dataActual,
+          medios_pago_ids: dataActual.medios_pago.map(m => m.id)
+        };
+        
+        return this.catalogoService.updateCatalogo(this.adminStore.catalogoId(), payload);
+      })
+    ).subscribe({
+      next: (res: Catalogo) => {
         this.adminStore.catalogo.set(res);
         this.catalogo.set(structuredClone(res));
         this.toastService.show('Cambios guardados');
+        
+        this.imagenLogoPendiente = null;
+        this.logoPreview = null;
+        
         section.forceClose();
         this.loading.set(false);
       },
-      error: () => this.loading.set(false)
+      error: () => {
+        this.toastService.show('Error al guardar los cambios', 'error');
+        this.loading.set(false);
+      }
     });
   }
 

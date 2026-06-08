@@ -3,7 +3,7 @@ import { AdminStoreService } from './admin-store.service';
 import { ToastService } from './toast.service';
 import { ConfirmService } from './confirm.service';
 import { Producto } from '../models/producto.model';
-import { finalize } from 'rxjs';
+import { finalize, map, Observable, of, Subject, switchMap } from 'rxjs';
 import { ProductoService } from '../services-backend/productos.ServiceBackend';
 
 @Injectable({ providedIn: 'root' })
@@ -14,6 +14,9 @@ export class ProductoManagerService {
   private confirmService = inject(ConfirmService);
 
   public isLoading = signal(false);
+
+  private operationSuccess = new Subject<void>();
+  public operationSuccess$ = this.operationSuccess.asObservable();
 
   // --- ELIMINAR ---
   async eliminar(producto: Producto) {
@@ -161,29 +164,45 @@ export class ProductoManagerService {
   }
 
   // --- CREAR O EDITAR ---
-  guardar(productData: any, currentProduct?: Producto | null) {
+  guardar(productData: any, currentProduct?: Producto | null, imagenFile?: File | null) {
     const catalogoId = this.adminStore.catalogo()?.id;
+    const catalogo = this.adminStore.catalogo();
 
-    if (!catalogoId) {
-      console.error('Error: No se pudo obtener el ID del catálogo');
+    if (!catalogo || !catalogo.id) {
+      this.toastService.show('Error: No se pudo obtener el catálogo', 'error');
       return;
     }
 
     this.isLoading.set(true);
-    
-    const finalData = { 
-      ...productData, 
-      catalogo_id: catalogoId 
-    };
 
-    const request = currentProduct && currentProduct.id
-      ? this.productoBackend.updateProducto(currentProduct.id, finalData)
-      : this.productoBackend.createProducto(finalData);
+    // Creamos un observable para la subida de la imagen.
+    // Si NO hay imagen, usamos 'of(null)' para continuar inmediatamente.
+    const uploadImage$: Observable<string | null> = imagenFile 
+    ? this.subirImagenR2(imagenFile, catalogo.nombre_tienda) 
+    : of(null);
 
-    request.pipe(
+    uploadImage$.pipe(
+      // switchMap espera a que termine la subida de imagen, toma la URL y ejecuta el guardado
+      switchMap((urlImagen: string | null) => {
+
+        // Si subimos una imagen nueva, pisamos la propiedad imagen
+        if (urlImagen) {
+          productData.imagen = urlImagen;
+        }
+
+        const finalData = { 
+          ...productData, 
+          catalogo_id: catalogoId 
+        };
+
+        // Decidimos si es un Update o un Create
+        return currentProduct && currentProduct.id
+          ? this.productoBackend.updateProducto(currentProduct.id, finalData)
+          : this.productoBackend.createProducto(finalData);
+      }),
       finalize(() => this.isLoading.set(false))
     ).subscribe({
-      next: (res) => {
+      next: (res: Producto) => {
         if (currentProduct) {
           this.adminStore.updateProductoEnLista(res);
           this.toastService.show(`Producto actualizado`);
@@ -192,8 +211,19 @@ export class ProductoManagerService {
           this.toastService.show(`Producto creado con éxito`);
         }
         this.adminStore.refrescarCategorias();
+        this.operationSuccess.next();
       },
-      error: (err) => console.error('Error al guardar:', err)
+      error: (err: any) => {
+        console.error('Error al guardar:', err);
+        this.toastService.show('Hubo un error al guardar el producto', 'error');
+      }
     });
+  }
+
+  // SUBIR FOTO DE PRODUCTO
+  private subirImagenR2(file: File, nombreCatalogo: string) {
+    return this.productoBackend.uploadImagen(file, nombreCatalogo).pipe(
+        map(res => res.url) 
+    );
   }
 }

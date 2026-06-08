@@ -38,6 +38,16 @@ export class MenuLateral {
 
   selected = computed(() => this.menuService.categoriaSeleccionada());
 
+  tieneDestacados = computed(() => {
+    return this.adminStore.productos().some(producto => producto.destacado);
+  });
+
+  tieneOfertas = computed(() => {
+    return this.adminStore.productos().some(producto => 
+      producto.presentaciones?.some(pres => pres.precio_descuento && pres.precio_descuento > 0)
+    );
+  });
+
   seleccionarYFechar(nombre: string) {
     this.menuService.close(); 
 

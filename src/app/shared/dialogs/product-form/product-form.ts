@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -31,6 +31,11 @@ export class ProductForm {
       { unidad_venta: '', precio: null, precio_descuento: null, activo: true }
     ]
   };
+
+  public imagenPendiente: File | null = null;
+  public imagenPreviewTemporal = signal<string | null>(null);
+
+  MAX_SIZE_MB = 10;
 
   constructor() {
     effect(() => {
@@ -101,20 +106,30 @@ export class ProductForm {
       imagen: '',
       destacado: false,
       categorias_ids: [],
-      tags_ids: [], // Limpiamos los tags al resetear
+      tags_ids: [],
       presentaciones: [{ unidad_venta: '', precio: null, precio_descuento: null, activo: true }]
     };
+
+    this.imagenPendiente = null;
+    this.imagenPreviewTemporal.set(null);
   }
 
   onFileChange(event: any) {
     const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.producto.imagen = reader.result as string;
-      };
-      reader.readAsDataURL(file);
+    
+    if (!file) return;
+
+    const MAX_SIZE_BYTES = this.MAX_SIZE_MB * 1024 * 1024;
+
+    if (file.size > MAX_SIZE_BYTES) {
+      this.toastService.show(`La imagen es demasiado grande. Máximo ${this.MAX_SIZE_MB}MB.`, 'error');
+      
+      event.target.value = ''; 
+      return;
     }
+
+    this.imagenPendiente = file;
+    this.imagenPreviewTemporal.set(URL.createObjectURL(file));
   }
 
   agregarPresentacion() {
@@ -149,8 +164,7 @@ export class ProductForm {
   }
 
   guardar() {
-    this.productFormService.save(this.producto);
-    this.productFormService.close();
+    this.productFormService.save(this.producto, this.imagenPendiente);
   }
 
   get esFormularioInvalido(): boolean {

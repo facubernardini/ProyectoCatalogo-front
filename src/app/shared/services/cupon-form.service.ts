@@ -109,19 +109,6 @@ export class CuponFormService {
     });
   }
 
-  delete(cupon: Cupon) {
-    const currentCupon = this.editingCupon();
-    
-    // Verificamos por seguridad que el ID coincida (o si lo llamaron directamente desde la tabla)
-    const cuponABorrar = cupon || currentCupon;
-    
-    if (cuponABorrar) {
-      this.cuponManager.eliminar(cuponABorrar, () => {
-        this.close();
-      });
-    }
-  }
-
   cambiarTipoDescuento(esPorcentaje: boolean) {
     const dataActual = this.formData();
     

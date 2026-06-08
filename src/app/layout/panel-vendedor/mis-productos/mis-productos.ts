@@ -149,6 +149,8 @@ export class MisProductos {
       this.activeMenuId.set(null);
       this.isMenuUpward.set(false);
     }
+
+    this.isCategoriaDropdownOpen.set(false);
   }
 
   async exportarPDF() {

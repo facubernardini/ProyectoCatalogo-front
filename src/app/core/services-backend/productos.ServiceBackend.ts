@@ -32,4 +32,12 @@ export class ProductoService {
 	deleteProducto(id: number): Observable<void> {
 		return this.http.delete<void>(`${this.API_URL}/seller/productos/${id}`);
 	}
+
+	uploadImagen(file: File, nombreCatalogo: string): Observable<{ url: string }> {
+		const formData = new FormData();
+		formData.append('nombreCatalogo', nombreCatalogo);
+		formData.append('foto', file);
+		
+		return this.http.post<{ url: string }>(`${this.API_URL}/seller/productos/upload-imagen`, formData);
+	}
 }

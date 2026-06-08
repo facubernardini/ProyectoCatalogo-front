@@ -12,6 +12,12 @@ export class ProductFormService {
   
   editingProduct = signal<Producto | null>(null);
 
+  constructor() {
+    this.productManager.operationSuccess$.subscribe(() => {
+      this.close();
+    });
+  }
+
   openCreate() {
     this.editingProduct.set(null);
     this.isOpen.set(true);
@@ -30,16 +36,10 @@ export class ProductFormService {
     document.body.style.overflow = 'auto';
   }
 
-  save(productData: any) {
-    this.productManager.guardar(productData, this.editingProduct());
-  }
-
-  delete(id: number) {
+  save(productData: any, imagenFile?: File | null) {
     const currentProduct = this.editingProduct();
     
-    if (currentProduct && currentProduct.id === id) {
-      this.productManager.eliminar(currentProduct);
-      this.close();
-    }
+    this.productManager.guardar(productData, currentProduct, imagenFile);
   }
+
 }
