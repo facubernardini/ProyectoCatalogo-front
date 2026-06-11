@@ -1,0 +1,11 @@
+<div class="fixed inset-0 pointer-events-none z-999 overflow-hidden">
+    @for (p of particulas; track $index) {
+    <div 
+        class="absolute top-[-10%] w-2.5 h-5 rounded-sm animate-confetti-fall"
+        [style.left.%]="p.left"
+        [style.background-color]="p.color"
+        [style.animation-delay.ms]="p.delay"
+        [style.animation-duration.ms]="p.duration"
+    ></div>
+    }
+</div>

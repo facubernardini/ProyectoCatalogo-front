@@ -129,16 +129,18 @@ export class CartService {
     this.catalogConfig.set({ costoEnvio, envioGratisDesde, descuentoEfectivo });
   }
 
-  agregarProducto(producto: Producto, pres: Presentacion) {
+  agregarProducto(producto: Producto, pres: Presentacion, cantidadAgregada: number = 1) {
     const precioEfectivo = pres.precio_descuento ?? pres.precio;
 
     this.cartItems.update((prev) => {
       const existe = prev.find((i) => i.presentacionId === pres.id);
+      
       if (existe) {
         return prev.map((i) =>
-          i.presentacionId === pres.id ? { ...i, cantidad: i.cantidad + 1 } : i
+          i.presentacionId === pres.id ? { ...i, cantidad: i.cantidad + cantidadAgregada } : i
         );
       }
+      
       return [
         ...prev,
         {
@@ -149,11 +151,12 @@ export class CartService {
           precio: precioEfectivo,
           precio_base: Number(pres.precio),
           imagen: producto.imagen,
-          cantidad: 1,
+          cantidad: cantidadAgregada,
         },
       ];
     });
-    this.toastService.show(`${producto.nombre} agregado al carrito 🛒`);
+
+    this.toastService.show(`${cantidadAgregada}x ${producto.nombre} agregado al carrito 🛒`);
   }
 
   sumarUno(presentacionId: number) {

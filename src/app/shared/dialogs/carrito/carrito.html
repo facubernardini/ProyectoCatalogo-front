@@ -53,46 +53,60 @@
                  
                 <div class="flex flex-col gap-4">
                     @for (item of cartService.items(); track item.presentacionId) {
-                    <div class="flex items-center gap-3">
-                        <div class="relative shrink-0">
-                            <img [src]="item.imagen || 'https://placehold.co/100x100?text=%F0%9F%93%A6'"
-                                class="size-14 rounded-xl object-cover bg-brand-bg">
-                            @if (item.precio < item.precio_base) { 
-                                @let ahorro = getPorcentaje(item.precio_base, item.precio);
-                                <span class="absolute -top-1.5 -left-1.5 bg-green-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg shadow-sm border border-white">
-                                    {{ ahorro }}%
-                                </span>
-                            }
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-brand-text truncate leading-tight">{{ item.nombre }}</h4>
-                            <p class="text-[10px] text-gray-400">{{ item.unidad }}</p>
-                            <div class="flex items-center gap-1.5 mt-0.5">
+                        <div class="flex items-center gap-3">
+                            <div class="relative shrink-0">
+                                <img [src]="item.imagen || 'https://placehold.co/100x100?text=%F0%9F%93%A6'"
+                                    class="size-14 rounded-xl object-cover bg-brand-bg">
                                 @if (item.precio < item.precio_base) { 
-                                    <span class="text-[12px] text-gray-400 line-through">${{ item.precio_base }}</span>
-                                    <span class="text-sm font-bold text-brand-accent">${{ item.precio }}</span>
-                                } @else {
-                                    <span class="text-sm font-bold text-brand-accent">${{ item.precio }}</span>
+                                    @let ahorro = getPorcentaje(item.precio_base, item.precio);
+                                    <span class="absolute -top-1.5 -left-1.5 bg-green-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg shadow-sm border border-white">
+                                        {{ ahorro }}%
+                                    </span>
                                 }
-                                <span class="text-xs text-gray-400">c/u</span>
+                            </div>
+                            
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-brand-text truncate leading-tight">{{ item.nombre }}</h4>
+                                <p class="text-[12px] text-gray-500">{{ item.unidad }}</p>
+                                
+                                <div class="flex flex-col mt-0.5">
+                                    <!-- Fila principal: Subtotal de los productos multiplicados -->
+                                    <div class="flex items-center gap-1.5">
+                                        @if (item.precio < item.precio_base) { 
+                                            <span class="text-[12px] text-gray-400 line-through">${{ item.precio_base * item.cantidad }}</span>
+                                            <span class="text-sm font-bold text-brand-accent">${{ item.precio * item.cantidad }}</span>
+                                        } @else {
+                                            <span class="text-sm font-bold text-brand-accent">${{ item.precio * item.cantidad }}</span>
+                                        }
+                                        @if (item.cantidad === 1) {
+                                            <span class="text-xs text-gray-400">c/u</span>
+                                        }
+                                    </div>
+
+                                    @if (item.cantidad > 1) {
+                                        <span class="text-[10px] text-gray-400 font-medium">
+                                            ${{ item.precio }} c/u
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 bg-gray-100 p-1 rounded-xl">
+                                <button (click)="cartService.restarUno(item.presentacionId)"
+                                    class="size-8 flex items-center justify-center bg-white rounded-lg shadow-sm active:scale-90 transition-transform">
+                                    @if (item.cantidad === 1) {
+                                        <app-icon name="trash" classes="size-4 fill-current text-red-500 animate-in zoom-in duration-200" />
+                                    } @else {
+                                        <app-icon name="remove" classes="size-4 fill-current text-brand-text" />
+                                    }
+                                </button>
+                                <span class="font-black text-brand-text min-w-5 text-center">{{ item.cantidad }}</span>
+                                <button (click)="cartService.sumarUno(item.presentacionId)"
+                                    class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-transform text-white">
+                                    <app-icon name="add-producto" classes="size-4 fill-current" />
+                                </button>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3 bg-gray-100 p-1 rounded-xl">
-                            <button (click)="cartService.restarUno(item.presentacionId)"
-                                class="size-8 flex items-center justify-center bg-white rounded-lg shadow-sm active:scale-90 transition-transform">
-                                @if (item.cantidad === 1) {
-                                    <app-icon name="trash" classes="size-4 fill-current text-red-500 animate-in zoom-in duration-200" />
-                                } @else {
-                                    <app-icon name="remove" classes="size-4 fill-current text-brand-text" />
-                                }
-                            </button>
-                            <span class="font-black text-brand-text min-w-5 text-center">{{ item.cantidad }}</span>
-                            <button (click)="cartService.sumarUno(item.presentacionId)"
-                                class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-transform text-white">
-                                <app-icon name="add-producto" classes="size-4 fill-current" />
-                            </button>
-                        </div>
-                    </div>
                     }
                 </div>
 
@@ -242,7 +256,7 @@
                                 <p class="text-[11px] font-bold uppercase tracking-tight" 
                                     [class]="cartService.esEnvioGratis() ? 'text-green-700' : 'text-blue-700'">
                                     @if (cartService.esEnvioGratis()) {
-                                        ¡Llegaste! Tenés envío gratis 🚀
+                                        ¡Llegaste! Tenés envío gratis
                                     } @else {
                                         Te faltan <span class="text-sm font-black">${{ cartService.faltanteEnvioGratis() }}</span> para el envío gratis
                                     }

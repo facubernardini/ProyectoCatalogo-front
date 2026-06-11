@@ -29,11 +29,26 @@
         <label class="block text-sm font-semibold text-brand-text mb-2">Contraseña</label>
         <div class="relative">
           <input 
-            type="password" 
+            [type]="showPassword() ? 'text' : 'password'" 
             formControlName="password" 
             placeholder="••••••••"
-            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white"
+            class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white"
+            (input)="loginForm.get('password')?.value === '' ? showPassword.set(false) : null"
           >
+          
+          @if (loginForm.get('password')?.value?.length > 0) {
+            <button 
+              type="button" 
+              (click)="showPassword.set(!showPassword())"
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none animate-in fade-in duration-200"
+              aria-label="Alternar visibilidad de la contraseña"
+            >
+              <app-icon 
+                [name]="showPassword() ? 'eye-off' : 'eye'" 
+                classes="size-5 fill-current" 
+              />
+            </button>
+          }
         </div>
       </div>
 

@@ -24,8 +24,8 @@ export class Register {
   private router = inject(Router);
   
   public loading = signal(false);
+  showConfirmPassword = signal(false);
   
-  // Ahora soportamos 3 pasos
   public pasoActual = signal<1 | 2 | 3>(1);
 
   public rubros = signal<Rubro[]>([]);
@@ -36,7 +36,6 @@ export class Register {
   public apellido = '';
   public confirmPassword = '';
   
-  // Variable nueva para atar al input de 6 dígitos
   public codigoOTP = '';
 
   public vendedorReq: RegistroVendedorRequest = {
@@ -59,6 +58,7 @@ export class Register {
 
   ngOnInit() {
     this.cargarRubros();
+    this.recuperarProgreso();
   }
 
   cargarRubros() {
@@ -103,6 +103,8 @@ export class Register {
 
     this.pasoActual.set(2);
     history.pushState({ paso: 2 }, '', '');
+
+    this.guardarProgreso();
   }
 
   volverPaso() {
@@ -111,7 +113,9 @@ export class Register {
     } else {
       this.pasoActual.set(1);
     }
+
     history.back(); 
+    this.guardarProgreso();
   }
 
   generarSlug() {
@@ -158,6 +162,8 @@ export class Register {
         
         this.pasoActual.set(3);
         history.pushState({ paso: 3 }, '', '');
+
+        this.guardarProgreso();
       },
       error: (err) => {
         this.loading.set(false);
@@ -201,7 +207,9 @@ export class Register {
         this.loading.set(false);
         this.toastService.show(res.mensaje || '¡Tienda creada con éxito!');
         
-        this.router.navigate(['/login']); 
+        this.limpiarProgreso();
+        
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.loading.set(false);
@@ -209,5 +217,46 @@ export class Register {
         this.toastService.show(mensajeError, 'error');
       }
     });
+  }
+
+  // Storage por seguridad si recarga la pagina
+  private guardarProgreso() {
+    const progreso = {
+      pasoActual: this.pasoActual(),
+      nombre: this.nombre,
+      apellido: this.apellido,
+      confirmPassword: this.confirmPassword,
+      vendedorReq: this.vendedorReq,
+      catalogo: this.catalogo,
+      rubroSeleccionadoNombre: this.rubroSeleccionadoNombre()
+    };
+    sessionStorage.setItem('registro_progreso', JSON.stringify(progreso));
+  }
+
+  private recuperarProgreso() {
+    const progresoGuardado = sessionStorage.getItem('registro_progreso');
+    if (progresoGuardado) {
+      try {
+        const data = JSON.parse(progresoGuardado);
+        this.nombre = data.nombre || '';
+        this.apellido = data.apellido || '';
+        this.confirmPassword = data.confirmPassword || '';
+        this.vendedorReq = data.vendedorReq;
+        this.catalogo = data.catalogo;
+        
+        if (data.rubroSeleccionadoNombre) {
+          this.rubroSeleccionadoNombre.set(data.rubroSeleccionadoNombre);
+        }
+        
+        this.pasoActual.set(data.pasoActual || 1);
+      } catch (e) {
+        console.error('Error al leer el progreso', e);
+        sessionStorage.removeItem('registro_progreso');
+      }
+    }
+  }
+
+  private limpiarProgreso() {
+    sessionStorage.removeItem('registro_progreso');
   }
 }

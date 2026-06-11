@@ -118,58 +118,75 @@ export class Carrito {
     const pago = this.cartService.selectedPaymentMethod()?.nombre;
     const cupon = this.cartService.appliedCupon();
     
-    let mensaje = `*Nuevo Pedido - ${this.catalogo()?.nombre_tienda}*\n\n`;
-    mensaje += `*Cliente:* ${this.nombreCliente()}\n`;
-
-    if (envio) {
-      mensaje += `*Dirección:* ${this.direccionEnvio()}\n`;
-    }
-
-    mensaje += `\n--------------------------\n`;
+    const descuentoEfectivo = this.cartService.cashDiscountAmount();
+    const porcentajeEfectivo = this.cartService.catalogConfig()?.descuentoEfectivo;
     
+    // --- CONSTRUCCIÓN DEL MENSAJE FORMAL ---
+    
+    const nombreTienda = this.catalogo()?.nombre_tienda?.toUpperCase() || 'TIENDA';
+    let mensaje = `*NUEVO PEDIDO | ${nombreTienda}*\n\n`;
+
+    // Sección 1: Cliente y Modalidad
+    mensaje += `*1. Datos del Cliente*\n`;
+    mensaje += `▪ Cliente: ${this.nombreCliente()}\n`;
+    mensaje += `▪ Modalidad: ${envio ? 'Envío a domicilio' : 'Retiro por sucursal'}\n`;
+    if (envio) {
+      mensaje += `▪ Dirección: ${this.direccionEnvio()}\n`;
+    }
+    mensaje += `▪ Medio de pago: ${pago}\n\n`;
+
+    // Sección 2: Detalle de compras
+    mensaje += `*2. Detalle de Artículos*\n`;
     items.forEach(item => {
       const subtotalItem = item.precio * item.cantidad;
-      mensaje += `• ${item.cantidad}x ${item.nombre} (${item.unidad}): $${subtotalItem}\n`;
+      mensaje += `• ${item.cantidad}x ${item.nombre} (${item.unidad}) — $${subtotalItem}\n`;
     });
+    mensaje += `\n`;
 
-    mensaje += `\n--------------------------`;
-    mensaje += `\n*Subtotal:* $${this.cartService.subtotalPrice()}`;
+    // Sección 3: Resumen de costos
+    mensaje += `*3. Resumen de Cuenta*\n`;
+    mensaje += `▪ Subtotal: $${this.cartService.subtotalPrice()}\n`;
 
+    // Descuento por Cupón
     if (cupon) {
-      mensaje += `\n*Cupón:* ${cupon.codigo} (-$${this.cartService.discountAmount()})`;
+      mensaje += `▪ Cupón (${cupon.codigo}): -$${this.cartService.discountAmount()}\n`;
+    }
+
+    // Descuento por Efectivo
+    if (descuentoEfectivo > 0 && porcentajeEfectivo) {
+      mensaje += `▪ Descuento pago en efectivo (${porcentajeEfectivo}%): -$${descuentoEfectivo}\n`;
     }
     
+    // Costo de Envío
     if (envio) {
       if (this.cartService.esEnvioGratis()) {
-          mensaje += `\n*Envío:* Gratis (Bonificado)`;
+          mensaje += `▪ Costo de envío: Bonificado (Gratis)\n`;
       } else {
-          mensaje += `\n*Envío:* $${this.catalogo()?.costo_envio}`;
+          mensaje += `▪ Costo de envío: $${this.catalogo()?.costo_envio}\n`;
       }
     }
 
-    mensaje += `\n*Medio de Pago:* ${pago}`;
-    mensaje += `\n*Entrega:* ${envio ? 'Envío a domicilio' : 'Retiro en el local'}`;
-
-    mensaje += `\n\n*TOTAL FINAL: $${this.cartService.totalFinal()}*`;
+    // Total final
+    mensaje += `\n*TOTAL A ABONAR: $${this.cartService.totalFinal()}*\n\n`;
     
+    mensaje += `Quedo a la espera de su confirmación. Muchas gracias.`;
+
+    // --- FIN DEL MENSAJE ---
+
     const phone = this.catalogo()?.wpp_numero;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
     
-    window.open(url, '_blank');
-
     const metodo = this.cartService.deliveryMethod() || 'retiro';
 
     window.open(url, '_blank');
 
     this.cartService.limpiarCarrito(true);
-
     this.nombreCliente.set('');
     this.direccionEnvio.set('');
-
     this.cartService.close();
 
     setTimeout(() => {
       this.pedidoRealizadoService.open(metodo, url);
-    }, 500);
+    }, 5000);
   }
 }

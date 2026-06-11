@@ -46,36 +46,66 @@
 
                 <div class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto no-scrollbar">
                     @for (pres of prod.presentaciones; track pres.id) {
-                    <button (click)="productSelectorService.seleccionarYAgregar(pres)"
-                            class="flex items-center justify-between p-4 rounded-2xl border-2 border-gray-100 hover:border-brand-accent active:bg-brand-accent/5 transition-all group">
                         
-                        <div class="flex flex-col items-start text-left">
-                            <span class="font-bold text-brand-text group-hover:text-brand-accent">
-                                {{ pres.unidad_venta }}
-                            </span>
+                        <div class="flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 border-gray-100 hover:border-brand-accent/30 transition-all bg-white">
                             
-                            @if (pres.precio_descuento) {
-                                <span class="text-[10px] mt-0.5 bg-green-100 text-green-600 px-1.5 py-0.5 rounded-md font-bold">
-                                    {{ getPorcentaje(pres.precio, pres.precio_descuento) }}% OFF
+                            <div class="flex flex-col items-start text-left flex-1 pr-2">
+                                <span class="text-base font-bold text-gray-600">
+                                    {{ pres.unidad_venta }}
                                 </span>
-                            }
-                        </div>
+                                
+                                <div class="w-10 h-0.75 bg-brand-accent/40 rounded-full my-1.5"></div>
+                                
+                                <div class="flex items-baseline flex-wrap gap-1.5">
+                                    @if (pres.precio_descuento) {
+                                        <span class="font-black text-xl text-brand-text leading-none">
+                                            ${{ pres.precio_descuento }}
+                                        </span>
+                                        <span class="text-xs text-gray-400 line-through">
+                                            ${{ pres.precio }}
+                                        </span>
+                                        <span class="text-[9px] bg-green-100 text-green-600 px-1.5 py-0.5 rounded-md font-bold">
+                                            -{{ getPorcentaje(pres.precio, pres.precio_descuento) }}%
+                                        </span>
+                                    } @else {
+                                        <span class="font-black text-xl text-brand-text leading-none">
+                                            ${{ pres.precio }}
+                                        </span>
+                                    }
+                                </div>
+                            </div>
 
-                        <div class="flex flex-col items-end">
-                            @if (pres.precio_descuento) {
-                                <span class="text-xs text-gray-400 line-through mb-0.5">
-                                    ${{ pres.precio }}
-                                </span>
-                                <span class="block font-black text-lg text-brand-text leading-none">
-                                    ${{ pres.precio_descuento }}
-                                </span>
-                            } @else {
-                                <span class="block font-black text-lg text-brand-text">
-                                    ${{ pres.precio }}
-                                </span>
-                            }
+                            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                                
+                                <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl p-1 shadow-inner">
+                                    <button type="button" (click)="decrementar(pres.id)"
+                                            class="size-8 flex items-center justify-center rounded-lg hover:bg-white hover:shadow-sm text-gray-500 transition-all active:scale-95 disabled:opacity-30 disabled:hover:bg-transparent disabled:shadow-none"
+                                            [disabled]="getCantidad(pres.id) <= 1"> 
+                                        <app-icon name="remove" classes="size-4 fill-current" />
+                                    </button>
+                                    
+                                    <div class="w-6 flex items-center justify-center">
+                                        @for (cantidad of [getCantidad(pres.id)]; track cantidad) { 
+                                            <span class="text-sm font-black text-brand-text select-none animate-in zoom-in-50 fade-in duration-200">
+                                                {{ cantidad }}
+                                            </span>
+                                        }
+                                    </div>
+                                    
+                                    <button type="button" (click)="incrementar(pres.id)"
+                                            class="size-8 flex items-center justify-center rounded-lg hover:bg-white hover:shadow-sm text-gray-500 transition-all active:scale-95">
+                                        <app-icon name="add-producto" classes="size-4 fill-current" />
+                                    </button>
+                                </div>
+
+                                <button type="button" (click)="agregarAlCarrito(pres)"
+                                        [disabled]="getCantidad(pres.id) === 0"
+                                        class="size-11 flex items-center justify-center bg-brand-accent text-white rounded-xl shadow-md shadow-brand-accent/30 hover:bg-brand-accent/90 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none">
+                                    <app-icon name="shop-add" classes="size-5 fill-current" />
+                                </button>
+                            </div>
+
                         </div>
-                    </button>
                     }
                 </div>
             }

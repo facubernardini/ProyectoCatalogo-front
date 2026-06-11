@@ -53,10 +53,10 @@ export class ProductSelectorService {
     }
   }
 
-  seleccionarYAgregar(pres: Presentacion) {
+  seleccionarYAgregar(pres: Presentacion, cantidad: number) {
     const prod = this.selectedProduct();
     if (prod) {
-      this.cartService.agregarProducto(prod, pres);
+      this.cartService.agregarProducto(prod, pres, cantidad); 
       this.close();
     }
   }

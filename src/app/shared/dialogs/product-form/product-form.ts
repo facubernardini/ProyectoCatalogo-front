@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, computed } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -37,17 +37,27 @@ export class ProductForm {
 
   MAX_SIZE_MB = 10;
 
+  public isCategoriaDropdownOpen = signal(false);
+  public searchQuery = signal('');
+
+  public categoriasFiltradas = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const categorias = this.adminStore.categorias();
+    
+    if (!query) return categorias;
+    
+    return categorias.filter(c => c.nombre.toLowerCase().includes(query));
+  });
+
   constructor() {
     effect(() => {
       const isOpen = this.productFormService.isOpen();
-      
       const editing = this.productFormService.editingProduct();
 
       if (isOpen) {
         if (editing) {
           const p = JSON.parse(JSON.stringify(editing));
           p.categorias_ids = editing.categorias?.map((c: any) => c.id) || [];
-          // Mapeamos los IDs de los tags al abrir el modo edición
           p.tags_ids = editing.tags?.map((t: any) => t.id) || []; 
           this.producto = p;
         } else {
@@ -59,7 +69,21 @@ export class ProductForm {
     });
   }
 
-  // --- LÓGICA DE CATEGORÍAS ---
+  // --- LÓGICA DE CATEGORÍAS Y BUSCADOR ---
+
+  abrirDropdownYScroll(container: HTMLElement) {
+    this.isCategoriaDropdownOpen.set(true);
+    
+    setTimeout(() => {
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+  }
+
+  cerrarDropdown(inputElement?: HTMLInputElement) {
+
+    this.isCategoriaDropdownOpen.set(false);
+    this.searchQuery.set('');
+  }
 
   toggleCategoria(id: number) {
     if (!this.producto.categorias_ids) {
@@ -72,13 +96,15 @@ export class ProductForm {
     } else {
       this.producto.categorias_ids.push(id);
     }
+
+    this.searchQuery.set('');
   }
 
   isCategoriaSelected(id: number): boolean {
     return this.producto.categorias_ids?.includes(id) || false;
   }
 
-  // --- LÓGICA DE TAGS (NUEVA) ---
+  // --- LÓGICA DE TAGS ---
 
   toggleTag(id: number) {
     if (!this.producto.tags_ids) {
@@ -97,8 +123,6 @@ export class ProductForm {
     return this.producto.tags_ids?.includes(id) || false;
   }
 
-  // --- RESTO DEL COMPONENTE ---
-
   resetForm() {
     this.producto = {
       nombre: '',
@@ -112,6 +136,10 @@ export class ProductForm {
 
     this.imagenPendiente = null;
     this.imagenPreviewTemporal.set(null);
+
+    // Reseteo del buscador simplificado
+    this.searchQuery.set('');
+    this.isCategoriaDropdownOpen.set(false);
   }
 
   onFileChange(event: any) {
@@ -123,7 +151,6 @@ export class ProductForm {
 
     if (file.size > MAX_SIZE_BYTES) {
       this.toastService.show(`La imagen es demasiado grande. Máximo ${this.MAX_SIZE_MB}MB.`, 'error');
-      
       event.target.value = ''; 
       return;
     }
@@ -141,7 +168,7 @@ export class ProductForm {
     if (sinCategorias) {
       this.toastService.show(`Primero debes asignarle una categoría a tu producto`, 'error');
     }
-    else{
+    else {
       const presentaciones = this.producto.presentaciones;
       const presAEliminar = presentaciones[index];
   
@@ -157,7 +184,6 @@ export class ProductForm {
       if (confirmacion) {
         if (this.producto.presentaciones.length > 1) {
           this.producto.presentaciones.splice(index, 1);
-          this.productFormService.save(this.producto);
         }
       }
     }
@@ -168,24 +194,19 @@ export class ProductForm {
   }
 
   get esFormularioInvalido(): boolean {
-    // 1. Validar nombre del producto (que no esté vacío ni sean solo espacios)
     const nombreInvalido = !this.producto.nombre || this.producto.nombre.trim().length === 0;
     if (nombreInvalido) return true;
 
-    // 2. Validar que tenga al menos una categoría
     const sinCategorias = !this.producto.categorias_ids || this.producto.categorias_ids.length === 0;
     if (sinCategorias) return true;
 
-    // 3. Validar presentaciones
     return this.producto.presentaciones.some(pres => {
-      // A. Campos obligatorios vacíos o precio en 0/negativo
       const datosIncompletos = 
         !pres.unidad_venta || 
         pres.unidad_venta.trim() === '' || 
         pres.precio === null || 
         pres.precio <= 0;
 
-      // B. Lógica de descuento (el descuento no puede ser mayor o igual al precio original)
       const descuentoInvalido = 
         pres.precio_descuento !== null && 
         pres.precio !== null && 

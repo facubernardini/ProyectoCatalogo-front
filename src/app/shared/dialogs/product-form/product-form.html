@@ -92,26 +92,65 @@
                             </span>
                         </div>
 
-                        <div class="flex flex-wrap gap-2">
-                            @for (cat of adminStore.categorias(); track cat.id) {
-                                <button type="button"
-                                        (click)="toggleCategoria(cat.id)"
-                                        [class]="isCategoriaSelected(cat.id) 
-                                            ? 'bg-brand-accent text-white border-brand-accent shadow-md shadow-brand-accent/20 scale-105' 
-                                            : 'bg-gray-50 text-gray-500 border-gray-100 hover:border-gray-200'"
-                                        class="px-4 py-2 rounded-xl border text-xs font-bold transition-all duration-200 active:scale-95 flex items-center gap-2">
-                                    
-                                    @if (isCategoriaSelected(cat.id)) {
-                                        <app-icon name="check" classes="size-3 fill-current" />
+                        <div class="relative" #containerElement>
+                            <div class="relative flex items-center">
+                                <input 
+                                    #searchInput
+                                    type="text" 
+                                    [(ngModel)]="searchQuery"
+                                    (focus)="abrirDropdownYScroll(containerElement)"
+                                    (click)="abrirDropdownYScroll(containerElement)"
+                                    placeholder="Buscar categorías..."
+                                    class="w-full p-3 pr-16 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text transition-all"
+                                >
+                                
+                                @if (producto.categorias_ids.length > 0 && isCategoriaDropdownOpen()) {
+                                    <button 
+                                        type="button" 
+                                        (click)="cerrarDropdown(searchInput)"
+                                        class="absolute right-3 px-3 py-1.5 bg-brand-accent text-white text-xs font-black rounded-lg transition-all active:scale-95 animate-in fade-in zoom-in-95 duration-150"
+                                    >
+                                        OK
+                                    </button>
+                                }
+                            </div>
+
+                            @if (isCategoriaDropdownOpen()) {
+                                <div class="fixed inset-0 z-40" (click)="cerrarDropdown(searchInput)"></div>
+                                
+                                <ul class="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-lg 
+                                    max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
+                                    @for (cat of categoriasFiltradas(); track cat.id) {
+                                        <li>
+                                            <button 
+                                                type="button" 
+                                                (click)="toggleCategoria(cat.id)"
+                                                class="w-full text-left px-4 py-3 text-sm font-bold transition-colors flex justify-between items-center"
+                                                [class.bg-brand-accent]="isCategoriaSelected(cat.id)" 
+                                                [class.text-white]="isCategoriaSelected(cat.id)"
+                                                [class.text-brand-text-sec]="!isCategoriaSelected(cat.id)" 
+                                                [class.hover:bg-gray-50]="!isCategoriaSelected(cat.id)"
+                                                [class.hover:text-brand-text]="!isCategoriaSelected(cat.id)"
+                                            >
+                                                {{ cat.nombre }}
+                                                
+                                                @if (isCategoriaSelected(cat.id)) {
+                                                    <app-icon name="check" classes="size-4 fill-current" />
+                                                }
+                                            </button>
+                                        </li>
+                                    } @empty {
+                                        <li class="px-4 py-4 text-sm font-bold text-gray-400 text-center">
+                                            No se encontraron categorías.
+                                        </li>
                                     }
-                                    {{ cat.nombre }}
-                                </button>
-                            }
-                            
-                            @if (adminStore.categorias().length === 0) {
-                                <p class="text-xs text-gray-400 italic">No hay categorías creadas todavía.</p>
+                                </ul>
                             }
                         </div>
+
+                        @if (adminStore.categorias().length === 0) {
+                            <p class="text-xs text-gray-400 italic mt-1">No hay categorías creadas todavía.</p>
+                        }
                     </section>
                 </div>
 
