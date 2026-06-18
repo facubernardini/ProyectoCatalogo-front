@@ -6,6 +6,8 @@ import { HistorialSuscripcionesService } from '@shared/services/historial-suscri
 import { VendedorService } from 'src/app/core/services-backend/vendedores.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
+import { AdminSubscriptionService } from '@shared/services/admin-sub.service';
+import { VendedorBackoffice } from 'src/app/core/models/backoffice/vendedorBackoffice.model';
 
 @Component({
   selector: 'app-vendedores',
@@ -19,6 +21,7 @@ export class Vendedores {
   private confirmService = inject(ConfirmService);
   private vendedorService = inject(VendedorService);
   private historialSuscripcionesService = inject(HistorialSuscripcionesService);
+  public subscriptionService = inject(AdminSubscriptionService);
 
   vendedores = this.adminStore.vendedoresBackoffice;
 
@@ -69,10 +72,12 @@ export class Vendedores {
     }
   }
 
-  administrarSuscripcion(vendedor: any) {
-    this.menuAbiertoId.set(null);
-    console.log(`Administrando suscripción de: ${vendedor.nombre_apellido}`);
-    // Acá podrías abrir un modal o redirigir: this.router.navigate([...])
+  administrarSuscripcion(vendedor: VendedorBackoffice) {
+    this.menuAbiertoId.set(null); 
+
+    const planes = this.adminStore.planesSuscripcionBackoffice(); 
+
+    this.subscriptionService.open(vendedor, planes);
   }
 
   abrirHistorial(vendedorId: number) {

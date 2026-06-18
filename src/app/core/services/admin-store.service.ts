@@ -13,7 +13,7 @@ import { TagService } from "../services-backend/tags.ServiceBackend";
 import { VendedorBackoffice } from "../models/backoffice/vendedorBackoffice.model";
 import { VendedorService } from "../services-backend/vendedores.ServiceBackend";
 import { CatalogoBackoffice } from "../models/backoffice/catalogoBackoffice.mode";
-import { HistorialSuscripcion, SuscripcionEstado } from "../models/backoffice/suscripcion.model";
+import { HistorialSuscripcion, PlanSuscripcion, SuscripcionEstado } from "../models/backoffice/suscripcion.model";
 import { SuscripcionesService } from "../services-backend/suscripciones.ServiceBackend";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
@@ -46,6 +46,7 @@ export class AdminStoreService {
   vendedoresBackoffice = signal<VendedorBackoffice[]>([]);
   catalogosBackoffice = signal<CatalogoBackoffice[]>([]);
   suscripcionesHistorialBackoffice = signal<HistorialSuscripcion[]>([]);
+  planesSuscripcionBackoffice = signal<PlanSuscripcion[]>([]);
   
   public isLoading = signal(false);
 
@@ -84,13 +85,13 @@ export class AdminStoreService {
 
         // Tienda suspendida
         if (err.status === 403 && err.error?.code === 'TIENDA_SUSPENDIDA') {
-            this.router.navigate(['/not-found']);
+          this.router.navigate(['/not-found']);
         } else if (err.status === 404) {
-            // La tienda no existe
-            this.router.navigate(['/not-found']); 
+          // La tienda no existe
+          this.router.navigate(['/not-found']); 
         } else {
-            // Error de servidor (500) o sin conexión
-            this.router.navigate(['/404']);
+          // Error de servidor (500) o sin conexión
+          this.router.navigate(['/404']);
         }
       }
     });
@@ -128,11 +129,13 @@ export class AdminStoreService {
       vendedores: this.vendedorService.getVendedores(),
       catalogos: this.catalogoService.getCatalogos(),
       historialSuscripciones: this.suscripcionService.getHistorialSuscripciones(),
+      planes: this.suscripcionService.getPlanes(),
     }).subscribe({
-      next: ({ vendedores, catalogos, historialSuscripciones }) => {
+      next: ({ vendedores, catalogos, historialSuscripciones, planes }) => {
         this.vendedoresBackoffice.set(vendedores);
         this.catalogosBackoffice.set(catalogos);
         this.suscripcionesHistorialBackoffice.set(historialSuscripciones);
+        this.planesSuscripcionBackoffice.set(planes);
         
         this.isLoading.set(false);
       },
@@ -152,6 +155,28 @@ export class AdminStoreService {
         error: (err) => console.error('Error al refrescar categorías por ID', err)
       });
     }
+  }
+
+  refrescarDatosBackoffice() {
+    this.isLoading.set(true);
+    forkJoin({
+      vendedores: this.vendedorService.getVendedores(),
+      catalogos: this.catalogoService.getCatalogos(),
+      historialSuscripciones: this.suscripcionService.getHistorialSuscripciones(),
+      planes: this.suscripcionService.getPlanes(),
+    }).subscribe({
+      next: ({ vendedores, catalogos, historialSuscripciones, planes }) => {
+        this.vendedoresBackoffice.set(vendedores);
+        this.catalogosBackoffice.set(catalogos);
+        this.suscripcionesHistorialBackoffice.set(historialSuscripciones);
+        this.planesSuscripcionBackoffice.set(planes);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error al refrescar el backoffice', err);
+        this.isLoading.set(false);
+      }
+    });
   }
 
   // --- MÉTODOS PARA PRODUCTOS ---

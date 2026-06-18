@@ -6,10 +6,11 @@ import { Toast } from "@shared/toast/toast";
 import { ConfirmDialog } from "@shared/dialogs/confirm-dialog/confirm-dialog";
 import { MenuInferiorBO } from "./menu-inferior-bo/menu-inferior-bo";
 import { HistorialSuscripciones } from "@shared/dialogs/historial-suscripciones/historial-suscripciones";
+import { AdminSub } from "@shared/dialogs/admin-sub/admin-sub";
 
 @Component({
   selector: 'app-backoffice',
-  imports: [LoadingSpinner, RouterOutlet, Toast, ConfirmDialog, MenuInferiorBO, HistorialSuscripciones],
+  imports: [LoadingSpinner, RouterOutlet, Toast, ConfirmDialog, MenuInferiorBO, HistorialSuscripciones, AdminSub],
   templateUrl: './backoffice.html',
   styleUrl: './backoffice.css',
 })

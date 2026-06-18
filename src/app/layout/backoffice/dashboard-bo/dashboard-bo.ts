@@ -1,14 +1,13 @@
 import { Component, computed, inject } from '@angular/core';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { Icon } from "@shared/components/icon";
-import { RouterLink } from '@angular/router';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard-bo',
-  imports: [Icon, RouterLink, DatePipe],
+  imports: [Icon, DatePipe],
   templateUrl: './dashboard-bo.html',
   styleUrl: './dashboard-bo.css',
 })

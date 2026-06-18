@@ -7,8 +7,14 @@ export enum SuscripcionEstado {
 export enum SuscripcionAccion {
     ALTA = 'ALTA',
     UPGRADE = 'UPGRADE',
+    DOWNGRADE = 'DOWNGRADE',
     RENOVACION = 'RENOVACION',
     CANCELACION = 'CANCELACION'
+}
+
+export interface PlanSuscripcion {
+    id: number;
+    tipo_plan: string;
 }
 
 export interface Suscripcion {
