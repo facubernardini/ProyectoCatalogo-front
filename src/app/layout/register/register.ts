@@ -9,6 +9,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { Toast } from "@shared/toast/toast";
 import { RubroService } from 'src/app/core/services-backend/rubros.ServiceBackend';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-register',
@@ -22,6 +23,8 @@ export class Register {
   private rubroService = inject(RubroService);
   private toastService = inject(ToastService);
   private router = inject(Router);
+
+  public BRAND_DATA = BRAND_DATA;
   
   public loading = signal(false);
   showConfirmPassword = signal(false);

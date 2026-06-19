@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment.dev';
 import { VendedorBackoffice } from '../models/backoffice/vendedorBackoffice.model';
 
 @Injectable({ providedIn: 'root' })
