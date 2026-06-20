@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { Component, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Icon } from "@shared/components/icon";
@@ -10,6 +10,7 @@ import { Toast } from "@shared/toast/toast";
 import { RubroService } from 'src/app/core/services-backend/rubros.ServiceBackend';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
+import { debounceTime, distinctUntilChanged, of, Subject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -17,7 +18,7 @@ import { BRAND_DATA } from 'src/app/core/data/brand.data';
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
-export class Register {
+export class Register implements OnInit, OnDestroy {
   private registroService = inject(RegisterService);
   private authService = inject(AuthService);
   private rubroService = inject(RubroService);
@@ -30,6 +31,10 @@ export class Register {
   showConfirmPassword = signal(false);
   
   public pasoActual = signal<1 | 2 | 3>(1);
+
+  public slugDisponible = signal<boolean | null>(null);
+  public validandoSlug = signal(false);
+  private slugSubject = new Subject<string>();
 
   public rubros = signal<Rubro[]>([]);
   public isRubroDropdownOpen = signal(false);
@@ -62,6 +67,11 @@ export class Register {
   ngOnInit() {
     this.cargarRubros();
     this.recuperarProgreso();
+    this.configurarDebounceSlug();
+  }
+
+  ngOnDestroy() {
+    this.slugSubject.complete();
   }
 
   cargarRubros() {
@@ -121,9 +131,63 @@ export class Register {
     this.guardarProgreso();
   }
 
-  generarSlug() {
-    if (!this.catalogo.nombre_tienda) {
+  private configurarDebounceSlug() {
+    this.slugSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(slug => {
+        if (!slug || slug.trim() === '') {
+          this.slugDisponible.set(null);
+          this.validandoSlug.set(false);
+          return of(null);
+        }
+        this.validandoSlug.set(true);
+        return this.registroService.verificarSlugPublico(slug);
+      })
+    ).subscribe({
+      next: (res) => {
+        this.validandoSlug.set(false);
+        if (res) {
+          this.slugDisponible.set(res.disponible);
+        } else {
+          this.slugDisponible.set(null); 
+        }
+      },
+      error: () => {
+        this.validandoSlug.set(false);
+        this.slugDisponible.set(null);
+      }
+    });
+
+    if (this.catalogo.slug) {
+      this.slugSubject.next(this.catalogo.slug);
+    }
+  }
+
+  onSlugChange(value: string) {
+    this.slugDisponible.set(null);
+    
+    if (!value || value.trim() === '') {
       this.catalogo.slug = '';
+      this.validandoSlug.set(false);
+      this.slugSubject.next('');
+      return;
+    }
+    
+    const slugLimpio = value
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '');
+      
+    this.catalogo.slug = slugLimpio;
+    this.slugSubject.next(slugLimpio);
+  }
+
+  generarSlug() {
+    if (!this.catalogo.nombre_tienda || this.catalogo.nombre_tienda.trim() === '') {
+      this.catalogo.slug = '';
+      this.slugDisponible.set(null);
+      this.validandoSlug.set(false);
+      this.slugSubject.next('');
       return;
     }
 
@@ -134,6 +198,9 @@ export class Register {
       .replace(/[^a-z0-9\s-]/g, '')
       .trim()
       .replace(/\s+/g, '-');
+
+    this.slugDisponible.set(null);
+    this.slugSubject.next(this.catalogo.slug);
   }
 
   @HostListener('window:popstate', ['$event'])
@@ -146,13 +213,18 @@ export class Register {
   }
 
   solicitarCodigo() {
-    if (!this.catalogo.nombre_tienda || !this.catalogo.slug) {
-      this.toastService.show('Por favor, completá los datos de tu negocio.', 'error');
+    if (!this.catalogo.nombre_tienda || this.catalogo.nombre_tienda.trim() === '') {
+      this.toastService.show('Por favor, ingresá el nombre de tu negocio.', 'error');
       return;
     }
 
-    if (!this.catalogo.rubro_id) {
-      this.toastService.show('Por favor, seleccioná un rubro para tu tienda.');
+    if (!this.catalogo.slug || this.catalogo.slug.trim() === '' || this.slugDisponible() !== true) {
+      this.toastService.show('El enlace de la tienda no es válido o está ocupado.', 'error');
+      return;
+    }
+
+    if (!this.catalogo.rubro_id || this.catalogo.rubro_id === 0) {
+      this.toastService.show('Por favor, seleccioná un rubro para tu tienda.', 'error');
       return;
     }
 

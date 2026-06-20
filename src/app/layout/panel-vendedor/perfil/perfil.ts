@@ -1,11 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { CommonModule, DatePipe, Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { FormsModule } from '@angular/forms';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-perfil',
@@ -47,6 +48,19 @@ export class Perfil {
 
   volverAtras() {
     this.location.back();
+  }
+
+  mejorarPlan() {
+    const vendedor = this.adminStore.vendedor();
+    const nombre = vendedor?.nombre_apellido;
+    const planActual = vendedor?.suscripcion?.plan || 'Actual';
+    
+    const mensaje = `¡Hola! Soy ${nombre}. Me gustaría recibir más información para mejorar mi plan ${planActual} en el catálogo.`;
+    
+    const numero = BRAND_DATA.contact.whatsapp.replace(/\D/g, ''); 
+    
+    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
   }
 
   async onLogout() {

@@ -29,6 +29,11 @@ export interface Rubro {
   nombre: string;
 }
 
+export interface RespuestaSlug {
+  disponible: boolean;
+  slugVerificado: string;
+}
+
 export interface Catalogo {
   id: number;
   nombre_tienda: string;

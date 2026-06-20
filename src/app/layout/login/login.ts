@@ -25,6 +25,8 @@ export class Login {
 
   showPassword = signal(false);
 
+  isLoading = signal(false);
+
   constructor() {
     this.loginForm = this.fb.group({
       correo: ['vendedor@test.com', [Validators.required, Validators.email]],
@@ -35,9 +37,11 @@ export class Login {
   onSubmit() {
     if (this.loginForm.invalid) return;
 
+    this.isLoading.set(true);
+
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
-        console.log("Login: ", res);
+        this.isLoading.set(false);
         if (res.vendedor.admin) {
           this.router.navigate(['/backoffice/inicio']);
         } else {
@@ -47,10 +51,11 @@ export class Login {
       },
       error: (err) => {
         console.log(err);
+        this.isLoading.set(false);
         // Credenciales inválidas o cuenta suspendida
         if (err.status === 401) {
-          const mensajeSuspendido = err.error.message
-          this.toastService.show(mensajeSuspendido, 'error');
+          const mensajeError = err.error.message
+          this.toastService.show(mensajeError, 'error');
         } 
         // Error de Servidor
         else {

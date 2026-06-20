@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CommonModule, Location } from '@angular/common';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -8,7 +8,8 @@ import { Catalogo, HorarioDia, TemaCatalogo } from 'src/app/core/models/catalogo
 import { FormsModule } from '@angular/forms';
 import { ConfigSection } from "./config-section/config-section";
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
-import { Observable, of, switchMap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-mi-tienda',
@@ -16,15 +17,21 @@ import { Observable, of, switchMap } from 'rxjs';
   templateUrl: './mi-tienda.html',
   styleUrl: './mi-tienda.css',
 })
-export class MiTienda {
+export class MiTienda implements OnInit, OnDestroy {
   private location = inject(Location);
 
   public adminStore = inject(AdminStoreService);
   private catalogoService = inject(CatalogoService);
   private toastService = inject(ToastService);
+
+  BRAND_DATA = BRAND_DATA;
   
   catalogo = signal<Catalogo | null>(null);
   loading = signal(false);
+
+  public slugDisponible = signal<boolean | null>(true);
+  public validandoSlug = signal(false);
+  private slugSubject = new Subject<string>();
 
   logoPreview: string | null = null;
   imagenLogoPendiente: File | null = null;
@@ -53,6 +60,14 @@ export class MiTienda {
     });
   }
 
+  ngOnInit() {
+    this.configurarDebounceSlug();
+  }
+
+  ngOnDestroy() {
+    this.slugSubject.complete();
+  }
+
   private clonarDatosDesdeStore() {
     const storeData = this.adminStore.catalogo();
     if (storeData) {
@@ -64,6 +79,10 @@ export class MiTienda {
       copia.medios_pago = copia.medios_pago || [];
       
       this.catalogo.set(copia);
+
+      if (copia.slug) {
+        this.slugDisponible.set(true);
+      }
     }
   }
 
@@ -101,8 +120,8 @@ export class MiTienda {
 
   cambiarTema(nuevoTema: TemaCatalogo) {
     this.catalogo.update(cat => {
-        if (!cat) return cat;
-        return { ...cat, tema: nuevoTema };
+      if (!cat) return cat;
+      return { ...cat, tema: nuevoTema };
     });
   }
 
@@ -124,11 +143,92 @@ export class MiTienda {
     this.logoPreview = URL.createObjectURL(file);
   }
 
+  private configurarDebounceSlug() {
+    this.slugSubject.pipe(
+      tap(() => {
+        this.validandoSlug.set(false);
+        this.slugDisponible.set(null);
+      }),
+      debounceTime(500),
+      switchMap(slug => {
+        if (!slug || slug.trim() === '') {
+          return of({ esActual: false, disponible: null });
+        }
+        
+        const slugGuardado = this.adminStore.catalogo()?.slug;
+        if (slug === slugGuardado) {
+          return of({ esActual: true, disponible: true });
+        }
+
+        this.validandoSlug.set(true);
+        const idCatalogo = this.adminStore.catalogoId();
+        
+        return this.catalogoService.verificarSlugSeller(slug, idCatalogo).pipe(
+          catchError((err) => {
+            console.error('Error validando slug:', err);
+            return of({ esActual: false, disponible: null, error: true });
+          })
+        ); 
+      })
+    ).subscribe({
+      next: (res: any) => {
+        this.validandoSlug.set(false);
+        
+        if (res && res.error) {
+           this.slugDisponible.set(null);
+           return;
+        }
+
+        if (res) {
+          if ('esActual' in res && res.esActual) {
+            this.slugDisponible.set(true);
+          } else {
+            this.slugDisponible.set(res.disponible);
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Suscripción muerta:', err);
+        this.validandoSlug.set(false);
+        this.slugDisponible.set(null);
+      }
+    });
+  }
+
+  onSlugChange(value: string) {
+    if (!value || value.trim() === '') {
+      this.catalogo.update(c => c ? { ...c, slug: '' } : c);
+      this.slugSubject.next('');
+      return;
+    }
+    
+    const slugLimpio = value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+      
+    this.catalogo.update(c => c ? { ...c, slug: slugLimpio } : c);
+    
+    this.slugSubject.next(slugLimpio);
+  }
+
   async guardarCambios(section: ConfigSection) {
     const dataActual = this.catalogo();
 
     if (!dataActual) {
       this.toastService.show('No hay datos para guardar', 'error');
+      return;
+    }
+
+    if (!dataActual.slug || dataActual.slug.trim() === '') {
+      this.toastService.show('La URL de la tienda no puede estar vacía.', 'error');
+      return;
+    }
+
+    if (this.slugDisponible() === false) {
+      this.toastService.show('La URL seleccionada ya está ocupada.', 'error');
+      return;
+    }
+    
+    if (this.validandoSlug()) {
+      this.toastService.show('Espera a que termine la validación de la URL.', 'error');
       return;
     }
 
