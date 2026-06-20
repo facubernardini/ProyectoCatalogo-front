@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.dev';
-import { Catalogo } from '../models/catalogo.model';
+import { Catalogo, RespuestaSlug } from '../models/catalogo.model';
 import { CatalogoBackoffice } from '../models/backoffice/catalogoBackoffice.mode';
 
 @Injectable({
@@ -34,5 +34,14 @@ export class CatalogoService {
 		formData.append('foto', file);
 		
 		return this.http.post<{ url: string }>(`${this.API_URL}/seller/catalogos/upload-imagen`, formData);
+	}
+
+	verificarSlugSeller(slug: string, idCatalogoActual: number): Observable<RespuestaSlug> {
+		return this.http.get<RespuestaSlug>(`${this.API_URL}/seller/catalogos/check-slug`, {
+			params: { 
+				slug, 
+				excludeCatalogoId: idCatalogoActual.toString() 
+			}
+		});
 	}
 }

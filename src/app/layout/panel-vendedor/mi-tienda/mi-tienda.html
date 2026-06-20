@@ -29,7 +29,7 @@
 				description="Datos de contacto, logo de tu tienda, etc"
 				icon="store" 
 				[loading]="loading()"
-				[deshabilitarGuardar]="!this.catalogo()?.nombre_tienda?.trim() || !this.catalogo()?.slug?.trim()"
+				[deshabilitarGuardar]="!this.catalogo()?.nombre_tienda?.trim() || !this.catalogo()?.slug?.trim() || slugDisponible() === false || validandoSlug()"
 				(onSave)="guardarCambios(sectionConfigPrincipal)"
 				(onCancel)="resetearValores()">
 				<section class="pt-3 border-t border-brand-bg space-y-5">
@@ -52,20 +52,45 @@
 					</div>
 					
 					<div class="w-full">
-						<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">URL de tu tienda</label>
+						<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1 flex justify-between items-center">
+							<span>URL de tu tienda</span>
+							@if (validandoSlug()) {
+								<span class="text-brand-accent animate-pulse">Verificando...</span>
+							} @else if (slugDisponible() === true && catalogo()?.slug !== adminStore.catalogo()?.slug) {
+								<span class="text-green-600">✓ Disponible</span>
+							} @else if (slugDisponible() === false) {
+								<span class="text-red-500 animate-in shake">✕ Ocupado</span>
+							}
+						</label>
 						
-						<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
-							<span class="pl-4 py-4 text-sm font-bold text-gray-400 whitespace-nowrap select-none">
-								mitienda.com/
-							</span>
+						<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:bg-white transition-all overflow-hidden"
+							[class.border-brand-accent]="slugDisponible() === true || !catalogo()?.slug"
+							[class.focus-within:border-brand-accent]="slugDisponible() === true || !catalogo()?.slug"
+							[class.border-red-500]="slugDisponible() === false"
+							[class.focus-within:border-red-500]="slugDisponible() === false">
 							
 							<input type="text" 
-								[(ngModel)]="catalogo()!.slug"
+								[ngModel]="catalogo()?.slug"
+								(ngModelChange)="onSlugChange($event)"
 								placeholder="tu-tienda"
-								class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
+								class="w-full bg-transparent border-none py-4 px-0.5 outline-none text-right text-brand-text font-medium focus:ring-0">
+
+							<span class="text-brand-text/40 font-medium pr-4 pointer-events-none select-none shrink-0">
+								.{{ BRAND_DATA.domain }}
+							</span>
 						</div>
 						
-						<p class="text-[12px] text-brand-text/60 mt-1 ml-1">Tus clientes accederán usando este enlace personalizado.</p>
+						<div class="mt-1 ml-1 h-4"> 
+							@if (!catalogo()?.slug || catalogo()!.slug.trim() === '') {
+								<p class="text-[12px] font-bold text-red-500 animate-in fade-in duration-200">
+									La URL es obligatoria.
+								</p>
+							} @else {
+								<p class="text-[12px] text-brand-text/60">
+									Tus clientes accederán usando este enlace personalizado.
+								</p>
+							}
+						</div>
 					</div>
 
 					<div class="w-full">

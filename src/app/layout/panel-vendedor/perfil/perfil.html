@@ -57,7 +57,9 @@
                             </div>
                         </div>
                         
-                        <button class="px-3 py-2.5 flex flex-row items-center bg-brand-bg text-brand-accent text-xs font-bold rounded-xl active:scale-95 transition-transform border border-brand-accent/20">
+                        <button 
+                            (click)="mejorarPlan()"
+                            class="px-3 py-2.5 flex flex-row items-center bg-brand-bg text-brand-accent text-xs font-bold rounded-xl active:scale-95 transition-transform border border-brand-accent/20">
                             <app-icon name="upgrade" classes="size-5 mr-px text-brand-text-sec fill-current" />
                             Mejorar
                         </button>
