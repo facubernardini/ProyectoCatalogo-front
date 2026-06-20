@@ -90,11 +90,14 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "production": {
-              "buildTarget": "proyecto-catalogo:build:production"
-            },
             "development": {
               "buildTarget": "proyecto-catalogo:build:development"
+            },
+            "staging": { 
+              "buildTarget": "proyecto-catalogo:build:staging"
+            },
+            "production": {
+              "buildTarget": "proyecto-catalogo:build:production"
             }
           },
           "defaultConfiguration": "development"

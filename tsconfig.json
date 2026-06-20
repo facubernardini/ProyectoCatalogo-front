@@ -3,7 +3,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -15,16 +14,18 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "baseUrl": "./",
     "paths": {
+      "src/*": [
+        "./src/*"
+      ],
       "@layout/*": [
-        "src/app/layout/*"
+        "./src/app/layout/*"
       ],
       "@shared/*": [
-        "src/app/shared/*"
+        "./src/app/shared/*"
       ],
       "@models": [
-        "src/app/core/models"
+        "./src/app/core/models"
       ],
     },
   },
