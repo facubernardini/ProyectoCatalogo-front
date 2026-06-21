@@ -10,6 +10,8 @@ import { CategoryDelete } from "@shared/dialogs/category-delete/category-delete"
 import { CuponForm } from "@shared/dialogs/cupon-form/cupon-form";
 import { CategoryPreview } from "@shared/dialogs/category-preview/category-preview";
 import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinner";
+import { Title } from '@angular/platform-browser';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-panel-vendedor',
@@ -19,6 +21,7 @@ import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinn
 })
 export class PanelVendedor {
   public adminStore = inject(AdminStoreService);
+  private titleService = inject(Title);
 
   ngOnInit() {
     const data = localStorage.getItem('vendedor');
@@ -26,6 +29,7 @@ export class PanelVendedor {
       const vendedor = JSON.parse(data);
       if (vendedor.catalogoId) {
         this.adminStore.cargarDatosPanelVendedor(vendedor.catalogoId);
+        this.titleService.setTitle(`${BRAND_DATA.name} - Panel vendedor`);
       }
     }
   }

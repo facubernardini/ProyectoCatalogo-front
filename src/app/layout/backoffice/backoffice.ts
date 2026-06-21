@@ -7,6 +7,8 @@ import { ConfirmDialog } from "@shared/dialogs/confirm-dialog/confirm-dialog";
 import { MenuInferiorBO } from "./menu-inferior-bo/menu-inferior-bo";
 import { HistorialSuscripciones } from "@shared/dialogs/historial-suscripciones/historial-suscripciones";
 import { AdminSub } from "@shared/dialogs/admin-sub/admin-sub";
+import { Title } from '@angular/platform-browser';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-backoffice',
@@ -16,8 +18,10 @@ import { AdminSub } from "@shared/dialogs/admin-sub/admin-sub";
 })
 export class Backoffice {
   public adminStore = inject(AdminStoreService);
+  private titleService = inject(Title);
 
   ngOnInit() {
     this.adminStore.cargarDatosPanelBackoffice();
+    this.titleService.setTitle(`${BRAND_DATA.name} - Backoffice`);
   }
 }

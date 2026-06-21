@@ -1,13 +1,25 @@
 @if (adminStore.isLoading()) {
     <app-catalogo-skeleton/>
 } @else {
-    <!-- Layout -->
-    <app-navbar/>
-    <app-banner-info/>
-    <app-search-nav/>
-    <app-carousel-destacados/>
-    <app-carousel-ofertas/>
-    <app-lista-productos/>
+    @if (isDesktop()) {
+        <!-- Layout Desktop (VER) -->
+        <app-navbar/>
+        <app-banner-info/>
+        <app-search-nav/>
+        <app-carousel-destacados/>
+        <app-carousel-ofertas/>
+        <app-lista-productos/>
+
+    }
+    @else {
+        <!-- Layout Mobile -->
+        <app-navbar/>
+        <app-banner-info/>
+        <app-search-nav/>
+        <app-carousel-destacados/>
+        <app-carousel-ofertas/>
+        <app-lista-productos/>
+    }
 
     <!-- Dialogs emergentes -->
     <app-search-products/>
