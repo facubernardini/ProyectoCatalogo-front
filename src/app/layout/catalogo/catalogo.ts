@@ -22,6 +22,9 @@ import { Skeleton } from "./skeleton/skeleton";
 import { PedidoRealizado } from "@shared/dialogs/pedido-realizado/pedido-realizado";
 import { Title } from '@angular/platform-browser';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
+import { NavbarDesktop } from "./navbar-desktop/navbar-desktop";
+import { BannerInfoDesktop } from "./banner-info-desktop/banner-info-desktop";
+import { MenuLateralDesktop } from "./menu-lateral-desktop/menu-lateral-desktop";
 
 @Component({
   selector: 'app-catalogo',
@@ -37,7 +40,10 @@ import { BRAND_DATA } from 'src/app/core/data/brand.data';
     ProductosDestacados,
     ProductosOfertas,
     Skeleton,
-    PedidoRealizado
+    PedidoRealizado,
+    NavbarDesktop,
+    BannerInfoDesktop,
+    MenuLateralDesktop
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',

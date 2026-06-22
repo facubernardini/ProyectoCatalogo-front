@@ -1,18 +1,18 @@
-<nav class="w-full border-b border-zinc-100 bg-white px-4 py-2 md:py-3">
+<nav class="w-full border-b border-white/10 bg-brand-accent text-white px-4 py-2">
     <div class="mx-auto flex max-w-7xl items-center justify-between">
         
         <img [src]="adminStore.catalogo()?.logo_tienda"
             (click)="infoService.open()"
             alt="Logo de la tienda"
-            class="size-14 md:size-16 rounded-full object-cover shadow-sm cursor-pointer hover:opacity-90 transition-opacity">
+            class="size-14 rounded-full bg-white object-cover shadow-sm cursor-pointer hover:opacity-90 transition-opacity">
 
-        <div class="flex flex-col pt-2 md:pt-0 items-center text-center">
-            <h1 class="text-xl md:text-2xl font-black tracking-tighter text-brand-accent leading-none">
+        <div class="flex flex-col pt-2 items-center text-center">
+            <h1 class="text-xl font-black tracking-tighter text-white leading-none">
                 {{ adminStore.catalogo()?.nombre_tienda || 'Cargando...' }}
             </h1>
             
             @if (adminStore.catalogo()?.frase_eslogan) {
-                <p class="text-xs md:text-base font-semibold text-gray-500 mt-0.5 md:mt-1.5 truncate max-w-50 md:max-w-lg">
+                <p class="text-xs font-semibold text-white/80 mt-0.5 truncate max-w-50">
                     {{ adminStore.catalogo()?.frase_eslogan }}
                 </p>
             }
@@ -20,13 +20,10 @@
 
         <button 
             (click)="infoService.open()" 
-            class="flex items-center gap-2 text-gray-400 p-2 md:px-5 md:py-2.5 md:bg-gray-50 md:border md:border-gray-100 md:rounded-xl md:hover:bg-gray-100 transition-all active:scale-95 group" aria-label="Menú">
+            class="flex items-center gap-2 text-white p-2 transition-all active:scale-95" aria-label="Menú">
             
-            <app-icon name="info" classes="size-7 md:size-5 fill-current text-brand-accent" />
+            <app-icon name="info" classes="size-7 fill-current text-white" />
             
-            <span class="hidden md:block text-sm font-bold text-brand-text group-hover:text-brand-accent transition-colors">
-                Info del local
-            </span>
         </button>
 
     </div>

@@ -3,13 +3,20 @@
 } @else {
     @if (isDesktop()) {
         <!-- Layout Desktop (VER) -->
-        <app-navbar/>
-        <app-banner-info/>
-        <app-search-nav/>
-        <app-carousel-destacados/>
-        <app-carousel-ofertas/>
-        <app-lista-productos/>
+        <app-navbar-desktop/>
+        <app-banner-info-desktop/>
 
+        <div class="mx-auto flex max-w-7xl items-start gap-8 p-5">
+            <aside class="w-72 shrink-0">
+                <app-menu-lateral-desktop/>
+            </aside>
+            <main class="flex-1 min-w-0 flex flex-col gap-10">
+                <!--REHACER ESTOS COMPONENTES-->
+                <app-carousel-destacados/>
+                <app-carousel-ofertas/>
+                <app-lista-productos/>
+            </main>
+        </div>
     }
     @else {
         <!-- Layout Mobile -->
@@ -21,7 +28,7 @@
         <app-lista-productos/>
     }
 
-    <!-- Dialogs emergentes -->
+    <!-- Dialogs emergentes (REHACER COMPONENTES PARA DESKTOP, PERO USAR MISMOS SERVICIOS) -->
     <app-search-products/>
     <app-carrito/>
     <app-menu-info/>
