@@ -22,7 +22,7 @@ export class ListaProductosDesktop {
   ordenSeleccionado = signal<OrdenCriterio>('default');
 
   paginaActual = signal(1);
-  itemsPorPagina = 12; // Aumenté a 12 porque al ser 3 columnas (3x4), queda un bloque simétrico.
+  itemsPorPagina = 12;
 
   productos = computed(() => {
     const cat = this.categoriaSeleccionada();

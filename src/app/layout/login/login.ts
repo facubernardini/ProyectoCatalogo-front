@@ -68,4 +68,8 @@ export class Login {
   recuperarPassword() {
     this.router.navigate(['/recovery']);
   }
+
+  registrarme() {
+    this.router.navigate(['/register']);
+  }
 }
