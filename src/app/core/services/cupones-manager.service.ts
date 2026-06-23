@@ -3,7 +3,7 @@ import { AdminStoreService } from './admin-store.service';
 import { ToastService } from './toast.service';
 import { ConfirmService } from './confirm.service';
 import { Cupon } from '../models/cupon.model';
-import { finalize } from 'rxjs';
+import { finalize, Subject } from 'rxjs';
 import { CuponServiceBackend } from '../services-backend/cupones.ServiceBackend';
 
 @Injectable({ providedIn: 'root' })
@@ -14,6 +14,9 @@ export class CuponManagerService {
   private confirmService = inject(ConfirmService);
 
   public isLoading = signal(false);
+
+  private operationSuccess = new Subject<void>();
+  public operationSuccess$ = this.operationSuccess.asObservable();
 
   // --- ELIMINAR ---
   async eliminar(cupon: Cupon, onSuccess?: () => void) {
@@ -133,7 +136,7 @@ export class CuponManagerService {
   }
 
   // --- CREAR O EDITAR ---
-  guardar(cuponData: any, currentCupon?: Cupon | null, onSuccess?: () => void) {
+  guardar(cuponData: any, currentCupon?: Cupon | null) {
     const catalogoId = this.adminStore.catalogo()?.id;
 
     if (!catalogoId) {
@@ -168,7 +171,7 @@ export class CuponManagerService {
           this.toastService.show(`Cupón creado con éxito`);
         }
         
-        if (onSuccess) onSuccess();
+        this.operationSuccess.next(); 
       },
       error: (err) => {
         console.error('Error al guardar cupón:', err);

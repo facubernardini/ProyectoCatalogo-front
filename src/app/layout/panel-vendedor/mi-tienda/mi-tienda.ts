@@ -256,7 +256,7 @@ export class MiTienda implements OnInit, OnDestroy {
     this.loading.set(true);
 
     const upload$: Observable<{ url: string | null }> = this.imagenLogoPendiente 
-      ? this.catalogoService.uploadLogoTienda(this.imagenLogoPendiente, dataActual.nombre_tienda) 
+      ? this.catalogoService.uploadLogoTienda(this.imagenLogoPendiente, dataActual.id) 
       : of({ url: null });
 
     upload$.pipe(

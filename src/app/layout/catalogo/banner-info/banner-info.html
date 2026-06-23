@@ -5,7 +5,7 @@
             
             @for (bloque of [0, 1]; track bloque) {
                 
-                <div class="flex items-center gap-4 px-2" [attr.aria-hidden]="bloque > 0 ? 'true' : null">
+                <div class="flex items-center gap-4 pl-2" [attr.aria-hidden]="bloque > 0 ? 'true' : null">
                     
                     @for (msg of anunciosBanner(); track $index) {
                         

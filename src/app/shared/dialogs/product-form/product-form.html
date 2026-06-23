@@ -60,7 +60,6 @@
                     </div>
                     <div class="flex-1">
                         <p class="text-sm font-bold text-brand-text">Foto del producto</p>
-                        <p class="text-xs text-gray-400 leading-tight">Recomendado: Cuadrada, fondo claro.</p>
                     </div>
                 </div>
             </section>
@@ -72,8 +71,7 @@
                     <label class="text-xs font-bold text-gray-600 ml-1">Nombre</label>
                     <input type="text" [(ngModel)]="producto.nombre" 
                         [class.border-red-300]="!producto.nombre || producto.nombre.trim().length === 0"
-                        class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300" 
-                        placeholder="Ej: Pizza Napolitana">
+                        class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text">
                 </div>
                 
                 <div class="flex flex-col gap-1.5">
@@ -154,36 +152,35 @@
                     </section>
                 </div>
 
-                <div class="pt-2 border-t border-gray-100 mt-2"> <section class="space-y-3 mt-4">
-                        <div class="flex items-center justify-between">
-                            <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Etiquetas (Tags)</p>
-                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
-                                {{ producto.tags_ids.length || 0 }} seleccionada(s)
-                            </span>
-                        </div>
+                <section class="space-y-3 mt-6">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Restricciones</p>
+                        <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
+                            {{ producto.tags_ids.length || 0 }} seleccionada(s)
+                        </span>
+                    </div>
 
-                        <div class="flex flex-wrap gap-2">
-                            @for (tag of adminStore.tags(); track tag.id) {
-                                <button type="button"
-                                        (click)="toggleTag(tag.id)"
-                                        [class]="isTagSelected(tag.id) 
-                                            ? 'bg-brand-accent text-white border-brand-accent shadow-md shadow-brand-accent/20 scale-105' 
-                                            : 'bg-gray-50 text-gray-500 border-gray-100 hover:border-gray-200'"
-                                        class="px-4 py-2 rounded-xl border text-xs font-bold transition-all duration-200 active:scale-95 flex items-center gap-2">
-                                    
-                                    @if (isTagSelected(tag.id)) {
-                                        <app-icon name="check" classes="size-3 fill-current" />
-                                    }
-                                    {{ tag.nombre }}
-                                </button>
-                            }
-                            
-                            @if (adminStore.tags().length === 0) {
-                                <p class="text-xs text-gray-400 italic">No hay etiquetas disponibles para tu rubro.</p>
-                            }
-                        </div>
-                    </section>
-                </div>
+                    <div class="flex flex-wrap gap-2">
+                        @for (tag of adminStore.tags(); track tag.id) {
+                            <button type="button"
+                                    (click)="toggleTag(tag.id)"
+                                    [class]="isTagSelected(tag.id) 
+                                        ? 'bg-brand-accent text-white border-brand-accent shadow-md shadow-brand-accent/20 scale-105' 
+                                        : 'bg-gray-50 text-gray-500 border-gray-100 hover:border-gray-200'"
+                                    class="px-4 py-2 rounded-xl border text-xs font-bold transition-all duration-200 active:scale-95 flex items-center gap-2">
+                                
+                                @if (isTagSelected(tag.id)) {
+                                    <app-icon name="check" classes="size-3 fill-current" />
+                                }
+                                {{ tag.nombre }}
+                            </button>
+                        }
+                        
+                        @if (adminStore.tags().length === 0) {
+                            <p class="text-xs text-gray-400 italic">No hay etiquetas disponibles para tu rubro.</p>
+                        }
+                    </div>
+                </section>
             </section>
 
             <section>
@@ -201,7 +198,7 @@
             <section class="space-y-4 pb-12">
                 <div class="flex items-center justify-between pb-1">
                     <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Precios y Unidades</p>
-                    <button (click)="agregarPresentacion()" class="text-brand-accent text-xs font-bold hover:underline">+ Agregar</button>
+                    <button (click)="agregarPresentacion()" class="text-brand-accent text-xs font-bold active:scale-95">+ Agregar</button>
                 </div>
 
                 @for (pres of producto.presentaciones; track $index) {
@@ -227,7 +224,7 @@
                                 <input type="text" [(ngModel)]="pres.unidad_venta" 
                                     [class.border-red-300]="!pres.unidad_venta || pres.unidad_venta.trim() === ''"
                                     class="w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
-                                    placeholder="Ej: 500 gr, Pack x6">
+                                    placeholder="Ej: 500 gr, Pack x6, Docena, Unidad">
                             </div>
                             <div class="col-span-6">
                                 <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio</label>

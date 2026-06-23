@@ -3,7 +3,7 @@ import { AdminStoreService } from './admin-store.service';
 import { ToastService } from './toast.service';
 import { ConfirmService } from './confirm.service';
 import { Producto } from '../models/producto.model';
-import { finalize, map, Observable, of, Subject, switchMap } from 'rxjs';
+import { finalize, map, Observable, of, Subject, switchMap, throwError } from 'rxjs';
 import { ProductoService } from '../services-backend/productos.ServiceBackend';
 
 @Injectable({ providedIn: 'root' })
@@ -178,7 +178,7 @@ export class ProductoManagerService {
     // Creamos un observable para la subida de la imagen.
     // Si NO hay imagen, usamos 'of(null)' para continuar inmediatamente.
     const uploadImage$: Observable<string | null> = imagenFile 
-    ? this.subirImagenR2(imagenFile, catalogo.nombre_tienda) 
+    ? this.subirImagenR2(imagenFile) 
     : of(null);
 
     uploadImage$.pipe(
@@ -221,9 +221,15 @@ export class ProductoManagerService {
   }
 
   // SUBIR FOTO DE PRODUCTO
-  private subirImagenR2(file: File, nombreCatalogo: string) {
-    return this.productoBackend.uploadImagen(file, nombreCatalogo).pipe(
-        map(res => res.url) 
+  private subirImagenR2(file: File) {
+    const catalogoId = this.adminStore.catalogo()?.id;
+    if (!catalogoId) {
+      this.toastService.show('Error: ID del catálogo no disponible', 'error');
+      return throwError(() => new Error('No catalogoId'));
+    }
+
+    return this.productoBackend.uploadImagen(file, catalogoId).pipe(
+      map(res => res.url) 
     );
   }
 }

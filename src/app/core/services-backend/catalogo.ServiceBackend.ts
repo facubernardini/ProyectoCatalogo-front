@@ -28,9 +28,9 @@ export class CatalogoService {
         return this.http.patch<Catalogo>(`${this.API_URL}/seller/catalogos/${id}`, datosActualizados);
     }
 
-	uploadLogoTienda(file: File, nombreCatalogo: string): Observable<{ url: string }> {
+	uploadLogoTienda(file: File, catalogoId: number): Observable<{ url: string }> {
 		const formData = new FormData();
-		formData.append('nombreCatalogo', nombreCatalogo);
+		formData.append('catalogoId', catalogoId.toString());
 		formData.append('foto', file);
 		
 		return this.http.post<{ url: string }>(`${this.API_URL}/seller/catalogos/upload-imagen`, formData);

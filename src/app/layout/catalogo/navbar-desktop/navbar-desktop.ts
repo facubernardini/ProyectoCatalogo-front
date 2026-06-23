@@ -5,10 +5,11 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { InfoService } from '@shared/services/info.service';
 import { SearchService } from '@shared/services/search.service';
 import { CartService } from '@shared/services/cart.service';
+import { BannerInfoDesktop } from "../banner-info-desktop/banner-info-desktop";
 
 @Component({
   selector: 'app-navbar-desktop',
-  imports: [Icon],
+  imports: [Icon, BannerInfoDesktop],
   templateUrl: './navbar-desktop.html',
   styleUrl: './navbar-desktop.css',
 })

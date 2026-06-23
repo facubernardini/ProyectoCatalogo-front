@@ -8,7 +8,7 @@ import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 import { CategoryDeleteService } from '@shared/services/category-delete.service';
 import { CategoryFormService } from '@shared/services/category-form.service';
 import { CategoryPreviewService } from '@shared/services/category-preview.service';
-import { CategoriaManagerService } from 'src/app/core/services/categoria-manager.service'; // <-- Nuevo Manager
+import { CategoriaManagerService } from 'src/app/core/services/categoria-manager.service';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 
 @Component({
@@ -26,6 +26,8 @@ export class MisCategorias {
 
   public categoriaManager = inject(CategoriaManagerService);
   public categoryPreview = inject(CategoryPreviewService);
+
+  hasCategorias = computed(() => this.adminStore.categorias().length > 0);
 
   busquedaRaw = signal('');
   filtro = signal('');
@@ -131,7 +133,6 @@ export class MisCategorias {
       p.categorias?.length === 1 && p.categorias[0].id === categoria.id
     );
 
-    // 1. Si no hay huérfanos, borrado directo
     if (productosAfectados.length === 0) {
       const confirm = await this.confirmService.ask({
         title: '¿Eliminar categoría?',
@@ -141,21 +142,16 @@ export class MisCategorias {
       });
 
       if (!confirm) return;
-      
-      // Llamamos al manager pasando el ID y la acción por defecto
       this.categoriaManager.eliminar(categoria.id, 'eliminar');
       return;
     }
 
-    // 2. Si hay huérfanos, el servicio se encarga de mostrar el modal especial
     const resultado = await this.categoryDeleteService.ask({
       categoria,
       productosAfectados: productosAfectados
     });
 
     if (!resultado) return;
-
-    // 3. Ejecutamos usando el manager según lo que eligió en el modal
     this.categoriaManager.eliminar(categoria.id, resultado.accion, resultado.categoriaDestinoId);
   }
 }

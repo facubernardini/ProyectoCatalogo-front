@@ -23,8 +23,11 @@ import { PedidoRealizado } from "@shared/dialogs/pedido-realizado/pedido-realiza
 import { Title } from '@angular/platform-browser';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { NavbarDesktop } from "./navbar-desktop/navbar-desktop";
-import { BannerInfoDesktop } from "./banner-info-desktop/banner-info-desktop";
 import { MenuLateralDesktop } from "./menu-lateral-desktop/menu-lateral-desktop";
+import { CarouselDestacadosDesktop } from "./carousel-destacados-desktop/carousel-destacados-desktop";
+import { CarouselOfertasDesktop } from "./carousel-ofertas-desktop/carousel-ofertas-desktop";
+import { ListaProductosDesktop } from "./lista-productos-desktop/lista-productos-desktop";
+import { FooterDesktop } from "./footer-desktop/footer-desktop";
 
 @Component({
   selector: 'app-catalogo',
@@ -42,8 +45,11 @@ import { MenuLateralDesktop } from "./menu-lateral-desktop/menu-lateral-desktop"
     Skeleton,
     PedidoRealizado,
     NavbarDesktop,
-    BannerInfoDesktop,
-    MenuLateralDesktop
+    MenuLateralDesktop,
+    CarouselDestacadosDesktop,
+    CarouselOfertasDesktop,
+    ListaProductosDesktop,
+    FooterDesktop
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
