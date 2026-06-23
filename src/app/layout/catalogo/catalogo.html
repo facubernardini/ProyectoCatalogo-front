@@ -1,25 +1,56 @@
 @if (adminStore.isLoading()) {
     <app-catalogo-skeleton/>
 } @else {
-    <!-- Layout -->
-    <app-navbar/>
-    <app-banner-info/>
-    <app-search-nav/>
-    <app-carousel-destacados/>
-    <app-carousel-ofertas/>
-    <app-lista-productos/>
+    @if (isDesktop()) {
+        <!-- Layout Desktop -->
+        <app-navbar-desktop/>
 
-    <!-- Dialogs emergentes -->
-    <app-search-products/>
-    <app-carrito/>
-    <app-menu-info/>
-    <app-product-selector/>
-    <app-menu-lateral/>
-    <app-category-products-view/>
-    <app-map-dialog/>
-    <app-productos-destacados/>
-    <app-productos-ofertas/>
-    <app-pedido-realizado/>
+        <div class="mx-auto flex max-w-7xl items-start gap-8 py-5 px-2">
+            <aside class="w-72 shrink-0 sticky top-34 max-h-[calc(100vh-7rem)] overflow-y-auto custom-scrollbar rounded-2xl">
+                <app-menu-lateral-desktop/>
+            </aside>
+            <main class="flex-1 min-w-0 flex flex-col gap-5">
+                <app-carousel-destacados-desktop/>
+                <app-carousel-ofertas-desktop/>
+                <app-lista-productos-desktop/>
+            </main>
+        </div>
+
+        <app-footer-desktop/>
+
+        <!-- Dialogs emergentes (REHACER COMPONENTES PERO USAR MISMOS SERVICIOS) -->
+        <app-search-products/>
+        <app-carrito/>
+        <app-menu-info/>
+        <app-product-selector/>
+        <app-menu-lateral/>
+        <app-category-products-view/>
+        <app-map-dialog/>
+        <app-productos-destacados/>
+        <app-productos-ofertas/>
+        <app-pedido-realizado/>
+    }
+    @else {
+        <!-- Layout Mobile -->
+        <app-navbar/>
+        <app-banner-info/>
+        <app-search-nav/>
+        <app-carousel-destacados/>
+        <app-carousel-ofertas/>
+        <app-lista-productos/>
+
+        <!-- Dialogs emergentes -->
+        <app-search-products/>
+        <app-carrito/>
+        <app-menu-info/>
+        <app-product-selector/>
+        <app-menu-lateral/>
+        <app-category-products-view/>
+        <app-map-dialog/>
+        <app-productos-destacados/>
+        <app-productos-ofertas/>
+        <app-pedido-realizado/>
+    }
 
     <!-- Toast -->
     <app-toast/>

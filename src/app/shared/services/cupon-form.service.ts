@@ -24,6 +24,12 @@ export class CuponFormService {
     fecha_expiracion: '' as string | null
   });
 
+  constructor() {
+    this.cuponManager.operationSuccess$.subscribe(() => {
+      this.close();
+    });
+  }
+
   openCreate() {
     this.editingCupon.set(null);
     this.resetForm();
@@ -104,9 +110,7 @@ export class CuponFormService {
     };
 
     // 3. Delegamos al Manager pasando el callback de cierre
-    this.cuponManager.guardar(payload, this.editingCupon() ?? undefined, () => {
-      this.close();
-    });
+    this.cuponManager.guardar(payload, this.editingCupon() ?? undefined);
   }
 
   cambiarTipoDescuento(esPorcentaje: boolean) {

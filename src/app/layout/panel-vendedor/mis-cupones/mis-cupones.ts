@@ -22,6 +22,11 @@ export class MisCupones {
   public cuponFormService = inject(CuponFormService);
   public cuponManager = inject(CuponManagerService);
 
+  hasCupones = computed(() => {
+    const lista = this.adminStore.cupones();
+    return lista && lista.length > 0;
+  });
+
   busquedaRaw = signal('');
   filtro = signal('');
   isBuscando = signal(false);

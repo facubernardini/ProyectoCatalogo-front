@@ -1,4 +1,4 @@
-import { Component, DOCUMENT, effect, inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { Component, DOCUMENT, effect, HostListener, inject, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -20,6 +20,14 @@ import { ProductosDestacados } from "@shared/dialogs/productos-destacados/produc
 import { ProductosOfertas } from "@shared/dialogs/productos-ofertas/productos-ofertas";
 import { Skeleton } from "./skeleton/skeleton";
 import { PedidoRealizado } from "@shared/dialogs/pedido-realizado/pedido-realizado";
+import { Title } from '@angular/platform-browser';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
+import { NavbarDesktop } from "./navbar-desktop/navbar-desktop";
+import { MenuLateralDesktop } from "./menu-lateral-desktop/menu-lateral-desktop";
+import { CarouselDestacadosDesktop } from "./carousel-destacados-desktop/carousel-destacados-desktop";
+import { CarouselOfertasDesktop } from "./carousel-ofertas-desktop/carousel-ofertas-desktop";
+import { ListaProductosDesktop } from "./lista-productos-desktop/lista-productos-desktop";
+import { FooterDesktop } from "./footer-desktop/footer-desktop";
 
 @Component({
   selector: 'app-catalogo',
@@ -35,23 +43,44 @@ import { PedidoRealizado } from "@shared/dialogs/pedido-realizado/pedido-realiza
     ProductosDestacados,
     ProductosOfertas,
     Skeleton,
-    PedidoRealizado
+    PedidoRealizado,
+    NavbarDesktop,
+    MenuLateralDesktop,
+    CarouselDestacadosDesktop,
+    CarouselOfertasDesktop,
+    ListaProductosDesktop,
+    FooterDesktop
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
 export class CatalogoPublico implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
+  private titleService = inject(Title);
   public adminStore = inject(AdminStoreService);
 
   private renderer = inject(Renderer2);
   private document = inject(DOCUMENT);
 
+  isDesktop = signal(window.innerWidth >= 768);
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isDesktop.set(window.innerWidth >= 768);
+  }
+
   constructor() {
     effect(() => {
       const catalogo = this.adminStore.catalogo();
+      
       const tema = catalogo?.tema?.toLowerCase() ?? 'midnight';
       this.renderer.setAttribute(this.document.documentElement, 'data-theme', tema);
+
+      if (catalogo?.nombre_tienda) {
+        this.titleService.setTitle(`${catalogo.nombre_tienda}`);
+      } else {
+        this.titleService.setTitle(`${BRAND_DATA.name}`);
+      }
     });
 
     effect(() => {

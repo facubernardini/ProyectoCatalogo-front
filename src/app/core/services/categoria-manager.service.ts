@@ -3,7 +3,7 @@ import { AdminStoreService } from './admin-store.service';
 import { ToastService } from './toast.service';
 import { ConfirmService } from './confirm.service';
 import { CategoriaService } from '../services-backend/categorias.ServiceBackend';
-import { finalize } from 'rxjs';
+import { finalize, Subject } from 'rxjs';
 import { CategoriaVendedor } from '../models/categoriaVendedor.model';
 
 @Injectable({ providedIn: 'root' })
@@ -14,6 +14,9 @@ export class CategoriaManagerService {
   private confirmService = inject(ConfirmService);
 
   public isLoading = signal(false);
+
+  private operationSuccess = new Subject<void>();
+  public operationSuccess$ = this.operationSuccess.asObservable();
 
   // --- ELIMINAR ---
   eliminar(categoriaId: number, accionProductos: 'mover' | 'eliminar', categoriaDestino?: number) {
@@ -95,9 +98,8 @@ export class CategoriaManagerService {
     ).subscribe({
       next: (categoriaActualizada) => {
         this.adminStore.updateCategoriaEnLista(categoriaActualizada);
-        
         this.toastService.show(
-          estaActiva ? 'Categoría pausada correctamente' : '¡Categoría activada para el catálogo!'
+          estaActiva ? 'Categoría pausada correctamente' : 'Categoría activada correctamente'
         );
       },
       error: (err) => {
@@ -138,6 +140,7 @@ export class CategoriaManagerService {
           this.adminStore.agregarCategoriaALista(res);
           this.toastService.show(`Categoría creada con éxito`);
         }
+        this.operationSuccess.next();
       },
       error: (err) => {
         console.error('Error al guardar categoría:', err);

@@ -10,6 +10,7 @@ import { ProductPreviewService } from '@shared/services/product-preview.service'
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { PdfExportService } from 'src/app/core/services/pdf-export.service';
 import { ToastService } from 'src/app/core/services/toast.service';
+import { CategoryFormService } from 'src/app/shared/services/category-form.service';
 
 @Component({
   selector: 'app-mis-productos',
@@ -23,12 +24,16 @@ export class MisProductos {
   private productFormService = inject(ProductFormService);
   private toastService = inject(ToastService);
   private pdfExportService = inject(PdfExportService);
+  private categoryFormService = inject(CategoryFormService);
   
   public productManager = inject(ProductoManagerService); 
   public productPreviewService = inject(ProductPreviewService);
 
   productos = this.adminStore.productos; 
   categorias = this.adminStore.categorias;
+
+  hasCategorias = computed(() => this.categorias().length > 0);
+  hasProductos = computed(() => this.productos().length > 0);
 
   isCategoriaDropdownOpen = signal<boolean>(false);
   categoriaSeleccionada = signal<string>('todos');
@@ -100,6 +105,7 @@ export class MisProductos {
   }
 
   toggleCategoriaDropdown() {
+    if (!this.hasProductos()) return;
     this.isCategoriaDropdownOpen.set(!this.isCategoriaDropdownOpen());
   }
 
@@ -110,6 +116,10 @@ export class MisProductos {
 
   volverAtras() {
     this.location.back();
+  }
+  
+  onAddCategoria() {
+    this.categoryFormService.openCreate();
   }
 
   onAdd() {
@@ -166,7 +176,6 @@ export class MisProductos {
     this.toastService.show('Generando PDF...');
 
     try {
-      // Llamamos al método pasándole el objeto catálogo completo (para poder sacar el logo y el nombre)
       await this.pdfExportService.exportarCatalogo(categorias, todosLosProductos, catalogo);
     } catch (error) {
       console.error(error);
@@ -175,7 +184,6 @@ export class MisProductos {
   }
 
   // --- MÉTODOS DELEGADOS AL MANAGER ---
-
   onEliminar(producto: Producto) {
     this.productManager.eliminar(producto);
   }

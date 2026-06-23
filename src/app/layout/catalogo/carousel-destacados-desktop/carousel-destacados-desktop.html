@@ -1,0 +1,117 @@
+@if (productosDestacados().length > 0) {
+    <section class="mb-2 relative group/section">
+        
+        <div class="mb-5 flex items-end justify-between">
+            <h2 class="text-2xl font-black text-brand-text flex items-center gap-2">
+                Lo más pedido <span class="animate-pulse text-2xl">🔥</span>
+            </h2>
+            
+            <button (click)="productosDestacadosService.open()"
+                    class="text-sm font-extrabold text-brand-accent hover:text-white bg-brand-accent/10 hover:bg-brand-accent px-4 py-2 rounded-xl active:scale-95 transition-all duration-300 flex items-center gap-1 group/btn">
+                Ver todo
+                <app-icon name="chevron-right" classes="size-4 fill-current group-hover/btn:translate-x-1 transition-transform" />
+            </button>
+        </div>
+        
+        <div class="relative">
+            
+            @if (paginas().length > 1) {
+                <button (click)="prev()"
+                        class="absolute -left-5 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white shadow-[0_5px_15px_rgba(0,0,0,0.1)] border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
+                    <app-icon name="chevron-left" classes="size-6 fill-current" />
+                </button>
+            }
+
+            <div class="overflow-hidden rounded-3xl pb-4 -mx-2 px-4">
+                
+                <div class="flex transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                     [style.transform]="'translateX(-' + (currentPage() * 100) + '%)'">
+                    
+                    @for (pagina of paginas(); track $index) {
+                        
+                        <div class="w-full shrink-0 grid grid-cols-2 gap-5 px-2">
+                            
+                            @for (producto of pagina; track producto.id) {
+                                
+                                <div (click)="productSelectorService.open(producto)"
+                                     class="bg-white rounded-3xl overflow-hidden hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] border border-gray-100 transition-shadow duration-300 cursor-pointer group/card flex flex-col h-full">
+                                    
+                                    <div class="relative h-56 bg-brand-bg overflow-hidden shrink-0">
+                                        <img [src]="producto.imagen || 'https://placehold.co/400x300'" 
+                                             class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
+                                        
+                                        <div class="absolute top-4 left-4 z-20">
+                                            <div class="relative overflow-hidden bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-brand-accent/15 shadow-lg shadow-brand-accent/10">
+                                                <div class="absolute inset-0 h-full bg-linear-to-r from-transparent via-brand-accent/15 to-transparent animate-shimmer"></div>
+                                                <div class="relative flex items-center gap-1.5">
+                                                    <app-icon name="star" classes="size-4 fill-brand-accent" />
+                                                    <span class="text-[10px] font-black text-brand-accent uppercase tracking-widest">Destacado</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-5 flex flex-col flex-1">
+                                        <h3 class="font-bold text-brand-text text-lg mb-1 group-hover/card:text-brand-accent transition-colors">{{ producto.nombre }}</h3>
+                                        <p class="text-brand-text-sec text-sm line-clamp-2 mb-3 flex-1">{{ producto.descripcion }}</p>
+                                        
+                                        <div class="flex flex-wrap gap-1.5 mb-3 mt-auto">
+                                            @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
+                                                <span class="text-[10px] font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg border border-gray-200/60 uppercase tracking-tight">
+                                                    {{ pres.unidad_venta }}
+                                                </span>
+                                            }
+                                            @if (producto.presentaciones.length > 3) {
+                                                <span class="text-[10px] font-black text-brand-accent self-center ml-1">
+                                                    +{{ producto.presentaciones.length - 3 }}
+                                                </span>
+                                            }
+                                        </div>
+
+                                        <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                                            <div class="flex items-baseline gap-1.5">
+                                                @let cheapest = getMejorOferta(producto.presentaciones);
+
+                                                @if (producto.presentaciones.length > 1) {
+                                                    <span class="text-[11px] text-gray-400 font-bold uppercase tracking-widest">Desde</span>
+                                                }
+
+                                                @if (cheapest && cheapest.precio_descuento) {
+                                                    <span class="text-sm text-gray-400 line-through font-semibold mr-1">${{ cheapest.precio }}</span>
+                                                    <span class="text-brand-accent font-black text-2xl">${{ cheapest.precio_descuento }}</span>
+                                                } @else {
+                                                    <span class="text-brand-accent font-black text-2xl">${{ cheapest?.precio }}</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (paginas().length > 1) {
+                <button (click)="next()"
+                        class="absolute -right-5 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white shadow-[0_5px_15px_rgba(0,0,0,0.1)] border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
+                    <app-icon name="chevron-right" classes="size-6 fill-current" />
+                </button>
+            }
+
+        </div>
+
+        @if (paginas().length > 1) {
+            <div class="flex items-center justify-center gap-3 mt-2">
+                @for (pagina of paginas(); track $index) {
+                    <button (click)="goTo($index)"
+                            aria-label="Ir a página"
+                            class="rounded-full transition-all duration-300"
+                            [class]="currentPage() === $index ? 'w-6 h-2 bg-brand-accent' : 'w-2 h-2 bg-gray-200 hover:bg-gray-300'">
+                    </button>
+                }
+            </div>
+        }
+
+    </section>
+}

@@ -8,11 +8,16 @@ export class CategoryFormService {
 
   isOpen = signal(false);
   
-  // Vinculamos la señal de carga directamente a la del manager
   loading = this.categoriaManager.isLoading;
 
   nombre = signal('');
   editingCategory = signal<CategoriaVendedor | null>(null);
+
+  constructor() {
+    this.categoriaManager.operationSuccess$.subscribe(() => {
+      this.close();
+    });
+  }
 
   openCreate() {
     this.nombre.set('');
@@ -36,6 +41,5 @@ export class CategoryFormService {
     if (!datos.nombre?.trim()) return;
 
     this.categoriaManager.guardar(datos, this.editingCategory() ?? undefined);
-    this.close();
   }
 }
