@@ -27,7 +27,16 @@
       </div>
 
       <div>
-        <label class="block text-sm font-semibold text-brand-text mb-2">Contraseña</label>
+        <div class="flex items-center justify-between mb-2">
+          <label class="block text-sm font-semibold text-brand-text">Contraseña</label>
+          <a (click)="!isLoading() && recuperarPassword()" 
+             [class.opacity-50]="isLoading()"
+             [class.cursor-not-allowed]="isLoading()"
+             class="text-xs text-brand-accent font-bold hover:underline cursor-pointer transition-opacity">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+        
         <div class="relative">
           <input 
             [type]="showPassword() ? 'text' : 'password'" 
@@ -74,12 +83,10 @@
     </form>
 
     <p class="mt-8 text-center text-xs text-brand-text-sec">
-      ¿Olvidaste tu acceso? 
-      <a (click)="!isLoading() && recuperarPassword()" 
-         [class.opacity-50]="isLoading()"
-         [class.cursor-not-allowed]="isLoading()"
-         class="text-brand-accent font-semibold hover:underline cursor-pointer transition-opacity">
-          Recuperar contraseña
+      ¿Todavía no tenés tu catálogo online? 
+      <a (click)="!isLoading() && registrarme()"
+        class="text-brand-accent font-bold hover:underline cursor-pointer transition-opacity">
+        Crear tienda gratis
       </a>
     </p>
   </div>
