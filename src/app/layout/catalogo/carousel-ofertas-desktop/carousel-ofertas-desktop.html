@@ -46,7 +46,7 @@
                                         </div>
 
                                         @if (oferta) {
-                                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-sm border border-gray-100 z-20">
+                                            <div class="flex items-center absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-sm border border-gray-100 z-20">
                                                 <span class="text-[10px] font-black text-brand-text tracking-tight uppercase">
                                                 {{ oferta.unidad_venta }}
                                                 </span>
@@ -75,12 +75,6 @@
                                                     </span>
                                                 }
                                             </div>
-
-                                            <button (click)="manejarClickOferta(producto, $event)"
-                                                    class="bg-brand-accent text-white p-2.5 rounded-xl hover:bg-brand-accent/90 hover:shadow-lg hover:shadow-brand-accent/20 hover:-translate-y-0.5 active:scale-95 transition-all">
-                                                <app-icon name="shop-add" classes="size-5 fill-current" />
-                                            </button>
-
                                         </div>
                                     </div>
                                 </div>

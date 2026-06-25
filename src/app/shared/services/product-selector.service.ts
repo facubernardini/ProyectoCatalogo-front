@@ -11,6 +11,8 @@ export class ProductSelectorService {
   isOpen = signal(false);
 
   private preventScrollRestore = signal(false);
+  
+  private closeTimeoutId: ReturnType<typeof setTimeout> | null = null; 
 
   constructor() {
     window.addEventListener('popstate', () => {
@@ -21,6 +23,11 @@ export class ProductSelectorService {
   }
 
   open(producto: Producto, fromModal: boolean = false) {
+    if (this.closeTimeoutId) {
+      clearTimeout(this.closeTimeoutId);
+      this.closeTimeoutId = null;
+    }
+
     const yaEstabaAbierto = this.isOpen();
     
     this.selectedProduct.set(producto);
@@ -46,7 +53,11 @@ export class ProductSelectorService {
     if (!this.isOpen()) return;
 
     this.isOpen.set(false);
-    setTimeout(() => this.selectedProduct.set(null), 300);
+    
+    this.closeTimeoutId = setTimeout(() => {
+      this.selectedProduct.set(null);
+      this.closeTimeoutId = null;
+    }, 300);
     
     if (!this.preventScrollRestore()) {
       document.body.style.overflow = 'auto';

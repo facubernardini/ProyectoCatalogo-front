@@ -1,10 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { CartService } from '@shared/services/cart.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
 
@@ -18,7 +16,6 @@ export class CarouselOfertasDesktop {
   public adminStore = inject(AdminStoreService);
   public productosOfertasService = inject(ProductosOfertasService);
   public productSelectorService = inject(ProductSelectorService);
-  private cartService = inject(CartService);
 
   productosOferta = computed(() => 
     this.adminStore.productos().filter(p => 
@@ -67,20 +64,5 @@ export class CarouselOfertasDesktop {
     return ofertas.reduce((min, p) => 
       Number(p.precio_descuento) < Number(min.precio_descuento) ? p : min
     );
-  }
-
-  manejarClickOferta(producto: Producto, event: Event) {
-    // Evitamos que el clic en el botón del carrito abra también el modal del producto
-    event.stopPropagation(); 
-    
-    const presentacionesEnOferta = producto.presentaciones.filter(
-      p => p.precio_descuento !== null
-    );
-
-    if (presentacionesEnOferta.length === 1) {
-      this.cartService.agregarProducto(producto, presentacionesEnOferta[0]);
-    } else if (presentacionesEnOferta.length > 1) {
-      this.productSelectorService.open(producto);
-    }
   }
 }

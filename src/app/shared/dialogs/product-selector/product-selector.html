@@ -1,13 +1,13 @@
 @if (productSelectorService.isOpen()) {
-    <div class="fixed inset-0 z-80 bg-black/60 backdrop-blur-sm transition-all" 
+    <div class="fixed inset-0 z-80 bg-black/60 backdrop-blur-sm transition-all flex flex-col justify-end md:justify-center md:items-center md:p-4" 
         (click)="productSelectorService.close()">
         
         <div appSwipeDown
             (onSwipe)="productSelectorService.close()"
-            class="fixed bottom-0 w-full bg-white rounded-t-[40px] p-6 shadow-2xl animate-in slide-in-from-bottom duration-300" 
+            class="w-full md:max-w-125 bg-white rounded-t-[40px] md:rounded-4xl p-6 shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:fade-in md:zoom-in-[0.98] duration-300" 
             (click)="$event.stopPropagation()">
         
-            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 md:hidden"></div>
 
             @if (productSelectorService.selectedProduct(); as prod) {
                 <div class="flex gap-4 mb-8">
@@ -47,7 +47,7 @@
                 <div class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto no-scrollbar">
                     @for (pres of prod.presentaciones; track pres.id) {
                         
-                        <div class="flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 border-gray-100 hover:border-brand-accent/30 transition-all bg-white">
+                        <div class="flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 border-gray-100 md:hover:border-brand-accent/30 transition-all bg-white">
                             
                             <div class="flex flex-col items-start text-left flex-1 pr-2">
                                 <span class="text-base font-bold text-gray-600">
@@ -79,7 +79,7 @@
                                 
                                 <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl p-1 shadow-inner">
                                     <button type="button" (click)="decrementar(pres.id)"
-                                            class="size-8 flex items-center justify-center rounded-lg hover:bg-white hover:shadow-sm text-gray-500 transition-all active:scale-95 disabled:opacity-30 disabled:hover:bg-transparent disabled:shadow-none"
+                                            class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95 disabled:opacity-30 disabled:md:hover:bg-transparent disabled:shadow-none"
                                             [disabled]="getCantidad(pres.id) <= 1"> 
                                         <app-icon name="remove" classes="size-4 fill-current" />
                                     </button>
@@ -93,14 +93,14 @@
                                     </div>
                                     
                                     <button type="button" (click)="incrementar(pres.id)"
-                                            class="size-8 flex items-center justify-center rounded-lg hover:bg-white hover:shadow-sm text-gray-500 transition-all active:scale-95">
+                                            class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95">
                                         <app-icon name="add-producto" classes="size-4 fill-current" />
                                     </button>
                                 </div>
 
                                 <button type="button" (click)="agregarAlCarrito(pres)"
                                         [disabled]="getCantidad(pres.id) === 0"
-                                        class="size-11 flex items-center justify-center bg-brand-accent text-white rounded-xl shadow-md shadow-brand-accent/30 hover:bg-brand-accent/90 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none">
+                                        class="size-11 flex items-center justify-center bg-brand-accent text-white rounded-xl shadow-md shadow-brand-accent/30 md:hover:bg-brand-accent/90 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none">
                                     <app-icon name="shop-add" classes="size-5 fill-current" />
                                 </button>
                             </div>
@@ -111,7 +111,7 @@
             }
 
             <button (click)="productSelectorService.close()" 
-                    class="w-full mt-6 py-4 text-gray-400 font-bold hover:text-brand-text transition-colors">
+                    class="w-full mt-6 py-4 text-gray-400 font-bold md:hover:text-brand-text transition-colors">
                 Cancelar
             </button>
         </div>

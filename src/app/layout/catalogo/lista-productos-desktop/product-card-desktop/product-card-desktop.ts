@@ -3,10 +3,11 @@ import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
+import { SafeHtmlPipe } from "../../../../core/pipes/safe-html.pipe";
 
 @Component({
   selector: 'app-product-card-desktop',
-  imports: [Icon],
+  imports: [Icon, SafeHtmlPipe],
   templateUrl: './product-card-desktop.html',
   styleUrl: './product-card-desktop.css',
 })
@@ -23,7 +24,4 @@ export class ProductCardDesktop {
     });
   }
 
-  tieneOfertas(presentaciones: Presentacion[]): boolean {
-    return presentaciones.some(p => p.precio_descuento !== null);
-  }
 }
