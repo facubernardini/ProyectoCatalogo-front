@@ -5,6 +5,7 @@ import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ProductosDestacadosService } from '@shared/services/productos-destacados.service';
+import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
 
 @Component({
   selector: 'app-carousel-destacados-desktop',
@@ -14,15 +15,13 @@ import { ProductosDestacadosService } from '@shared/services/productos-destacado
 })
 export class CarouselDestacadosDesktop {
   public adminStore = inject(AdminStoreService);
-  public productosDestacadosService = inject(ProductosDestacadosService);
   public productSelectorService = inject(ProductSelectorService);
+  public exploradorService = inject(ExploradorProductosService);
 
-  // 1. Obtenemos los destacados
   productosDestacados = computed(() => 
     this.adminStore.productos().filter(p => p.destacado)
   );
 
-  // 2. MAGIA DESKTOP: Dividimos el array de a 2 productos por "página"
   paginas = computed(() => {
     const productos = this.productosDestacados();
     const agrupados = [];
@@ -32,14 +31,17 @@ export class CarouselDestacadosDesktop {
     return agrupados;
   });
 
-  // 3. Estado de la página actual para los puntitos y flechas
   currentPage = signal(0);
+
+  verTodosLosDestacados() {
+    this.exploradorService.verDestacados();
+  }
 
   next() {
     if (this.currentPage() < this.paginas().length - 1) {
       this.currentPage.update(p => p + 1);
     } else {
-      this.currentPage.set(0); // Vuelve al principio si llegó al final
+      this.currentPage.set(0);
     }
   }
 
@@ -47,7 +49,7 @@ export class CarouselDestacadosDesktop {
     if (this.currentPage() > 0) {
       this.currentPage.update(p => p - 1);
     } else {
-      this.currentPage.set(this.paginas().length - 1); // Va al final si estaba en el principio
+      this.currentPage.set(this.paginas().length - 1);
     }
   }
 

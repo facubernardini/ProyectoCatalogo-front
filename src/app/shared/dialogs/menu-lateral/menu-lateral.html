@@ -1,7 +1,7 @@
 <div class="fixed inset-0 z-50 transition-all duration-300 invisible"
     [class.invisible]="!menuService.isOpen()">
 
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+    <div class="absolute inset-0 bg-black/60 transition-opacity duration-300 opacity-0"
         [class.opacity-0]="!menuService.isOpen()"
         [class.opacity-100]="menuService.isOpen()"
         (click)="menuService.close()">

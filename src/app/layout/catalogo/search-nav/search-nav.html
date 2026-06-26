@@ -1,14 +1,10 @@
 <div #sentinel class="h-px w-full pointer-events-none"></div>
 
 <div #stickyHeader
-    class="sticky top-0 z-40 w-full transition-all duration-500 ease-in-out"
-    [class.bg-white/70]="isStuck()"
-    [class.backdrop-blur-md]="isStuck()"
+    class="sticky top-0 z-40 py-2 w-full transition-all duration-500 ease-in-out"
+    [class.bg-gray-50]="isStuck()"
     [class.shadow-xl]="isStuck()"
-    [class.rounded-b-[32px]]="isStuck()"
-    [class.py-2]="isStuck()"
-    [class.py-1]="!isStuck()"
-    [class.bg-transparent]="!isStuck()">
+    [class.rounded-b-[32px]]="isStuck()">
     
     <div class="w-full max-w-7xl mx-auto px-4 py-2 flex items-center gap-3">
         <button (click)="menuService.open()" 

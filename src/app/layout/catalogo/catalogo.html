@@ -5,14 +5,22 @@
         <!-- Layout Desktop -->
         <app-navbar-desktop/>
 
-        <div class="mx-auto flex max-w-7xl items-start gap-8 py-5 px-2">
+        <div class="w-full flex items-start gap-8 py-5 px-4 sm:px-6 lg:px-8">
             <aside class="w-72 shrink-0 sticky top-34 max-h-[calc(100vh-5rem)] overflow-y-auto custom-scrollbar rounded-2xl">
                 <app-menu-lateral-desktop/>
             </aside>
+            
             <main class="flex-1 min-w-0 flex flex-col gap-5">
-                <app-carousel-destacados-desktop/>
-                <app-carousel-ofertas-desktop/>
-                <app-lista-productos-desktop/>
+        
+                @if (exploradorProductosService.vistaActual() === 'home') {
+                    <app-carousel-destacados-desktop/>
+                    <app-carousel-ofertas-desktop/>
+                    <app-lista-productos-desktop/>
+                } 
+                @else {
+                    <app-explorador-productos-desktop/>
+                }
+                
             </main>
         </div>
 

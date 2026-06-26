@@ -1,5 +1,5 @@
 @if (confirmService.isOpen()) {
-    <div class="fixed inset-0 z-110 bg-black/60 backdrop-blur-sm transition-all" (click)="confirmService.cancel()">
+    <div class="fixed inset-0 z-110 bg-black/60" (click)="confirmService.cancel()">
         <div appSwipeDown (onSwipe)="confirmService.cancel()"
              class="fixed bottom-0 w-full bg-white rounded-t-[40px] p-8 shadow-2xl animate-in slide-in-from-bottom-full duration-500 ease-out" 
              (click)="$event.stopPropagation()">

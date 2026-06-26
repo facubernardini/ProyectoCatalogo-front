@@ -1,11 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "src/app/shared/components/icon";
-import { CategoryViewService } from 'src/app/shared/services/category-view.service';
+import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
 import { InfoService } from 'src/app/shared/services/info.service';
 import { MapDialogService } from 'src/app/shared/services/map.service';
-import { ProductosDestacadosService } from 'src/app/shared/services/productos-destacados.service';
-import { ProductosOfertasService } from 'src/app/shared/services/productos-ofertas.service';
 
 @Component({
   selector: 'app-menu-lateral-desktop',
@@ -14,12 +12,10 @@ import { ProductosOfertasService } from 'src/app/shared/services/productos-ofert
   styleUrl: './menu-lateral-desktop.css',
 })
 export class MenuLateralDesktop {
-  private categoryViewService = inject(CategoryViewService);
-  private productosDestacadosService = inject(ProductosDestacadosService);
-  public productosOfertasService = inject(ProductosOfertasService);
   public adminStore = inject(AdminStoreService);
   public infoService = inject(InfoService);
   public mapDialogService = inject(MapDialogService);
+  public exploradorProductosService = inject(ExploradorProductosService);
   
   public selected = signal<string | null>(null);
 
@@ -46,22 +42,22 @@ export class MenuLateralDesktop {
   });
 
   seleccionarYFechar(nombre: string) {
-    // 1. Guardamos visualmente qué categoría se tocó en esta barra
     this.selected.set(nombre);
-    
-    // 2. Abrimos la vista de la categoría
-    // (Nota: mantuve tu servicio original. Dependiendo de cómo funcione tu PC, 
-    // podrías querer scrollear hasta la categoría en lugar de abrir un modal)
-    this.categoryViewService.open(nombre);
+    this.exploradorProductosService.verCategoria(nombre);
   }
 
   abrirDestacados(){
-    this.selected.set('destacados'); // Para desmarcar la categoría activa
-    this.productosDestacadosService.open();
+    this.selected.set('destacados');
+    this.exploradorProductosService.verDestacados();
   }
 
   abrirOfertas(){
-    this.selected.set('ofertas'); // Para desmarcar la categoría activa
-    this.productosOfertasService.open();
+    this.selected.set('ofertas');
+    this.exploradorProductosService.verTodasLasOfertas();
+  }
+
+  irAlInicio() {
+    this.selected.set(null);
+    this.exploradorProductosService.limpiarVista();
   }
 }

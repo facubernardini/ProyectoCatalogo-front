@@ -1,5 +1,5 @@
 @if (cartService.isOpen()) {
-<div class="fixed inset-0 z-80 bg-black/60 backdrop-blur-sm" (click)="cartService.close()">
+<div class="fixed inset-0 z-80 bg-black/60" (click)="cartService.close()">
 
     <div appSwipeDown (onSwipe)="cartService.close()"
         class="absolute bottom-0 w-full max-h-[90vh] bg-white rounded-t-[40px] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300"
