@@ -14,27 +14,41 @@
         </div>
     </nav>
 
-    <div class="flex flex-col gap-5 p-4 flex-1">
-        
-        <div class="shimmer w-full h-12 rounded-xl shrink-0 shadow-sm"></div>
-
-        <div class="flex gap-4 -mx-4 px-4 py-1 overflow-hidden shrink-0">
-            <div class="shimmer w-[85%] h-64 rounded-3xl shrink-0 shadow-sm"></div>
-            <div class="shimmer w-[85%] h-64 rounded-3xl shrink-0 shadow-sm"></div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-4 shrink-0">
-            <div class="shimmer h-28 rounded-2xl w-full shadow-sm"></div>
-            <div class="shimmer h-28 rounded-2xl w-full shadow-sm"></div>
-            <div class="shimmer h-28 rounded-2xl w-full shadow-sm"></div>
-        </div>
-
-        <div class="flex flex-col gap-4 flex-1">
-            @for (item of [1, 2, 3]; track item) {
-                <div class="shimmer w-full h-32 rounded-2xl shrink-0 shadow-sm"></div>
+    <div class="w-full flex items-start gap-8 px-4 py-6 flex-1">
+    
+        <aside class="hidden xl:flex flex-col gap-3 w-72 shrink-0">
+            <div class="shimmer w-32 h-6 rounded-lg mb-1"></div>
+            @for (cat of [1, 2, 3, 4, 5, 6, 7, 8]; track cat) {
+                <div class="shimmer w-full h-15 rounded-2xl shadow-sm"></div>
             }
+        </aside>
+
+        <div class="flex flex-col gap-6 flex-1 min-w-0 w-full">
+            
+            <div class="flex items-center gap-3 w-full">
+                <div class="shimmer size-15 rounded-xl shrink-0 shadow-sm"></div>
+                <div class="shimmer flex-1 h-15 rounded-xl shrink-0 shadow-sm"></div>
+                <div class="shimmer size-15 rounded-xl shrink-0 shadow-sm"></div>
+            </div>
+
+            <div class="flex gap-4 -mx-4 px-4 overflow-hidden shrink-0">
+                <div class="shimmer w-[85%] h-64 rounded-3xl shrink-0 shadow-sm"></div>
+                <div class="shimmer w-[85%] h-64 rounded-3xl shrink-0 shadow-sm"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 shrink-0">
+                <div class="shimmer h-28 rounded-2xl w-full shadow-sm"></div>
+                <div class="shimmer h-28 rounded-2xl w-full shadow-sm"></div>
+                <div class="shimmer h-28 rounded-2xl w-full shadow-sm"></div>
+            </div>
+
+            <div class="flex flex-col gap-4 flex-1">
+                @for (item of [1, 2, 3]; track item) {
+                    <div class="shimmer w-full h-32 rounded-2xl shrink-0 shadow-sm"></div>
+                }
+            </div>
+            
         </div>
-        
     </div>
     
 </div>

@@ -5,6 +5,7 @@ import { InfoService } from '@shared/services/info.service';
 import { CartService } from '@shared/services/cart.service';
 import { BannerInfoDesktop } from "../banner-info-desktop/banner-info-desktop";
 import { SearchDesktopService } from 'src/app/shared/services/search-desktop.service';
+import { MenuLateralDesktopService } from 'src/app/shared/services/menu-lateral-desktop.service';
 
 @Component({
   selector: 'app-navbar-desktop',
@@ -12,29 +13,14 @@ import { SearchDesktopService } from 'src/app/shared/services/search-desktop.ser
   templateUrl: './navbar-desktop.html',
   styleUrl: './navbar-desktop.css',
 })
-export class NavbarDesktop implements AfterViewInit {
+export class NavbarDesktop {
   @ViewChild('sentinel') sentinel!: ElementRef;
 
   public adminStore = inject(AdminStoreService);
   public infoService = inject(InfoService);
   public searchDesktopService = inject(SearchDesktopService); 
   public cartService = inject(CartService);
-
-  isStuck = signal(false);
-
-  ngAfterViewInit() {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        this.isStuck.set(!entry.isIntersecting);
-      },
-      {
-        threshold: [0],
-        rootMargin: '0px'
-      }
-    );
-
-    observer.observe(this.sentinel.nativeElement);
-  }
+  public menuLateralService = inject(MenuLateralDesktopService);
 
   onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
