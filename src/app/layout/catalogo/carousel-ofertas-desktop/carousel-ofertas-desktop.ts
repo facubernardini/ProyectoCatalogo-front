@@ -4,7 +4,7 @@ import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
-import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
+import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
 
 @Component({
   selector: 'app-carousel-ofertas-desktop',
@@ -14,8 +14,8 @@ import { ProductosOfertasService } from '@shared/services/productos-ofertas.serv
 })
 export class CarouselOfertasDesktop {
   public adminStore = inject(AdminStoreService);
-  public productosOfertasService = inject(ProductosOfertasService);
   public productSelectorService = inject(ProductSelectorService);
+  public exploradorProductosService = inject(ExploradorProductosService);
 
   productosOferta = computed(() => 
     this.adminStore.productos().filter(p => 
@@ -23,7 +23,6 @@ export class CarouselOfertasDesktop {
     )
   );
 
-  // Dividimos el arreglo agrupándolo de a 3 productos por página
   paginas = computed(() => {
     const productos = this.productosOferta();
     const agrupados = [];
@@ -34,6 +33,10 @@ export class CarouselOfertasDesktop {
   });
 
   currentPage = signal(0);
+
+  verOfertasEnExplorador() {
+    this.exploradorProductosService.verTodasLasOfertas();
+  }
 
   next() {
     if (this.currentPage() < this.paginas().length - 1) {

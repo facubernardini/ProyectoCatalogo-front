@@ -66,7 +66,7 @@
 </div>
 
 @if (mostrarModalFiltros()) {
-<div class="fixed inset-0 z-60 bg-black/40 backdrop-blur-sm transition-opacity" (click)="cerrarFiltros()">
+<div class="fixed inset-0 z-60 bg-black/60" (click)="cerrarFiltros()">
     <div appSwipeDown
         (onSwipe)="cerrarFiltros()"
         class="absolute bottom-0 left-0 w-full bg-white rounded-t-4xl p-6 shadow-2xl animate-in slide-in-from-bottom duration-300" (click)="$event.stopPropagation()">

@@ -1,5 +1,5 @@
 @if (viewService.isOpen()) {
-    <div class="fixed inset-0 z-50 bg-gray-50 flex flex-col animate-in slide-in-from-bottom-8 fade-in duration-300">
+    <div class="fixed inset-0 z-50 bg-black/60 flex flex-col animate-in slide-in-from-bottom-8 fade-in duration-300">
         
         <header class="bg-white px-4 pt-4 pb-3 flex flex-col gap-4 shadow-sm shrink-0 relative z-10 border-b border-gray-100">
         
@@ -16,7 +16,7 @@
                 <button (click)="viewService.close()" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 hover:text-brand-text active:scale-90 transition-all duration-200">
                     <app-icon name="close" classes="size-5 fill-current" />
                 </button>
-        </div>
+            </div>
 
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">

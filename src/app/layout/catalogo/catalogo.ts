@@ -28,6 +28,9 @@ import { CarouselDestacadosDesktop } from "./carousel-destacados-desktop/carouse
 import { CarouselOfertasDesktop } from "./carousel-ofertas-desktop/carousel-ofertas-desktop";
 import { ListaProductosDesktop } from "./lista-productos-desktop/lista-productos-desktop";
 import { FooterDesktop } from "./footer-desktop/footer-desktop";
+import { ExploradorProductosDesktop } from "./explorador-productos-desktop/explorador-productos-desktop";
+import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
+import { CartService } from 'src/app/shared/services/cart.service';
 
 @Component({
   selector: 'app-catalogo',
@@ -49,7 +52,8 @@ import { FooterDesktop } from "./footer-desktop/footer-desktop";
     CarouselDestacadosDesktop,
     CarouselOfertasDesktop,
     ListaProductosDesktop,
-    FooterDesktop
+    FooterDesktop,
+    ExploradorProductosDesktop
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
@@ -58,6 +62,8 @@ export class CatalogoPublico implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private titleService = inject(Title);
   public adminStore = inject(AdminStoreService);
+  public exploradorProductosService = inject(ExploradorProductosService);
+  public cartService = inject(CartService);
 
   private renderer = inject(Renderer2);
   private document = inject(DOCUMENT);

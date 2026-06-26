@@ -1,11 +1,10 @@
 import { AfterViewInit, Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { InfoService } from '@shared/services/info.service';
-import { SearchService } from '@shared/services/search.service';
 import { CartService } from '@shared/services/cart.service';
 import { BannerInfoDesktop } from "../banner-info-desktop/banner-info-desktop";
+import { SearchDesktopService } from 'src/app/shared/services/search-desktop.service';
 
 @Component({
   selector: 'app-navbar-desktop',
@@ -18,7 +17,7 @@ export class NavbarDesktop implements AfterViewInit {
 
   public adminStore = inject(AdminStoreService);
   public infoService = inject(InfoService);
-  public searchService = inject(SearchService);
+  public searchDesktopService = inject(SearchDesktopService); 
   public cartService = inject(CartService);
 
   isStuck = signal(false);
@@ -39,15 +38,11 @@ export class NavbarDesktop implements AfterViewInit {
 
   onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    
-    this.searchService.query.set(value);
 
-    if (value.trim().length > 0) {
-      this.searchService.open();
-    }
+    this.searchDesktopService.actualizarBusqueda(value);
   }
 
   clearSearch() {
-    this.searchService.query.set('');
+    this.searchDesktopService.limpiarBusqueda();
   }
 }
