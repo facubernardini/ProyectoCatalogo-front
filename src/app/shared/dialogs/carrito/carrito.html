@@ -14,17 +14,19 @@
                     </div>
                     <span>Mi Pedido</span>
                 </h2>
-                @if (cartService.items().length > 0){
-                    <button (click)="cartService.limpiarCarrito(); cartService.close()"
-                        class="text-xs font-bold text-red-500 uppercase tracking-wider">
-                        Vaciar
-                    </button>
-                } @else {
+
+                <div class="space-x-5">
+                    @if (cartService.items().length > 0){
+                        <button (click)="cartService.limpiarCarrito()"
+                                class="text-xs font-bold text-white bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-xl uppercase tracking-wider transition-all duration-300 active:scale-95">
+                            Vaciar
+                        </button>
+                    }
                     <button (click)="cartService.close()"
                         class="text-xs font-bold text-gray-400 hover:text-red-500 uppercase tracking-wider transition-colors">
                         Cerrar
                     </button>
-                }
+                </div>
             </div>
         </div>
 

@@ -6,12 +6,14 @@
         <app-navbar-desktop/>
 
         <div class="w-full flex items-start gap-8 py-5 px-4 sm:px-6 lg:px-8">
-            <aside class="w-72 shrink-0 sticky top-34 max-h-[calc(100vh-5rem)] overflow-y-auto custom-scrollbar rounded-2xl">
-                <app-menu-lateral-desktop/>
-            </aside>
+    
+            @if (menuLateralService.isOpen()) {
+                <aside class="w-72 shrink-0 sticky top-34 max-h-[calc(100vh-5rem)] overflow-y-auto custom-scrollbar rounded-2xl animate-in fade-in slide-in-from-left-4 duration-300">
+                    <app-menu-lateral-desktop/>
+                </aside>
+            }
             
             <main class="flex-1 min-w-0 flex flex-col gap-5">
-        
                 @if (exploradorProductosService.vistaActual() === 'home') {
                     <app-carousel-destacados-desktop/>
                     <app-carousel-ofertas-desktop/>
@@ -20,23 +22,18 @@
                 @else {
                     <app-explorador-productos-desktop/>
                 }
-                
             </main>
         </div>
 
         <app-footer-desktop/>
 
         <!-- Dialogs emergentes (REHACER COMPONENTES PERO USAR MISMOS SERVICIOS) -->
-        <app-search-products/>
         <app-carrito/>
         <app-menu-info/>
         <app-product-selector/>
-        <app-menu-lateral/>
-        <app-category-products-view/>
         <app-map-dialog/>
-        <app-productos-destacados/>
-        <app-productos-ofertas/>
         <app-pedido-realizado/>
+        <app-confirm-dialog/>
     }
     @else {
         <!-- Layout Mobile -->
@@ -58,6 +55,7 @@
         <app-productos-destacados/>
         <app-productos-ofertas/>
         <app-pedido-realizado/>
+        <app-confirm-dialog/>
     }
 
     <!-- Toast -->

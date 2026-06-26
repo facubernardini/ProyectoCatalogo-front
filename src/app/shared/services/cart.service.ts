@@ -5,6 +5,7 @@ import { CuponVerificado } from 'src/app/core/models/cupon.model';
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { Producto } from 'src/app/core/models/producto.model';
 import { CuponServiceBackend } from 'src/app/core/services-backend/cupones.ServiceBackend';
+import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({ providedIn: 'root' })
@@ -12,6 +13,7 @@ export class CartService {
   private cartItems = signal<CartItem[]>(this.loadFromStorage());
   private cuponServiceBackend = inject(CuponServiceBackend);
   private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmService);
 
   // --- Estado del Carrito ---
   appliedCupon = signal<CuponVerificado | null>(null);
@@ -181,15 +183,28 @@ export class CartService {
     );
   }
 
-  limpiarCarrito(silent: boolean = false) {
-    if (this.cartItems().length > 0) {
-      this.cartItems.set([]);
-      this.selectedPaymentMethod.set(null);
-      this.appliedCupon.set(null);
-      this.deliveryMethod.set(null);
-      
-      if (!silent) {
-        this.toastService.show('Carrito vaciado con éxito 🗑️', 'success');
+  async limpiarCarrito(silent: boolean = false) {
+    const confirmacion = await this.confirmService.ask({
+      title: '¿Está seguro?',
+      message: '',
+      confirmText: 'Sí, vaciar',
+      cancelText: 'Cancelar',
+      icon: 'trash',
+      type: 'danger'
+    });
+
+    if (confirmacion) {
+      if (this.cartItems().length > 0) {
+        this.cartItems.set([]);
+        this.selectedPaymentMethod.set(null);
+        this.appliedCupon.set(null);
+        this.deliveryMethod.set(null);
+        
+        if (!silent) {
+          this.toastService.show('Carrito vaciado con éxito 🗑️', 'success');
+        }
+
+        this.close();
       }
     }
   }

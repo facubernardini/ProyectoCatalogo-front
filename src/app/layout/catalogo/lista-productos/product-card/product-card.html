@@ -25,14 +25,27 @@
             </div>
         }
 
-        <div class="flex flex-wrap gap-1.5 mt-1.5">
+        <div class="flex flex-wrap gap-2 mt-1.5 pt-1">
             @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
-                <span class="text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg border border-gray-200/50">
-                    {{ pres.unidad_venta }}
-                </span>
+                
+                <div class="relative">
+                    <span class="block text-[10px] font-bold px-2 py-0.5 rounded-lg border uppercase tracking-tight transition-colors"
+                          [class]="pres.precio_descuento && pres.precio_descuento > 0 
+                                   ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' 
+                                   : 'text-gray-500 bg-gray-100 border-gray-200/50'">
+                        {{ pres.unidad_venta }}
+                    </span>
+                    
+                    @if (pres.precio_descuento && pres.precio_descuento > 0) {
+                        <div class="absolute -top-1.5 -right-1.5 flex items-center justify-center size-3.5 bg-green-500 rounded-full border border-white shadow-sm z-10">
+                            <span class="text-[8px] font-black text-white leading-none">%</span>
+                        </div>
+                    }
+                </div>
+
             }
             @if (producto().presentaciones.length > 3) {
-                <span class="text-[10px] font-bold text-brand-accent">+{{ producto().presentaciones.length - 3 }}</span>
+                <span class="text-[10px] font-bold text-brand-accent self-center ml-1">+{{ producto().presentaciones.length - 3 }}</span>
             }
         </div>
 

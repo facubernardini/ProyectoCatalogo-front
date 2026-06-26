@@ -31,6 +31,8 @@ import { FooterDesktop } from "./footer-desktop/footer-desktop";
 import { ExploradorProductosDesktop } from "./explorador-productos-desktop/explorador-productos-desktop";
 import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
 import { CartService } from 'src/app/shared/services/cart.service';
+import { MenuLateralDesktopService } from 'src/app/shared/services/menu-lateral-desktop.service';
+import { ConfirmDialog } from "src/app/shared/dialogs/confirm-dialog/confirm-dialog";
 
 @Component({
   selector: 'app-catalogo',
@@ -53,7 +55,8 @@ import { CartService } from 'src/app/shared/services/cart.service';
     CarouselOfertasDesktop,
     ListaProductosDesktop,
     FooterDesktop,
-    ExploradorProductosDesktop
+    ExploradorProductosDesktop,
+    ConfirmDialog
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
@@ -64,6 +67,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
   public adminStore = inject(AdminStoreService);
   public exploradorProductosService = inject(ExploradorProductosService);
   public cartService = inject(CartService);
+  public menuLateralService = inject(MenuLateralDesktopService);
 
   private renderer = inject(Renderer2);
   private document = inject(DOCUMENT);
