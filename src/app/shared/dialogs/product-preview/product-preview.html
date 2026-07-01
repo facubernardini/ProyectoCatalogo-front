@@ -1,5 +1,5 @@
 @if (productPreviewService.isOpen()) {
-    <div class="fixed inset-0 z-100 bg-black/60" 
+    <div class="fixed inset-0 z-100 bg-black/60 animate-backdrop" 
          (click)="productPreviewService.close()">
         
         <div appSwipeDown
@@ -107,7 +107,7 @@
                                           [class.text-red-500]="!pres.precio">$</span>
                                     <input type="number" 
                                         [(ngModel)]="pres.precio"
-                                        class="w-full bg-white border rounded-lg py-1.5 pl-6 pr-2 text-xs font-bold outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
+                                        class="no-spinners w-full bg-white border rounded-lg py-1.5 pl-6 pr-2 text-xs font-bold outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
                                         [class.text-brand-text]="pres.precio"
                                         [class.border-gray-200]="pres.precio"
                                         [class.border-red-500]="!pres.precio"
@@ -118,7 +118,7 @@
                                     <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-brand-accent font-bold text-xs">$</span>
                                     <input type="number" 
                                         [(ngModel)]="pres.precio_descuento"
-                                        class="w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-6 pr-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-brand-accent/50"
+                                        class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-6 pr-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-brand-accent/50"
                                         placeholder="Opcional">
                                 </div>
 

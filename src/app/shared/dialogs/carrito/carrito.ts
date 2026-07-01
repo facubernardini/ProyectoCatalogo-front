@@ -128,12 +128,12 @@ export class Carrito {
 
     // Sección 1: Cliente y Modalidad
     mensaje += `*1. Datos del Cliente*\n`;
-    mensaje += `▪ Cliente: ${this.nombreCliente()}\n`;
-    mensaje += `▪ Modalidad: ${envio ? 'Envío a domicilio' : 'Retiro por sucursal'}\n`;
+    mensaje += `• Cliente: ${this.nombreCliente()}\n`;
+    mensaje += `• Modalidad: ${envio ? 'Envío a domicilio' : 'Retiro por sucursal'}\n`;
     if (envio) {
-      mensaje += `▪ Dirección: ${this.direccionEnvio()}\n`;
+      mensaje += `• Dirección: ${this.direccionEnvio()}\n`;
     }
-    mensaje += `▪ Medio de pago: ${pago}\n\n`;
+    mensaje += `• Medio de pago: ${pago}\n\n`;
 
     // Sección 2: Detalle de compras
     mensaje += `*2. Detalle de Artículos*\n`;
@@ -145,24 +145,24 @@ export class Carrito {
 
     // Sección 3: Resumen de costos
     mensaje += `*3. Resumen de Cuenta*\n`;
-    mensaje += `▪ Subtotal: $${this.cartService.subtotalPrice()}\n`;
+    mensaje += `• Subtotal: $${this.cartService.subtotalPrice()}\n`;
 
     // Descuento por Cupón
     if (cupon) {
-      mensaje += `▪ Cupón (${cupon.codigo}): -$${this.cartService.discountAmount()}\n`;
+      mensaje += `• Cupón (${cupon.codigo}): -$${this.cartService.discountAmount()}\n`;
     }
 
     // Descuento por Efectivo
     if (descuentoEfectivo > 0 && porcentajeEfectivo) {
-      mensaje += `▪ Descuento pago en efectivo (${porcentajeEfectivo}%): -$${descuentoEfectivo}\n`;
+      mensaje += `• Descuento pago en efectivo (${porcentajeEfectivo}%): -$${descuentoEfectivo}\n`;
     }
     
     // Costo de Envío
     if (envio) {
       if (this.cartService.esEnvioGratis()) {
-          mensaje += `▪ Costo de envío: Bonificado (Gratis)\n`;
+          mensaje += `• Costo de envío: Bonificado (Gratis)\n`;
       } else {
-          mensaje += `▪ Costo de envío: $${this.catalogo()?.costo_envio}\n`;
+          mensaje += `• Costo de envío: $${this.catalogo()?.costo_envio}\n`;
       }
     }
 

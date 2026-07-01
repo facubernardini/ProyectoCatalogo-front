@@ -10,10 +10,11 @@ import { CategoryDelete } from "@shared/dialogs/category-delete/category-delete"
 import { CuponForm } from "@shared/dialogs/cupon-form/cupon-form";
 import { CategoryPreview } from "@shared/dialogs/category-preview/category-preview";
 import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinner";
+import { Footer } from "./footer/footer";
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner],
+  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner, Footer],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })

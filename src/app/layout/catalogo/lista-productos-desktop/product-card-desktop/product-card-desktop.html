@@ -1,15 +1,15 @@
 <div (click)="productSelectorService.open(producto())"
-     class="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-gray-100 transition-all duration-300 cursor-pointer group/card flex flex-col h-full">
+    class="bg-white rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_5px_12px_rgb(0,0,0,0.1)] border border-gray-100 transition-all duration-300 cursor-pointer group/card flex flex-col h-full">
     
-    <div class="relative h-56 bg-brand-bg overflow-hidden shrink-0 border-b border-gray-50">
+    <div class="relative h-42 bg-brand-bg overflow-hidden shrink-0 border-b border-gray-50">
         
         @if (producto().tags.length > 0) {
-            <div class="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5 pr-3">
+            <div class="absolute top-2.5 left-2.5 z-10 flex flex-wrap gap-1 pr-2.5">
                 @for (tag of producto().tags; track tag.id) {
-                    <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-white/90 backdrop-blur-md shadow-sm px-1.5 py-1 rounded-md border border-white/50">
+                    <span class="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-brand-accent bg-white/90 backdrop-blur-md shadow-sm px-1.5 py-1 rounded-md border border-white/50">
                         
                         @if (tag.icono) {
-                            <div [innerHTML]="tag.icono | safeHtml" class="size-4 flex items-center justify-center shrink-0"></div>
+                            <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
                         }
                         
                         {{ tag.nombre }}
@@ -22,26 +22,26 @@
             <img [src]="producto().imagen" class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
         } @else {
             <div class="w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-50">
-                <app-icon name="photo" classes="size-16 fill-current" />
+                <app-icon name="photo" classes="size-12 fill-current" />
             </div>
         }
     </div>
 
-    <div class="px-6 pt-4 pb-6 flex flex-col flex-1">
+    <div class="p-4 flex flex-col flex-1">
         
-        <h3 class="font-bold text-brand-text text-xl mb-1.5 line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
+        <h3 class="font-bold text-brand-text text-base mb-1 line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
             {{ producto().nombre }}
         </h3>
 
-        <p class="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed">
+        <p class="text-[11px] text-gray-500 line-clamp-2 mb-3 leading-relaxed">
             {{ producto().descripcion }}
         </p>
 
-        <div class="flex flex-wrap gap-2 mt-auto mb-4 pt-1">
+        <div class="flex flex-wrap gap-1.5 mt-auto mb-3 pt-1">
             @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
                 
                 <div class="relative">
-                    <span class="block text-[11px] font-bold px-2.5 py-1 rounded-lg border uppercase tracking-tight transition-colors"
+                    <span class="block text-[10px] font-bold px-2 py-1 rounded-md border uppercase tracking-tight transition-colors"
                           [class]="pres.precio_descuento && pres.precio_descuento > 0 
                                    ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' 
                                    : 'text-gray-500 bg-gray-50 border-gray-200/60'">
@@ -57,31 +57,31 @@
 
             }
             @if (producto().presentaciones.length > 3) {
-                <span class="text-[11px] font-black text-brand-accent self-center ml-1">
+                <span class="text-[10px] font-black text-brand-accent self-center ml-1">
                     +{{ producto().presentaciones.length - 3 }}
                 </span>
             }
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+        <div class="flex items-center justify-between pt-3 border-t border-gray-100">
             <div class="flex items-baseline gap-1.5">
                 @let cheapest = getMejorOferta(producto().presentaciones);
 
                 @if (producto().presentaciones.length > 1) {
-                    <span class="mr-1 text-[11px] text-gray-400 font-bold uppercase tracking-widest">
+                    <span class="mr-0.5 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                         Desde
                     </span>
                 }
 
                 @if (cheapest && cheapest.precio_descuento) {
-                    <span class="text-sm text-gray-400 line-through font-semibold mr-1">
+                    <span class="text-xs text-gray-400 line-through font-semibold mr-1">
                         ${{ cheapest.precio }}
                     </span>
-                    <span class="text-brand-accent font-black text-2xl leading-none">
+                    <span class="text-brand-accent font-black text-xl leading-none">
                         ${{ cheapest.precio_descuento }}
                     </span>
                 } @else {
-                    <span class="text-brand-accent font-black text-2xl leading-none">
+                    <span class="text-brand-accent font-black text-xl leading-none">
                         ${{ cheapest?.precio }}
                     </span>
                 }

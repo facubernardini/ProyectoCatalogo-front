@@ -15,7 +15,6 @@ export class CartService {
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
 
-  // --- Estado del Carrito ---
   appliedCupon = signal<CuponVerificado | null>(null);
   selectedPaymentMethod = signal<MedioPago | null>(null);
   deliveryMethod = signal<'envio' | 'retiro' | null>(null);
@@ -84,7 +83,6 @@ export class CartService {
   });
 
   // --- Lógica de Envío Gratis ---
-  // Ahora usamos priceAfterAllDiscounts para evaluar si llega al envío gratis
   esEnvioGratis = computed(() => {
     const threshold = this.catalogConfig()?.envioGratisDesde;
     if (!threshold || threshold <= 0) return false;
@@ -114,12 +112,10 @@ export class CartService {
   });
 
   constructor() {
-    // Mantengo tu effect del LocalStorage
     effect(() => {
       localStorage.setItem('cart_storage', JSON.stringify(this.cartItems()));
     });
 
-    // Nuevo: Listener para el gesto de ir hacia atrás en móviles
     window.addEventListener('popstate', () => {
       if (this.isOpen() && history.state?.modal !== 'cart-modal') {
         this.cerrarInterno();
@@ -184,27 +180,39 @@ export class CartService {
   }
 
   async limpiarCarrito(silent: boolean = false) {
-    const confirmacion = await this.confirmService.ask({
-      title: '¿Está seguro?',
-      message: '',
-      confirmText: 'Sí, vaciar',
-      cancelText: 'Cancelar',
-      icon: 'trash',
-      type: 'danger'
-    });
 
-    if (confirmacion) {
+    if (silent){
       if (this.cartItems().length > 0) {
         this.cartItems.set([]);
         this.selectedPaymentMethod.set(null);
         this.appliedCupon.set(null);
         this.deliveryMethod.set(null);
-        
-        if (!silent) {
-          this.toastService.show('Carrito vaciado con éxito 🗑️', 'success');
-        }
+
 
         this.close();
+      }
+    }
+    else{
+      const confirmacion = await this.confirmService.ask({
+        title: '¿Está seguro?',
+        message: '',
+        confirmText: 'Sí, vaciar',
+        cancelText: 'Cancelar',
+        icon: 'trash',
+        type: 'danger'
+      });
+  
+      if (confirmacion) {
+        if (this.cartItems().length > 0) {
+          this.cartItems.set([]);
+          this.selectedPaymentMethod.set(null);
+          this.appliedCupon.set(null);
+          this.deliveryMethod.set(null);
+              
+          this.toastService.show('Carrito vaciado con éxito 🗑️', 'success');
+          
+          this.close();
+        }
       }
     }
   }

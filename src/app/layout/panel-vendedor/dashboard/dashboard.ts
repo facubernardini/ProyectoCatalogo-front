@@ -1,8 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon } from "@shared/components/icon";
-import { Catalogo } from 'src/app/core/models/catalogo.model';
-import { Vendedor } from 'src/app/core/models/vendedor.model';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';

@@ -29,53 +29,59 @@
                     
                     @for (pagina of paginas(); track $index) {
                         
-                        <div class="w-full shrink-0 grid grid-cols-3 gap-5 px-2">
+                        <div class="w-full shrink-0 grid grid-cols-3 xl:grid-cols-4 gap-4 px-2">
                             
                             @for (producto of pagina; track producto.id) {
                                 @let oferta = getMejorOferta(producto.presentaciones);
                                 
                                 <div (click)="productSelectorService.open(producto)"
-                                     class="bg-white rounded-3xl overflow-hidden hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] border border-gray-100 transition-shadow duration-300 cursor-pointer group/card flex flex-col h-full">
+                                    class="bg-white rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_5px_12px_rgb(0,0,0,0.1)] border border-gray-100 transition-shadow duration-300 cursor-pointer group/card flex flex-col h-full">
                                     
-                                    <div class="relative h-48 bg-brand-bg overflow-hidden shrink-0">
+                                    <div class="relative h-42 bg-brand-bg overflow-hidden shrink-0">
                                         <img [src]="producto.imagen || 'https://placehold.co/400x300'" 
-                                             class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
+                                            class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
                                         
-                                        <div class="absolute top-3 left-3 bg-green-600 text-white px-1.5 py-1.5 rounded-lg shadow-sm z-20">
-                                            <app-icon name="discount" classes="size-5 fill-current" />
+                                        <div class="absolute top-2.5 left-2.5 bg-green-600 text-white p-1.5 rounded-lg shadow-sm z-20">
+                                            <app-icon name="discount" classes="size-4 fill-current" />
                                         </div>
 
                                         @if (oferta) {
-                                            <div class="flex items-center absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-sm border border-gray-100 z-20">
-                                                <span class="text-[10px] font-black text-brand-text tracking-tight uppercase">
+                                            <div class="flex items-center absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm border border-gray-100 z-20">
+                                                <span class="text-[9px] font-black text-brand-text tracking-tight uppercase">
                                                 {{ oferta.unidad_venta }}
                                                 </span>
                                             </div>
                                         }
                                     </div>
 
-                                    <div class="p-5 flex flex-col flex-1">
-                                        <h3 class="font-bold text-brand-text text-lg leading-tight mb-3 line-clamp-2 group-hover/card:text-brand-accent transition-colors">
+                                    <div class="p-3.5 flex flex-col flex-1">
+                                        
+                                        <h3 class="font-bold text-brand-text text-sm leading-tight mb-1 line-clamp-2 group-hover/card:text-brand-accent transition-colors">
                                             {{ producto.nombre }}
                                         </h3>
                                         
-                                        <div class="mt-auto flex items-end justify-between gap-2 pt-2">
+                                        <p class="text-[11px] text-gray-500 line-clamp-2 mb-2 leading-tight">
+                                            {{ producto.descripcion }}
+                                        </p>
+                                        
+                                        <div class="mt-auto flex items-end justify-between gap-2 pt-1.5">
                                             
                                             <div class="flex flex-col">
                                                 @if (oferta) {
-                                                    <span class="text-xs text-gray-400 line-through leading-none mb-0.5">
+                                                    <span class="text-[10px] text-gray-400 line-through leading-none mb-0.5">
                                                         ${{ oferta.precio }}
                                                     </span>
-                                                    <span class="text-brand-accent font-black text-2xl leading-none">
+                                                    <span class="text-brand-accent font-black text-lg leading-none">
                                                         ${{ oferta.precio_descuento }}
                                                     </span>
                                                 } @else {
-                                                    <span class="text-brand-text font-black text-2xl leading-none">
+                                                    <span class="text-brand-text font-black text-lg leading-none">
                                                         ${{ producto.presentaciones[0]?.precio }}
                                                     </span>
                                                 }
                                             </div>
                                         </div>
+                                        
                                     </div>
                                 </div>
                             }

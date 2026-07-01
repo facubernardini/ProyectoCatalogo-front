@@ -26,11 +26,10 @@ export class ListaProductosDesktop {
   categoriaSeleccionada = signal<string>('todos');
   ordenSeleccionado = signal<OrdenCriterio>('default');
   
-  // NUEVO: Controla si el menú desplegable está abierto o cerrado
   isOrdenDropdownOpen = signal(false);
 
   paginaActual = signal(1);
-  itemsPorPagina = 12;
+  itemsPorPagina = 16;
 
   productos = computed(() => {
     const cat = this.categoriaSeleccionada();

@@ -1,5 +1,5 @@
 @if (confirmService.isOpen()) {
-    <div class="fixed inset-0 z-110 bg-black/60 flex flex-col justify-end md:justify-center md:items-center md:p-6" 
+    <div class="fixed inset-0 z-110 bg-black/60 animate-backdrop flex flex-col justify-end md:justify-center md:items-center md:p-6" 
          (click)="confirmService.cancel()">
         
         <div appSwipeDown (onSwipe)="confirmService.cancel()"
