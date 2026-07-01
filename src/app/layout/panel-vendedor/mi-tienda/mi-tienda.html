@@ -1,6 +1,6 @@
 <div class="min-h-svh flex flex-col">
     <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
-		<div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
+		<div class="flex items-center justify-between px-4 h-16 max-w-4xl mx-auto">
 			
 			<button
 				(click)="volverAtras()"
@@ -102,7 +102,17 @@
 							maxlength="50"
 							class="w-full mt-1 p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium placeholder:text-gray-400 placeholder:font-medium">
 							
-						<p class="text-[12px] text-brand-text/60 mt-1 ml-1">Aparecerá debajo del nombre de tu tienda.</p>
+						<div class="flex items-center justify-between mt-1.5 mx-1">
+							<p class="text-[12px] text-brand-text/60">
+								Aparecerá debajo del nombre de tu tienda.
+							</p>
+							
+							<span class="text-[11px] font-bold transition-colors"
+								[class.text-gray-400]="(catalogo()!.frase_eslogan?.length || 0) < 50"
+								[class.text-red-500]="(catalogo()!.frase_eslogan?.length || 0) === 50">
+								{{ catalogo()!.frase_eslogan?.length || 0 }}/50
+							</span>
+						</div>
 					</div>
 					
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,7 +124,8 @@
 								<input type="tel" 
 									[(ngModel)]="catalogo()!.wpp_numero"
 									(input)="$any($event.target).value = $any($event.target).value.replace(/[^0-9]/g, '')"
-									placeholder="Ej: 549112345678"
+									placeholder="Ej: 2923123456"
+									maxlength="10"
 									class="flex-1 bg-transparent border-none py-4 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
 							</div>
 						</div>
@@ -131,7 +142,6 @@
 								
 								<input type="text" 
 									[(ngModel)]="catalogo()!.instagram_usuario"
-									placeholder="mitienda.ok"
 									class="flex-1 bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 							</div>
 						</div>
@@ -414,14 +424,14 @@
 				<section class="pt-4 border-t border-brand-bg w-full">
 					<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Paletas Disponibles</label>
 					
-					<div class="flex overflow-x-auto gap-4 pb-5 pt-3 px-1 snap-x scroll-smooth no-scrollbar w-full mt-1">
+					<div class="flex overflow-x-auto md:flex-wrap md:overflow-visible gap-4 md:gap-y-8 pb-5 pt-3 px-1 snap-x md:snap-none scroll-smooth no-scrollbar w-full mt-1">
 						
 						@for (tema of temasDisponibles; track tema.id) {
 							<button 
 								type="button"
 								(click)="cambiarTema(tema.id)"
 								class="relative snap-center shrink-0 w-16 h-16 rounded-full border-4 transition-all duration-300 focus:outline-none"
-								[class]="catalogo()!.tema === tema.id ? 'border-brand-text scale-110 shadow-lg' : 'border-transparent scale-100 opacity-70 hover:opacity-100'">
+								[class]="catalogo()!.tema === tema.id ? 'border-brand-text scale-110 shadow-lg' : 'border-transparent scale-100 opacity-70 md:hover:opacity-100'">
 								
 								<div class="w-full h-full rounded-full overflow-hidden flex flex-col shadow-inner" 
 									[style.background]="tema.bg">
@@ -441,10 +451,10 @@
 							</button>
 						}
 						
-						<div class="shrink-0 w-4"></div>
+						<div class="shrink-0 w-4 md:hidden"></div>
 					</div>
 					
-					<p class="text-[10px] text-brand-text-sec ml-1 mt-4">
+					<p class="text-[10px] text-brand-text-sec ml-1 mt-4 md:hidden">
 						Deslizá hacia los lados para ver todas las opciones.
 					</p>
 				</section>

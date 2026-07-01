@@ -1,5 +1,5 @@
 @if (productSelectorService.isOpen()) {
-    <div class="fixed inset-0 z-80 bg-black/60 flex flex-col justify-end md:justify-center md:items-center md:p-4" 
+    <div class="fixed inset-0 z-80 bg-black/60 animate-backdrop flex flex-col justify-end md:justify-center md:items-center md:p-4" 
         (click)="productSelectorService.close()">
         
         <div appSwipeDown
@@ -85,7 +85,13 @@
                                     </button>
                                     
                                     <div class="w-6 flex items-center justify-center">
-                                        @for (cantidad of [getCantidad(pres.id)]; track cantidad) { 
+                                        @let cantidad = getCantidad(pres.id);
+                                        
+                                        @if (cantidad % 2 === 0) {
+                                            <span class="text-sm font-black text-brand-text select-none animate-in zoom-in-50 fade-in duration-200">
+                                                {{ cantidad }}
+                                            </span>
+                                        } @else {
                                             <span class="text-sm font-black text-brand-text select-none animate-in zoom-in-50 fade-in duration-200">
                                                 {{ cantidad }}
                                             </span>

@@ -92,6 +92,18 @@ button:not(:disabled),
   cursor: pointer;
 }
 
+/* Solucion para ocultar flechas up/down en input number desktop */
+@layer utilities {
+  .no-spinners {
+    -moz-appearance: textfield;
+  }
+  .no-spinners::-webkit-outer-spin-button,
+  .no-spinners::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 body.tema-catalogo {
   background-color: var(--color-brand-bg);
   color: var(--color-brand-text);

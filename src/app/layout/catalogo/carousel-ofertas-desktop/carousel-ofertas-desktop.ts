@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
@@ -17,6 +17,8 @@ export class CarouselOfertasDesktop {
   public productSelectorService = inject(ProductSelectorService);
   public exploradorProductosService = inject(ExploradorProductosService);
 
+  itemsPorPagina = signal(window.innerWidth >= 1280 ? 4 : 3);
+
   productosOferta = computed(() => 
     this.adminStore.productos().filter(p => 
       p.presentaciones.some(pres => pres.precio_descuento && pres.precio_descuento > 0)
@@ -25,14 +27,22 @@ export class CarouselOfertasDesktop {
 
   paginas = computed(() => {
     const productos = this.productosOferta();
+    const cantidad = this.itemsPorPagina();
     const agrupados = [];
-    for (let i = 0; i < productos.length; i += 3) {
-      agrupados.push(productos.slice(i, i + 3));
+    
+    for (let i = 0; i < productos.length; i += cantidad) {
+        agrupados.push(productos.slice(i, i + cantidad));
     }
+    
     return agrupados;
   });
 
   currentPage = signal(0);
+
+  @HostListener('window:resize')
+  onResize() {
+    this.itemsPorPagina.set(window.innerWidth >= 1280 ? 4 : 3);
+  }
 
   verOfertasEnExplorador() {
     this.exploradorProductosService.verTodasLasOfertas();

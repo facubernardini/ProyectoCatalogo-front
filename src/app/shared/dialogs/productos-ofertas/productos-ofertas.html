@@ -44,7 +44,7 @@
             </div>
         </header>
 
-        <main class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+        <main class="flex-1 overflow-y-auto overscroll-contain p-4 custom-scrollbar">
         
             @if (!isBuscando() && resultados().length === 0 && filtro().length >= 2) {
                 <div class="text-center py-20 animate-in fade-in duration-500">

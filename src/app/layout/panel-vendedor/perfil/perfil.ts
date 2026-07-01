@@ -55,7 +55,7 @@ export class Perfil {
     const nombre = vendedor?.nombre_apellido;
     const planActual = vendedor?.suscripcion?.plan || 'Actual';
     
-    const mensaje = `¡Hola! Soy ${nombre}. Me gustaría recibir más información para mejorar mi plan ${planActual} en el catálogo.`;
+    const mensaje = `¡Hola! Soy ${nombre}. Me gustaría recibir más información para mejorar el plan ${planActual} de mi tienda.`;
     
     const numero = BRAND_DATA.contact.whatsapp.replace(/\D/g, ''); 
     
