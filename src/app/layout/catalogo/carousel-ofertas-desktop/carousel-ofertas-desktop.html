@@ -56,9 +56,15 @@
 
                                     <div class="p-3.5 flex flex-col flex-1">
                                         
-                                        <h3 class="font-bold text-brand-text text-sm leading-tight mb-1 line-clamp-2 group-hover/card:text-brand-accent transition-colors">
+                                        <h3 class="font-bold text-brand-text text-sm leading-tight line-clamp-2 group-hover/card:text-brand-accent transition-colors">
                                             {{ producto.nombre }}
                                         </h3>
+
+                                        @if (producto.marca) {
+                                            <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-0.5 mb-1 truncate">
+                                                {{ producto.marca }}
+                                            </p>
+                                        }
                                         
                                         <p class="text-[11px] text-gray-500 line-clamp-2 mb-2 leading-tight">
                                             {{ producto.descripcion }}

@@ -16,12 +16,14 @@
         <div class="relative">
             <div class="absolute left-0 top-0 bottom-0 z-10 w-5 bg-linear-to-r from-brand-bg via-brand-bg/50 to-transparent pointer-events-none"></div>
 
-            <div class="flex overflow-x-auto gap-4 px-4 pb-2 snap-x snap-mandatory no-scrollbar">
+            <div class="flex overflow-x-auto gap-4 px-4 pb-2 snap-x snap-mandatory no-scrollbar items-stretch">
                 @for (producto of productosDestacados(); track producto.id) {
+                    
                     <div 
                         (click)="productSelectorService.open(producto)"
-                        class="shrink-0 w-[75%] sm:w-80 bg-white rounded-3xl overflow-hidden shadow-md snap-center border border-gray-100">
-                        <div class="relative h-44 bg-brand-bg">
+                        class="shrink-0 w-[75%] sm:w-80 self-stretch flex flex-col bg-white rounded-3xl overflow-hidden shadow-md snap-center border border-gray-100">
+                        
+                        <div class="relative h-44 bg-brand-bg shrink-0">
                             <img [src]="producto.imagen || 'https://placehold.co/400x300'" class="w-full h-full object-cover">
                             <div class="absolute top-3 left-3 z-20 animate-float">
                                 <div class="relative overflow-hidden bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-brand-accent/15 shadow-lg shadow-brand-accent/10">
@@ -36,11 +38,16 @@
                             </div>
                         </div>
 
-                        <div class="px-4 py-3">
-                            <h3 class="font-bold text-brand-text text-lg mb-1">{{ producto.nombre }}</h3>
-                            <p class="text-brand-text-sec text-sm line-clamp-1 mb-1.5">{{ producto.descripcion }}</p>
+                        <div class="px-4 py-3 flex flex-col flex-1">
+                            <h3 class="font-bold text-brand-text text-lg leading-tight truncate">{{ producto.nombre }}</h3>
                             
-                            <div class="flex flex-wrap gap-1.5 mb-1">
+                            @if (producto.marca) {
+                                <p class="text-[11px] font-black text-brand-accent/80 uppercase tracking-wider mt-1 truncate">
+                                    {{ producto.marca }}
+                                </p>
+                            }
+                            
+                            <div class="flex flex-wrap gap-1.5 mt-3 mb-2">
                                 @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
                                     <span class="text-[9px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg border border-gray-200/50 uppercase tracking-tight">
                                         {{ pres.unidad_venta }}
@@ -53,7 +60,7 @@
                                 }
                             </div>
 
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between mt-auto">
                                 <div class="flex items-baseline gap-1">
                                     @let cheapest = getMejorOferta(producto.presentaciones);
 

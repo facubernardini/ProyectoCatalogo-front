@@ -27,15 +27,23 @@
         }
     </div>
 
-    <div class="p-4 flex flex-col flex-1">
+    <div class="p-4 flex flex-col flex-1 min-w-0">
         
-        <h3 class="font-bold text-brand-text text-base mb-1 line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
+        <h3 class="font-bold text-brand-text text-base line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
             {{ producto().nombre }}
         </h3>
 
-        <p class="text-[11px] text-gray-500 line-clamp-2 mb-3 leading-relaxed">
-            {{ producto().descripcion }}
-        </p>
+        @if (producto().marca) {
+            <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-0.5 mb-1 truncate">
+                {{ producto().marca }}
+            </p>
+        }
+
+        @if (producto().descripcion) {
+            <p class="text-[11px] text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+                {{ producto().descripcion }}
+            </p>
+        }
 
         <div class="flex flex-wrap gap-1.5 mt-auto mb-3 pt-1">
             @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
