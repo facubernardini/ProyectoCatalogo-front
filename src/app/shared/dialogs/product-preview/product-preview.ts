@@ -7,10 +7,11 @@ import { ProductPreviewService } from '@shared/services/product-preview.service'
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { ProductoManagerService } from 'src/app/core/services/producto-manager.service';
+import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
 
 @Component({
   selector: 'app-product-preview',
-  imports: [SwipeDownDirective, FormsModule, Icon],
+  imports: [SwipeDownDirective, FormsModule, Icon, SafeHtmlPipe],
   templateUrl: './product-preview.html',
   styleUrl: './product-preview.css',
 })

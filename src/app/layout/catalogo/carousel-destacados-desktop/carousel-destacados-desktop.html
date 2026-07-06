@@ -1,8 +1,8 @@
 @if (productosDestacados().length > 0) {
-    <section class="mb-2 relative">
+    <section class="relative">
         
-        <div class="mb-5 flex items-end justify-between">
-            <h2 class="text-2xl font-black text-brand-text flex items-center gap-2">
+        <div class="mb-4 flex items-end justify-between">
+            <h2 class="text-xl font-black text-brand-text flex items-center gap-2">
                 Lo más pedido <span class="animate-pulse text-2xl">🔥</span>
             </h2>
             
@@ -25,33 +25,34 @@
             <div class="overflow-hidden rounded-3xl pb-5 -mx-2 px-4">
                 
                 <div class="flex transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
-                     [style.transform]="'translateX(-' + (currentPage() * 100) + '%)'">
+                    [style.transform]="'translateX(-' + (currentPage() * 100) + '%)'">
                     
                     @for (pagina of paginas(); track $index) {
                         
-                        <div class="w-full shrink-0 grid grid-cols-2 gap-5 px-2">
+                        <div class="w-full shrink-0 grid grid-cols-2 gap-5 px-2 items-stretch">
                             
                             @for (producto of pagina; track producto.id) {
                                 
                                 <div (click)="productSelectorService.open(producto)"
-                                    class="bg-brand-accent rounded-3xl overflow-hidden hover:shadow-lg hover:shadow-brand-accent/40 transition-shadow duration-300 cursor-pointer group/card flex h-50">
+                                    class="bg-brand-accent rounded-3xl overflow-hidden hover:shadow-lg hover:shadow-brand-accent/40 transition-shadow duration-300 cursor-pointer group/card flex h-full">
                                     
                                     <div class="p-5 flex flex-col flex-1 min-w-0">
-                                        
-                                        <div class="flex items-center gap-1.5 mb-2 w-max">
-                                            <div class="bg-white/20 text-white px-2 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm">
-                                                <app-icon name="star" classes="size-3 fill-white" />
-                                                <span class="text-[9px] font-black uppercase tracking-widest">Destacado</span>
-                                            </div>
-                                        </div>
 
-                                        <h3 class="font-bold text-white text-lg mb-1 truncate group-hover/card:text-white/90 transition-colors">
-                                            {{ producto.nombre }}
-                                        </h3>
-                                        
-                                        <p class="text-white/75 text-xs line-clamp-2 mb-3">
-                                            {{ producto.descripcion }}
-                                        </p>
+                                        <div class="mb-auto">
+                                            <h3 class="font-bold text-white text-lg line-clamp-2 group-hover/card:text-white/90 transition-colors">
+                                                {{ producto.nombre }}
+                                            </h3>
+                                            
+                                            @if (producto.marca) {
+                                                <p class="text-xs font-black text-white/80 uppercase tracking-wider mb-2 truncate mt-1">
+                                                    {{ producto.marca }}
+                                                </p>
+                                            }
+                                            
+                                            <p class="text-white/75 text-xs line-clamp-2 mb-3 mt-2">
+                                                {{ producto.descripcion }}
+                                            </p>
+                                        </div>
                                         
                                         <div class="flex flex-wrap gap-1.5 mb-3 mt-auto">
                                             @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
@@ -84,8 +85,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="p-4 shrink-0 h-full">
-                                        <div class="w-40 h-full bg-white rounded-2xl overflow-hidden flex items-center justify-center">
+                                    <div class="p-4 shrink-0 flex flex-col justify-center">
+                                        <div class="w-40 aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center">
                                             <img [src]="producto.imagen" 
                                                 class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
                                         </div>

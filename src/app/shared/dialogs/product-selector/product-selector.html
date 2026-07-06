@@ -16,10 +16,12 @@
                             class="w-full h-full object-cover">
                     </div>
 
-                    <div class="flex-1 min-w-0"> <h2 class="text-xl font-black text-brand-text leading-tight truncate">{{ prod.nombre }}</h2>
+                    <div class="flex-1 min-w-0"> <h2 class="text-base font-black text-brand-text leading-tight">
+                        {{ prod.nombre }}
+                    </h2>
                         
                         @if (prod.marca) {
-                            <p class="text-xs font-black text-brand-accent/80 uppercase tracking-wider mt-1 truncate">
+                            <p class="text-xs font-black text-brand-accent/80 uppercase tracking-wider mt-1">
                                 {{ prod.marca }}
                             </p>
                         }

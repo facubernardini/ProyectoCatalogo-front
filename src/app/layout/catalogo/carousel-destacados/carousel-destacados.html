@@ -1,93 +1,82 @@
 @if (productosDestacados().length > 0) {
-    <section class="mt-1">
-        <div class="px-4 mb-4 flex items-center justify-between">
-            <h2 class="text-lg font-black text-brand-text flex items-center gap-2">
-                Lo más pedido <span class="animate-pulse">🔥</span>
-            </h2>
-            
-            <button 
-                (click)="productosDestacadosService.open()"
-                class="text-xs font-extrabold text-brand-accent bg-brand-accent/10 px-2.5 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1">
-                Ver todo
-                <app-icon name="chevron-right" classes="size-4 fill-brand-accent" />
-            </button>
-        </div>
+    <div class="px-4 mb-4 flex items-center justify-between">
+        <h2 class="text-lg font-black text-brand-text flex items-center gap-2">
+            Lo más pedido <span class="animate-pulse">🔥</span>
+        </h2>
         
-        <div class="relative">
-            <div class="absolute left-0 top-0 bottom-0 z-10 w-5 bg-linear-to-r from-brand-bg via-brand-bg/50 to-transparent pointer-events-none"></div>
+        <button 
+            (click)="productosDestacadosService.open()"
+            class="text-xs font-extrabold text-brand-accent bg-brand-accent/10 px-2.5 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1">
+            Ver todo
+            <app-icon name="chevron-right" classes="size-4 fill-brand-accent" />
+        </button>
+    </div>
+    
+    <div class="relative">
+        <div class="absolute left-0 top-0 bottom-0 z-10 w-5 bg-linear-to-r from-brand-bg via-brand-bg/50 to-transparent pointer-events-none"></div>
 
-            <div class="flex overflow-x-auto gap-4 px-4 pb-2 snap-x snap-mandatory no-scrollbar items-stretch">
-                @for (producto of productosDestacados(); track producto.id) {
+        <div class="flex overflow-x-auto gap-4 px-4 pb-2 snap-x snap-mandatory no-scrollbar items-stretch">
+            @for (producto of productosDestacados(); track producto.id) {
+                
+                <div 
+                    (click)="productSelectorService.open(producto)"
+                    class="shrink-0 w-[68%] sm:w-80 self-stretch flex flex-col bg-white rounded-3xl overflow-hidden shadow-md snap-center border border-gray-100">
                     
-                    <div 
-                        (click)="productSelectorService.open(producto)"
-                        class="shrink-0 w-[75%] sm:w-80 self-stretch flex flex-col bg-white rounded-3xl overflow-hidden shadow-md snap-center border border-gray-100">
+                    <div class="relative h-50 bg-brand-bg shrink-0">
+                        <img [src]="producto.imagen || 'https://placehold.co/400x300'" class="w-full h-full object-cover">
+                    </div>
+
+                    <div class="px-4 py-3 flex flex-col flex-1">
+                        <h3 class="font-bold text-brand-text text-base leading-tight line-clamp-2">
+                            {{ producto.nombre }}
+                        </h3>
                         
-                        <div class="relative h-44 bg-brand-bg shrink-0">
-                            <img [src]="producto.imagen || 'https://placehold.co/400x300'" class="w-full h-full object-cover">
-                            <div class="absolute top-3 left-3 z-20 animate-float">
-                                <div class="relative overflow-hidden bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-brand-accent/15 shadow-lg shadow-brand-accent/10">
-                                    <div class="absolute inset-0 h-full bg-linear-to-r from-transparent via-brand-accent/15 to-transparent animate-shimmer"></div>
-                                    <div class="relative flex items-center gap-1.5">
-                                        <app-icon name="star" classes="size-4 fill-brand-accent" />
-                                        <span class="text-[10px] font-black text-brand-accent uppercase tracking-widest">
-                                            Destacado
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                        @if (producto.marca) {
+                            <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-0.5 truncate">
+                                {{ producto.marca }}
+                            </p>
+                        }
+                        
+                        <div class="flex flex-wrap gap-1.5 my-1.5">
+                            @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
+                                <span class="text-[9px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg border border-gray-200/50 uppercase tracking-tight">
+                                    {{ pres.unidad_venta }}
+                                </span>
+                            }
+                            @if (producto.presentaciones.length > 3) {
+                                <span class="text-[9px] font-black text-brand-accent self-center">
+                                    +{{ producto.presentaciones.length - 3 }}
+                                </span>
+                            }
                         </div>
 
-                        <div class="px-4 py-3 flex flex-col flex-1">
-                            <h3 class="font-bold text-brand-text text-lg leading-tight truncate">{{ producto.nombre }}</h3>
-                            
-                            @if (producto.marca) {
-                                <p class="text-[11px] font-black text-brand-accent/80 uppercase tracking-wider mt-1 truncate">
-                                    {{ producto.marca }}
-                                </p>
-                            }
-                            
-                            <div class="flex flex-wrap gap-1.5 mt-3 mb-2">
-                                @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
-                                    <span class="text-[9px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg border border-gray-200/50 uppercase tracking-tight">
-                                        {{ pres.unidad_venta }}
+                        <div class="flex items-center justify-between mt-auto">
+                            <div class="flex items-baseline gap-1">
+                                @let cheapest = getMejorOferta(producto.presentaciones);
+
+                                @if (producto.presentaciones.length > 1) {
+                                    <span class="mr-0.5 text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Desde</span>
+                                }
+
+                                @if (cheapest && cheapest.precio_descuento) {
+                                    <span class="text-xs text-gray-400 line-through font-medium">
+                                        ${{ cheapest.precio }}
+                                    </span>
+                                    <span class="text-brand-accent font-black text-xl">
+                                        ${{ cheapest.precio_descuento }}
+                                    </span>
+                                } @else {
+                                    <span class="text-brand-accent font-black text-xl">
+                                        ${{ cheapest?.precio }}
                                     </span>
                                 }
-                                @if (producto.presentaciones.length > 3) {
-                                    <span class="text-[9px] font-black text-brand-accent self-center">
-                                        +{{ producto.presentaciones.length - 3 }}
-                                    </span>
-                                }
-                            </div>
-
-                            <div class="flex items-center justify-between mt-auto">
-                                <div class="flex items-baseline gap-1">
-                                    @let cheapest = getMejorOferta(producto.presentaciones);
-
-                                    @if (producto.presentaciones.length > 1) {
-                                        <span class="mr-0.5 text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Desde</span>
-                                    }
-
-                                    @if (cheapest && cheapest.precio_descuento) {
-                                        <span class="text-xs text-gray-400 line-through font-medium">
-                                            ${{ cheapest.precio }}
-                                        </span>
-                                        <span class="text-brand-accent font-black text-xl">
-                                            ${{ cheapest.precio_descuento }}
-                                        </span>
-                                    } @else {
-                                        <span class="text-brand-accent font-black text-xl">
-                                            ${{ cheapest?.precio }}
-                                        </span>
-                                    }
-                                </div>
                             </div>
                         </div>
                     </div>
-                }
-            </div>
-
-            <div class="absolute right-0 top-0 bottom-0 z-10 w-5 bg-linear-to-l from-brand-bg via-brand-bg/50 to-transparent pointer-events-none"></div>
+                </div>
+            }
         </div>
-    </section>
+
+        <div class="absolute right-0 top-0 bottom-0 z-10 w-5 bg-linear-to-l from-brand-bg via-brand-bg/50 to-transparent pointer-events-none"></div>
+    </div>
 }

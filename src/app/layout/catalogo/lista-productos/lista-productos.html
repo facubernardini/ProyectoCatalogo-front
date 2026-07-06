@@ -8,7 +8,7 @@
                 <button 
                     (click)="seleccionarCategoria('todos')"
                     [class]="categoriaSeleccionada() === 'todos' ? 'bg-brand-accent text-white' : 'bg-white text-brand-text border border-gray-200'"
-                    class="px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95">
+                    class="px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95">
                     Todos
                 </button>
 
@@ -20,7 +20,7 @@
                             : (cat.especial 
                                 ? 'bg-white/80 backdrop-blur-md border border-brand-accent' 
                                 : 'bg-white text-brand-text border border-gray-200')"
-                        class="relative overflow-hidden px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95 shrink-0">
+                        class="relative overflow-hidden px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all active:scale-95 shrink-0">
                         
                         @if (cat.especial && categoriaSeleccionada() !== cat.nombre) {
                             <div class="absolute inset-0 h-full w-full bg-linear-to-r from-transparent via-brand-accent/15 to-transparent animate-shimmer"></div>

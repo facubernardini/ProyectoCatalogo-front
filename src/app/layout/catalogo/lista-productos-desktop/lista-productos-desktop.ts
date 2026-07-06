@@ -74,6 +74,11 @@ export class ListaProductosDesktop {
     setTimeout(() => this.checkScroll(), 100);
   }
 
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScroll();
+  }
+
   checkScroll() {
     if (!this.scrollTrack) return;
     const el = this.scrollTrack.nativeElement;
