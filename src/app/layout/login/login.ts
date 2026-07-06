@@ -50,7 +50,6 @@ export class Login {
         }
       },
       error: (err) => {
-        console.log(err);
         this.isLoading.set(false);
         // Credenciales inválidas o cuenta suspendida
         if (err.status === 401) {
