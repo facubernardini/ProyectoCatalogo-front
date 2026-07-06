@@ -4,7 +4,7 @@
         
         <div appSwipeDown
             (onSwipe)="productSelectorService.close()"
-            class="w-full md:max-w-125 bg-white rounded-t-[40px] md:rounded-4xl p-6 shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:fade-in md:zoom-in-[0.98] duration-300" 
+            class="w-full md:max-w-125 bg-white rounded-t-[40px] md:rounded-3xl p-6 shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:fade-in md:zoom-in-[0.98] duration-300" 
             (click)="$event.stopPropagation()">
         
             <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 md:hidden"></div>
@@ -16,8 +16,15 @@
                             class="w-full h-full object-cover">
                     </div>
 
-                    <div class="flex-1">
-                        <h2 class="text-xl font-black text-brand-text leading-tight">{{ prod.nombre }}</h2>
+                    <div class="flex-1 min-w-0"> <h2 class="text-base font-black text-brand-text leading-tight">
+                        {{ prod.nombre }}
+                    </h2>
+                        
+                        @if (prod.marca) {
+                            <p class="text-xs font-black text-brand-accent/80 uppercase tracking-wider mt-1">
+                                {{ prod.marca }}
+                            </p>
+                        }
                         
                         @if (prod.descripcion) {
                             <p class="text-sm text-gray-500 line-clamp-2 mt-1">{{ prod.descripcion }}</p>
@@ -26,10 +33,10 @@
                         @if (prod.tags.length > 0) {
                             <div class="flex flex-wrap gap-1.5 mt-3">
                                 @for (tag of prod.tags; track tag.id) {
-                                    <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/4 px-1.5 py-0.5 rounded-lg border border-brand-accent/10">
+                                    <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/5 px-1.5 py-0.5 rounded-lg border border-brand-accent/10">
                                         
                                         @if (tag.icono) {
-                                            <div [innerHTML]="tag.icono | safeHtml" class="size-6 flex items-center justify-center shrink-0"></div>
+                                            <div [innerHTML]="tag.icono | safeHtml" class="size-5 flex items-center justify-center shrink-0"></div>
                                         }
                                         
                                         {{ tag.nombre }}
@@ -87,15 +94,9 @@
                                     <div class="w-6 flex items-center justify-center">
                                         @let cantidad = getCantidad(pres.id);
                                         
-                                        @if (cantidad % 2 === 0) {
-                                            <span class="text-sm font-black text-brand-text select-none animate-in zoom-in-50 fade-in duration-200">
-                                                {{ cantidad }}
-                                            </span>
-                                        } @else {
-                                            <span class="text-sm font-black text-brand-text select-none animate-in zoom-in-50 fade-in duration-200">
-                                                {{ cantidad }}
-                                            </span>
-                                        }
+                                        <span class="text-sm font-black text-brand-text select-none animate-in zoom-in-50 fade-in duration-200">
+                                            {{ cantidad }}
+                                        </span>
                                     </div>
                                     
                                     <button type="button" (click)="incrementar(pres.id)"

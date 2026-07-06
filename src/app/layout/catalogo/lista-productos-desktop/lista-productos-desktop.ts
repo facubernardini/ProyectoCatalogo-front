@@ -74,6 +74,11 @@ export class ListaProductosDesktop {
     setTimeout(() => this.checkScroll(), 100);
   }
 
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScroll();
+  }
+
   checkScroll() {
     if (!this.scrollTrack) return;
     const el = this.scrollTrack.nativeElement;
@@ -122,7 +127,6 @@ export class ListaProductosDesktop {
     this.paginaActual.set(1);
   }
 
-  // MODIFICADO: Ahora recibe el string directo y cierra el menú
   aplicarOrden(criterio: OrdenCriterio) {
     this.ordenSeleccionado.set(criterio);
     this.paginaActual.set(1);

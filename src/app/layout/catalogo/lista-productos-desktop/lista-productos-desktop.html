@@ -1,6 +1,6 @@
 <div class="w-full relative group/section pb-12">
     
-    <div class="mb-6 flex flex-col gap-4 border-b border-gray-100 pb-4">
+    <div class="flex flex-col gap-4 pb-4">
         
         <div class="flex items-center justify-between">
             <h2 class="text-2xl font-black text-brand-text flex items-center gap-2">
@@ -145,7 +145,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-3 xl:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 xl:grid-cols-3 gap-4">
         @for (producto of productosVisibles(); track producto.id) {
             
             <app-product-card-desktop [producto]="producto"></app-product-card-desktop>

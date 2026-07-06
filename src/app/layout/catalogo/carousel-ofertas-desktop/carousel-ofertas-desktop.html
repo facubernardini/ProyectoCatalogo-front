@@ -1,8 +1,8 @@
 @if (productosOferta().length > 0) {
     <section class="mb-2 relative">
         
-        <div class="mb-5 flex items-end justify-between">
-            <h2 class="text-2xl font-black text-brand-text flex items-center gap-2">
+        <div class="mb-4 flex items-end justify-between">
+            <h2 class="text-xl font-black text-brand-text flex items-center gap-2">
                 Ofertas Imperdibles <span class="animate-pulse text-2xl">🏷️</span>
             </h2>
             
@@ -29,43 +29,35 @@
                     
                     @for (pagina of paginas(); track $index) {
                         
-                        <div class="w-full shrink-0 grid grid-cols-3 xl:grid-cols-4 gap-4 px-2">
+                        <div class="w-full shrink-0 grid grid-cols-2 xl:grid-cols-3 gap-4 px-2 items-stretch">
                             
                             @for (producto of pagina; track producto.id) {
                                 @let oferta = getMejorOferta(producto.presentaciones);
                                 
                                 <div (click)="productSelectorService.open(producto)"
-                                    class="bg-white rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_5px_12px_rgb(0,0,0,0.1)] border border-gray-100 transition-shadow duration-300 cursor-pointer group/card flex flex-col h-full">
+                                    class="bg-white rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_5px_12px_rgb(0,0,0,0.1)] border border-gray-100 transition-shadow duration-300 cursor-pointer group/card flex h-full">
                                     
-                                    <div class="relative h-42 bg-brand-bg overflow-hidden shrink-0">
-                                        <img [src]="producto.imagen || 'https://placehold.co/400x300'" 
-                                            class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
+                                    <div class="p-3.5 flex flex-col flex-1 min-w-0">
                                         
-                                        <div class="absolute top-2.5 left-2.5 bg-green-600 text-white p-1.5 rounded-lg shadow-sm z-20">
-                                            <app-icon name="discount" classes="size-4 fill-current" />
+                                        <div class="mb-auto">
+                                            <h3 class="font-bold text-brand-text text-sm xl:text-base line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
+                                                {{ producto.nombre }}
+                                            </h3>
+
+                                            @if (producto.marca) {
+                                                <p class="text-[9px] xl:text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-0.5 mb-1 truncate">
+                                                    {{ producto.marca }}
+                                                </p>
+                                            }
+
+                                            @if (producto.descripcion) {
+                                                <p class="text-[10px] xl:text-[11px] text-gray-500 line-clamp-2 mb-2 mt-1 leading-relaxed">
+                                                    {{ producto.descripcion }}
+                                                </p>
+                                            }
                                         </div>
-
-                                        @if (oferta) {
-                                            <div class="flex items-center absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm border border-gray-100 z-20">
-                                                <span class="text-[9px] font-black text-brand-text tracking-tight uppercase">
-                                                {{ oferta.unidad_venta }}
-                                                </span>
-                                            </div>
-                                        }
-                                    </div>
-
-                                    <div class="p-3.5 flex flex-col flex-1">
-                                        
-                                        <h3 class="font-bold text-brand-text text-sm leading-tight mb-1 line-clamp-2 group-hover/card:text-brand-accent transition-colors">
-                                            {{ producto.nombre }}
-                                        </h3>
-                                        
-                                        <p class="text-[11px] text-gray-500 line-clamp-2 mb-2 leading-tight">
-                                            {{ producto.descripcion }}
-                                        </p>
                                         
                                         <div class="mt-auto flex items-end justify-between gap-2 pt-1.5">
-                                            
                                             <div class="flex flex-col">
                                                 @if (oferta) {
                                                     <span class="text-[10px] text-gray-400 line-through leading-none mb-0.5">
@@ -83,6 +75,27 @@
                                         </div>
                                         
                                     </div>
+
+                                    <div class="p-3 pl-0 shrink-0 flex flex-col justify-center">
+                                        
+                                        <div class="relative w-28 lg:w-32 aspect-square bg-brand-bg rounded-xl overflow-hidden flex items-center justify-center shrink-0">
+                                            <img [src]="producto.imagen || 'https://placehold.co/400x300'" 
+                                                class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
+                                            
+                                            <div class="absolute top-1.5 left-1.5 z-10 bg-green-600 text-white p-1 rounded-lg shadow-sm">
+                                                <app-icon name="discount" classes="size-3.5 fill-current" />
+                                            </div>
+
+                                            @if (oferta) {
+                                                <div class="flex items-center absolute top-1.5 right-1.5 z-10 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-md shadow-sm border border-gray-100">
+                                                    <span class="text-[9px] font-black text-brand-text tracking-tight uppercase">
+                                                    {{ oferta.unidad_venta }}
+                                                    </span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
                                 </div>
                             }
                         </div>

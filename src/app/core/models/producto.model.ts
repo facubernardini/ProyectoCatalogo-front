@@ -15,6 +15,7 @@ export interface Tag {
 export interface Producto {
   id: number;
   nombre: string;
+  marca: string | null;
   descripcion: string | null;
   imagen: string | null;
   destacado: boolean;

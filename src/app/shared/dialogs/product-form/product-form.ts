@@ -22,6 +22,7 @@ export class ProductForm {
 
   public producto = {
     nombre: '',
+    marca: '',
     descripcion: '',
     imagen: '',
     destacado: false,
@@ -58,7 +59,8 @@ export class ProductForm {
         if (editing) {
           const p = JSON.parse(JSON.stringify(editing));
           p.categorias_ids = editing.categorias?.map((c: any) => c.id) || [];
-          p.tags_ids = editing.tags?.map((t: any) => t.id) || []; 
+          p.tags_ids = editing.tags?.map((t: any) => t.id) || [];
+          p.marca = p.marca || '';
           this.producto = p;
         } else {
           this.resetForm();
@@ -126,6 +128,7 @@ export class ProductForm {
   resetForm() {
     this.producto = {
       nombre: '',
+      marca: '',
       descripcion: '',
       imagen: '',
       destacado: false,

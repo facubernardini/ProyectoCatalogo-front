@@ -1,5 +1,4 @@
 import { Component, computed, inject } from '@angular/core';
-import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -35,17 +34,5 @@ export class CarouselOfertas {
     return ofertas.reduce((min, p) => 
       Number(p.precio_descuento) < Number(min.precio_descuento) ? p : min
     );
-  }
-
-  manejarClickOferta(producto: Producto) {
-    const presentacionesEnOferta = producto.presentaciones.filter(
-      p => p.precio_descuento !== null
-    );
-
-    if (presentacionesEnOferta.length === 1) {
-      this.cartService.agregarProducto(producto, presentacionesEnOferta[0]);
-    } else if (presentacionesEnOferta.length > 1) {
-      this.productSelectorService.open(producto);
-    }
   }
 }

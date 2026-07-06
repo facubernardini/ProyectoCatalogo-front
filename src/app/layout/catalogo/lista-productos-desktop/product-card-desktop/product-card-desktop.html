@@ -1,43 +1,27 @@
 <div (click)="productSelectorService.open(producto())"
-    class="bg-white rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_5px_12px_rgb(0,0,0,0.1)] border border-gray-100 transition-all duration-300 cursor-pointer group/card flex flex-col h-full">
+    class="bg-white rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_5px_12px_rgb(0,0,0,0.1)] border border-gray-100 transition-all duration-300 cursor-pointer group/card flex h-full">
     
-    <div class="relative h-42 bg-brand-bg overflow-hidden shrink-0 border-b border-gray-50">
+    <div class="p-4 flex flex-col flex-1 min-w-0">
         
-        @if (producto().tags.length > 0) {
-            <div class="absolute top-2.5 left-2.5 z-10 flex flex-wrap gap-1 pr-2.5">
-                @for (tag of producto().tags; track tag.id) {
-                    <span class="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-brand-accent bg-white/90 backdrop-blur-md shadow-sm px-1.5 py-1 rounded-md border border-white/50">
-                        
-                        @if (tag.icono) {
-                            <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
-                        }
-                        
-                        {{ tag.nombre }}
-                    </span>
-                }
-            </div>
-        }
+        <div class="mb-auto">
+            <h3 class="font-bold text-brand-text text-sm xl:text-base line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
+                {{ producto().nombre }}
+            </h3>
 
-        @if (producto().imagen) {
-            <img [src]="producto().imagen" class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
-        } @else {
-            <div class="w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-50">
-                <app-icon name="photo" classes="size-12 fill-current" />
-            </div>
-        }
-    </div>
+            @if (producto().marca) {
+                <p class="text-[9px] xl:text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-0.5 mb-1 truncate">
+                    {{ producto().marca }}
+                </p>
+            }
 
-    <div class="p-4 flex flex-col flex-1">
-        
-        <h3 class="font-bold text-brand-text text-base mb-1 line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
-            {{ producto().nombre }}
-        </h3>
+            @if (producto().descripcion) {
+                <p class="text-[10px] xl:text-[11px] text-gray-500 line-clamp-2 mb-2 mt-1 leading-relaxed">
+                    {{ producto().descripcion }}
+                </p>
+            }
+        </div>
 
-        <p class="text-[11px] text-gray-500 line-clamp-2 mb-3 leading-relaxed">
-            {{ producto().descripcion }}
-        </p>
-
-        <div class="flex flex-wrap gap-1.5 mt-auto mb-3 pt-1">
+        <div class="flex flex-wrap gap-1.5 mt-auto mb-2 pt-1">
             @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
                 
                 <div class="relative">
@@ -63,25 +47,25 @@
             }
         </div>
 
-        <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+        <div class="flex items-center justify-between pt-2 border-t border-gray-100">
             <div class="flex items-baseline gap-1.5">
                 @let cheapest = getMejorOferta(producto().presentaciones);
 
                 @if (producto().presentaciones.length > 1) {
-                    <span class="mr-0.5 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                    <span class="mr-0.5 text-[9px] xl:text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                         Desde
                     </span>
                 }
 
                 @if (cheapest && cheapest.precio_descuento) {
-                    <span class="text-xs text-gray-400 line-through font-semibold mr-1">
+                    <span class="text-[11px] xl:text-xs text-gray-400 line-through font-semibold mr-1">
                         ${{ cheapest.precio }}
                     </span>
-                    <span class="text-brand-accent font-black text-xl leading-none">
+                    <span class="text-brand-accent font-black text-lg xl:text-xl leading-none">
                         ${{ cheapest.precio_descuento }}
                     </span>
                 } @else {
-                    <span class="text-brand-accent font-black text-xl leading-none">
+                    <span class="text-brand-accent font-black text-lg xl:text-xl leading-none">
                         ${{ cheapest?.precio }}
                     </span>
                 }
@@ -89,4 +73,36 @@
         </div>
 
     </div>
+
+    <!-- IMAGEN (Derecha) -->
+    <div class="p-4 pl-0 shrink-0 flex flex-col justify-center">
+        <!-- Contenedor estricto para formar el cuadrado perfecto -->
+        <div class="relative w-32 xl:w-36 aspect-square bg-brand-bg rounded-xl overflow-hidden shrink-0">
+            
+            @if (producto().tags.length > 0) {
+                <div class="absolute top-1.5 left-1.5 z-20 flex flex-wrap gap-1 pr-1.5">
+                    @for (tag of producto().tags; track tag.id) {
+                        <span class="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-brand-accent bg-white/90 backdrop-blur-md shadow-sm px-1.5 py-1 rounded-md border border-white/50">
+                            
+                            @if (tag.icono) {
+                                <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
+                            }
+                            
+                            {{ tag.nombre }}
+                        </span>
+                    }
+                </div>
+            }
+
+            @if (producto().imagen) {
+                <!-- Imagen con position absolute para no romper el aspecto cuadrado -->
+                <img [src]="producto().imagen" class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
+            } @else {
+                <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-50">
+                    <app-icon name="photo" classes="size-10 fill-current" />
+                </div>
+            }
+        </div>
+    </div>
+
 </div>
