@@ -13,10 +13,12 @@
     </div>
 
     <div class="flex-1 min-w-0 flex flex-col py-0.5">
-        <h3 class="text-brand-text font-bold text-base truncate leading-tight">{{ producto().nombre }}</h3>
+        <h3 class="text-brand-text font-bold text-[13px] truncate leading-tight">
+            {{ producto().nombre }}
+        </h3>
         
         @if (producto().marca) {
-            <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-0.5 truncate">
+            <p class="text-[10px] font-bold text-brand-accent/80 uppercase tracking-wider mt-0.5 truncate">
                 {{ producto().marca }}
             </p>
         }
@@ -35,7 +37,7 @@
             @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
                 
                 <div class="relative">
-                    <span class="block text-[10px] font-bold px-2 py-0.5 rounded-lg border uppercase tracking-tight transition-colors"
+                    <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg border uppercase tracking-tight transition-colors"
                           [class]="pres.precio_descuento && pres.precio_descuento > 0 
                                    ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' 
                                    : 'text-gray-500 bg-gray-100 border-gray-200/50'">
@@ -48,10 +50,12 @@
                         </div>
                     }
                 </div>
-
             }
+            
             @if (producto().presentaciones.length > 3) {
-                <span class="text-[10px] font-bold text-brand-accent self-center ml-1">+{{ producto().presentaciones.length - 3 }}</span>
+                <span class="text-[10px] font-bold text-brand-accent self-center ml-1">
+                    +{{ producto().presentaciones.length - 3 }}
+                </span>
             }
         </div>
 
@@ -68,11 +72,11 @@
                 <span class="text-xs text-gray-400 line-through font-medium">
                     ${{ cheapest.precio }}
                 </span>
-                <span class="text-brand-accent font-black text-xl leading-none">
+                <span class="text-brand-accent font-black text-base leading-none">
                     ${{ cheapest.precio_descuento }}
                 </span>
             } @else {
-                <span class="text-brand-accent font-black text-xl leading-none">
+                <span class="text-brand-accent font-black text-base leading-none">
                     ${{ cheapest?.precio }}
                 </span>
             }

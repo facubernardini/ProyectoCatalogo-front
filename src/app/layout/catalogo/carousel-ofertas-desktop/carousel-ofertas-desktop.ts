@@ -17,7 +17,7 @@ export class CarouselOfertasDesktop {
   public productSelectorService = inject(ProductSelectorService);
   public exploradorProductosService = inject(ExploradorProductosService);
 
-  itemsPorPagina = signal(window.innerWidth >= 1280 ? 4 : 3);
+  itemsPorPagina = signal(window.innerWidth >= 1280 ? 3 : 2);
 
   productosOferta = computed(() => 
     this.adminStore.productos().filter(p => 
@@ -41,7 +41,7 @@ export class CarouselOfertasDesktop {
 
   @HostListener('window:resize')
   onResize() {
-    this.itemsPorPagina.set(window.innerWidth >= 1280 ? 4 : 3);
+    this.itemsPorPagina.set(window.innerWidth >= 1280 ? 3 : 2);
   }
 
   verOfertasEnExplorador() {

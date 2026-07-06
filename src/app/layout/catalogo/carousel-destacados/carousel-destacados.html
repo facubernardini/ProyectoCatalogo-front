@@ -1,5 +1,5 @@
 @if (productosDestacados().length > 0) {
-    <div class="px-4 mb-4 flex items-center justify-between">
+    <div class="px-4 mb-3 flex items-center justify-between">
         <h2 class="text-lg font-black text-brand-text flex items-center gap-2">
             Lo más pedido <span class="animate-pulse">🔥</span>
         </h2>
@@ -17,31 +17,43 @@
 
         <div class="flex overflow-x-auto gap-4 px-4 pb-2 snap-x snap-mandatory no-scrollbar items-stretch">
             @for (producto of productosDestacados(); track producto.id) {
-                
                 <div 
                     (click)="productSelectorService.open(producto)"
-                    class="shrink-0 w-[68%] sm:w-80 self-stretch flex flex-col bg-white rounded-3xl overflow-hidden shadow-md snap-center border border-gray-100">
+                    class="shrink-0 w-[65%] sm:w-80 self-stretch flex flex-col bg-white rounded-3xl overflow-hidden shadow-md snap-center border border-gray-100">
                     
-                    <div class="relative h-50 bg-brand-bg shrink-0">
-                        <img [src]="producto.imagen || 'https://placehold.co/400x300'" class="w-full h-full object-cover">
+                    <div class="relative w-full aspect-square bg-brand-bg shrink-0 overflow-hidden">
+                        <img [src]="producto.imagen || 'https://placehold.co/400x300'" class="absolute inset-0 w-full h-full object-cover">
                     </div>
 
                     <div class="px-4 py-3 flex flex-col flex-1">
-                        <h3 class="font-bold text-brand-text text-base leading-tight line-clamp-2">
+                        <h3 class="font-bold text-brand-text text-[13px] leading-tight line-clamp-2">
                             {{ producto.nombre }}
                         </h3>
                         
                         @if (producto.marca) {
-                            <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-0.5 truncate">
+                            <p class="text-[10px] font-bold text-brand-accent/80 uppercase tracking-wider mt-0.5 truncate">
                                 {{ producto.marca }}
                             </p>
                         }
                         
                         <div class="flex flex-wrap gap-1.5 my-1.5">
+
                             @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
-                                <span class="text-[9px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg border border-gray-200/50 uppercase tracking-tight">
-                                    {{ pres.unidad_venta }}
-                                </span>
+                                <div class="relative">
+                                    <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg border uppercase tracking-tight transition-colors"
+                                        [class]="pres.precio_descuento && pres.precio_descuento > 0 
+                                                ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' 
+                                                : 'text-gray-500 bg-gray-100 border-gray-200/50'">
+                                        {{ pres.unidad_venta }}
+                                    </span>
+                                    
+                                    @if (pres.precio_descuento && pres.precio_descuento > 0) {
+                                        <div class="absolute -top-1.5 -right-1.5 flex items-center justify-center size-3.5 bg-green-500 rounded-full border border-white shadow-sm z-10">
+                                            <span class="text-[8px] font-black text-white leading-none">%</span>
+                                        </div>
+                                    }
+                                </div>
+
                             }
                             @if (producto.presentaciones.length > 3) {
                                 <span class="text-[9px] font-black text-brand-accent self-center">
@@ -62,11 +74,11 @@
                                     <span class="text-xs text-gray-400 line-through font-medium">
                                         ${{ cheapest.precio }}
                                     </span>
-                                    <span class="text-brand-accent font-black text-xl">
+                                    <span class="text-brand-accent font-black text-base">
                                         ${{ cheapest.precio_descuento }}
                                     </span>
                                 } @else {
-                                    <span class="text-brand-accent font-black text-xl">
+                                    <span class="text-brand-accent font-black text-base">
                                         ${{ cheapest?.precio }}
                                     </span>
                                 }

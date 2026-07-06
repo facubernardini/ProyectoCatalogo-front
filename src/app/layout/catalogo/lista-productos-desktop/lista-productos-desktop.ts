@@ -127,7 +127,6 @@ export class ListaProductosDesktop {
     this.paginaActual.set(1);
   }
 
-  // MODIFICADO: Ahora recibe el string directo y cierra el menú
   aplicarOrden(criterio: OrdenCriterio) {
     this.ordenSeleccionado.set(criterio);
     this.paginaActual.set(1);

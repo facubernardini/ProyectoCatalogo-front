@@ -1,6 +1,6 @@
 @if (productosOferta().length > 0) {
     <section class="mt-3">
-        <div class="px-4 mb-4 flex items-center justify-between">
+        <div class="px-4 mb-3 flex items-center justify-between">
             <h2 class="text-lg font-black text-brand-text flex items-center gap-2">
                 Ofertas Imperdibles <span class="animate-pulse">🏷️</span>
             </h2>
@@ -24,15 +24,15 @@
                         class="shrink-0 w-[45%] sm:w-64 self-stretch bg-white rounded-2xl overflow-hidden shadow-sm snap-center border border-gray-100 flex flex-col"
                         (click)="productSelectorService.open(producto)">
                         
-                        <div class="relative h-34 bg-brand-bg shrink-0">
-                            <img [src]="producto.imagen || 'https://placehold.co/300x200'" class="w-full h-full object-cover">
+                        <div class="relative w-full aspect-square bg-brand-bg shrink-0 overflow-hidden">
+                            <img [src]="producto.imagen || 'https://placehold.co/300x200'" class="absolute inset-0 w-full h-full object-cover">
                             
-                            <div class="absolute top-2 left-2 bg-green-600 text-white px-1 py-1 rounded-lg shadow-sm">
+                            <div class="absolute top-2 left-2 z-10 bg-green-600 text-white px-1 py-1 rounded-lg shadow-sm">
                                 <app-icon name="discount" classes="size-5 fill-current" />
                             </div>
 
                             @if (oferta) {
-                                <div class="absolute flex items-center top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm border border-gray-100">
+                                <div class="absolute flex items-center top-2 right-2 z-10 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm border border-gray-100">
                                     <span class="text-xs font-black text-brand-text tracking-tight">
                                     {{ oferta.unidad_venta }}
                                     </span>
@@ -40,14 +40,14 @@
                             }
                         </div>
 
-                        <div class="px-3 py-2 flex flex-col flex-1">
+                        <div class="px-2 py-2 flex flex-col flex-1">
                             
-                            <h3 class="font-bold text-brand-text text-base leading-tight line-clamp-2">
+                            <h3 class="font-bold text-brand-text text-[12px] leading-tight line-clamp-2">
                                 {{ producto.nombre }}
                             </h3>
                             
                             @if (producto.marca) {
-                                <p class="text-[9px] font-black text-brand-accent/80 uppercase tracking-wider mt-1 truncate">
+                                <p class="text-[9px] font-bold text-brand-accent/80 uppercase tracking-wider mt-1 truncate">
                                     {{ producto.marca }}
                                 </p>
                             }
@@ -59,11 +59,11 @@
                                         <span class="text-[10px] text-gray-400 line-through leading-none">
                                             ${{ oferta.precio }}
                                         </span>
-                                        <span class="text-brand-accent font-black text-lg leading-tight">
+                                        <span class="text-brand-accent font-black text-base leading-tight">
                                             ${{ oferta.precio_descuento }}
                                         </span>
                                     } @else {
-                                        <span class="text-brand-text font-black text-lg leading-tight">
+                                        <span class="text-brand-text font-black text-base leading-tight">
                                             ${{ producto.presentaciones[0]?.precio }}
                                         </span>
                                     }
