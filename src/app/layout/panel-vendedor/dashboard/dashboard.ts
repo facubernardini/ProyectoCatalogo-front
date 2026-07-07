@@ -33,8 +33,13 @@ export class Dashboard {
 
   verCatalogoPublico() {
     const slug = this.adminStore.catalogo()?.slug;
+    
     if (slug) {
-      window.open(`/${slug}`, '_blank');
+      const currentHost = window.location.hostname;
+      const baseDomain = currentHost.replace('www.', '');
+      const url = `https://${slug}.${baseDomain}`;
+      
+      window.open(url, '_blank');
     } else {
       this.toastService.show('Primero debés configurar el nombre de tu tienda', 'error');
     }
