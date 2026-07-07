@@ -19,20 +19,16 @@ import { Catalogos } from '@layout/backoffice/catalogos/catalogos';
 import { ErrorView } from '@layout/error/error';
 import { RecoveryPassword } from '@layout/login/recovery-password/recovery-password';
 import { NotFound } from '@layout/catalogo/not-found/not-found';
+import { isDominioBase } from './core/data/domains.data';
 
 export function subdominioMatcher(url: UrlSegment[]): UrlMatchResult | null {
     const host = window.location.hostname;
-    const dominiosBase = [
-        'changu.com.ar', 'www.changu.com.ar',
-        'listalo.com.ar', 'www.listalo.com.ar',
-        'localhost', '127.0.0.1'
-    ];
 
-    if (!dominiosBase.includes(host) && url.length === 0) {
-        return { consumed: url };
+    if (isDominioBase(host)) {
+        return null;
     }
-    
-    return null;
+
+    return { consumed: url }; 
 }
 
 export const routes: Routes = [
