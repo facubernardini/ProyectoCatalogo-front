@@ -1,6 +1,5 @@
 import { Component, DOCUMENT, effect, HostListener, inject, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Navbar } from "./navbar/navbar";
 import { ListaProductos } from "@layout/catalogo/lista-productos/lista-productos";
@@ -32,6 +31,7 @@ import { ExploradorProductosDesktop } from "./explorador-productos-desktop/explo
 import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
 import { CartService } from 'src/app/shared/services/cart.service';
 import { ConfirmDialog } from "src/app/shared/dialogs/confirm-dialog/confirm-dialog";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-catalogo',
@@ -61,7 +61,7 @@ import { ConfirmDialog } from "src/app/shared/dialogs/confirm-dialog/confirm-dia
   styleUrl: './catalogo.css',
 })
 export class CatalogoPublico implements OnInit, OnDestroy {
-  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private titleService = inject(Title);
   public adminStore = inject(AdminStoreService);
   public exploradorProductosService = inject(ExploradorProductosService);
@@ -101,17 +101,37 @@ export class CatalogoPublico implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const slug = this.route.snapshot.paramMap.get('slug');
+    const slug = this.obtenerSlugDesdeSubdominio();
+
     if (slug) {
       this.renderer.addClass(this.document.body, 'tema-catalogo');
       this.adminStore.cargarDatosPublicos(slug);
-    }
-    else {
+    } else {
       this.adminStore.isLoading.set(false);
+      this.router.navigate(['/']);
     }
   }
 
   ngOnDestroy() {
     this.renderer.removeClass(this.document.body, 'tema-catalogo');
+  }
+
+  private obtenerSlugDesdeSubdominio(): string | null {
+    const host = window.location.hostname;
+
+    const dominiosBase = [
+      'changu.com.ar', 
+      'www.changu.com.ar',
+      'listalo.com.ar', 
+      'www.listalo.com.ar',
+      'catalogos-front-staging.web.app',
+      'localhost', '127.0.0.1'
+    ];
+
+    if (dominiosBase.includes(host)) {
+      return null;
+    }
+
+    return host.split('.')[0];
   }
 }

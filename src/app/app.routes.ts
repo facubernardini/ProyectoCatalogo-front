@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { Routes, UrlSegment, UrlMatchResult } from '@angular/router';
 import { Backoffice } from '@layout/backoffice/backoffice';
 import { CatalogoPublico } from '@layout/catalogo/catalogo';
 import { Login } from '@layout/login/login';
@@ -20,17 +20,35 @@ import { ErrorView } from '@layout/error/error';
 import { RecoveryPassword } from '@layout/login/recovery-password/recovery-password';
 import { NotFound } from '@layout/catalogo/not-found/not-found';
 
+export function subdominioMatcher(url: UrlSegment[]): UrlMatchResult | null {
+    const host = window.location.hostname;
+    const dominiosBase = [
+        'changu.com.ar', 'www.changu.com.ar',
+        'listalo.com.ar', 'www.listalo.com.ar',
+        'catalogos-front-staging.web.app',
+        'localhost', '127.0.0.1'
+    ];
+
+    if (!dominiosBase.includes(host) && url.length === 0) {
+        return { consumed: url };
+    }
+    
+    return null;
+}
+
 export const routes: Routes = [
-	{ path: '', component: Home },
+    { matcher: subdominioMatcher, component: CatalogoPublico },
+
+    { path: '', component: Home },
     { path: 'register', component: Register },
-	{ path: 'login', component: Login },
+    { path: 'login', component: Login },
     { path: 'recovery', component: RecoveryPassword },
-	{ 
+    { 
         path: 'panel-vendedor', 
         component: PanelVendedor,
         canActivate: [authGuard],
         children: [
-			{ path: 'inicio', component: Dashboard },
+            { path: 'inicio', component: Dashboard },
             { path: 'mis-productos', component: MisProductos },
             { path: 'mis-categorias', component: MisCategorias },
             { path: 'mis-cupones', component: MisCupones },
@@ -38,17 +56,18 @@ export const routes: Routes = [
             { path: 'perfil', component: Perfil },
         ]
     },
-	{ path: 'backoffice', 
+    { 
+        path: 'backoffice', 
         component: Backoffice, 
         canActivate: [authGuard, adminGuard] ,
         children: [
-			{ path: 'inicio', component: DashboardBO },
+            { path: 'inicio', component: DashboardBO },
             { path: 'vendedores', component: Vendedores },
             { path: 'catalogos', component: Catalogos },
         ]
     },
     { path: '404', component: ErrorView },
     { path: 'not-found', component: NotFound },
-    { path: ':slug', component: CatalogoPublico },
-	{ path: '**', redirectTo: '' },
+    
+    { path: '**', redirectTo: '' },
 ];
