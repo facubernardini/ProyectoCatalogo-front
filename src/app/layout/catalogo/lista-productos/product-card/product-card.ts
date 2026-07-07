@@ -3,10 +3,11 @@ import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
+import { SafeHtmlPipe } from "../../../../core/pipes/safe-html.pipe";
 
 @Component({
   selector: 'app-product-card',
-  imports: [Icon],
+  imports: [Icon, SafeHtmlPipe],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
 })
