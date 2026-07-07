@@ -81,8 +81,6 @@ export class AdminStoreService {
       },
       error: (err: HttpErrorResponse) => {
         this.isLoading.set(false);
-        console.error('Error cargando catálogo público', err);
-
         // Tienda suspendida
         if (err.status === 403 && err.error?.code === 'TIENDA_SUSPENDIDA') {
           this.router.navigate(['/not-found']);

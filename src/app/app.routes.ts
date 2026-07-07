@@ -32,6 +32,9 @@ export function subdominioMatcher(url: UrlSegment[]): UrlMatchResult | null {
 }
 
 export const routes: Routes = [
+    { path: 'not-found', component: NotFound },
+    { path: '404', component: ErrorView },
+
     { matcher: subdominioMatcher, component: CatalogoPublico },
 
     { path: '', component: Home },
@@ -61,8 +64,6 @@ export const routes: Routes = [
             { path: 'catalogos', component: Catalogos },
         ]
     },
-    { path: '404', component: ErrorView },
-    { path: 'not-found', component: NotFound },
     
     { path: '**', redirectTo: '' },
 ];
