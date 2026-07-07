@@ -32,6 +32,7 @@ import { ExploradorProductosService } from 'src/app/shared/services/explorador-p
 import { CartService } from 'src/app/shared/services/cart.service';
 import { ConfirmDialog } from "src/app/shared/dialogs/confirm-dialog/confirm-dialog";
 import { Router } from '@angular/router';
+import { isDominioBase } from 'src/app/core/data/domains.data';
 
 @Component({
   selector: 'app-catalogo',
@@ -119,16 +120,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
   private obtenerSlugDesdeSubdominio(): string | null {
     const host = window.location.hostname;
 
-    const dominiosBase = [
-      'changu.com.ar', 
-      'www.changu.com.ar',
-      'listalo.com.ar', 
-      'www.listalo.com.ar',
-      'catalogos-front-staging.web.app',
-      'localhost', '127.0.0.1'
-    ];
-
-    if (dominiosBase.includes(host)) {
+    if (isDominioBase(host)) {
       return null;
     }
 
