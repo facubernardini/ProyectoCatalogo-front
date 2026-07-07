@@ -124,7 +124,6 @@ export class CatalogoPublico implements OnInit, OnDestroy {
       'www.changu.com.ar',
       'listalo.com.ar', 
       'www.listalo.com.ar',
-      'catalogos-front-staging.web.app',
       'localhost', '127.0.0.1'
     ];
 
