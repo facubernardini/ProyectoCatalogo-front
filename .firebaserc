@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "catalogos-front-staging"
-  }
+    "default": "catalogos-front-staging",
+    "staging": "catalogos-front-staging",
+    "production": "catalogos-front-production"
+  },
+  "targets": {},
+  "etags": {}
 }
