@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
+import { isDominioBase } from 'src/app/core/data/domains.data';
 
 @Component({
   selector: 'app-footer-desktop',
@@ -12,11 +13,29 @@ export class FooterDesktop {
   
   currentYear = new Date().getFullYear();
 
+  private obtenerUrlBasePlataforma(): string {
+    const host = window.location.hostname;
+    const protocolo = window.location.protocol;
+    const puerto = window.location.port ? `:${window.location.port}` : ''; 
+
+    if (isDominioBase(host)) {
+      return `${protocolo}//${host}${puerto}`;
+    }
+
+    const partes = host.split('.');
+    partes.shift(); 
+    const dominioBase = partes.join('.'); 
+
+    return `${protocolo}//${dominioBase}${puerto}`;
+  }
+
   irAHome() {
-    window.open('/', '_blank');
+    const urlBase = this.obtenerUrlBasePlataforma();
+    window.open(urlBase, '_blank');
   }
 
   irACreacion() {
-    window.open('/register', '_blank');
+    const urlBase = this.obtenerUrlBasePlataforma();
+    window.open(`${urlBase}/register`, '_blank');
   }
 }
