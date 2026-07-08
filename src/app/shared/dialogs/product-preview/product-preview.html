@@ -48,7 +48,9 @@
                             }
                         </div>
 
-                        <p class="text-sm text-gray-500 line-clamp-2">{{ prod.descripcion || 'Sin descripción' }}</p>
+                        <p class="text-sm text-gray-500">
+                            {{ prod.descripcion || 'Sin descripción' }}
+                        </p>
 
                         @if (prod.tags && prod.tags.length > 0) {
                             <div class="flex flex-wrap gap-1.5 mt-2">

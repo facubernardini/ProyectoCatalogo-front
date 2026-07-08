@@ -36,6 +36,7 @@ export class MisProductos {
   hasProductos = computed(() => this.productos().length > 0);
 
   isCategoriaDropdownOpen = signal<boolean>(false);
+  isFiltrosOpen = signal<boolean>(false);
   categoriaSeleccionada = signal<string>('todos');
   activeMenuId = signal<number | null>(null);
   isMenuUpward = signal<boolean>(false);
@@ -47,9 +48,14 @@ export class MisProductos {
   private searchSubject = new Subject<string>();
   private searchSubscription!: Subscription;
 
+  soloDestacados = signal<boolean>(false);
+  soloPausados = signal<boolean>(false);
+
   productosFiltrados = computed(() => {
     const seleccion = this.categoriaSeleccionada();
     const term = this.filtro().toLowerCase();
+    const destacados = this.soloDestacados();
+    const pausados = this.soloPausados();
     
     let lista = this.adminStore.productos();
 
@@ -59,6 +65,14 @@ export class MisProductos {
 
     if (term) {
       lista = lista.filter(prod => prod.nombre.toLowerCase().includes(term));
+    }
+
+    if (destacados) {
+      lista = lista.filter(prod => prod.destacado);
+    }
+
+    if (pausados) {
+      lista = lista.filter(prod => !prod.activo);
     }
 
     return lista;
@@ -85,6 +99,14 @@ export class MisProductos {
     }
   }
 
+  toggleDestacados() {
+    this.soloDestacados.update(v => !v);
+  }
+
+  togglePausados() {
+    this.soloPausados.update(v => !v);
+  }
+
   onSearchInput(valor: string) {
     this.busquedaRaw.set(valor);
     
@@ -104,9 +126,23 @@ export class MisProductos {
     this.searchSubject.next('');
   }
 
+  limpiarFiltros() {
+    this.soloDestacados.set(false);
+    this.soloPausados.set(false);
+    this.isFiltrosOpen.set(false);
+  }
+
+  toggleFiltrosDropdown() {
+    if (!this.hasProductos()) return;
+    this.isFiltrosOpen.set(!this.isFiltrosOpen());
+    // Cerramos el otro menú por las dudas para que no se superpongan
+    this.isCategoriaDropdownOpen.set(false);
+  }
+
   toggleCategoriaDropdown() {
     if (!this.hasProductos()) return;
     this.isCategoriaDropdownOpen.set(!this.isCategoriaDropdownOpen());
+    this.isFiltrosOpen.set(false);
   }
 
   seleccionarCategoriaCustom(nombre: string) {
@@ -159,8 +195,8 @@ export class MisProductos {
       this.activeMenuId.set(null);
       this.isMenuUpward.set(false);
     }
-
     this.isCategoriaDropdownOpen.set(false);
+    this.isFiltrosOpen.set(false);
   }
 
   async exportarPDF() {

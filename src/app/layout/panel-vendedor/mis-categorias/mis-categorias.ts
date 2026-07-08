@@ -36,14 +36,33 @@ export class MisCategorias {
   activeMenuId = signal<number | null>(null);
   isMenuUpward = signal<boolean>(false);
 
+  isFiltrosOpen = signal<boolean>(false);
+  soloDestacadas = signal<boolean>(false);
+  soloPausadas = signal<boolean>(false);
+
   private searchSubject = new Subject<string>();
   private searchSubscription!: Subscription;
   
   categoriasFiltradas = computed(() => {
     const term = this.filtro().toLowerCase();
-    const lista = this.adminStore.categorias();
-    if (!term) return lista;
-    return lista.filter(c => c.nombre.toLowerCase().includes(term));
+    const destacadas = this.soloDestacadas();
+    const pausadas = this.soloPausadas();
+    
+    let lista = this.adminStore.categorias();
+
+    if (term) {
+      lista = lista.filter(c => c.nombre.toLowerCase().includes(term));
+    }
+
+    if (destacadas) {
+      lista = lista.filter(c => c.especial);
+    }
+
+    if (pausadas) {
+      lista = lista.filter(c => !c.activo);
+    }
+
+    return lista;
   });
 
   ngOnInit() {
@@ -74,11 +93,30 @@ export class MisCategorias {
     this.searchSubject.next(valor);
   }
 
+  toggleFiltrosDropdown() {
+    if (!this.hasCategorias()) return;
+    this.isFiltrosOpen.set(!this.isFiltrosOpen());
+  }
+
+  toggleDestacados() {
+    this.soloDestacadas.update(v => !v);
+  }
+
+  togglePausados() {
+    this.soloPausadas.update(v => !v);
+  }
+
   limpiarBusqueda() {
     this.busquedaRaw.set('');
     this.filtro.set('');
     this.isBuscando.set(false);
     this.searchSubject.next('');
+  }
+
+  limpiarFiltros() {
+    this.soloDestacadas.set(false);
+    this.soloPausadas.set(false);
+    this.isFiltrosOpen.set(false);
   }
 
   onAddCategory() {
@@ -114,6 +152,7 @@ export class MisCategorias {
       this.activeMenuId.set(null);
       this.isMenuUpward.set(false);
     }
+    this.isFiltrosOpen.set(false);
   }
 
   volverAtras() {
