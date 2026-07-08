@@ -37,8 +37,85 @@
         <div class="w-full max-w-2xl mx-auto flex flex-col flex-1">
             
             <div class="relative w-full max-w-md mx-auto group shrink-0">
-                <div class="flex items-center gap-3 mb-4 relative">
+                <div class="flex items-center gap-2 mb-4 relative">
         
+                    <div class="relative shrink-0">
+                        <button type="button" 
+                                (click)="toggleFiltrosDropdown()"
+                                [disabled]="!hasProductos()"
+                                class="p-3 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                                [class.ring-2]="isFiltrosOpen()" [class.ring-brand-accent]="isFiltrosOpen()" [class.border-brand-accent]="isFiltrosOpen()">
+                            
+                            <app-icon name="filter" classes="size-5 text-brand-accent fill-current" />
+                            
+                            @if (soloDestacados() || soloPausados()) {
+                                <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
+                            }
+                        </button>
+
+                        @if (isFiltrosOpen()) {
+                            <div class="fixed inset-0 z-40" (click)="isFiltrosOpen.set(false)"></div>
+                            
+                            <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg animate-in fade-in zoom-in-95 duration-200 py-2">
+                                
+                                <div class="px-3 pb-2 mt-2 mb-1 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-50">
+                                    Mostrar Solo
+                                </div>
+                                
+                                <button type="button" 
+                                        (click)="toggleDestacados(); isFiltrosOpen.set(false)"
+                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50"
+                                        [class.text-brand-accent]="soloDestacados()"
+                                        [class.font-bold]="soloDestacados()"
+                                        [class.bg-brand-accent]="soloDestacados()"
+                                        [style.backgroundColor]="soloDestacados() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''" 
+                                        [class.text-brand-text-sec]="!soloDestacados()"
+                                        [class.font-medium]="!soloDestacados()">
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <app-icon [name]="soloDestacados() ? 'star-filled' : 'star'" classes="size-4 fill-current" />
+                                        Destacados
+                                    </div>
+                                    
+                                    @if (soloDestacados()) {
+                                        <app-icon name="check" classes="size-4 fill-current" />
+                                    }
+                                </button>
+
+                                <button type="button" 
+                                        (click)="togglePausados(); isFiltrosOpen.set(false)"
+                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
+                                        [class.text-brand-accent]="soloPausados()"
+                                        [class.font-bold]="soloPausados()"
+                                        [class.bg-brand-accent]="soloPausados()"
+                                        [style.backgroundColor]="soloPausados() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                        [class.text-brand-text-sec]="!soloPausados()"
+                                        [class.font-medium]="!soloPausados()">
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <app-icon name="pause" classes="size-4 fill-current" />
+                                        Pausados
+                                    </div>
+                                    
+                                    @if (soloPausados()) {
+                                        <app-icon name="check" classes="size-4 fill-current" />
+                                    }
+                                </button>
+
+                                @if (soloDestacados() || soloPausados()) {
+                                    <div class="px-2 mt-2 pt-2 border-t border-gray-50">
+                                        <button type="button" 
+                                                (click)="limpiarFiltros()"
+                                                class="w-full py-2 px-2 text-xs font-bold text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                            <app-icon name="close" classes="size-3.5 fill-current" />
+                                            Limpiar filtros
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
                     <div class="flex-1 relative">
                         <input type="text" 
                                 [ngModel]="busquedaRaw()" 
@@ -251,7 +328,7 @@
                     } @empty {
                         <div class="text-center py-10 opacity-40">
                             <p class="text-sm font-bold">
-                                No hay productos con ese nombre
+                                No hay productos con ese nombre o filtro
                             </p>
                         </div>
                     }
