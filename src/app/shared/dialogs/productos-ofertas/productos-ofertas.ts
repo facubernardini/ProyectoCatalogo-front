@@ -8,11 +8,12 @@ import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { Producto } from 'src/app/core/models/producto.model';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
+import { ProductCard } from "src/app/layout/catalogo/lista-productos/product-card/product-card";
 
 @Component({
   selector: 'app-productos-ofertas',
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon],
+  imports: [CommonModule, FormsModule, Icon, ProductCard],
   templateUrl: './productos-ofertas.html'
 })
 export class ProductosOfertas implements OnDestroy {
@@ -26,7 +27,6 @@ export class ProductosOfertas implements OnDestroy {
 
   private searchSubject = new Subject<string>();
 
-  // 🔥 El cambio clave: Filtramos por productos activos que tengan al menos una oferta
   productosConOfertas = computed(() => {
     return this.adminStore.productos().filter(p => 
       p.activo && this.tieneOfertas(p.presentaciones)
@@ -85,16 +85,7 @@ export class ProductosOfertas implements OnDestroy {
     this.limpiarBusqueda();
     this.productosOfertasService.close();
   }
-  
-  getPrecioDesde(presentaciones: Presentacion[]): number {
-    if (!presentaciones.length) return 0;
-    const preciosActuales = presentaciones.map(p => 
-      p.precio_descuento !== null ? Number(p.precio_descuento) : Number(p.precio)
-    );
-    return Math.min(...preciosActuales);
-  }
 
-  // Esta misma función que ya tenías nos sirve como filtro maestro arriba
   tieneOfertas(presentaciones: Presentacion[]): boolean {
     return presentaciones.some(p => p.precio_descuento !== null);
   }

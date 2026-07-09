@@ -19,9 +19,24 @@
                     {{ producto().descripcion }}
                 </p>
             }
+
+            @if (producto().tags.length > 0) {
+                <div class="flex flex-wrap gap-1.5 mt-2">
+                    @for (tag of producto().tags; track tag.id) {
+                        <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/5 px-2 py-1 rounded-md border border-brand-accent/20">
+                            
+                            @if (tag.icono) {
+                                <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
+                            }
+                            
+                            {{ tag.nombre }}
+                        </span>
+                    }
+                </div>
+            }
         </div>
 
-        <div class="flex flex-wrap gap-1.5 mt-auto mb-2 pt-1">
+        <div class="flex flex-wrap gap-1.5 mt-auto mb-2 pt-3">
             @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
                 
                 <div class="relative">
@@ -74,34 +89,17 @@
 
     </div>
 
-    <!-- IMAGEN (Derecha) -->
     <div class="p-4 pl-0 shrink-0 flex flex-col justify-center">
-        <!-- Contenedor estricto para formar el cuadrado perfecto -->
         <div class="relative w-32 xl:w-36 aspect-square bg-brand-bg rounded-xl overflow-hidden shrink-0">
             
-            @if (producto().tags.length > 0) {
-                <div class="absolute top-1.5 left-1.5 z-20 flex flex-wrap gap-1 pr-1.5">
-                    @for (tag of producto().tags; track tag.id) {
-                        <span class="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-brand-accent bg-white/90 backdrop-blur-md shadow-sm px-1.5 py-1 rounded-md border border-white/50">
-                            
-                            @if (tag.icono) {
-                                <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
-                            }
-                            
-                            {{ tag.nombre }}
-                        </span>
-                    }
-                </div>
-            }
-
             @if (producto().imagen) {
-                <!-- Imagen con position absolute para no romper el aspecto cuadrado -->
                 <img [src]="producto().imagen" class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
             } @else {
                 <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-50">
                     <app-icon name="photo" classes="size-10 fill-current" />
                 </div>
             }
+            
         </div>
     </div>
 

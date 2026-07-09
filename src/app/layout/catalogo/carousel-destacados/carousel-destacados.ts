@@ -5,10 +5,11 @@ import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ProductosDestacadosService } from '@shared/services/productos-destacados.service';
+import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
 
 @Component({
   selector: 'app-carousel-destacados',
-  imports: [CommonModule, Icon],
+  imports: [CommonModule, Icon, SafeHtmlPipe],
   templateUrl: './carousel-destacados.html',
   styleUrl: './carousel-destacados.css',
 })

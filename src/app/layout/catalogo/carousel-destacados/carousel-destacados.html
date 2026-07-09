@@ -17,8 +17,7 @@
 
         <div class="flex overflow-x-auto gap-4 px-4 pb-2 snap-x snap-mandatory no-scrollbar items-stretch">
             @for (producto of productosDestacados(); track producto.id) {
-                <div 
-                    (click)="productSelectorService.open(producto)"
+                <div (click)="productSelectorService.open(producto)"
                     class="shrink-0 w-[65%] sm:w-80 self-stretch flex flex-col bg-white rounded-3xl overflow-hidden shadow-md snap-center border border-gray-100">
                     
                     <div class="relative w-full aspect-square bg-brand-bg shrink-0 overflow-hidden">
@@ -36,8 +35,22 @@
                             </p>
                         }
                         
-                        <div class="flex flex-wrap gap-1.5 my-1.5">
-
+                        @if (producto.tags && producto.tags.length > 0) {
+                            <div class="flex flex-wrap gap-1 mt-1.5">
+                                @for (tag of producto.tags; track tag.id) {
+                                    <span class="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/5 px-1.5 py-0.5 rounded border border-brand-accent/20">
+                                        
+                                        @if (tag.icono) {
+                                            <div [innerHTML]="tag.icono | safeHtml" class="size-3 flex items-center justify-center shrink-0"></div>
+                                        }
+                                        
+                                        {{ tag.nombre }}
+                                    </span>
+                                }
+                            </div>
+                        }
+                        
+                        <div class="flex flex-wrap gap-1.5 mt-2 mb-1.5">
                             @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
                                 <div class="relative">
                                     <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg border uppercase tracking-tight transition-colors"
@@ -53,7 +66,6 @@
                                         </div>
                                     }
                                 </div>
-
                             }
                             @if (producto.presentaciones.length > 3) {
                                 <span class="text-[9px] font-black text-brand-accent self-center">
@@ -62,7 +74,7 @@
                             }
                         </div>
 
-                        <div class="flex items-center justify-between mt-auto">
+                        <div class="flex items-center justify-between mt-auto pt-1 border-t border-gray-50">
                             <div class="flex items-baseline gap-1">
                                 @let cheapest = getMejorOferta(producto.presentaciones);
 

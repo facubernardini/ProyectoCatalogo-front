@@ -55,9 +55,24 @@
                                                     {{ producto.descripcion }}
                                                 </p>
                                             }
+
+                                            @if (producto.tags && producto.tags.length > 0) {
+                                                <div class="flex flex-wrap gap-1.5 mt-2">
+                                                    @for (tag of producto.tags; track tag.id) {
+                                                        <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/5 px-2 py-1 rounded-md border border-brand-accent/20">
+                                                            
+                                                            @if (tag.icono) {
+                                                                <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
+                                                            }
+                                                            
+                                                            {{ tag.nombre }}
+                                                        </span>
+                                                    }
+                                                </div>
+                                            }
                                         </div>
                                         
-                                        <div class="mt-auto flex items-end justify-between gap-2 pt-1.5">
+                                        <div class="mt-auto flex items-end justify-between gap-2 pt-3">
                                             <div class="flex flex-col">
                                                 @if (oferta) {
                                                     <span class="text-[10px] text-gray-400 line-through leading-none mb-0.5">

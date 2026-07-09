@@ -37,8 +37,18 @@
                     
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="size-1.5 shrink-0 rounded-full transition-colors duration-300"
-                             [class]="selected() === cat.nombre ? 'bg-white/60' : 'bg-gray-300 group-hover:bg-brand-accent'"></div>
-                        <span class="capitalize truncate" [class.font-black]="cat.especial">{{ cat.nombre }}</span>
+                            [class.bg-white]="selected() === cat.nombre"
+                            [class.bg-brand-accent]="selected() !== cat.nombre && cat.especial"
+                            [class.bg-gray-300]="selected() !== cat.nombre && !cat.especial">
+                        </div>
+                        
+                        <span class="capitalize truncate transition-colors duration-200"
+                            [class.font-black]="cat.especial"
+                            [class.text-brand-accent]="selected() !== cat.nombre && cat.especial"
+                            [class.text-white]="selected() === cat.nombre"
+                            [class.text-brand-text]="selected() !== cat.nombre && !cat.especial">
+                            {{ cat.nombre }}
+                        </span>
                     </div>
 
                     @if (selected() === cat.nombre) {

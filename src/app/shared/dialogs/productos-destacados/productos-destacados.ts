@@ -4,15 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "@shared/components/icon";
-import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { Producto } from 'src/app/core/models/producto.model';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ProductosDestacadosService } from '@shared/services/productos-destacados.service';
+import { ProductCard } from "src/app/layout/catalogo/lista-productos/product-card/product-card";
 
 @Component({
   selector: 'app-productos-destacados',
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon],
+  imports: [CommonModule, FormsModule, Icon, ProductCard],
   templateUrl: './productos-destacados.html'
 })
 export class ProductosDestacados implements OnDestroy {
@@ -81,18 +81,6 @@ export class ProductosDestacados implements OnDestroy {
   cerrarVista() {
     this.limpiarBusqueda();
     this.productosDestacadosService.close();
-  }
-  
-  getPrecioDesde(presentaciones: Presentacion[]): number {
-    if (!presentaciones.length) return 0;
-    const preciosActuales = presentaciones.map(p => 
-      p.precio_descuento !== null ? Number(p.precio_descuento) : Number(p.precio)
-    );
-    return Math.min(...preciosActuales);
-  }
-
-  tieneOfertas(presentaciones: Presentacion[]): boolean {
-    return presentaciones.some(p => p.precio_descuento !== null);
   }
 
   ngOnDestroy() {

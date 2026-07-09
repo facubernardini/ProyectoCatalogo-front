@@ -5,10 +5,11 @@ import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
+import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
 
 @Component({
   selector: 'app-carousel-ofertas-desktop',
-  imports: [CommonModule, Icon],
+  imports: [CommonModule, Icon, SafeHtmlPipe],
   templateUrl: './carousel-ofertas-desktop.html',
   styleUrl: './carousel-ofertas-desktop.css',
 })
