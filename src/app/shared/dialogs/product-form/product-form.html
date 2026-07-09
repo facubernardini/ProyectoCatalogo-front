@@ -1,0 +1,346 @@
+@if (productFormService.isOpen()) {
+<div class="fixed inset-0 z-50 flex justify-end overflow-hidden">
+    
+    <div class="absolute inset-0 bg-black/60 animate-backdrop"
+         (click)="productFormService.close()">
+    </div>
+
+    <div (click)="$event.stopPropagation()"
+         class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col animate-side-panel">
+        
+        <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 border-b border-gray-100 rounded-tl-4xl">
+            <div class="flex items-center gap-4">
+                <button (click)="productFormService.close()" 
+                        class="group p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-all duration-300 active:scale-90 border border-gray-200/50">
+                    <app-icon name="back" classes="size-5 text-gray-500 fill-current" />
+                </button>
+
+                <h2 class="text-base font-black text-brand-text leading-tight">
+                    {{ productFormService.editingProduct() ? 'Editar Producto' : 'Nuevo Producto' }}
+                </h2>
+            </div>
+
+            <button (click)="guardar()" 
+                    [disabled]="productFormService.loading() || esFormularioInvalido"
+                    class="relative px-7 py-2.5 bg-brand-accent text-white text-sm font-black rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
+                
+                <div class="flex items-center gap-2">
+                    @if (productFormService.loading()) {
+                        <div class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    }
+                    
+                    <span>
+                        {{ 
+                            productFormService.loading() 
+                            ? 'Procesando' 
+                            : (productFormService.editingProduct() ? 'Guardar' : 'Crear producto') 
+                        }}
+                    </span>
+                </div>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-8">
+            
+            <section>
+                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest mb-3">Imagen</p>
+                <div class="flex items-center gap-4">
+                    <div class="size-24 bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center relative group">
+                        @if (producto.imagen || imagenPreviewTemporal()) {
+                            <img [src]="imagenPreviewTemporal() || producto.imagen" class="w-full h-full object-cover">
+                            
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <app-icon name="edit" classes="size-6 text-white fill-current" />
+                            </div>
+
+                        } @else {
+                            <app-icon name="image-add" classes="size-8 text-gray-300 fill-current" />
+                        }
+                        <input type="file" (change)="onFileChange($event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-brand-text">Foto del producto</p>
+                        <p class="pt-1 text-xs font-base text-brand-text">Recomendado: Foto cuadrada, producto centrado.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-4">
+                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">General</p>
+                
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-gray-600 ml-1">Nombre</label>
+                    <input type="text" [(ngModel)]="producto.nombre" 
+                        [class.border-red-300]="!producto.nombre || producto.nombre.trim().length === 0"
+                        class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text">
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between ml-1">
+                        <label class="text-xs font-bold text-gray-600">Marca</label>
+                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Opcional</span>
+                    </div>
+                    <input type="text" [(ngModel)]="producto.marca" 
+                        class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300">
+                </div>
+                
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between ml-1">
+                        <label class="text-xs font-bold text-gray-600">Descripción</label>
+                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Opcional</span>
+                    </div>
+                    
+                    <textarea [(ngModel)]="producto.descripcion" rows="3" 
+                            maxlength="100"
+                            class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300 resize-none" 
+                            placeholder="Breve detalle del producto..."></textarea>
+
+                    <div class="flex items-center justify-between mx-1">
+                        <p class="text-[12px] text-brand-text/60">
+                            Aparecerá en la vista previa del producto.
+                        </p>
+                        
+                        <span class="text-[11px] font-bold transition-colors"
+                            [class.text-gray-400]="(producto.descripcion.length || 0) < 100"
+                            [class.text-red-500]="(producto.descripcion.length || 0) === 100">
+                            {{ producto.descripcion.length || 0 }}/100
+                        </span>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <section class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Categorías</p>
+                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
+                                {{ producto.categorias_ids.length }} seleccionada(s)
+                            </span>
+                        </div>
+
+                        <div class="relative" #containerElement>
+                            <div class="relative flex items-center">
+                                <input 
+                                    #searchInput
+                                    type="text" 
+                                    [(ngModel)]="searchQuery"
+                                    (focus)="abrirDropdownYScroll(containerElement)"
+                                    (click)="abrirDropdownYScroll(containerElement)"
+                                    placeholder="Buscar categorías..."
+                                    class="w-full p-3 pr-16 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text placeholder:text-gray-300 transition-all"
+                                >
+                                
+                                @if (producto.categorias_ids.length > 0 && isCategoriaDropdownOpen()) {
+                                    <button 
+                                        type="button" 
+                                        (click)="cerrarDropdown(searchInput)"
+                                        class="absolute right-3 px-3 py-1.5 bg-brand-accent text-white text-xs font-black rounded-lg transition-all active:scale-95 animate-in fade-in zoom-in-95 duration-150"
+                                    >
+                                        OK
+                                    </button>
+                                }
+                            </div>
+
+                            @if (isCategoriaDropdownOpen()) {
+                                <div class="fixed inset-0 z-40" (click)="cerrarDropdown(searchInput)"></div>
+                                
+                                <ul class="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-lg 
+                                    max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
+                                    @for (cat of categoriasFiltradas(); track cat.id) {
+                                        <li>
+                                            <button 
+                                                type="button" 
+                                                (click)="toggleCategoria(cat.id)"
+                                                class="w-full text-left px-4 py-3 text-sm font-bold transition-colors flex justify-between items-center"
+                                                [class.bg-brand-accent]="isCategoriaSelected(cat.id)" 
+                                                [class.text-white]="isCategoriaSelected(cat.id)"
+                                                [class.text-brand-text-sec]="!isCategoriaSelected(cat.id)" 
+                                                [class.hover:bg-gray-50]="!isCategoriaSelected(cat.id)"
+                                                [class.hover:text-brand-text]="!isCategoriaSelected(cat.id)"
+                                            >
+                                                {{ cat.nombre }}
+                                                
+                                                @if (isCategoriaSelected(cat.id)) {
+                                                    <app-icon name="check" classes="size-4 fill-current" />
+                                                }
+                                            </button>
+                                        </li>
+                                    } @empty {
+                                        <li class="px-4 py-4 text-sm font-bold text-gray-400 text-center">
+                                            No se encontraron categorías.
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+
+                        @if (adminStore.categorias().length === 0) {
+                            <p class="text-xs text-gray-400 italic mt-1">No hay categorías creadas todavía.</p>
+                        }
+                    </section>
+                </div>
+
+                <section class="space-y-3 mt-6">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Restricciones</p>
+                        <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
+                            {{ producto.tags_ids.length || 0 }} seleccionada(s)
+                        </span>
+                    </div>
+
+                    <div class="relative">
+                        
+                        <button type="button" 
+                                (click)="toggleTagsDropdown($event)"
+                                [disabled]="adminStore.tags().length === 0"
+                                class="w-full p-3 flex justify-between items-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all md:hover:bg-gray-100/50 disabled:opacity-60 disabled:cursor-not-allowed"
+                                [class.ring-2]="isTagsDropdownOpen()" [class.ring-brand-accent]="isTagsDropdownOpen()" [class.border-brand-accent]="isTagsDropdownOpen()">
+                            
+                            <span class="text-sm font-bold truncate mr-2"
+                                [class.text-gray-500]="producto.tags_ids.length > 0"
+                                [class.text-gray-300]="producto.tags_ids.length === 0">
+                                {{ producto.tags_ids.length > 0 ? 'Modificar restricciones...' : 'Seleccionar restricciones...' }}
+                            </span>
+                            
+                            <div class="shrink-0 transition-transform duration-300" [class.rotate-180]="isTagsDropdownOpen()">
+                                <app-icon name="chevron-down" classes="size-4 text-gray-400 fill-current" />
+                            </div>
+                        </button>
+
+                        @if (isTagsDropdownOpen()) {
+                            <div class="fixed inset-0 z-40" (click)="isTagsDropdownOpen.set(false)"></div>
+                            
+                            <div class="absolute left-0 z-50 w-full bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200"
+                                [class.bottom-full]="isTagsMenuUpward()"
+                                [class.mb-2]="isTagsMenuUpward()"
+                                [class.top-full]="!isTagsMenuUpward()"
+                                [class.mt-2]="!isTagsMenuUpward()">
+                                
+                                <div class="flex flex-col py-1">
+                                    @for (tag of adminStore.tags(); track tag.id) {
+                                        <button type="button"
+                                                (click)="toggleTag(tag.id)"
+                                                class="w-full text-left px-4 py-3 text-sm transition-colors flex items-center gap-3 md:hover:bg-gray-50 border-b border-gray-50 last:border-0"
+                                                [class.text-brand-accent]="isTagSelected(tag.id)"
+                                                [class.font-bold]="isTagSelected(tag.id)"
+                                                [class.bg-brand-accent]="isTagSelected(tag.id)"
+                                                [style.backgroundColor]="isTagSelected(tag.id) ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                                [class.text-brand-text-sec]="!isTagSelected(tag.id)"
+                                                [class.font-medium]="!isTagSelected(tag.id)">
+                                            
+                                            <div class="shrink-0 size-5 rounded border flex items-center justify-center transition-all duration-200"
+                                                    [class.border-brand-accent]="isTagSelected(tag.id)"
+                                                    [class.bg-brand-accent]="isTagSelected(tag.id)"
+                                                    [class.border-gray-300]="!isTagSelected(tag.id)"
+                                                    [class.bg-white]="!isTagSelected(tag.id)">
+                                                    
+                                                    @if (isTagSelected(tag.id)) {
+                                                        <app-icon name="check" classes="size-3.5 text-white fill-current" />
+                                                    }
+                                            </div>
+                                            
+                                            @if (tag.icono) {
+                                                <div [innerHTML]="tag.icono | safeHtml" class="size-5 flex items-center justify-center shrink-0"></div>
+                                            }
+                                            
+                                            <span class="flex-1 truncate">{{ tag.nombre }}</span>
+                                        </button>
+                                    }
+                                </div>
+
+                                @if (adminStore.tags().length === 0) {
+                                    <div class="p-4 text-center">
+                                        <p class="text-xs text-gray-400 italic">No hay restricciones disponibles.</p>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad especial</label>
+                    <button (click)="producto.destacado = !producto.destacado" 
+                            [class]="producto.destacado ? 'bg-brand-accent text-white border-brand-accent shadow-md' : 'bg-gray-50 text-gray-400 border-gray-100'"
+                            class="flex items-center justify-center gap-2 h-11.5 rounded-xl border font-bold text-sm transition-all active:scale-95 w-full">
+                        <app-icon name="star" [classes]="'size-4 ' + (producto.destacado ? 'fill-white' : 'fill-gray-400')" />
+                        {{ producto.destacado ? 'Producto Destacado' : 'Destacar Producto' }}
+                    </button>
+                </div>
+            </section>
+
+            <section class="space-y-4 pb-12">
+                <div class="flex items-center justify-between pb-1">
+                    <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Precios y Unidades</p>
+                    <button (click)="agregarPresentacion()" class="text-brand-accent text-xs font-bold active:scale-95">+ Agregar</button>
+                </div>
+
+                @for (pres of producto.presentaciones; track $index) {
+                    <div [class]="!pres.activo ? 'opacity-60 grayscale-[0.5] bg-gray-100' : 'bg-gray-50'" 
+                        class="p-4 rounded-2xl border border-gray-100 relative group/item animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all">
+                        
+                        <button (click)="pres.activo = !pres.activo"
+                                [class]="pres.activo ? 'bg-green-500 text-white border-green-600' : 'bg-gray-400 text-white border-gray-500'"
+                                class="absolute -top-2 left-4 z-10 px-3 py-1 rounded-full border text-[10px] font-black transition-all active:scale-95 shadow-sm uppercase tracking-tighter">
+                            {{ pres.activo ? 'Visible' : 'Pausado' }}
+                        </button>
+
+                        @if (producto.presentaciones.length > 1) {
+                            <button (click)="eliminarPresentacion($index)" 
+                                    class="absolute -top-2 -right-2 z-10 bg-red-500 shadow-sm p-1.5 rounded-full text-white hover:bg-red-600 transition-colors">
+                                <app-icon name="trash" classes="size-3.5 fill-current" />
+                            </button>
+                        }
+
+                        <div class="grid grid-cols-12 gap-3 mt-2">
+                            <div class="col-span-12">
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Unidad</label>
+                                <input type="text" [(ngModel)]="pres.unidad_venta" 
+                                    [class.border-red-300]="!pres.unidad_venta || pres.unidad_venta.trim() === ''"
+                                    class="w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                    placeholder="Ej: 500 gr, Pack x6, Docena, Unidad">
+                            </div>
+                            <div class="col-span-6">
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio</label>
+                                <div class="relative group/input">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 transition-colors group-focus-within/input:text-brand-accent">
+                                        $
+                                    </span>
+                                    <input type="number" [(ngModel)]="pres.precio" 
+                                        [class.border-red-300]="pres.precio === null || pres.precio <= 0"
+                                        class="w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <div class="col-span-6">
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio oferta</label>
+                                <div class="relative group/input">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 transition-colors group-focus-within/input:text-brand-accent">
+                                        $
+                                    </span>
+                                    <input type="number" [(ngModel)]="pres.precio_descuento" 
+                                        [class.border-red-400]="pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio"
+                                        class="w-full p-2.5 pl-7 bg-white border border-brand-accent/20 rounded-lg outline-none focus:border-brand-accent/50 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        placeholder="Opcional">
+                                </div>
+                                
+                                @if (pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio) {
+                                    <p class="text-[8px] text-red-500 font-black mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
+                                        EL PRECIO OFERTA DEBE SER MENOR
+                                    </p>
+                                }
+                            </div>
+                        </div>
+
+                        @if (!pres.activo) {
+                            <p class="text-[9px] text-gray-500 font-bold mt-2 text-center uppercase">Esta variante no se mostrará en el catálogo</p>
+                        }
+                    </div>
+                }
+            </section>
+        </div>
+    </div>
+</div>
+}

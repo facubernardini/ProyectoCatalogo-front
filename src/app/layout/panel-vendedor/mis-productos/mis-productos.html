@@ -1,0 +1,348 @@
+<div class="min-h-svh flex flex-col">
+    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
+        <div class="flex items-center justify-between px-4 h-16 max-w-4xl mx-auto w-full">
+            
+            <button (click)="volverAtras()"
+                    class="p-2 mr-6 text-brand-accent active:scale-95 transition-transform"
+                    aria-label="Volver atrás">
+                <app-icon name="back" classes="size-7 fill-current" />
+            </button>
+
+            <div class="flex-1 text-center px-2 overflow-hidden flex flex-col items-center justify-center">
+                <h1 class="text-[17px] font-bold text-brand-text tracking-wide truncate w-full">
+                    Mis productos
+                </h1>
+            </div>
+
+            <div class="w-14 flex justify-end">
+                @if (hasProductos()) {
+                    <button (click)="exportarPDF()"
+                            class="p-1 mb-1 flex flex-col items-center justify-center gap-1 text-brand-accent active:scale-95 transition-transform"
+                            aria-label="Exportar catálogo a PDF">
+                        <app-icon name="pdf-export" classes="size-6 fill-current" />
+                        <span class="text-[8px] font-black uppercase tracking-widest leading-none opacity-90">
+                            Generar PDF
+                        </span>
+                    </button>
+                } @else {
+                    <div class="size-10 pointer-events-none"></div>
+                }
+            </div>
+
+        </div>
+    </header>
+
+    <main class="flex-1 bg-gray-50 p-4 flex flex-col">
+        
+        <div class="w-full max-w-2xl mx-auto flex flex-col flex-1">
+            
+            <div class="relative w-full max-w-md mx-auto group shrink-0">
+                <div class="flex items-center gap-2 mb-4 relative">
+        
+                    <div class="relative shrink-0">
+                        <button type="button" 
+                                (click)="toggleFiltrosDropdown()"
+                                [disabled]="!hasProductos()"
+                                class="p-3 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                                [class.ring-2]="isFiltrosOpen()" [class.ring-brand-accent]="isFiltrosOpen()" [class.border-brand-accent]="isFiltrosOpen()">
+                            
+                            <app-icon name="filter" classes="size-5 text-brand-accent fill-current" />
+                            
+                            @if (soloDestacados() || soloPausados()) {
+                                <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
+                            }
+                        </button>
+
+                        @if (isFiltrosOpen()) {
+                            <div class="fixed inset-0 z-40" (click)="isFiltrosOpen.set(false)"></div>
+                            
+                            <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg animate-in fade-in zoom-in-95 duration-200 py-2">
+                                
+                                <div class="px-3 pb-2 mt-2 mb-1 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-50">
+                                    Mostrar Solo
+                                </div>
+                                
+                                <button type="button" 
+                                        (click)="toggleDestacados(); isFiltrosOpen.set(false)"
+                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50"
+                                        [class.text-brand-accent]="soloDestacados()"
+                                        [class.font-bold]="soloDestacados()"
+                                        [class.bg-brand-accent]="soloDestacados()"
+                                        [style.backgroundColor]="soloDestacados() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''" 
+                                        [class.text-brand-text-sec]="!soloDestacados()"
+                                        [class.font-medium]="!soloDestacados()">
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <app-icon [name]="soloDestacados() ? 'star-filled' : 'star'" classes="size-4 fill-current" />
+                                        Destacados
+                                    </div>
+                                    
+                                    @if (soloDestacados()) {
+                                        <app-icon name="check" classes="size-4 fill-current" />
+                                    }
+                                </button>
+
+                                <button type="button" 
+                                        (click)="togglePausados(); isFiltrosOpen.set(false)"
+                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
+                                        [class.text-brand-accent]="soloPausados()"
+                                        [class.font-bold]="soloPausados()"
+                                        [class.bg-brand-accent]="soloPausados()"
+                                        [style.backgroundColor]="soloPausados() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                        [class.text-brand-text-sec]="!soloPausados()"
+                                        [class.font-medium]="!soloPausados()">
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <app-icon name="pause" classes="size-4 fill-current" />
+                                        Pausados
+                                    </div>
+                                    
+                                    @if (soloPausados()) {
+                                        <app-icon name="check" classes="size-4 fill-current" />
+                                    }
+                                </button>
+
+                                @if (soloDestacados() || soloPausados()) {
+                                    <div class="px-2 mt-2 pt-2 border-t border-gray-50">
+                                        <button type="button" 
+                                                (click)="limpiarFiltros()"
+                                                class="w-full py-2 px-2 text-xs font-bold text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                            <app-icon name="close" classes="size-3.5 fill-current" />
+                                            Limpiar filtros
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="flex-1 relative">
+                        <input type="text" 
+                                [ngModel]="busquedaRaw()" 
+                                (ngModelChange)="onSearchInput($event)" 
+                                placeholder="Buscar producto..."
+                                [disabled]="!hasProductos()"
+                                class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                        
+                        @if (isBuscando()) {
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                <svg class="animate-spin size-5 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+                        } @else if (busquedaRaw().length > 0) {
+                            <button (click)="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 md:hover:text-brand-accent transition-colors duration-200 focus:outline-none">
+                                <app-icon name="close" classes="size-5 fill-current" />
+                            </button>
+                        } @else {
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none" [class.opacity-50]="!hasProductos()">
+                                <app-icon name="search" classes="size-5 text-gray-400 fill-current" />
+                            </div>
+                        }
+                    </div>
+
+                    <div class="relative min-w-35">
+                        <button type="button" 
+                                (click)="toggleCategoriaDropdown()"
+                                [disabled]="!hasProductos()"
+                                class="w-full p-3 flex justify-between items-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                                [class.ring-2]="isCategoriaDropdownOpen()" [class.ring-brand-accent]="isCategoriaDropdownOpen()" [class.border-brand-accent]="isCategoriaDropdownOpen()">
+                            
+                            <span class="text-sm font-bold truncate text-brand-text mr-2">
+                                {{ categoriaSeleccionada() === 'todos' ? 'Todos' : categoriaSeleccionada() }}
+                            </span>
+                            
+                            <div class="shrink-0 transition-transform duration-300" [class.rotate-180]="isCategoriaDropdownOpen()">
+                                <app-icon name="chevron-down" classes="size-4 text-gray-400 fill-current" />
+                            </div>
+                        </button>
+
+                        @if (isCategoriaDropdownOpen()) {
+                            <div class="fixed inset-0 z-40" (click)="isCategoriaDropdownOpen.set(false)"></div>
+                            
+                            <ul class="absolute right-0 z-50 w-full min-w-50 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
+                                <li>
+                                    <button type="button" (click)="seleccionarCategoriaCustom('todos')"
+                                            class="w-full text-left px-4 py-3 text-sm font-bold transition-colors"
+                                            [class.bg-brand-accent]="categoriaSeleccionada() === 'todos'" [class.text-white]="categoriaSeleccionada() === 'todos'"
+                                            [class.text-brand-text-sec]="categoriaSeleccionada() !== 'todos'" [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== 'todos'"
+                                            [class.md:hover:text-brand-text]="categoriaSeleccionada() !== 'todos'">
+                                        Todos
+                                    </button>
+                                </li>
+                                
+                                @for (cat of categoriasOrdenadas(); track cat.id) {
+                                    <li>
+                                        <button type="button" (click)="seleccionarCategoriaCustom(cat.nombre)"
+                                                class="w-full text-left px-4 py-3 text-sm font-bold transition-colors"
+                                                [class.bg-brand-accent]="categoriaSeleccionada() === cat.nombre" [class.text-white]="categoriaSeleccionada() === cat.nombre"
+                                                [class.text-brand-text-sec]="categoriaSeleccionada() !== cat.nombre" [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== cat.nombre"
+                                                [class.md:hover:text-brand-text]="categoriaSeleccionada() !== cat.nombre">
+                                            {{ cat.nombre }}
+                                        </button>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @if (!hasCategorias()) {
+                
+                <div class="flex-1 flex flex-col items-center justify-end px-4 pb-6 text-center">
+                    <div class="flex-1 flex flex-col items-center justify-center w-full pb-14">
+                        <img src="assets/panel-vendedor/empty-state.svg" alt="Sin cupones" class="w-40 h-40 mb-5">
+                    </div>
+
+                    <p class="text-brand-text-sec text-sm mb-6 max-w-xs mx-auto leading-relaxed font-medium">
+                        Antes de crear un producto debes crear al menos una categoría.
+                    </p>
+                    
+                    <button (click)="onAddCategoria()" 
+                            class="bg-brand-accent text-white px-6 py-3.5 rounded-xl font-bold shadow-lg shadow-brand-accent/30 md:hover:scale-105 active:scale-95 transition-all w-full max-w-xs flex justify-center items-center gap-2">
+                        <app-icon name="add-categoria" classes="size-5 fill-current" />
+                        Crear categoría
+                    </button>
+                </div>
+
+            } @else if (!hasProductos()) {
+
+                <div class="flex-1 flex flex-col items-center px-4 pb-6 text-center">
+                    <div class="flex-1 flex flex-col items-center justify-center w-full pb-14">
+                        <img src="assets/panel-vendedor/empty-state.svg" alt="Sin productos" class="w-40 h-40 mb-5">
+                        <p class="text-brand-text/50 font-semibold text-sm">Aún no tenés productos creados</p>
+                    </div>
+
+                    <button (click)="onAdd()" 
+                            class="bg-brand-accent text-white px-6 py-3.5 rounded-xl font-bold shadow-lg shadow-brand-accent/30 md:hover:scale-105 active:scale-95 transition-all w-full max-w-xs flex justify-center items-center gap-2">
+                        <app-icon name="add-producto" classes="size-5 fill-current" />
+                        Crear mi primer producto
+                    </button>
+                </div>
+
+            } @else {
+
+                <div class="flex flex-col gap-3">
+                    @for (producto of productosFiltrados(); track producto.id) {
+                        <div (click)="productPreviewService.open(producto)"
+                            class="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-100 md:hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] transition-all group shadow-xs cursor-pointer"
+                            [class.border-l-4]="producto.destacado"
+                            [class.border-l-amber-400]="producto.destacado">
+                            
+                            <div class="relative shrink-0 w-12 h-12 bg-gray-50 rounded-lg overflow-hidden border border-gray-100">
+                                
+                                @if (producto.imagen) {
+                                    <img [src]="producto.imagen" 
+                                        class="object-cover w-full h-full transition-all"
+                                        [class.grayscale]="!producto.activo">
+                                } @else {
+                                    <div class="w-full h-full flex items-center justify-center text-gray-300"
+                                        [class.grayscale]="!producto.activo">
+                                        <app-icon name="photo" classes="size-5 fill-current" />
+                                    </div>
+                                }
+
+                                @if (producto.destacado) {
+                                    <div [class]="producto.activo ? 'bg-yellow-400' : 'bg-gray-400 grayscale'"
+                                        class="absolute top-0 left-0 text-white p-0.5 rounded-br-lg">
+                                        <app-icon name="star-filled" classes="size-3 fill-current" />
+                                    </div>
+                                }
+                                
+                                <div [class]="producto.activo ? 'bg-green-500' : 'bg-gray-300'" 
+                                    class="absolute bottom-0.5 right-0.5 size-2.5 rounded-full border-2 border-white shadow-sm transition-colors">
+                                </div>
+                            </div>
+                            
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-brand-text font-bold text-sm truncate group-md:hover:text-brand-accent transition-colors">{{ producto.nombre }}</h3>
+                                
+                                <div class="flex items-center gap-2 text-[10px] text-gray-400 font-medium mt-0.5">
+                                    <div class="flex items-center gap-1">
+                                        <app-icon name="layers" classes="size-3 fill-current" />
+                                        {{ producto.presentaciones.length }} {{ producto.presentaciones.length === 1 ? 'variante' : 'variantes' }}
+                                    </div>
+
+                                    @if (!producto.activo) {
+                                        <span class="flex items-center gap-1 text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded-full font-bold">
+                                            <app-icon name="pause" classes="size-2.5 fill-current" />
+                                            Pausado
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button (click)="onEdit(producto, $event)" 
+                                        class="p-2 bg-gray-50 text-brand-accent md:md:hover:bg-brand-accent md:md:hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                                    <app-icon name="edit" classes="size-4.5 fill-current" />
+                                </button>
+
+                                <div class="relative">
+                                    <button (click)="toggleMenu(producto.id, $event)" 
+                                            class="p-2 bg-gray-50 text-brand-accent md:md:hover:bg-brand-accent md:md:hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                                        <app-icon name="options" classes="size-4.5 fill-current" />
+                                    </button>
+
+                                    @if (activeMenuId() === producto.id) {
+                                        <div class="absolute right-0 z-50 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 animate-in fade-in zoom-in duration-200"
+                                            [class.top-full]="!isMenuUpward()" 
+                                            [class.mt-2]="!isMenuUpward()"
+                                            [class.bottom-full]="isMenuUpward()" 
+                                            [class.mb-2]="isMenuUpward()"
+                                            (click)="$event.stopPropagation()">
+                                            
+                                            <button (click)="onDestacar(producto); activeMenuId.set(null)"
+                                                    class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text md:hover:bg-gray-50 rounded-xl transition-colors">
+                                                <app-icon [name]="producto.destacado ? 'star-filled' : 'star'" 
+                                                        [classes]="'size-4 fill-current ' + (producto.destacado ? 'text-yellow-400' : 'text-gray-400')" />
+                                                {{ producto.destacado ? 'Quitar destacado' : 'Destacar' }}
+                                            </button>
+
+                                            <button (click)="onToggleActivo(producto); activeMenuId.set(null)"
+                                                    class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text md:hover:bg-gray-50 rounded-xl transition-colors">
+                                                <app-icon [name]="producto.activo ? 'pause' : 'play'" classes="size-4 fill-current text-gray-400" />
+                                                {{ producto.activo ? 'Pausar' : 'Reanudar' }}
+                                            </button>
+
+                                            <button (click)="onDuplicar(producto); activeMenuId.set(null)"
+                                                    class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text md:hover:bg-gray-50 rounded-xl transition-colors">
+                                                <app-icon name="copy" classes="size-4 fill-current text-gray-400" />
+                                                Duplicar
+                                            </button>
+
+                                            <div class="h-px bg-gray-100 my-1 mx-2"></div>
+
+                                            <button (click)="onEliminar(producto); activeMenuId.set(null)"
+                                                    class="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 md:hover:bg-red-50 rounded-xl transition-colors">
+                                                <app-icon name="trash" classes="size-4 fill-current" />
+                                                Eliminar
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    } @empty {
+                        <div class="text-center py-10 opacity-40">
+                            <p class="text-sm font-bold">
+                                No hay productos con ese nombre o filtro
+                            </p>
+                        </div>
+                    }
+                </div>
+
+                <div class="fixed bottom-8 right-6 z-50 lg:right-[calc(50vw-420px)]">
+                    <button (click)="onAdd()"
+                        class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 md:hover:scale-105 transition-all duration-200 group"
+                        aria-label="Agregar producto">
+                        <app-icon name="add-producto" classes="size-6 fill-current" />
+                    </button>
+                </div>
+
+            }
+        </div>
+    </main>
+</div>

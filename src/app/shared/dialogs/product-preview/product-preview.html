@@ -1,0 +1,171 @@
+@if (productPreviewService.isOpen()) {
+    <div class="fixed inset-0 z-100 bg-black/60 animate-backdrop" 
+         (click)="productPreviewService.close()">
+        
+        <div appSwipeDown
+            (onSwipe)="productPreviewService.close()"
+            class="fixed bottom-0 w-full bg-white rounded-t-[40px] px-5 py-6 shadow-2xl animate-in slide-in-from-bottom duration-300 max-w-lg left-1/2 -translate-x-1/2" 
+            (click)="$event.stopPropagation()">
+        
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+
+            @if (productPreviewService.selectedProduct(); as prod) {
+                <div class="flex gap-4 mb-6">
+                    <div class="relative w-24 h-24 bg-brand-bg rounded-2xl overflow-hidden shrink-0 shadow-sm mt-1">
+                        <img [src]="prod.imagen || 'https://placehold.co/200x200?text=📦'" 
+                            class="w-full h-full object-cover">
+                        
+                        @if (prod.destacado) {
+                            <div class="absolute top-1.5 left-1.5 flex items-center gap-0.5 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg border border-yellow-400/30 shadow-sm z-10">
+                                <span class="text-[8px] font-black text-yellow-600 uppercase tracking-widest">
+                                    Destacado
+                                </span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="flex-1 flex flex-col justify-center min-w-0">
+                        
+                        <div class="mb-2 shrink-0">                            
+                            <div class="relative w-full">
+                                <input type="text" 
+                                    [(ngModel)]="prod.nombre" 
+                                    placeholder="Nombre del producto"
+                                    (focus)="onFocus($event)" 
+                                    class="w-full bg-gray-50 border-none rounded-2xl py-3 pl-4 pr-12 text-xl font-black text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all truncate"
+                                    [class.border-2]="!prod.nombre"
+                                    [class.border-red-500]="!prod.nombre">
+                            
+                                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                                    <app-icon name="edit" classes="size-5 fill-current" />
+                                </div>
+                            </div>
+                            
+                            @if (prod.marca) {
+                                <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-1.5 truncate">
+                                    {{ prod.marca }}
+                                </p>
+                            }
+                        </div>
+
+                        <p class="text-sm text-gray-500">
+                            {{ prod.descripcion || 'Sin descripción' }}
+                        </p>
+
+                        @if (prod.tags && prod.tags.length > 0) {
+                            <div class="flex flex-wrap gap-1.5 mt-2">
+                                @for (tag of prod.tags; track tag.id) {
+                                    <span class="flex items-center gap-1 text-[10px] bg-gray-100 text-gray-500 font-bold uppercase px-2 py-1 rounded-md border border-gray-200/50">
+                                        
+                                        @if (tag.icono) {
+                                            <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
+                                        }
+                                        
+                                        {{ tag.nombre }}
+                                    </span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-gray-400">
+                        Presentaciones y Precios
+                    </h3>
+                    <button (click)="agregarPresentacion(prod)" class="text-xs font-bold text-brand-accent hover:opacity-80 transition-opacity">
+                        + Agregar
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between px-3 mb-2">
+                    <div class="shrink-0 mr-2 flex-1">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Unidad</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-24">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider pl-1">Precio</span>
+                        </div>
+                        <div class="w-24">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider pl-1">Oferta</span>
+                        </div>
+                        <div class="w-14 ml-1"></div> 
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto custom-scrollbar">
+                    @for (pres of prod.presentaciones; track $index) {
+                        
+                        <div [class]="pres.activo !== false ? 'bg-gray-50/30 border-gray-50' : 'bg-gray-100 border-gray-200 opacity-60 grayscale-[0.5]'"
+                             class="relative flex items-center justify-between p-2 rounded-2xl border-2 transition-all">
+                            
+                            @if (pres.activo === false) {
+                                <span class="absolute -top-2 left-3 bg-gray-500 text-white px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest shadow-sm z-10">
+                                    Pausado
+                                </span>
+                            }
+
+                            <div class="shrink-0 mr-2 flex-1">
+                                <input type="text" 
+                                    [(ngModel)]="pres.unidad_venta"
+                                    class="w-full bg-white border rounded-lg py-1.5 px-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-gray-300"
+                                    [class.border-gray-200]="pres.unidad_venta"
+                                    [class.border-red-500]="!pres.unidad_venta">
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <div class="relative w-24">
+                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 font-bold text-xs"
+                                          [class.text-gray-500]="pres.precio"
+                                          [class.text-red-500]="!pres.precio">$</span>
+                                    <input type="number" 
+                                        [(ngModel)]="pres.precio"
+                                        class="no-spinners w-full bg-white border rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
+                                        [class.text-brand-text]="pres.precio"
+                                        [class.border-gray-200]="pres.precio"
+                                        [class.border-red-500]="!pres.precio"
+                                        placeholder="Precio">
+                                </div>
+                                
+                                <div class="relative w-24">
+                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">$</span>
+                                    <input type="number" 
+                                        [(ngModel)]="pres.precio_descuento"
+                                        class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-brand-accent/50"
+                                        placeholder="Opcional">
+                                </div>
+
+                                <div class="flex items-center gap-0.5 ml-1">
+                                    <button (click)="onToggleActivoPresentacion(prod, $index)" 
+                                            [class]="pres.activo !== false ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50' : 'text-orange-500 bg-orange-50 hover:bg-orange-100'"
+                                            class="p-1.5 rounded-lg transition-colors"
+                                            [title]="pres.activo !== false ? 'Pausar variante' : 'Reanudar variante'">
+                                        <app-icon [name]="pres.activo !== false ? 'pause' : 'play'" classes="size-4 fill-current" />
+                                    </button>
+
+                                    <button (click)="eliminarPresentacion(prod, $index)" 
+                                            class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Eliminar variante">
+                                        <app-icon name="trash" classes="size-4 fill-current" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="flex gap-3 mt-8">
+                    <button (click)="productPreviewService.close()" 
+                            class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
+                        Cerrar
+                    </button>
+                    <button (click)="onGuardar(prod)" 
+                            [disabled]="datosInvalidos(prod) || productPreviewService.loading()"
+                            class="flex-1 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale">
+                        {{ productPreviewService.loading() ? 'Guardando...' : 'Guardar producto' }}
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+}

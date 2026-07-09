@@ -1,0 +1,76 @@
+@if (searchService.isOpen()) {
+    <div class="fixed inset-0 z-60 bg-white flex flex-col">
+        
+        <div class="p-4 flex items-center gap-3 border-b border-gray-100">
+            <button (click)="searchService.close()" class="p-2 text-gray-400 active:scale-90 transition-transform">
+                <app-icon name="back" classes="size-6 fill-current" />
+            </button>
+            
+            <div class="flex-1 relative">
+                <input #searchInput
+                    type="text" 
+                    placeholder="¿Qué estás buscando?"
+                    class="w-full bg-gray-100 border-none rounded-2xl py-3 px-11 text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20"
+                    [value]="searchService.query()"
+                    (input)="onInputChange($event)">
+                
+                <app-icon name="search" classes="absolute left-4 top-1/2 -translate-y-1/2 size-5 fill-gray-400" />
+                
+                @if (searchService.query()) {
+                    <button (click)="searchService.query.set('')" class="absolute right-4 top-1/2 -translate-y-1/2">
+                        <app-icon name="close" classes="size-6 fill-gray-300" />
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-3">
+  
+            @if (searchService.query().length === 0) {
+                <div class="flex flex-col items-center justify-center py-32 animate-in fade-in zoom-in duration-300">
+                    <div class="size-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                        <app-icon name="search" classes="size-10 fill-current text-gray-200" />
+                    </div>
+                    <h3 class="text-zinc-500 font-bold text-lg">¿Qué estás buscando?</h3>
+                    <p class="text-zinc-400 text-sm max-w-50 text-center mt-1">
+                        Escribí el nombre de un producto para empezar.
+                    </p>
+                </div>
+            } 
+            @else {
+                <div class="grid grid-cols-1 grid-rows-1">
+                    @if (searchService.query() !== searchService.debouncedQuery() && searchService.query().length >= 2) {
+                        <div class="col-start-1 row-start-1 z-10 bg-white flex flex-col items-center justify-center py-10 animate-pulse">
+                            <div class="flex gap-1.5 mb-3">
+                                <div class="size-2.5 bg-brand-accent rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                <div class="size-2.5 bg-brand-accent rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                <div class="size-2.5 bg-brand-accent rounded-full animate-bounce"></div>
+                            </div>
+                            <span class="text-xs font-bold text-brand-accent/60 uppercase tracking-widest">Buscando productos...</span>
+                        </div>
+                    }
+
+                    <div [class.opacity-0]="searchService.query() !== searchService.debouncedQuery()" 
+                        [class.pointer-events-none]="searchService.query() !== searchService.debouncedQuery()"
+                        class="col-start-1 row-start-1 flex flex-col gap-3 transition-opacity duration-300 ease-in-out">
+                        
+                        @for (producto of resultados(); track producto.id) {
+                            <app-product-card [producto]="producto"></app-product-card>
+                        } 
+                        @empty {
+                            @if (searchService.debouncedQuery().length >= 2) {
+                                <div class="text-center py-20 animate-in fade-in duration-500">
+                                    <div class="size-20 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                        <app-icon name="search-off" classes="size-8 fill-current text-gray-400" />
+                                    </div>
+                                    <p class="text-gray-500 font-bold text-lg">No hay resultados</p>
+                                    <p class="text-gray-400 text-sm mt-1">No encontramos nada para "{{ searchService.debouncedQuery() }}"</p>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            </div>
+    </div>
+}

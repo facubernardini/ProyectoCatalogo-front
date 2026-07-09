@@ -1,0 +1,35 @@
+@if (pedidoRealizadoService.isOpen()) {
+    <div class="fixed inset-0 z-100 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60" (click)="cerrar()"></div>
+
+        <div class="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            
+            <div class="mx-auto size-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-5">
+                <app-icon name="check" classes="size-8 fill-current" />
+            </div>
+
+            <h2 class="text-2xl font-black text-center text-brand-text mb-5">¡Pedido realizado!</h2>
+
+            <div class="bg-gray-50 border border-gray-100 rounded-2xl p-5 mb-6 text-center">
+                <p class="text-sm font-bold text-gray-600 mb-4">
+                    ¿No se te abrió WhatsApp? Tocá el botón para volver a intentar.
+                </p>
+                
+                <button (click)="reenviarWhatsapp()" 
+                        class="w-full flex items-center justify-center gap-2 py-3 bg-[#25D366] text-white font-black rounded-xl active:scale-95 transition-all shadow-md shadow-green-500/20">
+                    <app-icon name="whatsapp" classes="size-6 fill-current" />
+                    Reenviar mensaje
+                </button>
+            </div>
+
+            <button (click)="cerrar()" 
+                    class="w-full py-3.5 bg-brand-bg border border-gray-200 text-brand-text font-black rounded-xl active:scale-95 transition-all hover:bg-gray-100">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    @if (mostrarConfeti()) {
+        <app-confeti />
+    }
+}

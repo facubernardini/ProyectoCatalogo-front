@@ -1,0 +1,54 @@
+<div class="flex flex-col min-h-screen bg-gray-50 overflow-hidden pointer-events-none">
+    
+    <nav class="w-full border-b border-zinc-100 bg-white px-4 py-2 shrink-0">
+        <div class="mx-auto flex max-w-7xl items-center justify-between">
+            
+            <div class="size-14 rounded-full shimmer shadow-sm shrink-0"></div>
+
+            <div class="flex flex-col pt-2 items-center text-center">
+                <div class="shimmer w-40 h-10 rounded-xl"></div>
+            </div>
+
+            <div class="w-14"></div>
+
+        </div>
+    </nav>
+
+    <div class="w-full flex items-start gap-8 px-4 py-6 flex-1">
+    
+        <aside class="hidden xl:flex flex-col gap-3 w-72 shrink-0">
+            <div class="shimmer w-32 h-6 rounded-lg mb-1"></div>
+            @for (cat of [1, 2, 3, 4, 5, 6, 7, 8]; track cat) {
+                <div class="shimmer w-full h-15 rounded-2xl shadow-sm"></div>
+            }
+        </aside>
+
+        <div class="flex flex-col gap-8 flex-1 min-w-0 w-full">
+            
+            <div class="flex items-center gap-3 w-full">
+                <div class="shimmer size-15 rounded-xl shrink-0 shadow-sm"></div>
+                <div class="shimmer flex-1 h-15 rounded-xl shrink-0 shadow-sm"></div>
+                <div class="shimmer size-15 rounded-xl shrink-0 shadow-sm"></div>
+            </div>
+
+            <div class="flex gap-4 -mx-4 px-4 overflow-hidden shrink-0">
+                <div class="shimmer w-[68%] h-76 rounded-3xl shrink-0 shadow-sm"></div>
+                <div class="shimmer w-[68%] h-76 rounded-3xl shrink-0 shadow-sm"></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 shrink-0">
+                <div class="shimmer h-40 rounded-2xl w-full shadow-sm"></div>
+                <div class="shimmer h-40 rounded-2xl w-full shadow-sm"></div>
+                <div class="shimmer h-40 rounded-2xl w-full shadow-sm"></div>
+            </div>
+
+            <div class="flex flex-col gap-4 flex-1">
+                @for (item of [1, 2, 3]; track item) {
+                    <div class="shimmer w-full h-28 rounded-2xl shrink-0 shadow-sm"></div>
+                }
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
