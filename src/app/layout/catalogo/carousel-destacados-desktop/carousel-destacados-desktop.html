@@ -32,7 +32,7 @@
                         <div class="w-full shrink-0 grid grid-cols-2 gap-5 px-2 items-stretch">
                             
                             @for (producto of pagina; track producto.id) {
-                                
+    
                                 <div (click)="productSelectorService.open(producto)"
                                     class="bg-brand-accent rounded-3xl overflow-hidden hover:shadow-lg hover:shadow-brand-accent/40 transition-shadow duration-300 cursor-pointer group/card flex h-full">
                                     
@@ -48,12 +48,27 @@
                                                 </p>
                                             }
                                             
-                                            <p class="text-white/75 text-[10px] xl:text-xs line-clamp-2 mb-3 mt-2">
+                                            <p class="text-white/75 text-[10px] xl:text-xs line-clamp-2 mb-2 mt-2">
                                                 {{ producto.descripcion }}
                                             </p>
+
+                                            @if (producto.tags && producto.tags.length > 0) {
+                                                <div class="flex flex-wrap gap-1.5 mt-2">
+                                                    @for (tag of producto.tags; track tag.id) {
+                                                        <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-white px-2 py-1 rounded-md shadow-sm">
+                                                            
+                                                            @if (tag.icono) {
+                                                                <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
+                                                            }
+                                                            
+                                                            {{ tag.nombre }}
+                                                        </span>
+                                                    }
+                                                </div>
+                                            }
                                         </div>
                                         
-                                        <div class="flex flex-wrap gap-1.5 mb-3 mt-auto">
+                                        <div class="flex flex-wrap gap-1.5 mb-3 mt-auto pt-3">
                                             @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
                                                 <span class="text-[9px] xl:text-[10px] font-bold text-white bg-white/10 px-2 py-1 rounded-lg border border-white/20 uppercase tracking-tight">
                                                     {{ pres.unidad_venta }}
@@ -86,8 +101,15 @@
 
                                     <div class="p-4 shrink-0 flex flex-col justify-center">
                                         <div class="w-40 aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center">
-                                            <img [src]="producto.imagen" 
-                                                class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
+                                            
+                                            @if (producto.imagen) {
+                                                <img [src]="producto.imagen" class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
+                                            } @else {
+                                                <div class="w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-50">
+                                                    <app-icon name="photo" classes="size-10 fill-current" />
+                                                </div>
+                                            }
+                                            
                                         </div>
                                     </div>
                                     

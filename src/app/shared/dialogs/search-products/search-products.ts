@@ -1,14 +1,14 @@
 import { Component, computed, inject } from '@angular/core';
 import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
-import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { SearchService } from '@shared/services/search.service';
+import { ProductCard } from "src/app/layout/catalogo/lista-productos/product-card/product-card";
 
 @Component({
   selector: 'app-search-products',
-  imports: [Icon],
+  imports: [Icon, ProductCard],
   templateUrl: './search-products.html',
   styleUrl: './search-products.css',
 })
@@ -39,17 +39,4 @@ export class SearchProducts {
     this.selectorService.open(producto, fromModal);
   }
 
-  getPrecioDesde(presentaciones: Presentacion[]): number {
-    if (!presentaciones.length) return 0;
-    
-    const preciosActuales = presentaciones.map(p => 
-      p.precio_descuento !== null ? Number(p.precio_descuento) : Number(p.precio)
-    );
-    
-    return Math.min(...preciosActuales);
-  }
-
-  tieneOfertas(presentaciones: Presentacion[]): boolean {
-    return presentaciones.some(p => p.precio_descuento !== null);
-  }
 }

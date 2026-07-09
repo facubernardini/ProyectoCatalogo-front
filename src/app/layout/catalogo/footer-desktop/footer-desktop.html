@@ -1,4 +1,4 @@
-<footer class="w-full py-6 mt-auto px-4 bg-transparent">
+<footer class="w-full p-4 mt-auto bg-transparent">
     <div class="max-w-5xl mx-auto flex flex-col items-center gap-3 text-center">
     
         <button (click)="irACreacion()"
@@ -8,13 +8,12 @@
 
         <div class="flex flex-col gap-1">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            © {{ currentYear }} 
+            © {{ currentYear }} - 
                 <button (click)="irAHome()"
-                    class="text-[9px] font-black text-gray-500 hover:text-brand-accent transition-colors uppercase tracking-widest">
-                    Powered by {{ BRAND_DATA.name }}
+                    class="text-[9px] font-black text-gray-500 md:hover:text-brand-accent md:hover:underline transition-colors uppercase tracking-widest">
+                    {{ BRAND_DATA.name }}
                 </button>
             </p>
-            
         </div>
     
     </div>

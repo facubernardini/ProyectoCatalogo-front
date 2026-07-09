@@ -5,10 +5,11 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CartService } from '@shared/services/cart.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
+import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
 
 @Component({
   selector: 'app-carousel-ofertas',
-  imports: [Icon],
+  imports: [Icon, SafeHtmlPipe],
   templateUrl: './carousel-ofertas.html',
   styleUrl: './carousel-ofertas.css',
 })

@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-4">
+        <div class="flex-1 overflow-y-auto p-3">
   
             @if (searchService.query().length === 0) {
                 <div class="flex flex-col items-center justify-center py-32 animate-in fade-in zoom-in duration-300">
@@ -52,49 +52,10 @@
 
                     <div [class.opacity-0]="searchService.query() !== searchService.debouncedQuery()" 
                         [class.pointer-events-none]="searchService.query() !== searchService.debouncedQuery()"
-                        class="col-start-1 row-start-1 transition-opacity duration-300 ease-in-out">
+                        class="col-start-1 row-start-1 flex flex-col gap-3 transition-opacity duration-300 ease-in-out">
                         
-                        @for (prod of resultados(); track prod.id) {
-                            <div (click)="abrirProducto(prod, true)" 
-                                class="mb-3 flex items-center gap-4 p-2 bg-white rounded-2xl active:scale-[0.98] transition-all border border-gray-100 shadow-sm hover:shadow-md cursor-pointer">
-                                
-                                <div class="relative size-16 rounded-xl bg-gray-50 overflow-hidden shrink-0 border border-gray-100/50">
-                                    <img [src]="prod.imagen || 'assets/img/placeholder.png'" class="w-full h-full object-cover">
-                                    @if (tieneOfertas(prod.presentaciones)) {
-                                        <div class="absolute top-0 left-0 bg-green-600 text-white p-1 rounded-br-lg">
-                                            <app-icon name="discount" classes="size-3 fill-current" />
-                                        </div>
-                                    }
-                                </div>
-
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="font-bold text-brand-text truncate leading-tight">{{ prod.nombre }}</h4>
-                                    
-                                    <div class="flex items-center gap-1.5 mt-1">
-                                        @if (prod.presentaciones.length > 1) {
-                                            <span class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">Desde</span>
-                                            <p class="text-sm text-brand-accent font-black">${{ getPrecioDesde(prod.presentaciones) }}</p>
-                                            <span class="text-[10px] text-gray-400 font-medium ml-1">• {{ prod.presentaciones.length }} opciones</span>
-                                        } 
-                                        @else {
-                                            @let pres = prod.presentaciones[0];
-                                            <div class="flex items-center gap-2">
-                                                @if (pres?.precio_descuento) {
-                                                    <p class="text-sm text-brand-accent font-black">${{ pres.precio_descuento }}</p>
-                                                    <span class="text-[11px] text-gray-400 line-through font-medium">${{ pres.precio }}</span>
-                                                } @else {
-                                                    <p class="text-sm text-brand-accent font-black">${{ pres?.precio }}</p>
-                                                }
-                                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tight ml-1">• {{ pres?.unidad_venta }}</span>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-
-                                <div class="pr-2">
-                                    <app-icon name="chevron-right" classes="size-5 fill-gray-300" />
-                                </div>
-                            </div>
+                        @for (producto of resultados(); track producto.id) {
+                            <app-product-card [producto]="producto"></app-product-card>
                         } 
                         @empty {
                             @if (searchService.debouncedQuery().length >= 2) {

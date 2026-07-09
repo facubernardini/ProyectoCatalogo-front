@@ -31,13 +31,13 @@
         <div class="px-4 pt-2 flex flex-col shrink-0 bg-white z-10 relative">
             <div class="flex flex-col gap-1 mb-5">
                 @if (tieneDestacados()) {
-                    <button (click)="abrirDestacados()" class="w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-bold text-gray-700 hover:text-brand-text hover:bg-gray-50 transition-all duration-300 group active:scale-[0.98]">
+                    <button (click)="abrirDestacados()" class="w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-bold text-gray-700 transition-all duration-300 group active:scale-[0.98]">
                         <span class="font-black">Destacados</span>
                     </button>
                 }
 
                 @if (tieneOfertas()) {
-                    <button (click)="abrirOfertas()" class="w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-bold text-gray-700 hover:text-brand-text hover:bg-gray-50 transition-all duration-300 group active:scale-[0.98]">
+                    <button (click)="abrirOfertas()" class="w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-bold text-gray-700 transition-all duration-300 group active:scale-[0.98]">
                         <span class="font-black">Ofertas</span>
                     </button>
                 }
@@ -53,11 +53,19 @@
                 @for (cat of categoriasOrdenadas(); track cat.id) {
                     <button (click)="seleccionarYFechar(cat.nombre)"
                             class="w-full flex items-center justify-between py-2.5 px-3 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden shrink-0"
-                            [class]="selected() === cat.nombre ? 'bg-brand-accent/10 text-brand-accent shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-brand-text'">
+                            [class]="selected() === cat.nombre ? 'bg-brand-accent/10 text-brand-accent shadow-sm' : 'text-gray-600'">
                         
                         <div class="flex items-center gap-3 min-w-0">
-                            <div class="size-1.5 bg-gray-300 group-hover:bg-brand-accent/50 shrink-0 rounded-full transition-colors duration-300"></div>
-                            <span class="capitalize truncate" [class.font-black]="cat.especial">{{ cat.nombre }}</span>
+                            <div class="size-1.5 shrink-0 rounded-full transition-colors duration-300"
+                                [class.bg-brand-accent]="cat.especial"
+                                [class.bg-gray-300]="!cat.especial">
+                            </div>
+                            
+                            <span class="capitalize truncate" 
+                                [class.font-black]="cat.especial"
+                                [class.text-brand-accent]="cat.especial">
+                                {{ cat.nombre }}
+                            </span>
                         </div>
 
                         <app-icon name="chevron-right" classes="size-4 opacity-30" />
@@ -69,10 +77,10 @@
         <div class="p-4 border-t border-gray-100 bg-white flex flex-col gap-2 shrink-0 z-10 relative shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.02)]">
             
             <button (click)="infoService.open()"
-                    class="w-full flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100 hover:border-brand-accent/30 hover:bg-brand-accent/5 transition-all group">
+                    class="w-full flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100 transition-all group">
                 
                 <div class="flex items-center p-1 gap-3 overflow-hidden">
-                    <div class="size-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-accent shrink-0 group-hover:scale-110 transition-transform">
+                    <div class="size-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-accent shrink-0 transition-transform">
                         <app-icon name="time" classes="size-4 fill-current" />
                     </div>
                     <div class="text-left min-w-0">
@@ -81,15 +89,15 @@
                     </div>
                 </div>
                 
-                <app-icon name="chevron-right" classes="size-4 text-gray-300 group-hover:text-brand-accent transition-colors" />
+                <app-icon name="chevron-right" classes="size-4 text-gray-300 transition-colors" />
             </button>
 
             @if (adminStore.catalogo()?.direccion && adminStore.catalogo()?.ciudad) {
                 <button (click)="menuService.close(); mapDialogService.open()"
-                        class="w-full flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100 hover:border-brand-accent/30 hover:bg-brand-accent/5 transition-all group">
+                        class="w-full flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100 transition-all group">
                     
                     <div class="flex items-center p-1 gap-3 overflow-hidden">
-                        <div class="size-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-accent shrink-0 group-hover:scale-110 transition-transform">
+                        <div class="size-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-accent shrink-0 transition-transform">
                             <app-icon name="location" classes="size-4 fill-current" />
                         </div>
                         <div class="text-left min-w-0">
@@ -98,7 +106,7 @@
                         </div>
                     </div>
                     
-                    <app-icon name="chevron-right" classes="size-4 text-gray-300 group-hover:text-brand-accent transition-colors" />
+                    <app-icon name="chevron-right" classes="size-4 text-gray-300 transition-colors" />
                 </button>
             }
         </div>
@@ -110,7 +118,7 @@
                    target="_blank" 
                    rel="noopener noreferrer"
                    aria-label="Contactar por WhatsApp"
-                   class="p-3 rounded-full text-green-600 bg-green-100 hover:bg-green-200 active:scale-95 transition-all duration-200 shadow-sm">
+                   class="p-3 rounded-full text-green-600 bg-green-100 active:scale-95 transition-all duration-200 shadow-sm">
                     <app-icon name="whatsapp" classes="size-6 fill-current" />
                 </a>
             }
@@ -120,7 +128,7 @@
                    target="_blank" 
                    rel="noopener noreferrer"
                    aria-label="Ir a Instagram"
-                   class="p-3 rounded-full text-pink-600 bg-pink-100 hover:bg-pink-200 active:scale-95 transition-all duration-200 shadow-sm">
+                   class="p-3 rounded-full text-pink-600 bg-pink-100 active:scale-95 transition-all duration-200 shadow-sm">
                     <app-icon name="instagram" classes="size-6 fill-current" />
                 </a>
             }
