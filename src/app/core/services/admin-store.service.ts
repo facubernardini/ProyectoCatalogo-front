@@ -191,6 +191,11 @@ export class AdminStoreService {
         tienda_id: subdominio,
         origen: 'web'
       });
+
+      console.log("Registre visita");
+    }
+    else{
+      console.log("NO registre visita");
     }
   }
 
