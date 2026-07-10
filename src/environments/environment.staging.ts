@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   apiUrl: 'https://proyectocatalogo-api.onrender.com/api/v1',
-  analyticsId: 'G-90WN5EWHZ7'
+  analyticsId: '0'
 };
