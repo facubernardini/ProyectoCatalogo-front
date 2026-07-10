@@ -19,6 +19,8 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Vendedor } from "../models/vendedor.model";
 
+declare var gtag: Function;
+
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
   private router = inject(Router);
@@ -76,6 +78,8 @@ export class AdminStoreService {
         this.catalogo.set(catalogo);
         this.productos.set(productos);
         this.categorias.set(categorias);
+
+        this.registrarVisita();
         
         this.isLoading.set(false);
       },
@@ -175,6 +179,24 @@ export class AdminStoreService {
         this.isLoading.set(false);
       }
     });
+  }
+
+  private registrarVisita(): void {
+    if (typeof gtag === 'function') {
+      
+      const hostname = window.location.hostname;
+      const subdominio = hostname.split('.')[0];
+
+      gtag('event', 'visita_tienda', {
+        tienda_id: subdominio,
+        origen: 'web'
+      });
+
+      console.log("Registre visita");
+    }
+    else{
+      console.log("NO registre visita");
+    }
   }
 
   // --- MÉTODOS PARA PRODUCTOS ---
