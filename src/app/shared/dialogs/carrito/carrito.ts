@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal, effect } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CartService } from '@shared/services/cart.service';
@@ -10,7 +11,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [Icon, SwipeDownDirective, SafeHtmlPipe],
+  imports: [Icon, SwipeDownDirective, SafeHtmlPipe, CommonModule],
   templateUrl: './carrito.html',
   styleUrl: './carrito.css',
 })
