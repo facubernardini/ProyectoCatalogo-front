@@ -91,10 +91,10 @@
                                         <app-icon name="remove" classes="size-4 fill-current" />
                                     </button>
                                     
-                                    <div class="w-6 flex items-center justify-center">
+                                    <div class="w-6 overflow-hidden flex items-center justify-center">
                                         @let cantidad = getCantidad(pres.id);
                                         
-                                        <span class="text-sm font-black text-brand-text select-none animate-in zoom-in-50 fade-in duration-200">
+                                        <span [@popAnimation]="cantidad" class="block text-sm font-black text-brand-text select-none">
                                             {{ cantidad }}
                                         </span>
                                     </div>

@@ -7,6 +7,7 @@ import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ToastService } from 'src/app/core/services/toast.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-carrito',
@@ -14,6 +15,19 @@ import { ToastService } from 'src/app/core/services/toast.service';
   imports: [Icon, SwipeDownDirective, SafeHtmlPipe, CommonModule],
   templateUrl: './carrito.html',
   styleUrl: './carrito.css',
+  animations: [
+    trigger('popAnimation', [
+      transition(':decrement', [
+        style({ transform: 'translateY(10px)', opacity: 0 }),
+        animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+      ]),
+      
+      transition(':increment', [
+        style({ transform: 'translateY(-10px)', opacity: 0 }),
+        animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class Carrito {
   public adminStore = inject(AdminStoreService);

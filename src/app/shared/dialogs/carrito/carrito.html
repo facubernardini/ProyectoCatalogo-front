@@ -101,7 +101,11 @@
                                         <app-icon name="remove" classes="size-4 fill-current text-brand-text" />
                                     }
                                 </button>
-                                <span class="font-black text-brand-text min-w-5 text-center">{{ item.cantidad }}</span>
+                                <div class="min-w-5 overflow-hidden flex items-center justify-center">
+                                    <span [@popAnimation]="item.cantidad" class="block font-black text-brand-text text-center select-none">
+                                        {{ item.cantidad }}
+                                    </span>
+                                </div>
                                 <button (click)="cartService.sumarUno(item.presentacionId)"
                                     class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-transform text-white hover:brightness-110">
                                     <app-icon name="add-producto" classes="size-4 fill-current" />
