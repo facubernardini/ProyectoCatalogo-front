@@ -82,6 +82,13 @@ export class CartService {
     return final > 0 ? final : 0;
   });
 
+  hasExtraCharges = computed(() => 
+    this.deliveryMethod() === 'envio' || 
+    !!this.appliedCupon() || 
+    this.cashDiscountAmount() > 0 || 
+    this.discountAmount() > 0
+  );
+
   // --- Lógica de Envío Gratis ---
   esEnvioGratis = computed(() => {
     const threshold = this.catalogConfig()?.envioGratisDesde;

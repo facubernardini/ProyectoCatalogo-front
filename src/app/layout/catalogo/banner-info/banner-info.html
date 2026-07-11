@@ -3,7 +3,7 @@
         
         <div class="animate-marquee flex w-max">
             
-            @for (bloque of [0, 1]; track bloque) {
+            @for (bloque of [0, 1, 2]; track bloque) {
                 
                 <div class="flex items-center gap-4 pl-2" [attr.aria-hidden]="bloque > 0 ? 'true' : null">
                     
