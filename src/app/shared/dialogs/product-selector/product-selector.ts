@@ -4,12 +4,26 @@ import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 import { Icon } from "@shared/components/icon";
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-product-selector',
   imports: [SwipeDownDirective, SafeHtmlPipe, Icon],
   templateUrl: './product-selector.html',
   styleUrl: './product-selector.css',
+  animations: [
+    trigger('popAnimation', [
+      transition(':decrement', [
+        style({ transform: 'translateY(10px)', opacity: 0 }),
+        animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+      ]),
+      
+      transition(':increment', [
+        style({ transform: 'translateY(-10px)', opacity: 0 }),
+        animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class ProductSelector {
   public productSelectorService = inject(ProductSelectorService);
