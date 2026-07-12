@@ -49,6 +49,10 @@ export class Carrito {
           Number(cat.envio_gratis_desde ?? 0),
           Number(cat.descuento_en_efectivo),
         );
+
+        if (!cat.ofrece_envio) {
+          this.cartService.setDeliveryMethod('retiro');
+        }
       }
     });
   }
@@ -189,7 +193,7 @@ export class Carrito {
     // --- FIN DEL MENSAJE ---
 
     const phone = this.catalogo()?.wpp_numero;
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
+    const url = `https://wa.me/+549${phone}?text=${encodeURIComponent(mensaje)}`;
     
     const metodo = this.cartService.deliveryMethod() || 'retiro';
 
