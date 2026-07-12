@@ -16,9 +16,8 @@ export class MenuLateralDesktop {
   public infoService = inject(InfoService);
   public mapDialogService = inject(MapDialogService);
   public exploradorProductosService = inject(ExploradorProductosService);
-  
-  public selected = signal<string | null>(null);
 
+  catalogo = this.adminStore.catalogo;
   categorias = this.adminStore.categorias;
 
   categoriasOrdenadas = computed(() => {
@@ -42,22 +41,38 @@ export class MenuLateralDesktop {
   });
 
   seleccionarYFechar(nombre: string) {
-    this.selected.set(nombre);
     this.exploradorProductosService.verCategoria(nombre);
   }
 
   abrirDestacados(){
-    this.selected.set('destacados');
     this.exploradorProductosService.verDestacados();
   }
 
   abrirOfertas(){
-    this.selected.set('ofertas');
     this.exploradorProductosService.verTodasLasOfertas();
   }
 
-  irAlInicio() {
-    this.selected.set(null);
-    this.exploradorProductosService.limpiarVista();
+  abrirWhatsapp(): void {
+    const numero = this.catalogo()?.wpp_numero;
+    if (!numero) {
+      console.warn('No hay número de WhatsApp configurado.');
+      return;
+    }
+    
+    const url = `https://wa.me/+549${numero}`;
+    
+    window.open(url, '_blank');
+  }
+
+  abrirInstagram(): void {
+    const usuario = this.catalogo()?.instagram_usuario;
+    if (!usuario) {
+      console.warn('No hay usuario de Instagram configurado.');
+      return;
+    }
+
+    const url = `https://instagram.com/${usuario}`;
+    
+    window.open(url, '_blank');
   }
 }

@@ -112,21 +112,21 @@
         <div class="px-4 py-2 border-t border-gray-100 bg-gray-50/50 flex items-center justify-center gap-4 shrink-0 z-10">
             
             @if (adminStore.catalogo()?.wpp_numero) {
-                <a [href]="'https://wa.me/' + adminStore.catalogo()?.wpp_numero"
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   aria-label="Contactar por WhatsApp"
-                   class="p-3 rounded-full text-green-600 bg-green-100 active:scale-95 transition-all duration-200 shadow-sm">
+                <a (click)="abrirWhatsapp()"
+                    role="button" 
+                    rel="noopener noreferrer"
+                    aria-label="Contactar por WhatsApp"
+                    class="p-3 rounded-full text-green-600 bg-green-100 active:scale-95 transition-all duration-200 shadow-sm">
                     <app-icon name="whatsapp" classes="size-6 fill-current" />
                 </a>
             }
 
             @if (adminStore.catalogo()?.instagram_usuario) {
-                <a [href]="'https://instagram.com/' + adminStore.catalogo()?.instagram_usuario"
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   aria-label="Ir a Instagram"
-                   class="p-3 rounded-full text-pink-600 bg-pink-100 active:scale-95 transition-all duration-200 shadow-sm">
+                <a (click)="abrirInstagram()"
+                    role="button"
+                    rel="noopener noreferrer"
+                    aria-label="Ir a Instagram"
+                    class="p-3 rounded-full text-pink-600 bg-pink-100 active:scale-95 transition-all duration-200 shadow-sm">
                     <app-icon name="instagram" classes="size-6 fill-current" />
                 </a>
             }

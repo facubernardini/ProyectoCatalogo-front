@@ -39,21 +39,22 @@
             <div class="w-full flex-1 min-h-0 space-y-3 overflow-y-auto pr-1 pb-2">
                 
                 @if (catalogo()?.wpp_numero) {
-                    <a [href]="'https://wa.me/' + catalogo()?.wpp_numero" 
-                        target="_blank"
+                    <a (click)="abrirWhatsapp()"
+                        role="button"
                         class="flex w-full items-center gap-4 rounded-2xl bg-green-50 px-4 py-2.5 text-green-700 transition-active md:transition-colors active:scale-95 md:hover:bg-green-100 shadow-sm">
                         <app-icon name="whatsapp" classes="size-6 fill-current" />
                         <div class="flex flex-1 flex-col">
                             <span class="text-[10px] font-black uppercase tracking-widest opacity-60">WhatsApp</span>
-                            <span class="font-bold">+{{ catalogo()?.wpp_numero }}</span>
+                            <span class="font-bold">+549{{ catalogo()?.wpp_numero }}</span>
                         </div>
                         <app-icon name="chevron-right" classes="size-5 fill-current opacity-40" />
                     </a>
                 }
 
                 @if (catalogo()?.instagram_usuario) {
-                    <a [href]="'https://instagram.com/' + catalogo()?.instagram_usuario" target="_blank"
-                    class="flex w-full items-center gap-4 rounded-2xl bg-pink-50 px-4 py-2.5 text-pink-700 transition-active md:transition-colors active:scale-95 md:hover:bg-pink-100 shadow-sm">
+                    <a (click)="abrirInstagram()"
+                        role="button"
+                        class="flex w-full items-center gap-4 rounded-2xl bg-pink-50 px-4 py-2.5 text-pink-700 transition-active md:transition-colors active:scale-95 md:hover:bg-pink-100 shadow-sm">
                         <app-icon name="instagram" classes="size-6 fill-current" />
                         <div class="flex flex-1 flex-col">
                             <span class="text-xs font-bold uppercase tracking-wider opacity-60">Instagram</span>
