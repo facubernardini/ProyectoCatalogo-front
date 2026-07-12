@@ -20,7 +20,7 @@ export class BannerInfo {
     if (cat.descuento_en_efectivo && cat.descuento_en_efectivo > 0) {
       mensajes.push({
         texto: `${cat.descuento_en_efectivo}% OFF pagando en efectivo`,
-        icono: ''
+        icono: 'discount'
       });
     }
 
@@ -39,5 +39,13 @@ export class BannerInfo {
     }
 
     return mensajes;
+  });
+
+  public anunciosRepetidos = computed(() => {
+    const base = this.anunciosBanner();
+    if (base.length === 0) return [];
+
+    const repeticiones = Math.ceil(5 / base.length);
+    return Array(repeticiones).fill(base).flat();
   });
 }

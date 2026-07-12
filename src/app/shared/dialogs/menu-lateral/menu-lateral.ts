@@ -24,6 +24,7 @@ export class MenuLateral {
   public infoService = inject(InfoService);
   public mapDialogService = inject(MapDialogService);
   
+  catalogo = this.adminStore.catalogo;
   categorias = this.adminStore.categorias;
 
   categoriasOrdenadas = computed(() => {
@@ -62,5 +63,29 @@ export class MenuLateral {
   abrirOfertas(){
     this.menuService.close();
     this.productosOfertasService.open();
+  }
+
+  abrirWhatsapp(): void {
+    const numero = this.catalogo()?.wpp_numero;
+    if (!numero) {
+      console.warn('No hay número de WhatsApp configurado.');
+      return;
+    }
+    
+    const url = `https://wa.me/+549${numero}`;
+    
+    window.open(url, '_blank');
+  }
+
+  abrirInstagram(): void {
+    const usuario = this.catalogo()?.instagram_usuario;
+    if (!usuario) {
+      console.warn('No hay usuario de Instagram configurado.');
+      return;
+    }
+
+    const url = `https://instagram.com/${usuario}`;
+    
+    window.open(url, '_blank');
   }
 }

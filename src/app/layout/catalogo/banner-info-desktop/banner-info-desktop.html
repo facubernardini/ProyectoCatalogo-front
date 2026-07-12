@@ -4,21 +4,21 @@
             
             <div class="animate-marquee flex w-max">
                 
-                @for (bloque of [0, 1, 2, 3, 4, 5]; track bloque) {
+                @for (bloque of [1, 2]; track bloque) {
                     
-                    <div class="flex items-center gap-12 pl-6" [attr.aria-hidden]="bloque > 0 ? 'true' : null">
+                    <div class="flex items-center" [attr.aria-hidden]="bloque === 2 ? 'true' : null">
                         
-                        @for (msg of anunciosBanner(); track $index) {
-                            
+                        @for (msg of anunciosRepetidos(); track $index) {
                             <span class="flex items-center gap-2 whitespace-nowrap">
                                 <app-icon [name]="msg.icono" classes="size-4 fill-current"></app-icon>
                                 {{ msg.texto }}
                             </span>
                             
-                            <div class="size-1.5 rounded-full bg-brand-accent/40 shrink-0"></div>
-                            
+                            <div class="size-1.5 rounded-full bg-brand-accent/40 shrink-0 mx-8"></div>
                         }
+                        
                     </div>
+                    
                 }
                 
             </div>

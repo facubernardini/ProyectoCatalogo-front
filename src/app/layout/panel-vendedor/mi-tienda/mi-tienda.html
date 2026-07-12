@@ -118,15 +118,19 @@
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div>
 							<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">WhatsApp</label>
-							
+
 							<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 								<app-icon name="whatsapp" classes="size-5 text-green-500 ml-4 shrink-0" />
-								<input type="tel" 
+
+								<span class="pl-3 py-4 text-base font-bold text-gray-400 select-none">
+									+549
+								</span>
+
+								<input type="tel"
 									[(ngModel)]="catalogo()!.wpp_numero"
 									(input)="$any($event.target).value = $any($event.target).value.replace(/[^0-9]/g, '')"
-									placeholder="Ej: 2923123456"
 									maxlength="10"
-									class="flex-1 bg-transparent border-none py-4 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
+									class="flex-1 bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 							</div>
 						</div>
 						
@@ -136,7 +140,7 @@
 							<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 								<app-icon name="instagram" classes="size-5 text-pink-500 ml-4 shrink-0" />
 								
-								<span class="pl-3 py-4 text-sm font-bold text-gray-400 select-none">
+								<span class="pl-3 py-4 text-base font-bold text-gray-400 select-none">
 									@
 								</span>
 								
@@ -180,25 +184,25 @@
 				<section class="pt-3 border-t border-brand-bg">
 					<div class="space-y-3">
 						@for (item of catalogo()?.horarios; track item.dia) {
-							<div class="flex items-center gap-4 bg-gray-50 p-3 rounded-2xl border border-transparent transition-all"
+							<div class="flex items-center justify-between gap-2 bg-gray-50 p-2 rounded-2xl border border-transparent transition-all"
 								[class.opacity-60]="!item.abierto">
 								
-								<div class="w-32 flex items-center gap-3 shrink-0">
+								<div class="w-20 md:w-32 flex flex-col-reverse md:flex-row items-start md:items-center gap-1 md:gap-3 shrink-0">
 									<label class="relative inline-flex items-center cursor-pointer">
 										<input type="checkbox" [(ngModel)]="item.abierto" class="sr-only peer">
 										<div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-accent"></div>
 									</label>
-									<span class="font-bold text-brand-text text-sm">{{ item.dia }}</span>
+									<span class="font-bold text-brand-text text-sm md:text-base">{{ item.dia }}</span>
 								</div>
 
-								<div class="flex-1 flex items-center justify-end md:justify-start gap-2">
+								<div class="flex-1 flex items-center justify-end gap-1">
 									@if (item.abierto) {
 										<div class="flex items-center gap-2 bg-white rounded-lg px-2 py-1 shadow-sm border border-gray-100">
 											<input type="time" [(ngModel)]="item.apertura" 
-												class="bg-transparent border-none py-1 text-xs font-bold text-brand-text focus:ring-0 w-20 outline-none">
+												class="bg-transparent border-none py-1 text-xs font-bold text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
 											<span class="text-gray-400 text-sm font-black">-</span>
 											<input type="time" [(ngModel)]="item.cierre" 
-												class="bg-transparent border-none py-1 text-xs font-bold text-brand-text focus:ring-0 w-20 outline-none">
+												class="bg-transparent border-none py-1 text-xs font-bold text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
 										</div>
 									} @else {
 										<span class="text-xs font-black uppercase tracking-widest text-gray-400 bg-gray-200/50 px-3 py-1.5 rounded-lg">
