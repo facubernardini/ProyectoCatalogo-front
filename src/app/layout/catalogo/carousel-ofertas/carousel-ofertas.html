@@ -1,13 +1,13 @@
 @if (productosOferta().length > 0) {
     <section class="mt-3">
         <div class="px-4 mb-3 flex items-center justify-between">
-            <h2 class="text-lg font-black text-brand-text flex items-center gap-2">
+            <h2 class="text-lg font-bold text-brand-text flex items-center gap-2">
                 Ofertas Imperdibles <span class="animate-pulse">🏷️</span>
             </h2>
             
             <button 
                 (click)="productosOfertasService.open()"
-                class="text-xs font-extrabold text-brand-accent bg-brand-accent/10 px-2.5 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1">
+                class="text-xs font-semibold text-brand-accent bg-brand-accent/10 px-2.5 py-1.5 rounded-full active:scale-95 transition-transform flex items-center gap-1">
                 Ver todo
                 <app-icon name="chevron-right" classes="size-4 fill-brand-accent" />
             </button>
@@ -25,17 +25,12 @@
                         (click)="productSelectorService.open(producto)">
                         
                         <div class="relative w-full aspect-square bg-brand-bg shrink-0 overflow-hidden">
-                            <img [src]="producto.imagen || 'https://placehold.co/300x200'" class="absolute inset-0 w-full h-full object-cover">
-                            
-                            <div class="absolute top-2 left-2 z-10 bg-green-600 text-white px-1 py-1 rounded-lg shadow-sm">
-                                <app-icon name="discount" classes="size-5 fill-current" />
-                            </div>
-
-                            @if (oferta) {
-                                <div class="absolute flex items-center top-2 right-2 z-10 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm border border-gray-100">
-                                    <span class="text-xs font-black text-brand-text tracking-tight">
-                                    {{ oferta.unidad_venta }}
-                                    </span>
+                            @if (producto.imagen) {
+                                <img [src]="producto.imagen" class="absolute inset-0 w-full h-full object-cover">
+                            }
+                            @else {
+                                <div class="w-full h-full flex items-center justify-center text-brand-accent/40 bg-gray-200">
+                                    <app-icon name="photo" classes="size-8 fill-current" />
                                 </div>
                             }
                         </div>
@@ -53,7 +48,7 @@
                             }
                             
                             @if (producto.tags && producto.tags.length > 0) {
-                                <div class="flex flex-wrap gap-1 mt-1.5 mb-1">
+                                <div class="flex flex-wrap gap-1 mt-1.5">
                                     @for (tag of producto.tags; track tag.id) {
                                         <span class="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/5 px-1.5 py-0.5 rounded border border-brand-accent/20">
                                             
@@ -66,9 +61,16 @@
                                     }
                                 </div>
                             }
-                            
-                            <div class="mt-auto pt-2 flex items-center justify-between gap-1 border-t border-gray-50">
 
+                            @if (oferta){
+                                <div class="flex flex-wrap gap-1.5 my-1.5">
+                                    <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg text-gray-500 bg-gray-100 border-gray-200/50 shadow-sm border uppercase tracking-tight transition-colors">
+                                        {{ oferta.unidad_venta }}
+                                    </span>
+                                </div>
+                            }
+                            
+                            <div class="mt-auto pt-2 flex items-center justify-between gap-1 border-t border-gray-100">
                                 <div class="flex flex-col">
                                     @if (oferta) {
                                         <span class="text-[10px] text-gray-400 line-through leading-none mb-0.5">
@@ -83,7 +85,6 @@
                                         </span>
                                     }
                                 </div>
-                                
                             </div>
                         </div>
                     </div>

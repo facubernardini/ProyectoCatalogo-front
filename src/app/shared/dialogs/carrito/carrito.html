@@ -18,12 +18,12 @@
                 <div class="space-x-4">
                     @if (cartService.items().length > 0){
                         <button (click)="cartService.limpiarCarrito()"
-                                class="text-xs font-bold text-white bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-xl uppercase tracking-wider transition-all duration-300 active:scale-95">
+                                class="text-xs font-semibold text-white bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-xl uppercase tracking-wider transition-all duration-300 active:scale-95">
                             Vaciar
                         </button>
                     }
                     <button (click)="cartService.close()"
-                        class="text-xs font-bold text-gray-400 hover:text-red-500 uppercase tracking-wider transition-colors">
+                        class="text-xs font-semibold text-gray-400 hover:text-red-500 uppercase tracking-wider transition-colors">
                         Cerrar
                     </button>
                 </div>
@@ -51,11 +51,11 @@
 
         } @else {
             
-            <div class="flex-1 overflow-y-auto px-5 py-4 md:custom-scrollbar no-scrollbar">
+            <div class="flex-1 overflow-y-auto px-5 py-2.5 md:custom-scrollbar no-scrollbar">
                  
                 <div class="flex flex-col gap-4">
                     @for (item of cartService.items(); track item.presentacionId) {
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2.5">
                             <div class="relative shrink-0">
                                 <img [src]="item.imagen || 'https://placehold.co/100x100?text=%F0%9F%93%A6'"
                                     class="size-14 rounded-xl object-cover bg-brand-bg">
@@ -68,8 +68,12 @@
                             </div>
                             
                             <div class="flex-1 min-w-0">
-                                <h4 class="font-bold text-brand-text truncate leading-tight">{{ item.nombre }}</h4>
-                                <p class="text-[12px] text-gray-500">{{ item.unidad }}</p>
+                                <h4 class="text-sm font-medium text-brand-text truncate leading-tight">
+                                    {{ item.nombre }}
+                                </h4>
+                                <p class="text-[12px] text-gray-500">
+                                    {{ item.unidad }}
+                                </p>
                                 
                                 <div class="flex flex-col mt-0.5">
                                     <div class="flex items-center gap-1.5">
@@ -116,7 +120,7 @@
                 </div>
 
                 <div class="mt-6" id="seccion-entrega">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Cómo lo recibís?</h3>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">¿Cómo lo recibís?</h3>
                     @if (catalogo()?.ofrece_envio) {
                         <div class="grid grid-cols-2 gap-3 mb-6">
                             <button (click)="seleccionarMetodo('retiro', seccionPago)"
@@ -154,8 +158,8 @@
                     }
                 </div>
 
-                <div class="mt-6" #seccionPago id="seccion-pago">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Elegí como pagar</h3>
+                <div class="mt-5" #seccionPago id="seccion-pago">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">Elegí como pagar</h3>
                     <div class="grid grid-cols-3 gap-3">
                         @for (pago of catalogo()?.medios_pago; track pago.id) {
                             <button (click)="seleccionarPago(pago, seccionDatos)"
@@ -182,18 +186,18 @@
                     </div>
                 </div>
 
-                <div class="mt-6" #seccionDatos id="seccion-datos">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Tus datos</h3>
+                <div class="mt-5" #seccionDatos id="seccion-datos">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">Tus datos</h3>
                     <div class="flex flex-col gap-4">
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-xs font-bold text-gray-400 ml-1 uppercase">Nombre y Apellido</label>
+                            <label class="text-xs font-semibold text-gray-400 ml-1 uppercase">Nombre y Apellido</label>
                             <input type="text" [value]="nombreCliente()"
                                 (input)="nombreCliente.set($any($event.target).value)"
                                 class="w-full p-2.5 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium">
                         </div>
                         @if (cartService.deliveryMethod() === 'envio') {
                             <div class="flex flex-col gap-1.5 animate-in slide-in-from-top-2 duration-300">
-                                <label class="text-xs font-bold text-gray-400 ml-1 uppercase">Dirección de envío</label>
+                                <label class="text-xs font-semibold text-gray-400 ml-1 uppercase">Dirección de envío</label>
                                 <input type="text" [value]="direccionEnvio()"
                                     (input)="direccionEnvio.set($any($event.target).value)"
                                     placeholder="Calle, número, departamento..."
@@ -203,38 +207,54 @@
                     </div>
                 </div>
 
-                <div class="mt-6" #seccionCupon>
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">¿Tenés un cupón?</h3>
+                <div class="mt-5" #seccionCupon>
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">¿Tenés un cupón?</h3>
                     @if (!cartService.appliedCupon()) {
                         <div class="flex gap-2">
                             <input type="text" #cuponInput (input)="0"
-                                class="flex-1 p-2.5 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold uppercase">
+                                [disabled]="cartService.loadingCupon()"
+                                class="flex-1 p-2.5 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold uppercase disabled:opacity-50 disabled:bg-gray-100">
                             
                             <button (click)="cartService.aplicarCupon(cuponInput.value, catalogo()?.id || 0)"
-                                [disabled]="!cuponInput.value.trim()"
-                                class="px-5 bg-brand-accent text-white font-bold rounded-2xl active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 hover:brightness-110">
-                                Aplicar
+                                [disabled]="!cuponInput.value.trim() || cartService.loadingCupon()"
+                                class="min-w-25 flex items-center justify-center px-5 bg-brand-accent text-white font-bold rounded-2xl active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 hover:brightness-110">
+                                
+                                @if (cartService.loadingCupon()) {
+                                    <div class="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                } @else {
+                                    Aplicar
+                                }
+                                
                             </button>
                         </div>
-                    } @else {
-                        <div class="p-4 bg-green-50 border-2 border-dashed border-green-200 rounded-2xl flex items-center justify-between animate-in zoom-in-95 duration-200">
-                            <div class="flex items-center gap-3">
+                    } 
+                    @else {
+                        <div class="p-2 bg-green-50 border-2 border-dashed border-green-200 rounded-2xl flex items-center justify-between animate-in zoom-in-95 duration-200">
+                            <div class="flex items-center gap-2">
                                 <div class="size-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-sm">
                                     <app-icon name="check" classes="size-5 fill-current" />
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-black text-green-600 uppercase tracking-tighter leading-none mb-1">Cupón activo</p>
-                                    <p class="text-xs font-black text-brand-text uppercase flex items-center gap-1">
+                                    <p class="text-[10px] font-bold text-green-600 uppercase tracking-tighter leading-none mb-1">
+                                        Cupón activo
+                                    </p>
+                                    <p class="text-xs font-bold text-brand-text uppercase flex items-center gap-1">
                                         {{ cartService.appliedCupon()?.mensaje || 'Descuento aplicado' }}
                                         @if (cartService.appliedCupon()?.es_porcentaje) {
-                                            <span class="bg-brand-accent/10 text-brand-accent px-1.5 py-0.5 rounded-lg text-[11px]">
+                                            <span class="bg-brand-accent/10 text-brand-accent text-center px-1 py-0.5 rounded-lg text-[10px]">
                                                 {{ cartService.appliedCupon()?.descuento }}% OFF
+                                            </span>
+                                        }
+
+                                        @if (!cartService.appliedCupon()?.es_porcentaje) {
+                                            <span class="bg-brand-accent/10 text-brand-accent text-center px-1 py-0.5 rounded-lg text-[10px]">
+                                                -${{ cartService.appliedCupon()?.descuento }}
                                             </span>
                                         }
                                     </p>
                                 </div>
                             </div>
-                            <button (click)="cartService.removerCupon()" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                            <button (click)="cartService.removerCupon()" class="p-2 text-red-500 md:text-gray-400 md:hover:text-red-500 transition-colors">
                                 <app-icon name="trash" classes="size-5 fill-current" />
                             </button>
                         </div>
@@ -247,23 +267,23 @@
                 @if (montoFaltante() > 0 && cartService.totalItems() > 0) {
                     <div class="mb-3 p-2.5 bg-amber-100 border border-amber-200 rounded-xl flex items-center gap-2 animate-pulse">
                         <app-icon name="alert" classes="size-4 text-amber-500 fill-current" />
-                        <p class="text-xs text-amber-700 font-bold">Te faltan ${{ montoFaltante() }} para el mínimo (${{ catalogo()?.minimo_compra }})</p>
+                        <p class="text-xs text-amber-700 font-semibold">Te faltan ${{ montoFaltante() }} para el mínimo (${{ catalogo()?.minimo_compra }})</p>
                     </div>
                 }
 
                 @if (catalogo()?.envio_gratis_desde && cartService.totalItems() > 0 && cartService.porcentajeEnvioGratis() >= cartService.umbralMontoFaltanteEnvioGratis) {
-                    <div class="mb-3 p-3 rounded-2xl border transition-all duration-500 animate-in fade-in slide-in-from-bottom-4"
+                    <div class="mb-3 px-3 py-2 rounded-2xl border transition-all duration-500 animate-in fade-in slide-in-from-bottom-4"
                         [class]="cartService.esEnvioGratis() ? 'bg-green-50 border-green-100' : 'bg-blue-50 border-blue-100'">
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center gap-2">
                                 <app-icon [name]="cartService.esEnvioGratis() ? 'check' : 'delivery'" 
                                         [classes]="'size-4 fill-current ' + (cartService.esEnvioGratis() ? 'text-green-500' : 'text-blue-500')" />
-                                <p class="text-[11px] font-bold uppercase tracking-tight" 
+                                <p class="text-[11px] font-semibold uppercase tracking-tight" 
                                     [class]="cartService.esEnvioGratis() ? 'text-green-700' : 'text-blue-700'">
                                     @if (cartService.esEnvioGratis()) {
                                         ¡Llegaste! Tenés envío gratis
                                     } @else {
-                                        Te faltan <span class="text-sm font-black">${{ cartService.faltanteEnvioGratis() }}</span> para el envío gratis
+                                        Te faltan <span class="text-[11px] font-black">${{ cartService.faltanteEnvioGratis() }}</span> para el envío gratis
                                     }
                                 </p>
                             </div>
@@ -277,10 +297,10 @@
                     </div>
                 }
 
-                <div class="space-y-3 mb-3 px-2">
+                <div class="space-y-3 mb-3 px-1">
                     @if (cartService.deliveryMethod() === 'envio' || cartService.appliedCupon() || cartService.cashDiscountAmount() > 0) {
                         <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
-                            <span class="text-gray-500 font-bold whitespace-nowrap">Subtotal</span>
+                            <span class="text-gray-500 font-semibold whitespace-nowrap">Subtotal</span>
                             <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
                             <span class="font-bold text-brand-text whitespace-nowrap">${{ cartService.subtotalPrice() }}</span>
                         </div>
@@ -290,21 +310,21 @@
                         <div class="flex flex-col gap-1 animate-in slide-in-from-right duration-300">
                             <div class="flex items-center gap-2 text-sm text-green-600">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="font-bold whitespace-nowrap">Descuento cupón</span>
+                                    <span class="font-semibold whitespace-nowrap">Desc. cupón</span>
                                     @if (cartService.appliedCupon()?.es_porcentaje) {
                                         <span class="bg-green-100 text-green-700 px-1.5 py-0.5 rounded-lg text-[11px] font-black tracking-tight">
                                             {{ cartService.appliedCupon()?.descuento }}% OFF
                                         </span>
                                     }
                                     @if (cartService.isDiscountCapped()) {
-                                        <span class="flex items-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-[10px] font-black uppercase tracking-tighter rounded-md animate-pulse">
+                                        <span class="flex items-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-[10px] font-semibold uppercase tracking-tighter rounded-md animate-pulse">
                                             <app-icon name="info" classes="size-3 fill-current" /> Tope Máx.
                                         </span>
                                     }
                                 </div>
                                 <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
                                 <div class="flex flex-col items-end">
-                                    <span class="font-black whitespace-nowrap">-${{ cartService.discountAmount() }}</span>
+                                    <span class="font-bold whitespace-nowrap">-${{ cartService.discountAmount() }}</span>
                                 </div>
                             </div>
                         </div>
@@ -314,14 +334,14 @@
                         <div class="flex flex-col gap-1 animate-in slide-in-from-right duration-300">
                             <div class="flex items-center gap-2 text-sm text-green-600">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="font-bold whitespace-nowrap">Pago en Efectivo</span>
+                                    <span class="font-semibold whitespace-nowrap">Pago en Efectivo</span>
                                     <span class="bg-green-100 text-green-700 px-1.5 py-0.5 rounded-lg text-[11px] font-black tracking-tight">
                                         {{ cartService.catalogConfig()?.descuentoEfectivo }}% OFF
                                     </span>
                                 </div>
                                 <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
                                 <div class="flex flex-col items-end">
-                                    <span class="font-black whitespace-nowrap">-${{ cartService.cashDiscountAmount() }}</span>
+                                    <span class="font-bold whitespace-nowrap">-${{ cartService.cashDiscountAmount() }}</span>
                                 </div>
                             </div>
                         </div>
@@ -329,7 +349,7 @@
 
                     @if (cartService.deliveryMethod() === 'envio') {
                         <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
-                            <span class="text-gray-500 font-bold whitespace-nowrap">Costo de envío</span>
+                            <span class="text-gray-500 font-semibold whitespace-nowrap">Costo de envío</span>
                             <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
                             @if (cartService.esEnvioGratis()) {
                                 <div class="flex items-center gap-2 whitespace-nowrap">
@@ -344,10 +364,10 @@
 
                     <div class="flex justify-between items-center" 
                         [ngClass]="{
-                            'pt-2 border-t-2 border-dashed border-gray-100 mt-2': cartService.hasExtraCharges()
+                            'pt-2 border-t-2 border-gray-100 mt-2': cartService.hasExtraCharges()
                         }">
                         <span class="text-lg font-bold text-brand-text">Total</span>
-                        <span class="text-2xl font-black text-brand-accent">${{ cartService.totalFinal() }}</span>
+                        <span class="text-xl font-black text-brand-accent">${{ cartService.totalFinal() }}</span>
                     </div>
                 </div>
 

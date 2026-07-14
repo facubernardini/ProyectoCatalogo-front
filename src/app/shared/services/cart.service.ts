@@ -15,6 +15,8 @@ export class CartService {
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
 
+  public loadingCupon = signal<boolean>(false);
+
   appliedCupon = signal<CuponVerificado | null>(null);
   selectedPaymentMethod = signal<MedioPago | null>(null);
   deliveryMethod = signal<'envio' | 'retiro' | null>(null);
@@ -226,14 +228,19 @@ export class CartService {
 
   aplicarCupon(codigo: string, catalogoId: number) {
     if (!codigo.trim()) return;
+    
+    this.loadingCupon.set(true);
+
     this.cuponServiceBackend.verificarCupon(codigo, catalogoId).subscribe({
       next: (res) => {
         this.appliedCupon.set(res);
         this.toastService.show(res.mensaje, 'success');
+        this.loadingCupon.set(false);
       },
       error: (err) => {
         this.appliedCupon.set(null);
         this.toastService.show(err.error?.error || 'Cupón no válido', 'error');
+        this.loadingCupon.set(false);
       },
     });
   }

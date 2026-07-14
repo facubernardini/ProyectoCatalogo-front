@@ -2,12 +2,12 @@
     <section class="mb-2 relative">
         
         <div class="mb-4 flex items-end justify-between">
-            <h2 class="text-xl font-black text-brand-text flex items-center gap-2">
+            <h2 class="text-xl font-bold text-brand-text flex items-center gap-2">
                 Ofertas Imperdibles <span class="animate-pulse text-2xl">🏷️</span>
             </h2>
             
             <button (click)="verOfertasEnExplorador()"
-                    class="text-sm font-extrabold text-brand-accent hover:text-white bg-brand-accent/10 hover:bg-brand-accent px-4 py-2 rounded-xl active:scale-95 transition-all duration-300 flex items-center gap-1 group/btn">
+                    class="text-sm font-semibold text-brand-accent hover:text-white bg-brand-accent/10 hover:bg-brand-accent px-4 py-2 rounded-xl active:scale-95 transition-all duration-300 flex items-center gap-1 group/btn">
                 Ver todo
                 <app-icon name="chevron-right" classes="size-4 fill-current group-hover/btn:translate-x-1 transition-transform" />
             </button>
@@ -70,9 +70,17 @@
                                                     }
                                                 </div>
                                             }
+
+                                            @if (oferta){
+                                                <div class="flex flex-wrap gap-1.5 mt-2 mb-1.5">
+                                                    <span class="block text-[10px] font-bold px-2 py-1 text-gray-500 bg-gray-50 border-gray-200/60 rounded-md border uppercase tracking-tight transition-colors">
+                                                        {{ oferta.unidad_venta }}
+                                                    </span>
+                                                </div>
+                                            }
                                         </div>
                                         
-                                        <div class="mt-auto flex items-end justify-between gap-2 pt-3">
+                                        <div class="mt-auto flex items-end justify-between border-t border-gray-100 gap-2 pt-2">
                                             <div class="flex flex-col">
                                                 @if (oferta) {
                                                     <span class="text-[10px] text-gray-400 line-through leading-none mb-0.5">
@@ -93,19 +101,12 @@
 
                                     <div class="p-3 pl-0 shrink-0 flex flex-col justify-center">
                                         
-                                        <div class="relative w-28 lg:w-32 aspect-square bg-brand-bg rounded-xl overflow-hidden flex items-center justify-center shrink-0">
-                                            <img [src]="producto.imagen || 'https://placehold.co/400x300'" 
-                                                class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
-                                            
-                                            <div class="absolute top-1.5 left-1.5 z-10 bg-green-600 text-white p-1 rounded-lg shadow-sm">
-                                                <app-icon name="discount" classes="size-3.5 fill-current" />
-                                            </div>
-
-                                            @if (oferta) {
-                                                <div class="flex items-center absolute top-1.5 right-1.5 z-10 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-md shadow-sm border border-gray-100">
-                                                    <span class="text-[9px] font-black text-brand-text tracking-tight uppercase">
-                                                    {{ oferta.unidad_venta }}
-                                                    </span>
+                                        <div class="relative w-32 lg:w-36 aspect-square bg-brand-bg rounded-xl overflow-hidden flex items-center justify-center shrink-0">
+                                            @if (producto.imagen) {
+                                                <img [src]="producto.imagen" class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
+                                            } @else {
+                                                <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-200">
+                                                    <app-icon name="photo" classes="size-10 fill-current" />
                                                 </div>
                                             }
                                         </div>
