@@ -69,31 +69,31 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xs font-black uppercase tracking-widest text-gray-400">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">
                         Presentaciones y Precios
                     </h3>
-                    <button (click)="agregarPresentacion(prod)" class="text-xs font-bold text-brand-accent hover:opacity-80 transition-opacity">
+                    <button (click)="agregarPresentacion(prod)" class="text-xs font-medium text-brand-accent hover:opacity-80 transition-opacity">
                         + Agregar
                     </button>
                 </div>
 
-                <div class="flex items-center justify-between px-3 mb-2">
+                <div class="flex items-center justify-between px-3 mb-1">
                     <div class="shrink-0 mr-2 flex-1">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Unidad</span>
+                        <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Unidad</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="w-24">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider pl-1">Precio</span>
+                            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider pl-1">Precio</span>
                         </div>
                         <div class="w-24">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider pl-1">Oferta</span>
+                            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider pl-1">Oferta</span>
                         </div>
                         <div class="w-14 ml-1"></div> 
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-3 max-h-[40vh] overflow-y-auto custom-scrollbar">
+                <div class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto custom-scrollbar">
                     @for (pres of prod.presentaciones; track $index) {
                         
                         <div [class]="pres.activo !== false ? 'bg-gray-50/30 border-gray-50' : 'bg-gray-100 border-gray-200 opacity-60 grayscale-[0.5]'"
@@ -154,7 +154,7 @@
                     }
                 </div>
 
-                <div class="flex gap-3 mt-8">
+                <div class="flex gap-3 mt-6">
                     <button (click)="productPreviewService.close()" 
                             class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
                         Cerrar

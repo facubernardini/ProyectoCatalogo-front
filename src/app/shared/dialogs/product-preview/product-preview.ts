@@ -51,11 +51,11 @@ export class ProductPreview {
   onFocus(event: FocusEvent) {
     const input = event.target as HTMLInputElement;
   
-  // Usamos requestAnimationFrame para asegurar que el DOM 
-  // ya haya procesado el enfoque antes de mover el cursor
-  requestAnimationFrame(() => {
-    input.setSelectionRange(input.value.length, input.value.length);
-  });
+    // Usamos requestAnimationFrame para asegurar que el DOM 
+    // ya haya procesado el enfoque antes de mover el cursor
+    requestAnimationFrame(() => {
+      input.setSelectionRange(input.value.length, input.value.length);
+    });
   }
 
   // --- NUEVO: PAUSAR / REANUDAR CON AUTO-GUARDADO ---

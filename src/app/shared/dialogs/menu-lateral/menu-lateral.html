@@ -12,10 +12,17 @@
            [class.translate-x-0]="menuService.isOpen()">
         
         <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-3 shrink-0 z-10 bg-white">
-            <img [src]="adminStore.catalogo()?.logo_tienda"
-                (click)="infoService.open()"
-                alt="Logo de la tienda"
-                class="size-12 rounded-full object-cover shadow-sm shrink-0">
+            @if (adminStore.catalogo()?.logo_tienda) {
+                <img [src]="adminStore.catalogo()?.logo_tienda"
+                    alt="Logo de la tienda"
+                    class="size-12 rounded-full object-cover shadow-sm shrink-0">
+            }
+            @else {
+                <div (click)="infoService.open()" 
+                    class="size-12 flex items-center justify-center rounded-full bg-white shadow-sm shrink-0">
+                    <app-icon name="shop" classes="size-6 fill-current text-brand-accent" />
+                </div>
+            }
                 
             <div class="flex-1 px-1">
                 <h2 class="text-sm font-bold text-brand-text leading-tight wrap-break-word">
@@ -85,7 +92,7 @@
                             <app-icon name="location" classes="size-4 fill-current" />
                         </div>
                         <div class="text-left min-w-0">
-                            <p class="text-sm font-bold text-brand-text truncate">Ubicación del local</p>
+                            <p class="text-sm font-medium text-brand-text truncate">Ubicación del local</p>
                         </div>
                     </div>
                     
@@ -101,7 +108,7 @@
                         <app-icon name="time" classes="size-4 fill-current" />
                     </div>
                     <div class="text-left min-w-0">
-                        <p class="text-sm font-bold text-brand-text truncate">Horarios de atención</p>
+                        <p class="text-sm font-medium text-brand-text truncate">Horarios de atención</p>
                     </div>
                 </div>
                 
