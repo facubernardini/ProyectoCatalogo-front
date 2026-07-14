@@ -23,7 +23,7 @@
             @if (producto().tags.length > 0) {
                 <div class="flex flex-wrap gap-1.5 mt-2">
                     @for (tag of producto().tags; track tag.id) {
-                        <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/5 px-2 py-1 rounded-md border border-brand-accent/20">
+                        <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-text bg-brand-accent/5 px-2 py-1 rounded-md border border-brand-accent/20">
                             
                             @if (tag.icono) {
                                 <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
@@ -76,11 +76,11 @@
                     <span class="text-[11px] xl:text-xs text-gray-400 line-through font-semibold mr-1">
                         ${{ cheapest.precio }}
                     </span>
-                    <span class="text-brand-accent font-black text-lg xl:text-xl leading-none">
+                    <span class="text-brand-text font-bold text-lg xl:text-xl leading-none">
                         ${{ cheapest.precio_descuento }}
                     </span>
                 } @else {
-                    <span class="text-brand-accent font-black text-lg xl:text-xl leading-none">
+                    <span class="text-brand-text font-bold text-lg xl:text-xl leading-none">
                         ${{ cheapest?.precio }}
                     </span>
                 }

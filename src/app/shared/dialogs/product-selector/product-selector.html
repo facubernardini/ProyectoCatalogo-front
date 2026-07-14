@@ -10,7 +10,7 @@
             <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 md:hidden"></div>
 
             @if (productSelectorService.selectedProduct(); as prod) {
-                <div class="flex gap-4 mb-5">
+                <div class="flex gap-2.5 mb-5">
                     <div class="relative w-28 h-28 md:w-40 md:h-40 bg-brand-bg rounded-2xl overflow-hidden shrink-0">
                         <img [src]="prod.imagen || 'https://placehold.co/200x200?text=%F0%9F%93%A6'" 
                             class="w-full h-full object-cover">
@@ -65,7 +65,7 @@
                                 
                                 <div class="flex items-baseline flex-wrap gap-1.5">
                                     @if (pres.precio_descuento) {
-                                        <span class="font-semibold text-sm text-brand-text leading-none">
+                                        <span class="font-bold text-sm text-brand-text leading-none">
                                             ${{ pres.precio_descuento }}
                                         </span>
                                         <span class="text-xs text-gray-400 line-through">
@@ -75,7 +75,7 @@
                                             -{{ getPorcentaje(pres.precio, pres.precio_descuento) }}%
                                         </span>
                                     } @else {
-                                        <span class="font-semibold text-sm text-brand-text leading-none">
+                                        <span class="font-bold text-sm text-brand-text leading-none">
                                             ${{ pres.precio }}
                                         </span>
                                     }
