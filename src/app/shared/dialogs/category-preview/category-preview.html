@@ -11,7 +11,7 @@
 
             @if (categoryPreviewService.selectedCategory(); as cat) {
                 
-                <div class="mb-6 shrink-0">                    
+                <div class="mb-4 shrink-0">                    
                     <div class="relative w-full">
                         <input type="text" 
                             [(ngModel)]="cat.nombre" 
@@ -24,8 +24,8 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between mb-3 shrink-0">
-                    <h3 class="text-xs font-black uppercase tracking-widest text-gray-400">
+                <div class="flex items-center justify-between mb-2 shrink-0">
+                    <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">
                         Productos asociados
                     </h3>
                     <span class="text-[10px] font-bold bg-brand-bg text-brand-text px-2 py-1 rounded-md">
@@ -37,7 +37,7 @@
                     @for (prod of getProductosDeCategoria(cat.id); track prod.id) {
                         
                         <div [class]="prod.activo ? 'bg-white border-gray-100' : 'bg-gray-50 border-gray-200 opacity-75 grayscale-[0.2]'" 
-                             class="flex items-center gap-3 p-3 rounded-xl border transition-all">
+                             class="flex items-center gap-3 p-2 rounded-xl border transition-all">
                             
                             <div class="relative size-10 bg-brand-bg rounded-lg overflow-hidden shrink-0">
                                 <img [src]="prod.imagen || 'https://placehold.co/100x100?text=📦'" class="w-full h-full object-cover">
@@ -54,12 +54,12 @@
                                 
                                 <div class="flex items-center gap-1.5 mt-1">
                                     <span [class]="prod.activo ? 'text-green-600 bg-green-100' : 'text-orange-600 bg-orange-100'" 
-                                          class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md tracking-wider">
+                                          class="text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md tracking-wider">
                                         {{ prod.activo ? 'Activo' : 'Pausado' }}
                                     </span>
                                     
                                     @if (prod.destacado) {
-                                        <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md bg-yellow-100 text-yellow-600 tracking-wider">
+                                        <span class="text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md bg-yellow-100 text-yellow-600 tracking-wider">
                                             Destacado
                                         </span>
                                     }
@@ -86,7 +86,7 @@
                         </div>
                     } @empty {
                         <div class="text-center py-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                            <p class="text-xs font-bold text-gray-400">No hay productos en esta categoría</p>
+                            <p class="text-xs font-medium text-gray-400">No hay productos en esta categoría</p>
                         </div>
                     }
                 </div>

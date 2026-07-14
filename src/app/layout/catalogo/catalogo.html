@@ -3,27 +3,29 @@
 } @else {
     @if (isDesktop()) {
         <!-- Layout Desktop -->
-        <app-navbar-desktop/>
+        <div class="min-h-screen flex flex-col">
+            <app-navbar-desktop class="contents" />
 
-        <div class="w-full flex items-start gap-6 py-5 sm:px-2 lg:px-5">
-    
-            <aside class="w-72 shrink-0 sticky top-34 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-2xl">
-                <app-menu-lateral-desktop/>
-            </aside>
-            
-            <main class="flex-1 min-w-0 flex flex-col gap-4">
-                @if (exploradorProductosService.vistaActual() === 'home') {
-                    <app-carousel-destacados-desktop/>
-                    <app-carousel-ofertas-desktop/>
-                    <app-lista-productos-desktop/>
-                } 
-                @else {
-                    <app-explorador-productos-desktop/>
-                }
-            </main>
+            <div class="flex-1 w-full flex items-start gap-6 py-5 sm:px-2 lg:px-5">
+        
+                <aside class="w-72 shrink-0 sticky top-34 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-2xl">
+                    <app-menu-lateral-desktop/>
+                </aside>
+                
+                <main class="flex-1 min-w-0 flex flex-col gap-4">
+                    @if (exploradorProductosService.vistaActual() === 'home') {
+                        <app-carousel-destacados-desktop/>
+                        <app-carousel-ofertas-desktop/>
+                        <app-lista-productos-desktop/>
+                    } 
+                    @else {
+                        <app-explorador-productos-desktop/>
+                    }
+                </main>
+            </div>
+
+            <app-footer-desktop/>
         </div>
-
-        <app-footer-desktop/>
 
         <!-- Dialogs emergentes -->
         <app-carrito/>
@@ -35,13 +37,21 @@
     }
     @else {
         <!-- Layout Mobile -->
-        <app-navbar/>
-        <app-banner-info/>
-        <app-search-nav/>
-        <app-carousel-destacados/>
-        <app-carousel-ofertas/>
-        <app-lista-productos/>
-        <app-footer-desktop/>
+        <div class="min-h-screen flex flex-col">
+            
+            <app-navbar/>
+            
+            <main class="flex-1 flex flex-col w-full">
+                <app-banner-info/>
+                <app-search-nav class="contents" />
+                <app-carousel-destacados/>
+                <app-carousel-ofertas/>
+                <app-lista-productos/>
+            </main>
+
+            <app-footer-desktop/>
+            
+        </div>
 
         <!-- Dialogs emergentes -->
         <app-search-products/>

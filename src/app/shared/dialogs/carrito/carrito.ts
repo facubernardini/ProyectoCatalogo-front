@@ -157,8 +157,14 @@ export class Carrito {
     // Sección 2: Detalle de compras
     mensaje += `*2. Detalle de Artículos*\n`;
     items.forEach(item => {
-      const subtotalItem = item.precio * item.cantidad;
-      mensaje += `• ${item.cantidad}x ${item.nombre} (${item.unidad}) — $${subtotalItem}\n`;
+        const subtotalItem = item.precio * item.cantidad;
+        let lineaItem = `• ${item.cantidad}x ${item.nombre} (${item.unidad}) — $${subtotalItem}`;
+        
+        if (item.cantidad >= 2) {
+            lineaItem += ` ($${item.precio} c/u)`;
+        }
+        
+        mensaje += lineaItem + `\n`;
     });
     mensaje += `\n`;
 

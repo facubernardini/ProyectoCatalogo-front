@@ -1,46 +1,47 @@
 <div class="px-4">
-    <h2 class="text-xl font-black text-brand-text flex items-center gap-2 mb-2">
-        Productos
-    </h2>
-    <div class="flex items-center gap-2 mb-3">
-        <div class="flex-1 overflow-x-auto no-scrollbar">
-            <div class="flex gap-2">
-                <button 
-                    (click)="seleccionarCategoria('todos')"
-                    [class]="categoriaSeleccionada() === 'todos' ? 'bg-brand-accent text-white' : 'bg-white text-brand-text border border-gray-200'"
-                    class="px-4 py-2 rounded-full text-[12px] font-bold whitespace-nowrap transition-all active:scale-95">
-                    Todos
-                </button>
-
-                @for (cat of categoriasOrdenadas(); track cat.id) {
-                    <button 
-                        (click)="seleccionarCategoria(cat.nombre)"
-                        [class]="categoriaSeleccionada() === cat.nombre 
-                            ? 'bg-brand-accent text-white' 
-                            : (cat.especial 
-                                ? 'bg-white/80 backdrop-blur-md border border-brand-accent' 
-                                : 'bg-white text-brand-text border border-gray-200')"
-                        class="relative overflow-hidden px-4 py-2 rounded-full text-[12px] font-bold whitespace-nowrap transition-all active:scale-95 shrink-0">
-                        
-                        @if (cat.especial && categoriaSeleccionada() !== cat.nombre) {
-                            <div class="absolute inset-0 h-full w-full bg-linear-to-r from-transparent via-brand-accent/15 to-transparent animate-shimmer"></div>
-                        }
-
-                        <div class="relative z-10 flex items-center justify-center gap-1.5">                           
-                            <span [class.text-brand-accent]="cat.especial && categoriaSeleccionada() !== cat.nombre">
-                                {{ cat.nombre }}
-                            </span>
-                        </div>
-                    </button>
-                }
-            </div>
-        </div>
-
+    <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-bold text-brand-text flex items-center gap-2">
+            Productos
+        </h2>
+        
         <button 
             (click)="abrirFiltros()"
-            class="shrink-0 p-2.5 bg-white border border-gray-200 rounded-xl text-brand-accent shadow-sm active:scale-90 transition-transform">
-            <app-icon name="filter" classes="size-6 fill-current" />
+            class="shrink-0 p-2 bg-white border border-gray-200 rounded-lg text-brand-accent shadow-sm active:scale-90 transition-transform">
+            <app-icon name="filter" classes="size-5 fill-current" />
         </button>
+    </div>
+
+    <div class="mb-3 w-full overflow-x-auto no-scrollbar">
+        <div class="flex gap-2">
+            <button 
+                (click)="seleccionarCategoria('todos')"
+                [class]="categoriaSeleccionada() === 'todos' ? 'bg-brand-accent text-white' : 'bg-white text-brand-text border border-gray-200'"
+                class="px-4 py-2 rounded-full text-[12px] font-bold whitespace-nowrap transition-all active:scale-95">
+                Todos
+            </button>
+
+            @for (cat of categoriasOrdenadas(); track cat.id) {
+                <button 
+                    (click)="seleccionarCategoria(cat.nombre)"
+                    [class]="categoriaSeleccionada() === cat.nombre 
+                        ? 'bg-brand-accent text-white' 
+                        : (cat.especial 
+                            ? 'bg-white/80 backdrop-blur-md border border-brand-accent' 
+                            : 'bg-white text-brand-text border border-gray-200')"
+                    class="relative overflow-hidden px-4 py-2 rounded-full text-[12px] font-bold whitespace-nowrap transition-all active:scale-95 shrink-0">
+                    
+                    @if (cat.especial && categoriaSeleccionada() !== cat.nombre) {
+                        <div class="absolute inset-0 h-full w-full bg-linear-to-r from-transparent via-brand-accent/15 to-transparent animate-shimmer"></div>
+                    }
+
+                    <div class="relative z-10 flex items-center justify-center gap-1.5">                           
+                        <span [class.text-brand-accent]="cat.especial && categoriaSeleccionada() !== cat.nombre">
+                            {{ cat.nombre }}
+                        </span>
+                    </div>
+                </button>
+            }
+        </div>
     </div>
 
     <div class="pb-5"> 
@@ -66,56 +67,56 @@
 </div>
 
 @if (mostrarModalFiltros()) {
-<div class="fixed inset-0 z-60 bg-black/60" (click)="cerrarFiltros()">
-    <div appSwipeDown
-        (onSwipe)="cerrarFiltros()"
-        class="absolute bottom-0 left-0 w-full bg-white rounded-t-4xl p-6 shadow-2xl animate-in slide-in-from-bottom duration-300" (click)="$event.stopPropagation()">
-        
-        <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
-        <h3 class="text-xl font-black text-brand-text mb-6">Ordenar por</h3>
+    <div class="fixed inset-0 z-60 bg-black/60" (click)="cerrarFiltros()">
+        <div appSwipeDown
+            (onSwipe)="cerrarFiltros()"
+            class="absolute bottom-0 left-0 w-full bg-white rounded-t-4xl p-6 shadow-2xl animate-in slide-in-from-bottom duration-300" (click)="$event.stopPropagation()">
+            
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <h3 class="text-lg font-black text-brand-text mb-4">Ordenar por</h3>
 
-        <div class="flex flex-col gap-2">
-            <button (click)="aplicarOrden('menor-precio')"
-                    [class.bg-brand-bg]="ordenSeleccionado() === 'menor-precio'"
-                    class="flex items-center justify-between p-4 rounded-2xl border border-gray-100 active:scale-95 transition-all text-left">
-                <span class="flex items-center gap-2 font-bold text-brand-text">
-                    <app-icon name="filter-by-price" classes="size-5 text-brand-accent fill-current rotate-180" />
-                    Menor precio
-                </span>
-                @if (ordenSeleccionado() === 'menor-precio') {
-                    <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
-                }
-            </button>
+            <div class="flex flex-col gap-2">
+                <button (click)="aplicarOrden('menor-precio')"
+                        [class.bg-brand-bg]="ordenSeleccionado() === 'menor-precio'"
+                        class="flex items-center justify-between p-4 rounded-2xl border border-gray-100 active:scale-95 transition-all text-left">
+                    <span class="flex items-center gap-2 font-semibold text-brand-text">
+                        <app-icon name="filter-by-price" classes="size-5 text-brand-accent fill-current rotate-180" />
+                        Menor precio
+                    </span>
+                    @if (ordenSeleccionado() === 'menor-precio') {
+                        <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                    }
+                </button>
 
-            <button (click)="aplicarOrden('mayor-precio')"
-                    [class.bg-brand-bg]="ordenSeleccionado() === 'mayor-precio'"
-                    class="flex items-center justify-between p-4 rounded-2xl border border-gray-100 active:scale-95 transition-all text-left">
-                <span class="flex items-center gap-2 font-bold text-brand-text">
-                    <app-icon name="filter-by-price" classes="size-5 text-brand-accent fill-current" />
-                    Mayor precio
-                </span>
-                @if (ordenSeleccionado() === 'mayor-precio') {
-                    <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
-                }
-            </button>
+                <button (click)="aplicarOrden('mayor-precio')"
+                        [class.bg-brand-bg]="ordenSeleccionado() === 'mayor-precio'"
+                        class="flex items-center justify-between p-4 rounded-2xl border border-gray-100 active:scale-95 transition-all text-left">
+                    <span class="flex items-center gap-2 font-semibold text-brand-text">
+                        <app-icon name="filter-by-price" classes="size-5 text-brand-accent fill-current" />
+                        Mayor precio
+                    </span>
+                    @if (ordenSeleccionado() === 'mayor-precio') {
+                        <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                    }
+                </button>
 
-            <button (click)="aplicarOrden('alfa')"
-                    [class.bg-brand-bg]="ordenSeleccionado() === 'alfa'"
-                    class="flex items-center justify-between p-4 rounded-2xl border border-gray-100 active:scale-95 transition-all text-left">
-                <span class="flex items-center gap-2 font-bold text-brand-text">
-                    <app-icon name="filter-by-alpha" classes="size-5 text-brand-accent fill-current" />
-                    Alfabéticamente
-                </span>
-                @if (ordenSeleccionado() === 'alfa') {
-                    <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
-                }
+                <button (click)="aplicarOrden('alfa')"
+                        [class.bg-brand-bg]="ordenSeleccionado() === 'alfa'"
+                        class="flex items-center justify-between p-4 rounded-2xl border border-gray-100 active:scale-95 transition-all text-left">
+                    <span class="flex items-center gap-2 font-semibold text-brand-text">
+                        <app-icon name="filter-by-alpha" classes="size-5 text-brand-accent fill-current" />
+                        Alfabéticamente
+                    </span>
+                    @if (ordenSeleccionado() === 'alfa') {
+                        <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                    }
+                </button>
+            </div>
+
+            <button (click)="cerrarFiltros()" 
+                    class="w-full mt-6 py-3 bg-brand-accent text-white font-bold rounded-2xl active:scale-95 transition-transform">
+                Listo
             </button>
         </div>
-
-        <button (click)="cerrarFiltros()" 
-                class="w-full mt-8 py-4 bg-brand-accent text-white font-bold rounded-2xl active:scale-95 transition-transform">
-            Listo
-        </button>
     </div>
-</div>
 }

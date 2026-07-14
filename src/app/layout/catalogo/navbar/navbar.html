@@ -1,13 +1,21 @@
 <nav class="w-full border-b border-white/10 bg-brand-accent text-white px-4 py-2">
     <div class="mx-auto flex max-w-7xl items-center justify-between">
         
-        <img [src]="adminStore.catalogo()?.logo_tienda"
-            (click)="infoService.open()"
-            alt="Logo de la tienda"
-            class="size-14 rounded-full bg-white object-cover shadow-sm cursor-pointer">
+        @if (adminStore.catalogo()?.logo_tienda) {
+            <img [src]="adminStore.catalogo()?.logo_tienda"
+                (click)="infoService.open()"
+                alt="Logo de la tienda"
+                class="size-14 rounded-full bg-white object-cover shadow-sm shrink-0">
+        } 
+        @else {
+            <div (click)="infoService.open()" 
+                 class="size-14 flex items-center justify-center rounded-full bg-white shadow-sm shrink-0">
+                <app-icon name="shop" classes="size-6 fill-current text-brand-accent" />
+            </div>
+        }
 
         <div class="flex flex-col pt-2 items-center text-center">
-            <h1 class="text-xl font-black tracking-tighter text-white leading-none">
+            <h1 class="text-xl font-bold tracking-tighter text-white leading-none">
                 {{ adminStore.catalogo()?.nombre_tienda || 'Cargando...' }}
             </h1>
             
