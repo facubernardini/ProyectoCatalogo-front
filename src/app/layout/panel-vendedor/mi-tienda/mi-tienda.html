@@ -32,7 +32,7 @@
 				[deshabilitarGuardar]="!this.catalogo()?.nombre_tienda?.trim() || !this.catalogo()?.slug?.trim() || slugDisponible() === false || validandoSlug()"
 				(onSave)="guardarCambios(sectionConfigPrincipal)"
 				(onCancel)="resetearValores()">
-				<section class="pt-3 border-t border-brand-bg space-y-5">
+				<section class="pt-3 border-t border-brand-bg space-y-4">
 					<div class="flex items-center gap-4">
 						<input type="file" #fileInput (change)="onLogoChange($event)" accept="image/*" class="hidden">
 						<div class="size-20 bg-brand-bg rounded-3xl overflow-hidden border-2 border-gray-100 flex items-center justify-center shrink-0 cursor-pointer hover:opacity-80"
@@ -47,7 +47,7 @@
 						<div class="flex-1">
 							<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Nombre Público</label>
 							<input type="text" [(ngModel)]="catalogo()!.nombre_tienda"
-								class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold">
+								class="w-full px-3 py-2 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold">
 						</div>
 					</div>
 					
@@ -73,7 +73,7 @@
 								[ngModel]="catalogo()?.slug"
 								(ngModelChange)="onSlugChange($event)"
 								placeholder="tu-tienda"
-								class="w-full bg-transparent border-none py-4 px-0.5 outline-none text-right text-brand-text font-medium focus:ring-0">
+								class="w-full bg-transparent border-none py-2 px-0.5 outline-none text-right text-brand-text font-medium focus:ring-0">
 
 							<span class="text-brand-text/40 font-medium pr-4 pointer-events-none select-none shrink-0">
 								.{{ BRAND_DATA.domain }}
@@ -100,7 +100,7 @@
 							[(ngModel)]="catalogo()!.frase_eslogan"
 							placeholder="Ej: Tu tienda de confianza"
 							maxlength="50"
-							class="w-full mt-1 p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium placeholder:text-gray-400 placeholder:font-medium">
+							class="w-full mt-1 px-3 py-2 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium placeholder:text-gray-400 placeholder:font-medium">
 							
 						<div class="flex items-center justify-between mt-1.5 mx-1">
 							<p class="text-[12px] text-brand-text/60">
@@ -122,7 +122,7 @@
 							<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 								<app-icon name="whatsapp" classes="size-5 text-green-500 ml-4 shrink-0" />
 
-								<span class="pl-3 py-4 text-base font-bold text-gray-400 select-none">
+								<span class="pl-3 py-2 text-base font-bold text-gray-400 select-none">
 									+549
 								</span>
 
@@ -130,7 +130,7 @@
 									[(ngModel)]="catalogo()!.wpp_numero"
 									(input)="$any($event.target).value = $any($event.target).value.replace(/[^0-9]/g, '')"
 									maxlength="10"
-									class="flex-1 bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
+									class="flex-1 bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 							</div>
 						</div>
 						
@@ -140,13 +140,13 @@
 							<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 								<app-icon name="instagram" classes="size-5 text-pink-500 ml-4 shrink-0" />
 								
-								<span class="pl-3 py-4 text-base font-bold text-gray-400 select-none">
+								<span class="pl-3 py-2 text-base font-bold text-gray-400 select-none">
 									@
 								</span>
 								
 								<input type="text" 
 									[(ngModel)]="catalogo()!.instagram_usuario"
-									class="flex-1 bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
+									class="flex-1 bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 							</div>
 						</div>
 					</div>
@@ -156,7 +156,7 @@
 						
 						<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 							
-							<span class="pl-4 py-4 text-sm font-bold text-gray-400 select-none">
+							<span class="pl-4 py-2 text-sm font-bold text-gray-400 select-none">
 								$
 							</span>
 							
@@ -164,7 +164,7 @@
 								(wheel)="$event.preventDefault()"
 								[(ngModel)]="catalogo()!.minimo_compra" 
 								placeholder="(Opcional)"
-								class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0 placeholder:text-gray-400 placeholder:font-medium">
+								class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0 placeholder:text-gray-400 placeholder:font-medium">
 								
 						</div>
 						
@@ -197,12 +197,12 @@
 
 								<div class="flex-1 flex items-center justify-end gap-1">
 									@if (item.abierto) {
-										<div class="flex items-center gap-2 bg-white rounded-lg px-2 py-1 shadow-sm border border-gray-100">
+										<div class="flex items-center gap-2 bg-white rounded-lg px-1.5 py-1 shadow-sm border border-gray-100">
 											<input type="time" [(ngModel)]="item.apertura" 
-												class="bg-transparent border-none py-1 text-xs font-bold text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
+												class="bg-transparent border-none py-1 text-xs font-medium text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
 											<span class="text-gray-400 text-sm font-black">-</span>
 											<input type="time" [(ngModel)]="item.cierre" 
-												class="bg-transparent border-none py-1 text-xs font-bold text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
+												class="bg-transparent border-none py-1 text-xs font-medium text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
 										</div>
 									} @else {
 										<span class="text-xs font-black uppercase tracking-widest text-gray-400 bg-gray-200/50 px-3 py-1.5 rounded-lg">
@@ -255,14 +255,14 @@
 									[class.!border-red-500]="(this.catalogo()?.costo_envio ?? 0) <= 0"
 									[class.bg-red-50]="(this.catalogo()?.costo_envio ?? 0) <= 0">
 									
-									<span class="pl-4 py-4 text-sm font-bold select-none" 
+									<span class="pl-4 py-2 text-sm font-bold select-none" 
 										[class.text-red-400]="(this.catalogo()?.costo_envio ?? 0) <= 0"
 										[class.text-gray-400]="(this.catalogo()?.costo_envio ?? 0) > 0">$</span>
 										
 									<input type="number"
 										(wheel)="$event.preventDefault()"
 										[(ngModel)]="this.catalogo()!.costo_envio"
-										class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-bold focus:ring-0">
+										class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 								</div>
 								
 								@if ((this.catalogo()?.costo_envio ?? 0) <= 0) {
@@ -277,12 +277,12 @@
 								
 								<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 									
-									<span class="pl-4 py-4 text-sm font-bold text-gray-400 select-none">$</span>
+									<span class="pl-4 py-2 text-sm font-bold text-gray-400 select-none">$</span>
 									
 									<input type="number"
 										(wheel)="$event.preventDefault()"
 										[(ngModel)]="this.catalogo()!.envio_gratis_desde"
-										class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-bold focus:ring-0">
+										class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 								</div>
 								
 								<p class="text-[12px] text-gray-400 mt-1 ml-1">Dejar vacío si no ofrecés envío gratis.</p>
@@ -314,7 +314,7 @@
 							
 							<input type="text" 
 								[(ngModel)]="catalogo()!.direccion"
-								class="flex-1 bg-transparent border-none py-4 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
+								class="flex-1 bg-transparent border-none py-2 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
 						</div>
 					</div>
 
@@ -326,7 +326,7 @@
 							
 							<input type="text" 
 								[(ngModel)]="catalogo()!.ciudad"
-								class="flex-1 bg-transparent border-none py-4 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
+								class="flex-1 bg-transparent border-none py-2 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
 						</div>
 					</div>
 				</section>
@@ -342,7 +342,7 @@
 				(onCancel)="resetearValores()">
 				
 				<section class="pt-4 border-t border-brand-bg">
-					<div class="mb-6 bg-white border border-brand-accent/20 rounded-2xl p-4 shadow-sm shadow-brand-accent/5 transition-all hover:border-brand-accent/40">
+					<div class="mb-6 bg-white border border-brand-accent/20 rounded-2xl p-3 shadow-sm shadow-brand-accent/5 transition-all hover:border-brand-accent/40">
 						<div class="flex items-center justify-between gap-4">
 							
 							<div class="flex items-center gap-3">
@@ -425,7 +425,7 @@
 				(onSave)="guardarCambios(sectionConfigTema)"
 				(onCancel)="resetearValores()">
 				
-				<section class="pt-4 border-t border-brand-bg w-full">
+				<section class="pt-2 border-t border-brand-bg w-full">
 					<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Paletas Disponibles</label>
 					
 					<div class="flex overflow-x-auto md:flex-wrap md:overflow-visible gap-4 md:gap-y-8 pb-5 pt-3 px-1 snap-x md:snap-none scroll-smooth no-scrollbar w-full mt-1">

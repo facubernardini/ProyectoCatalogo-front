@@ -9,7 +9,14 @@ export class ProductPreviewService {
   loading = this.productManager.isLoading;
   
   isOpen = signal(false);
+
   selectedProduct = signal<Producto | null>(null);
+
+  constructor() {
+    this.productManager.operationSuccess$.subscribe(() => {
+      this.close();
+    });
+  }
 
   open(producto: Producto) {
     const copiaProducto = structuredClone(producto);
@@ -29,6 +36,5 @@ export class ProductPreviewService {
     if (!producto || !producto.id) return;
 
     this.productManager.guardar(producto, producto);
-    this.close();
   }
 }

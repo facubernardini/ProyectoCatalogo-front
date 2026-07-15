@@ -5,6 +5,7 @@ import { ConfirmService } from './confirm.service';
 import { Cupon } from '../models/cupon.model';
 import { finalize, Subject } from 'rxjs';
 import { CuponServiceBackend } from '../services-backend/cupones.ServiceBackend';
+import { MicroLoadingService } from './micro-loading.service';
 
 @Injectable({ providedIn: 'root' })
 export class CuponManagerService {
@@ -12,6 +13,7 @@ export class CuponManagerService {
   private adminStore = inject(AdminStoreService);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
+  private microLoading = inject(MicroLoadingService);
 
   public isLoading = signal(false);
 
@@ -31,6 +33,8 @@ export class CuponManagerService {
 
     if (!confirmacion) return;
 
+    this.microLoading.show('Eliminando...');
+
     this.isLoading.set(true);
     this.cuponBackend.deleteCupon(cupon.id).pipe(
       finalize(() => this.isLoading.set(false))
@@ -40,10 +44,14 @@ export class CuponManagerService {
         this.toastService.show('Cupón eliminado con éxito');
         
         if (onSuccess) onSuccess();
+
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al eliminar cupón:', err);
         this.toastService.show('Hubo un error al intentar eliminar el cupón', 'error');
+        
+        this.microLoading.hide();
       }
     });
   }
@@ -65,6 +73,8 @@ export class CuponManagerService {
 
     if (!confirmacion) return;
 
+    this.microLoading.show('Actualizando...');
+
     this.isLoading.set(true);
     this.cuponBackend.updateCupon(cupon.id, { activo: !estaActivo }).pipe(
       finalize(() => this.isLoading.set(false))
@@ -72,10 +82,12 @@ export class CuponManagerService {
       next: (cuponActualizado) => {
         this.adminStore.updateCuponEnLista(cuponActualizado);
         this.toastService.show(estaActivo ? 'Cupón pausado' : '¡Cupón activado con éxito!');
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al cambiar estado del cupón:', err);
         this.toastService.show('No se pudo cambiar el estado del cupón', 'error');
+        this.microLoading.hide();
       }
     });
   }
@@ -111,6 +123,8 @@ export class CuponManagerService {
       activo: false,
     };
 
+    this.microLoading.show('Duplicando...');
+
     this.isLoading.set(true);
     this.cuponBackend.createCupon(cuponDuplicado).pipe(
       finalize(() => this.isLoading.set(false))
@@ -118,10 +132,12 @@ export class CuponManagerService {
       next: (res) => {
         this.adminStore.agregarCuponALista(res);
         this.toastService.show('¡Cupón duplicado con éxito!');
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al duplicar cupón:', err);
         this.toastService.show('Hubo un error al intentar duplicar el cupón', 'error');
+        this.microLoading.hide();
       }
     });
   }

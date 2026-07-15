@@ -51,7 +51,7 @@
                 </div>
             </div>
 
-            <div class="flex gap-1.5 py-2 mb-3 w-full max-w-md mx-auto shrink-0">
+            <div class="flex gap-1.5 py-1 mb-2 w-full max-w-md mx-auto shrink-0">
                 @for (estado of ['todos', 'activos', 'pausados', 'expirados']; track estado) {
                     <button (click)="estadoFiltro.set(estado)"
                         [disabled]="!hasCupones()"
@@ -94,7 +94,7 @@
 
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-1">
-                                    <h3 class="text-brand-text font-black text-sm uppercase tracking-wider truncate">{{ cupon.codigo_cupon }}</h3>
+                                    <h3 class="text-brand-text font-bold text-sm uppercase tracking-wider truncate">{{ cupon.codigo_cupon }}</h3>
                                 
                                     @if (isVencido(cupon.fecha_expiracion)) {
                                         <span class="bg-red-50 text-red-500 border border-red-100 text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wide shrink-0">
