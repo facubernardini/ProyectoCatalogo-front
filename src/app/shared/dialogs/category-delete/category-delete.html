@@ -4,11 +4,11 @@
 
         <div class="relative bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
             
-            <div class="bg-red-50 p-6 flex flex-col items-center text-center border-b border-red-100 shrink-0">
+            <div class="bg-red-50 px-5 py-4 flex flex-col items-center text-center border-b border-red-100 shrink-0">
                 <div class="size-12 bg-red-100 text-red-500 rounded-2xl flex items-center justify-center mb-3">
                     <app-icon name="warning" classes="size-6 fill-current" />
                 </div>
-                <h3 class="text-lg font-black text-red-700 uppercase tracking-widest">Atención Requerida</h3>
+                <h3 class="text-base font-bold text-red-700 uppercase tracking-widest">Atención Requerida</h3>
                 
                 <p class="text-sm font-medium text-red-600 mt-1">
                     @if (categoryDeleteService.opciones()?.productosAfectados?.length === 1) {
@@ -30,7 +30,7 @@
                 </div>
             </div>
             
-            <div class="p-6 space-y-4 overflow-y-auto shrink-0">
+            <div class="px-5 py-4 space-y-3 overflow-y-auto shrink-0">
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">¿Qué deseás hacer?</p>
 
                 <label class="flex items-start gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer"
@@ -40,7 +40,7 @@
                            (ngModelChange)="categoryDeleteService.accionHuerfanos.set($event)"
                            class="mt-0.5 text-brand-accent focus:ring-brand-accent">
                     <div class="flex-1 overflow-hidden">
-                        <span class="block font-bold text-brand-text truncate">Mover a otra categoría</span>
+                        <span class="block font-semibold text-brand-text truncate">Mover a otra categoría</span>
                         
                         <span class="block text-xs text-brand-text/60 mt-1 mb-2">
                             @if (categoryDeleteService.opciones()?.productosAfectados?.length === 1) {
@@ -70,19 +70,25 @@
                            (ngModelChange)="categoryDeleteService.accionHuerfanos.set($event)"
                            class="mt-0.5 text-red-500 focus:ring-red-500">
                     <div class="flex-1 overflow-hidden">
-                        <span class="block font-bold text-red-600 truncate">
+                        <span class="block font-semibold text-red-600 truncate">
                             @if (categoryDeleteService.opciones()?.productosAfectados?.length === 1) {
                                 Eliminar el producto también
                             } @else {
                                 Eliminar los productos también
                             }
                         </span>
-                        <span class="block text-xs text-red-500/70 mt-1">Se borrarán permanentemente del catálogo.</span>
+                        <span class="block text-xs text-red-500/70 mt-1">
+                            @if (categoryDeleteService.opciones()?.productosAfectados?.length === 1) {
+                                Se borrará permanentemente del catálogo.
+                            } @else {
+                                Se borrarán permanentemente del catálogo.
+                            }
+                        </span>
                     </div>
                 </label>
             </div>
 
-            <div class="p-4 bg-gray-50 flex gap-3 shrink-0">
+            <div class="p-3 bg-gray-50 flex gap-3 shrink-0">
                 <button (click)="categoryDeleteService.cancel()" class="flex-1 py-3 px-4 rounded-xl font-bold text-gray-500 hover:bg-gray-200 transition-colors">
                     Cancelar
                 </button>

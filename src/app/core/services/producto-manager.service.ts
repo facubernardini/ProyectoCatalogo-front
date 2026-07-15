@@ -5,6 +5,7 @@ import { ConfirmService } from './confirm.service';
 import { Producto } from '../models/producto.model';
 import { finalize, map, Observable, of, Subject, switchMap, throwError } from 'rxjs';
 import { ProductoService } from '../services-backend/productos.ServiceBackend';
+import { MicroLoadingService } from './micro-loading.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProductoManagerService {
@@ -12,6 +13,7 @@ export class ProductoManagerService {
   private adminStore = inject(AdminStoreService);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
+  private microLoading = inject(MicroLoadingService);
 
   public isLoading = signal(false);
 
@@ -31,17 +33,22 @@ export class ProductoManagerService {
 
     if (!confirmacion) return;
 
+    this.microLoading.show('Eliminando...');
+
     this.isLoading.set(true);
+
     this.productoBackend.deleteProducto(producto.id).pipe(
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: () => {
         this.adminStore.eliminarProductoDeLista(producto.id);
         this.toastService.show('Producto eliminado definitivamente');
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al eliminar:', err);
         this.toastService.show('Hubo un error al intentar eliminar el producto', 'error');
+        this.microLoading.hide();
       }
     });
   }
@@ -63,17 +70,22 @@ export class ProductoManagerService {
 
     if (!confirmacion) return;
 
+    this.microLoading.show('Actualizando...');
+    
     this.isLoading.set(true);
+
     this.productoBackend.updateProducto(producto.id, { activo: !estaActivo }).pipe(
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (productoActualizado) => {
         this.adminStore.updateProductoEnLista(productoActualizado);
         this.toastService.show(estaActivo ? 'Producto pausado' : '¡Producto activado para la venta!');
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al cambiar estado:', err);
         this.toastService.show('No se pudo cambiar el estado del producto', 'error');
+        this.microLoading.hide();
       }
     });
   }
@@ -95,17 +107,22 @@ export class ProductoManagerService {
 
     if (!confirmacion) return;
 
+    this.microLoading.show('Actualizando...');
+
     this.isLoading.set(true);
+
     this.productoBackend.updateProducto(producto.id, { destacado: !esDestacado }).pipe(
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (productoActualizado) => {
         this.adminStore.updateProductoEnLista(productoActualizado);
         this.toastService.show(esDestacado ? 'Se quitó de destacados' : '¡Producto destacado con éxito!');
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al actualizar destacado:', err);
         this.toastService.show('No se pudo actualizar el estado', 'error');
+        this.microLoading.hide();
       }
     });
   }
@@ -147,6 +164,8 @@ export class ProductoManagerService {
       tags_ids: tags?.map((t: any) => t.id) || []
     };
 
+    this.microLoading.show('Duplicando...');
+
     this.isLoading.set(true);
     this.productoBackend.createProducto(productoDuplicado).pipe(
       finalize(() => this.isLoading.set(false))
@@ -155,10 +174,12 @@ export class ProductoManagerService {
         this.adminStore.agregarProductoALista(res);
         this.adminStore.refrescarCategorias();
         this.toastService.show('¡Producto duplicado con éxito!');
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al duplicar:', err);
         this.toastService.show('Hubo un error al intentar duplicar el producto', 'error');
+        this.microLoading.hide();
       }
     });
   }

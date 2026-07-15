@@ -1,19 +1,16 @@
 <section class="bg-white rounded-2xl border border-brand-bg shadow-sm shadow-blue-100/50 transition-all overflow-hidden"
         [class.ring-1]="editando() && !loading()"
         [class.ring-brand-accent/20]="editando() && !loading()">
-      
-    <!-- Encabezado con estilo "Mis productos" -->
+        
     <button type="button" 
             (click)="toggleEdit()" 
             class="w-full flex items-center justify-between p-4 group outline-none">
         
         <div class="flex items-center gap-4">
-            <!-- Contenedor de Icono -->
             <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
                 <app-icon [name]="icon()" classes="size-6 fill-current" />
             </div>
             
-            <!-- Textos -->
             <div class="flex flex-col items-start text-left">
                 <span class="text-brand-text font-bold text-lg leading-tight">
                     {{ title() }}
@@ -26,13 +23,11 @@
             </div>
         </div>
 
-        <!-- Chevron con rotación -->
         <div class="text-brand-accent transition-transform duration-300" [class.rotate-180]="editando()">
             <app-icon name="chevron-down" classes="size-6 fill-current" />
         </div>
     </button>
 
-    <!-- Contenido animado -->
     <div class="grid transition-all duration-300 ease-in-out"
          [class]="editando() ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'">
         
@@ -41,7 +36,6 @@
 
                 <ng-content></ng-content>
 
-                <!-- Botones de acción -->
                 <div class="flex items-center justify-end gap-3 mt-3 pt-4 border-t border-brand-bg">
                     <button type="button" 
                             (click)="cancel()"
@@ -60,7 +54,7 @@
                         } @else {
                             <app-icon name="save" classes="size-4 fill-current" />
                         }
-                        Guardar
+                        {{ loading() ? 'Guardando' : 'Guardar' }}
                     </button>
                 </div>
             </div>

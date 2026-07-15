@@ -8,7 +8,7 @@ import { Catalogo, HorarioDia, TemaCatalogo } from 'src/app/core/models/catalogo
 import { FormsModule } from '@angular/forms';
 import { ConfigSection } from "./config-section/config-section";
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
-import { catchError, debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({

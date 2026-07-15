@@ -5,6 +5,7 @@ import { ConfirmService } from './confirm.service';
 import { CategoriaService } from '../services-backend/categorias.ServiceBackend';
 import { finalize, Subject } from 'rxjs';
 import { CategoriaVendedor } from '../models/categoriaVendedor.model';
+import { MicroLoadingService } from './micro-loading.service';
 
 @Injectable({ providedIn: 'root' })
 export class CategoriaManagerService {
@@ -12,6 +13,7 @@ export class CategoriaManagerService {
   private adminStore = inject(AdminStoreService);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
+  private microLoading = inject(MicroLoadingService);
 
   public isLoading = signal(false);
 
@@ -35,10 +37,12 @@ export class CategoriaManagerService {
         }
         
         this.toastService.show('Categoría eliminada con éxito');
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al eliminar categoría:', err);
         this.toastService.show('Hubo un error al intentar eliminar la categoría', 'error');
+        this.microLoading.hide();
       }
     });
   }
@@ -60,6 +64,8 @@ export class CategoriaManagerService {
 
     if (!confirmacion) return;
 
+    this.microLoading.show('Actualizando...');
+
     this.isLoading.set(true);
     this.categoriaBackend.updateCategoria(categoria.id, { especial: !esEspecial }).pipe(
       finalize(() => this.isLoading.set(false))
@@ -67,10 +73,12 @@ export class CategoriaManagerService {
       next: (categoriaActualizada) => {
         this.adminStore.updateCategoriaEnLista(categoriaActualizada);
         this.toastService.show(esEspecial ? 'Categoría normalizada' : '¡Categoría destacada con éxito!');
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al actualizar estado especial:', err);
         this.toastService.show('No se pudo actualizar el estado de la categoría', 'error');
+        this.microLoading.hide();
       }
     });
   }
@@ -92,6 +100,8 @@ export class CategoriaManagerService {
 
     if (!confirmacion) return;
 
+    this.microLoading.show('Actualizando...');
+
     this.isLoading.set(true);
     this.categoriaBackend.updateCategoria(categoria.id, { activo: !estaActiva }).pipe(
       finalize(() => this.isLoading.set(false))
@@ -101,10 +111,12 @@ export class CategoriaManagerService {
         this.toastService.show(
           estaActiva ? 'Categoría pausada correctamente' : 'Categoría activada correctamente'
         );
+        this.microLoading.hide();
       },
       error: (err) => {
         console.error('Error al cambiar estado de la categoría:', err);
         this.toastService.show('No se pudo cambiar el estado de la categoría', 'error');
+        this.microLoading.hide();
       }
     });
   }
