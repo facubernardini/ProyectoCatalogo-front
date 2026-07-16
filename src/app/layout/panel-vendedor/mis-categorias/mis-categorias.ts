@@ -181,16 +181,18 @@ export class MisCategorias {
       });
 
       if (!confirm) return;
+
       this.categoriaManager.eliminar(categoria.id, 'eliminar');
-      return;
     }
+    else{
+      const resultado = await this.categoryDeleteService.ask({
+        categoria,
+        productosAfectados: productosAfectados
+      });
 
-    const resultado = await this.categoryDeleteService.ask({
-      categoria,
-      productosAfectados: productosAfectados
-    });
+      if (!resultado) return;
 
-    if (!resultado) return;
-    this.categoriaManager.eliminar(categoria.id, resultado.accion, resultado.categoriaDestinoId);
+      this.categoriaManager.eliminar(categoria.id, resultado.accion, resultado.categoriaDestinoId);
+    }
   }
 }

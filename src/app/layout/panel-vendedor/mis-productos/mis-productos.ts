@@ -205,17 +205,18 @@ export class MisProductos {
     const catalogo = this.adminStore.catalogo();
 
     if (!catalogo) {
-      this.toastService.show('Error: No se encontraron los datos de la tienda.', 'error');
+      this.toastService.show('Ocurrió un error inesperado', 'error');
       return;
     }
 
-    this.toastService.show('Generando PDF...');
+    const proceso = this.toastService.loading('Generando PDF...');
 
     try {
       await this.pdfExportService.exportarCatalogo(categorias, todosLosProductos, catalogo);
+      proceso.success('PDF generado con éxito');
     } catch (error) {
       console.error(error);
-      this.toastService.show('Hubo un error al generar el PDF.', 'error');
+      proceso.error('Hubo un error al generar el PDF.');
     }
   }
 

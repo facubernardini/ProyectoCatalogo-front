@@ -10,8 +10,6 @@ export class CuponFormService {
 
   isOpen = signal(false);
   
-  loading = this.cuponManager.isLoading;
-  
   editingCupon = signal<Cupon | null>(null);
 
   formData = signal({
@@ -24,12 +22,6 @@ export class CuponFormService {
     fecha_expiracion: '' as string | null
   });
 
-  constructor() {
-    this.cuponManager.operationSuccess$.subscribe(() => {
-      this.close();
-    });
-  }
-
   openCreate() {
     this.editingCupon.set(null);
     this.resetForm();
@@ -40,7 +32,6 @@ export class CuponFormService {
   openEdit(cupon: Cupon) {
     this.editingCupon.set({ ...cupon });
     
-    // Formateamos la fecha para el input type="date" (YYYY-MM-DD)
     let fechaFormat = '';
     if (cupon.fecha_expiracion) {
         const d = new Date(cupon.fecha_expiracion);
@@ -50,7 +41,6 @@ export class CuponFormService {
     }
 
     this.formData.set({
-      // Consideramos ambos nombres de propiedad por si acaso
       codigo_cupon: (cupon as any).codigo_cupon || (cupon as any).codigo || '',
       es_porcentaje: cupon.es_porcentaje,
       descuento: Number(cupon.descuento),
@@ -86,7 +76,6 @@ export class CuponFormService {
   save() {
     const data = this.formData();
     
-    // 1. Validaciones del lado del Frontend
     if (!data.codigo_cupon?.trim()) {
       this.toastService.show('El código del cupón es obligatorio', 'error');
       return;
@@ -100,7 +89,6 @@ export class CuponFormService {
       return;
     }
 
-    // 2. Armamos el payload final
     const payload = {
       codigo_cupon: data.codigo_cupon,
       es_porcentaje: data.es_porcentaje,
@@ -109,8 +97,8 @@ export class CuponFormService {
       fecha_expiracion: data.tiene_vencimiento && data.fecha_expiracion ? new Date(data.fecha_expiracion).toISOString() : null
     };
 
-    // 3. Delegamos al Manager pasando el callback de cierre
-    this.cuponManager.guardar(payload, this.editingCupon() ?? undefined);
+    this.cuponManager.guardar(payload, this.editingCupon());
+    this.close();
   }
 
   cambiarTipoDescuento(esPorcentaje: boolean) {

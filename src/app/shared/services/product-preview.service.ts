@@ -5,10 +5,9 @@ import { ProductoManagerService } from 'src/app/core/services/producto-manager.s
 @Injectable({ providedIn: 'root' })
 export class ProductPreviewService {
   public productManager = inject(ProductoManagerService);
-
-  loading = this.productManager.isLoading;
   
   isOpen = signal(false);
+
   selectedProduct = signal<Producto | null>(null);
 
   open(producto: Producto) {
@@ -29,6 +28,7 @@ export class ProductPreviewService {
     if (!producto || !producto.id) return;
 
     this.productManager.guardar(producto, producto);
+
     this.close();
   }
 }

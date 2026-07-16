@@ -32,22 +32,22 @@
 				[deshabilitarGuardar]="!this.catalogo()?.nombre_tienda?.trim() || !this.catalogo()?.slug?.trim() || slugDisponible() === false || validandoSlug()"
 				(onSave)="guardarCambios(sectionConfigPrincipal)"
 				(onCancel)="resetearValores()">
-				<section class="pt-3 border-t border-brand-bg space-y-5">
+				<section class="pt-3 border-t border-brand-bg space-y-4">
 					<div class="flex items-center gap-4">
 						<input type="file" #fileInput (change)="onLogoChange($event)" accept="image/*" class="hidden">
-						<div class="size-20 bg-brand-bg rounded-3xl overflow-hidden border-2 border-gray-100 flex items-center justify-center shrink-0 cursor-pointer hover:opacity-80"
+						<div class="size-20 bg-brand-bg rounded-full overflow-hidden border-2 border-gray-100 flex items-center justify-center shrink-0 cursor-pointer hover:opacity-80"
 							(click)="fileInput.click()">
 							
 							@if (logoPreview || catalogo()?.logo_tienda) {
 								<img [src]="logoPreview || catalogo()?.logo_tienda" class="w-full h-full object-cover">
 							} @else {
-								<app-icon name="store" classes="size-8 text-brand-accent/40" />
+								<app-icon name="image-add" classes="size-6 fill-current text-brand-accent/40" />
 							}
 						</div>
 						<div class="flex-1">
 							<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Nombre Público</label>
 							<input type="text" [(ngModel)]="catalogo()!.nombre_tienda"
-								class="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold">
+								class="w-full px-3 py-2 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-bold">
 						</div>
 					</div>
 					
@@ -73,7 +73,7 @@
 								[ngModel]="catalogo()?.slug"
 								(ngModelChange)="onSlugChange($event)"
 								placeholder="tu-tienda"
-								class="w-full bg-transparent border-none py-4 px-0.5 outline-none text-right text-brand-text font-medium focus:ring-0">
+								class="w-full bg-transparent border-none py-2 px-0.5 outline-none text-right text-brand-text font-medium focus:ring-0">
 
 							<span class="text-brand-text/40 font-medium pr-4 pointer-events-none select-none shrink-0">
 								.{{ BRAND_DATA.domain }}
@@ -82,11 +82,11 @@
 						
 						<div class="mt-1 ml-1 h-4"> 
 							@if (!catalogo()?.slug || catalogo()!.slug.trim() === '') {
-								<p class="text-[12px] font-bold text-red-500 animate-in fade-in duration-200">
+								<p class="text-xs font-bold text-red-500 animate-in fade-in duration-200">
 									La URL es obligatoria.
 								</p>
 							} @else {
-								<p class="text-[12px] text-brand-text/60">
+								<p class="text-xs text-gray-400">
 									Tus clientes accederán usando este enlace personalizado.
 								</p>
 							}
@@ -100,14 +100,14 @@
 							[(ngModel)]="catalogo()!.frase_eslogan"
 							placeholder="Ej: Tu tienda de confianza"
 							maxlength="50"
-							class="w-full mt-1 p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium placeholder:text-gray-400 placeholder:font-medium">
+							class="w-full mt-1 px-3 py-2 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium placeholder:text-gray-400 placeholder:font-medium">
 							
 						<div class="flex items-center justify-between mt-1.5 mx-1">
-							<p class="text-[12px] text-brand-text/60">
+							<p class="text-xs text-gray-400">
 								Aparecerá debajo del nombre de tu tienda.
 							</p>
 							
-							<span class="text-[11px] font-bold transition-colors"
+							<span class="text-[11px] font-semibold transition-colors"
 								[class.text-gray-400]="(catalogo()!.frase_eslogan?.length || 0) < 50"
 								[class.text-red-500]="(catalogo()!.frase_eslogan?.length || 0) === 50">
 								{{ catalogo()!.frase_eslogan?.length || 0 }}/50
@@ -122,7 +122,7 @@
 							<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 								<app-icon name="whatsapp" classes="size-5 text-green-500 ml-4 shrink-0" />
 
-								<span class="pl-3 py-4 text-base font-bold text-gray-400 select-none">
+								<span class="pl-3 py-2 text-base font-bold text-gray-400 select-none">
 									+549
 								</span>
 
@@ -130,7 +130,7 @@
 									[(ngModel)]="catalogo()!.wpp_numero"
 									(input)="$any($event.target).value = $any($event.target).value.replace(/[^0-9]/g, '')"
 									maxlength="10"
-									class="flex-1 bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
+									class="flex-1 bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 							</div>
 						</div>
 						
@@ -140,13 +140,13 @@
 							<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 								<app-icon name="instagram" classes="size-5 text-pink-500 ml-4 shrink-0" />
 								
-								<span class="pl-3 py-4 text-base font-bold text-gray-400 select-none">
+								<span class="pl-3 py-2 text-base font-bold text-gray-400 select-none">
 									@
 								</span>
 								
 								<input type="text" 
 									[(ngModel)]="catalogo()!.instagram_usuario"
-									class="flex-1 bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
+									class="flex-1 bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 							</div>
 						</div>
 					</div>
@@ -156,7 +156,7 @@
 						
 						<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 							
-							<span class="pl-4 py-4 text-sm font-bold text-gray-400 select-none">
+							<span class="pl-4 py-2 text-sm font-bold text-gray-400 select-none">
 								$
 							</span>
 							
@@ -164,11 +164,11 @@
 								(wheel)="$event.preventDefault()"
 								[(ngModel)]="catalogo()!.minimo_compra" 
 								placeholder="(Opcional)"
-								class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0 placeholder:text-gray-400 placeholder:font-medium">
+								class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0 placeholder:text-gray-400 placeholder:font-medium">
 								
 						</div>
 						
-						<p class="text-[10px] text-brand-text/60 mt-1 ml-1">Dejalo en blanco o en 0 si no exigís un monto mínimo por pedido.</p>
+						<p class="text-xs text-gray-400 mt-1 ml-1">Dejalo en blanco si no exigís un monto mínimo por pedido.</p>
 					</div>
 				</section>
 			</app-config-section>
@@ -197,12 +197,12 @@
 
 								<div class="flex-1 flex items-center justify-end gap-1">
 									@if (item.abierto) {
-										<div class="flex items-center gap-2 bg-white rounded-lg px-2 py-1 shadow-sm border border-gray-100">
+										<div class="flex items-center gap-2 bg-white rounded-lg px-1.5 py-1 shadow-sm border border-gray-100">
 											<input type="time" [(ngModel)]="item.apertura" 
-												class="bg-transparent border-none py-1 text-xs font-bold text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
+												class="bg-transparent border-none py-1 text-xs font-medium text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
 											<span class="text-gray-400 text-sm font-black">-</span>
 											<input type="time" [(ngModel)]="item.cierre" 
-												class="bg-transparent border-none py-1 text-xs font-bold text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
+												class="bg-transparent border-none py-1 text-xs font-medium text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
 										</div>
 									} @else {
 										<span class="text-xs font-black uppercase tracking-widest text-gray-400 bg-gray-200/50 px-3 py-1.5 rounded-lg">
@@ -227,18 +227,18 @@
 				(onSave)="guardarCambios(sectionEnvios)"
 				(onCancel)="resetearValores()">
 				
-				<section class="pt-3 border-t border-brand-bg space-y-4">				
+				<section class="pt-3 border-t border-brand-bg space-y-3">				
 					<div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-2xl">
 						<button (click)="this.catalogo()!.ofrece_envio = false"
 							[class]="!this.catalogo()!.ofrece_envio ? 'bg-white text-brand-text shadow-sm' : 'text-gray-500'"
 							class="flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all">
-							<app-icon name="store" classes="size-4" />
+							<app-icon name="store" classes="size-4 fill-current" />
 							Solo Retiro
 						</button>
 						<button (click)="this.catalogo()!.ofrece_envio = true"
 							[class]="this.catalogo()!.ofrece_envio ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/20' : 'text-gray-500'"
 							class="flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all">
-							<app-icon name="delivery" classes="size-4" />
+							<app-icon name="delivery" classes="size-4 fill-current" />
 							Hago Envíos
 						</button>
 					</div>
@@ -255,18 +255,18 @@
 									[class.!border-red-500]="(this.catalogo()?.costo_envio ?? 0) <= 0"
 									[class.bg-red-50]="(this.catalogo()?.costo_envio ?? 0) <= 0">
 									
-									<span class="pl-4 py-4 text-sm font-bold select-none" 
+									<span class="pl-4 py-2 text-sm font-bold select-none" 
 										[class.text-red-400]="(this.catalogo()?.costo_envio ?? 0) <= 0"
 										[class.text-gray-400]="(this.catalogo()?.costo_envio ?? 0) > 0">$</span>
 										
 									<input type="number"
 										(wheel)="$event.preventDefault()"
 										[(ngModel)]="this.catalogo()!.costo_envio"
-										class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-bold focus:ring-0">
+										class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 								</div>
 								
 								@if ((this.catalogo()?.costo_envio ?? 0) <= 0) {
-									<p class="text-[12px] font-bold text-red-500 mt-1.5 ml-1 animate-in slide-in-from-top-1">
+									<p class="text-xs font-bold text-red-500 mt-1.5 ml-1 animate-in slide-in-from-top-1">
 										Debe ingresar un monto mayor a $0.
 									</p>
 								}
@@ -277,20 +277,20 @@
 								
 								<div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
 									
-									<span class="pl-4 py-4 text-sm font-bold text-gray-400 select-none">$</span>
+									<span class="pl-4 py-2 text-sm font-bold text-gray-400 select-none">$</span>
 									
 									<input type="number"
 										(wheel)="$event.preventDefault()"
 										[(ngModel)]="this.catalogo()!.envio_gratis_desde"
-										class="w-full bg-transparent border-none py-4 pr-4 pl-1 outline-none text-brand-text font-bold focus:ring-0">
+										class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0">
 								</div>
 								
-								<p class="text-[12px] text-gray-400 mt-1 ml-1">Dejar vacío si no ofrecés envío gratis.</p>
+								<p class="text-xs text-gray-400 mt-1 ml-1">Dejar vacío si no ofrecés envío gratis.</p>
 							</div>
 						</div>
 					} @else {
-						<div class="flex items-center gap-3 p-4 bg-blue-50 rounded-2xl text-blue-700">
-							<app-icon name="info" classes="size-5" />
+						<div class="flex items-center gap-3 p-3 bg-blue-50 rounded-2xl text-blue-700">
+							<app-icon name="info" classes="size-5 fill-current" />
 							<p class="text-xs font-medium">Los clientes verán que solo pueden retirar por tu local.</p>
 						</div>
 					}
@@ -314,7 +314,7 @@
 							
 							<input type="text" 
 								[(ngModel)]="catalogo()!.direccion"
-								class="flex-1 bg-transparent border-none py-4 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
+								class="flex-1 bg-transparent border-none py-2 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
 						</div>
 					</div>
 
@@ -326,7 +326,7 @@
 							
 							<input type="text" 
 								[(ngModel)]="catalogo()!.ciudad"
-								class="flex-1 bg-transparent border-none py-4 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
+								class="flex-1 bg-transparent border-none py-2 pr-4 pl-3 outline-none text-brand-text font-medium focus:ring-0">
 						</div>
 					</div>
 				</section>
@@ -342,15 +342,15 @@
 				(onCancel)="resetearValores()">
 				
 				<section class="pt-4 border-t border-brand-bg">
-					<div class="mb-6 bg-white border border-brand-accent/20 rounded-2xl p-4 shadow-sm shadow-brand-accent/5 transition-all hover:border-brand-accent/40">
+					<div class="mb-6 bg-white border border-brand-accent/20 rounded-2xl p-2 shadow-sm shadow-brand-accent/5 transition-all hover:border-brand-accent/40">
 						<div class="flex items-center justify-between gap-4">
 							
-							<div class="flex items-center gap-3">
+							<div class="flex items-center gap-2">
 								<div class="size-10 bg-brand-accent/10 text-brand-accent rounded-xl flex items-center justify-center shrink-0">
-									<app-icon name="percent" classes="size-5 fill-current" />
+									<app-icon name="discount" classes="size-5 fill-current" />
 								</div>
 								<div>
-									<p class="text-sm font-black text-brand-text">Descuento en Efectivo</p>
+									<p class="text-xs font-semibold text-brand-text">Descuento en Efectivo</p>
 								</div>
 							</div>
 							
@@ -361,9 +361,9 @@
 											[(ngModel)]="catalogo()!.descuento_en_efectivo"
 											(wheel)="$event.preventDefault()"
 											min="5" max="80"
-											class="w-full py-2 pl-3 pr-7 bg-gray-50 border border-brand-accent/30 rounded-xl outline-none focus:border-brand-accent focus:bg-white transition-all text-sm font-black text-brand-accent text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+											class="w-full py-1.5 pl-1 pr-6 bg-gray-50 border border-brand-accent/30 rounded-lg outline-none focus:border-brand-accent focus:bg-white transition-all text-sm font-black text-brand-accent text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
 											placeholder="10">
-										<span class="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-black text-brand-accent/50 pointer-events-none">%</span>
+										<span class="absolute right-2 top-1/2 -translate-y-1/2 text-sm font-black text-brand-accent/50 pointer-events-none">%</span>
 									</div>
 								}
 
@@ -382,16 +382,16 @@
 					<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						@for (medio of adminStore.mediosPago(); track medio.id) {
 							<div [class]="isMedioSeleccionado(medio.id) ? 'border-brand-accent/30 bg-brand-accent/2' : 'border-gray-100 bg-white'"
-								class="flex items-center justify-between p-3 rounded-2xl border transition-all duration-300">
+								class="flex items-center justify-between p-2 rounded-2xl border transition-all duration-300">
 								
-								<div class="flex items-center gap-3">
+								<div class="flex items-center gap-2">
 									<div class="size-12 bg-gray-100 text-gray-400 rounded-xl flex items-center justify-center transition-colors">
 										<div [innerHTML]="medio.icono | safeHtml" 
 											class="size-10 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
 										</div>
 									</div>
 									<div>
-										<p class="text-sm font-black text-brand-text">{{ medio.nombre }}</p>
+										<p class="text-sm font-semibold text-brand-text">{{ medio.nombre }}</p>
 										<p class="text-[10px] font-bold uppercase tracking-tight"
 											[class]="isMedioSeleccionado(medio.id) ? 'text-green-500' : 'text-red-500'">
 											{{ isMedioSeleccionado(medio.id) ? 'Habilitado' : 'Deshabilitado' }}
@@ -425,7 +425,7 @@
 				(onSave)="guardarCambios(sectionConfigTema)"
 				(onCancel)="resetearValores()">
 				
-				<section class="pt-4 border-t border-brand-bg w-full">
+				<section class="pt-2 border-t border-brand-bg w-full">
 					<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Paletas Disponibles</label>
 					
 					<div class="flex overflow-x-auto md:flex-wrap md:overflow-visible gap-4 md:gap-y-8 pb-5 pt-3 px-1 snap-x md:snap-none scroll-smooth no-scrollbar w-full mt-1">
@@ -458,7 +458,7 @@
 						<div class="shrink-0 w-4 md:hidden"></div>
 					</div>
 					
-					<p class="text-[10px] text-brand-text-sec ml-1 mt-4 md:hidden">
+					<p class="text-xs text-brand-text-sec ml-1 mt-4 md:hidden">
 						Deslizá hacia los lados para ver todas las opciones.
 					</p>
 				</section>

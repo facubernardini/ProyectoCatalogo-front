@@ -6,7 +6,7 @@ import { ListaProductos } from "@layout/catalogo/lista-productos/lista-productos
 import { CarouselDestacados } from "./carousel-destacados/carousel-destacados";
 import { CarouselOfertas } from "./carousel-ofertas/carousel-ofertas";
 import { SearchNav } from "./search-nav/search-nav";
-import { Toast } from "@shared/toast/toast";
+import { Toast } from "src/app/shared/components/toast/toast";
 import { SearchProducts } from "@shared/dialogs/search-products/search-products";
 import { Carrito } from "@shared/dialogs/carrito/carrito";
 import { MenuInfo } from "@shared/dialogs/menu-info/menu-info";

@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { ToastService } from 'src/app/core/services/toast.service'; // 👈 1. Importamos el Toast
+import { ToastService } from 'src/app/core/services/toast.service';
 
 export interface ModalEliminarOptions {
   categoria: CategoriaVendedor;
@@ -16,17 +16,14 @@ export interface ModalEliminarResult {
 @Injectable({ providedIn: 'root' })
 export class CategoryDeleteService {
   private adminStore = inject(AdminStoreService);
-  private toastService = inject(ToastService); // 👈 2. Lo inyectamos
+  private toastService = inject(ToastService);
 
-  // Estado del Modal
   isOpen = signal(false);
   opciones = signal<ModalEliminarOptions | null>(null);
   
-  // Estado del Formulario interno
   accionHuerfanos = signal<'mover' | 'eliminar'>('mover');
   categoriaDestinoId = signal<number | null>(null);
 
-  // Computado para el select
   categoriasParaMover = computed(() => {
     const catActual = this.opciones()?.categoria;
     return this.adminStore.categorias().filter(c => c.id !== catActual?.id);
