@@ -40,14 +40,14 @@
                     <button type="button" 
                             (click)="cancel()"
                             [disabled]="loading()"
-                            class="px-4 py-2.5 rounded-xl bg-gray-100 text-gray-500 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50">
+                            class="px-4 py-2.5 rounded-xl bg-gray-100 text-gray-500 text-[10px] font-semibold uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50">
                         Cancelar
                     </button>
 
                     <button type="button" 
                             (click)="save()"
                             [disabled]="loading() || deshabilitarGuardar()"
-                            class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-accent text-white shadow-lg shadow-brand-accent/20 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50">
+                            class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-accent text-white shadow-lg shadow-brand-accent/20 text-[10px] font-semibold uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50">
                         
                         @if (loading()) {
                             <div class="size-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

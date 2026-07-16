@@ -8,15 +8,7 @@ export class ProductFormService {
 
   isOpen = signal(false);
   
-  loading = this.productManager.isLoading; 
-  
   editingProduct = signal<Producto | null>(null);
-
-  constructor() {
-    this.productManager.operationSuccess$.subscribe(() => {
-      this.close();
-    });
-  }
 
   openCreate() {
     this.editingProduct.set(null);
@@ -40,6 +32,8 @@ export class ProductFormService {
     const currentProduct = this.editingProduct();
     
     this.productManager.guardar(productData, currentProduct, imagenFile);
+
+    this.close();
   }
 
 }

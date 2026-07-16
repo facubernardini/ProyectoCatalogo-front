@@ -7,8 +7,6 @@ export class CategoryFormService {
   private categoriaManager = inject(CategoriaManagerService);
 
   isOpen = signal(false);
-  
-  loading = this.categoriaManager.isLoading;
 
   nombre = signal('');
   editingCategory = signal<CategoriaVendedor | null>(null);
@@ -40,6 +38,7 @@ export class CategoryFormService {
   save(datos: Partial<CategoriaVendedor>) {
     if (!datos.nombre?.trim()) return;
 
-    this.categoriaManager.guardar(datos, this.editingCategory() ?? undefined);
+    this.categoriaManager.guardar(datos, this.editingCategory());
+    this.close();
   }
 }

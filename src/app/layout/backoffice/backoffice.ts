@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinner";
 import { RouterOutlet } from "@angular/router";
-import { Toast } from "@shared/toast/toast";
+import { Toast } from "src/app/shared/components/toast/toast";
 import { ConfirmDialog } from "@shared/dialogs/confirm-dialog/confirm-dialog";
 import { MenuInferiorBO } from "./menu-inferior-bo/menu-inferior-bo";
 import { HistorialSuscripciones } from "@shared/dialogs/historial-suscripciones/historial-suscripciones";

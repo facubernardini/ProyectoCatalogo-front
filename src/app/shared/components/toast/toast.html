@@ -1,0 +1,55 @@
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-200 w-full max-w-[85%] md:w-max md:min-w-[320px] md:max-w-md flex flex-col gap-2 pointer-events-none">
+    @for (toast of toastService.toasts(); track toast.id) {
+        <div class="bg-zinc-800 text-white p-2 rounded-full flex items-center gap-3 border border-white/10"
+            [class.animate-in]="toast.visible"
+            [class.animate-out]="!toast.visible">
+            
+            <div class="relative size-6 rounded-full flex items-center justify-center shrink-0 overflow-hidden transition-colors duration-300"
+                [class.bg-green-600]="toast.type === 'success'"
+                [class.bg-red-500]="toast.type === 'error'">
+                
+                <div class="absolute inset-0 flex items-center justify-center transition-all duration-300"
+                    [class.opacity-100]="toast.type === 'loading'"
+                    [class.scale-100]="toast.type === 'loading'"
+                    [class.opacity-0]="toast.type !== 'loading'"
+                    [class.scale-50]="toast.type !== 'loading'">
+                    
+                    <svg viewBox="200 200 400 400" class="size-5" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="custom-spin" cx="400" cy="400" fill="none"
+                            r="145" stroke-width="35" stroke="#D4D4D8"
+                            stroke-dasharray="606 1400"
+                            stroke-linecap="round" />
+                    </svg>
+                </div>
+
+                <div class="absolute inset-0 flex items-center justify-center transition-all duration-300 delay-75"
+                    [class.opacity-0]="toast.type === 'loading'"
+                    [class.scale-50]="toast.type === 'loading'"
+                    [class.opacity-100]="toast.type !== 'loading'"
+                    [class.scale-100]="toast.type !== 'loading'">
+                    <app-icon [name]="toast.type === 'success' ? 'check' : 'alert'" classes="size-4 fill-white" />
+                </div>
+            </div>
+
+            <div class="grid overflow-hidden relative">
+                
+                <p class="col-start-1 row-start-1 text-[13px] font-medium tracking-tight transition-all duration-500"
+                [class.-translate-y-4]="toast.finalMessage"
+                [class.opacity-0]="toast.finalMessage"
+                [class.translate-y-0]="!toast.finalMessage"
+                [class.opacity-100]="!toast.finalMessage">
+                    {{ toast.initialMessage }}
+                </p>
+
+                <p class="col-start-1 row-start-1 text-[13px] font-medium tracking-tight transition-all duration-500"
+                [class.translate-y-0]="toast.finalMessage"
+                [class.opacity-100]="toast.finalMessage"
+                [class.translate-y-4]="!toast.finalMessage"
+                [class.opacity-0]="!toast.finalMessage">
+                    {{ toast.finalMessage }}
+                </p>
+                
+            </div>
+        </div>
+    }
+</div>

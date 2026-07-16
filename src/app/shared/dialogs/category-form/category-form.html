@@ -22,19 +22,12 @@
                 </div>
 
                 <button (click)="guardar()" 
-                        [disabled]="categoryFormService.loading() || !categoryFormService.nombre().trim()"
+                        [disabled]="!categoryFormService.nombre().trim()"
                         class="relative px-7 py-2.5 bg-brand-accent text-white text-sm font-black rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
                     
                     <div class="flex items-center gap-2">
-                        @if (categoryFormService.loading()) {
-                            <div class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        }
                         <span>
-                            {{ 
-                                categoryFormService.loading() 
-                                ? 'Procesando' 
-                                : (categoryFormService.editingCategory() ? 'Guardar' : 'Crear categoría') 
-                            }}
+                            {{ categoryFormService.editingCategory() ? 'Guardar' : 'Crear categoría' }}
                         </span>
                     </div>
                 </button>

@@ -10,17 +10,6 @@ import { Catalogo } from '../models/catalogo.model';
 })
 export class PdfExportService {
 
-  // Método auxiliar para cargar la imagen antes de meterla al PDF
-  private cargarImagen(url: string): Promise<HTMLImageElement> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'Anonymous'; // Evita problemas de CORS
-      img.onload = () => resolve(img);
-      img.onerror = (e) => reject(e);
-      img.src = url;
-    });
-  }
-
   async exportarCatalogo(categorias: CategoriaVendedor[], productos: Producto[], catalogo: Catalogo) {
     const doc = new jsPDF();
     const nombreTienda = catalogo.nombre_tienda || 'Mi Tienda';
@@ -29,8 +18,10 @@ export class PdfExportService {
 
     if (catalogo.logo_tienda) {
       try {
-        const imgLogo = await this.cargarImagen(catalogo.logo_tienda);
-        doc.addImage(imgLogo, 'PNG', 14, 10, 25, 25); 
+        const imgLogoAplanado = await this.cargarImagenParaPDF(catalogo.logo_tienda);
+        
+        doc.addImage(imgLogoAplanado, 'JPEG', 14, 10, 25, 25); 
+        
         doc.setFontSize(22);
         doc.setTextColor(30, 61, 89);
         doc.text(`Catálogo de Productos`, 45, 22);
@@ -45,9 +36,6 @@ export class PdfExportService {
         this.dibujarCabeceraTexto(doc, nombreTienda);
         posicionYActual = 40;
       }
-    } else {
-      this.dibujarCabeceraTexto(doc, nombreTienda);
-      posicionYActual = 40;
     }
 
     const productosActivos = productos.filter(p => p.activo);
@@ -114,6 +102,38 @@ export class PdfExportService {
 
     const fecha = new Date().toLocaleDateString('es-AR').replace(/\//g, '-');
     doc.save(`Catalogo_${nombreTienda.replace(/\s+/g, '_')}_${fecha}.pdf`);
+  }
+
+  // Método auxiliar para cargar la imagen antes de meterla al PDF
+  async cargarImagenParaPDF(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      
+      img.crossOrigin = 'Anonymous'; 
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+          reject('Error al crear el Canvas');
+          return;
+        }
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(img, 0, 0);
+
+        const base64Aplanado = canvas.toDataURL('image/jpeg', 0.9);
+        resolve(base64Aplanado);
+      };
+
+      img.onerror = (error) => reject(error);
+      img.src = url;
+    });
   }
 
   private dibujarCabeceraTexto(doc: jsPDF, nombreTienda: string) {

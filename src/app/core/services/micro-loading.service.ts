@@ -3,6 +3,7 @@ import { Injectable, signal } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
+// DEPRECATED
 export class MicroLoadingService {
   public isWorking = signal<boolean>(false);
   public isHiding = signal<boolean>(false);

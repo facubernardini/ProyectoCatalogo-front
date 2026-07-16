@@ -6,7 +6,7 @@ import { Catalogo, Rubro } from 'src/app/core/models/catalogo.model';
 import { RegistroVendedorRequest } from 'src/app/core/models/vendedor.model';
 import { RegisterService } from 'src/app/core/services-backend/register.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { Toast } from "@shared/toast/toast";
+import { Toast } from "src/app/shared/components/toast/toast";
 import { RubroService } from 'src/app/core/services-backend/rubros.ServiceBackend';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';

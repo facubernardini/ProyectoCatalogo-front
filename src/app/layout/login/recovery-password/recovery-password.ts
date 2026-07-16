@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { Toast } from "@shared/toast/toast";
+import { Toast } from "src/app/shared/components/toast/toast";
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 
 @Component({
