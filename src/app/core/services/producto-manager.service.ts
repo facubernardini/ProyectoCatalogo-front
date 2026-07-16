@@ -3,9 +3,8 @@ import { AdminStoreService } from './admin-store.service';
 import { ToastService } from './toast.service';
 import { ConfirmService } from './confirm.service';
 import { Producto } from '../models/producto.model';
-import { finalize, map, Observable, of, Subject, switchMap, throwError } from 'rxjs';
+import { finalize, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { ProductoService } from '../services-backend/productos.ServiceBackend';
-import { MicroLoadingService } from './micro-loading.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProductoManagerService {
@@ -13,12 +12,8 @@ export class ProductoManagerService {
   private adminStore = inject(AdminStoreService);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
-  private microLoading = inject(MicroLoadingService);
 
   public isLoading = signal(false);
-
-  private operationSuccess = new Subject<void>();
-  public operationSuccess$ = this.operationSuccess.asObservable();
 
   // --- ELIMINAR ---
   async eliminar(producto: Producto) {
@@ -33,7 +28,7 @@ export class ProductoManagerService {
 
     if (!confirmacion) return;
 
-    this.microLoading.show('Eliminando...');
+    const proceso = this.toastService.loading('Eliminando producto...');
 
     this.isLoading.set(true);
 
@@ -42,13 +37,11 @@ export class ProductoManagerService {
     ).subscribe({
       next: () => {
         this.adminStore.eliminarProductoDeLista(producto.id);
-        this.toastService.show('Producto eliminado definitivamente');
-        this.microLoading.hide();
+        proceso.success('Producto eliminado definitivamente');
       },
       error: (err) => {
         console.error('Error al eliminar:', err);
-        this.toastService.show('Hubo un error al intentar eliminar el producto', 'error');
-        this.microLoading.hide();
+        proceso.error('Hubo un error al intentar eliminar el producto');
       }
     });
   }
@@ -70,7 +63,7 @@ export class ProductoManagerService {
 
     if (!confirmacion) return;
 
-    this.microLoading.show('Actualizando...');
+    const proceso = this.toastService.loading(estaActivo ? 'Pausando producto...' : 'Reactivando producto...');
     
     this.isLoading.set(true);
 
@@ -79,13 +72,11 @@ export class ProductoManagerService {
     ).subscribe({
       next: (productoActualizado) => {
         this.adminStore.updateProductoEnLista(productoActualizado);
-        this.toastService.show(estaActivo ? 'Producto pausado' : '¡Producto activado para la venta!');
-        this.microLoading.hide();
+        proceso.success(estaActivo ? 'Producto pausado' : '¡Producto activado para la venta!');
       },
       error: (err) => {
         console.error('Error al cambiar estado:', err);
-        this.toastService.show('No se pudo cambiar el estado del producto', 'error');
-        this.microLoading.hide();
+        proceso.error('No se pudo cambiar el estado del producto');
       }
     });
   }
@@ -107,7 +98,7 @@ export class ProductoManagerService {
 
     if (!confirmacion) return;
 
-    this.microLoading.show('Actualizando...');
+    const proceso = this.toastService.loading(esDestacado ? 'Quitando destacado...' : 'Destacando producto...');
 
     this.isLoading.set(true);
 
@@ -116,13 +107,11 @@ export class ProductoManagerService {
     ).subscribe({
       next: (productoActualizado) => {
         this.adminStore.updateProductoEnLista(productoActualizado);
-        this.toastService.show(esDestacado ? 'Se quitó de destacados' : '¡Producto destacado con éxito!');
-        this.microLoading.hide();
+        proceso.success(esDestacado ? 'Se quitó de destacados' : '¡Producto destacado con éxito!');
       },
       error: (err) => {
         console.error('Error al actualizar destacado:', err);
-        this.toastService.show('No se pudo actualizar el estado', 'error');
-        this.microLoading.hide();
+        proceso.error('No se pudo cambiar el estado del producto');
       }
     });
   }
@@ -142,7 +131,7 @@ export class ProductoManagerService {
 
     const catalogoId = this.adminStore.catalogo()?.id;
     if (!catalogoId) {
-      this.toastService.show('Error: No se pudo obtener el ID del catálogo', 'error');
+      this.toastService.show('Ocurrió un error inesperado', 'error');
       return;
     }
 
@@ -164,22 +153,21 @@ export class ProductoManagerService {
       tags_ids: tags?.map((t: any) => t.id) || []
     };
 
-    this.microLoading.show('Duplicando...');
+    const proceso = this.toastService.loading('Duplicando producto...');
 
     this.isLoading.set(true);
+
     this.productoBackend.createProducto(productoDuplicado).pipe(
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (res) => {
         this.adminStore.agregarProductoALista(res);
         this.adminStore.refrescarCategorias();
-        this.toastService.show('¡Producto duplicado con éxito!');
-        this.microLoading.hide();
+        proceso.success('¡Producto duplicado con éxito!');
       },
       error: (err) => {
         console.error('Error al duplicar:', err);
-        this.toastService.show('Hubo un error al intentar duplicar el producto', 'error');
-        this.microLoading.hide();
+        proceso.error('Hubo un error al intentar duplicar el producto');
       }
     });
   }
@@ -190,9 +178,11 @@ export class ProductoManagerService {
     const catalogo = this.adminStore.catalogo();
 
     if (!catalogo || !catalogo.id) {
-      this.toastService.show('Error: No se pudo obtener el catálogo', 'error');
+      this.toastService.show('Ocurrió un error inesperado', 'error');
       return;
     }
+
+    const proceso = this.toastService.loading(currentProduct ? 'Actualizando producto...' : 'Creando producto...');
 
     this.isLoading.set(true);
 
@@ -226,17 +216,16 @@ export class ProductoManagerService {
       next: (res: Producto) => {
         if (currentProduct) {
           this.adminStore.updateProductoEnLista(res);
-          this.toastService.show(`Producto actualizado`);
+          proceso.success('Producto actualizado');
         } else {
           this.adminStore.agregarProductoALista(res);
-          this.toastService.show(`Producto creado con éxito`);
+          proceso.success('Producto creado con éxito');
         }
         this.adminStore.refrescarCategorias();
-        this.operationSuccess.next();
       },
       error: (err: any) => {
         console.error('Error al guardar:', err);
-        this.toastService.show('Hubo un error al guardar el producto', 'error');
+        proceso.error('Hubo un error al guardar o actualizar el producto');
       }
     });
   }
@@ -245,7 +234,7 @@ export class ProductoManagerService {
   private subirImagenR2(file: File) {
     const catalogoId = this.adminStore.catalogo()?.id;
     if (!catalogoId) {
-      this.toastService.show('Error: ID del catálogo no disponible', 'error');
+      this.toastService.show('Ocurrió un error al cargar la imagen', 'error');
       return throwError(() => new Error('No catalogoId'));
     }
 

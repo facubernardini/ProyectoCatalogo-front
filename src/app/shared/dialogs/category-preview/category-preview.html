@@ -96,9 +96,9 @@
                         Cancelar
                     </button>
                     <button (click)="onGuardarCategoria(cat)" 
-                            [disabled]="!cat.nombre.trim() || categoryPreviewService.loading()"
+                            [disabled]="!cat.nombre.trim()"
                             class="flex-1 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale">
-                        {{ categoryPreviewService.loading() ? 'Guardando...' : 'Guardar cambios' }}
+                        Guardar cambios
                     </button>
                 </div>
             }

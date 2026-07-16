@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { Toast } from "@shared/toast/toast";
+import { Toast } from "src/app/shared/components/toast/toast";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "@shared/components/icon";
 

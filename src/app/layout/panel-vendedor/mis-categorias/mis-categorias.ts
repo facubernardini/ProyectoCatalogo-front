@@ -10,7 +10,6 @@ import { CategoryFormService } from '@shared/services/category-form.service';
 import { CategoryPreviewService } from '@shared/services/category-preview.service';
 import { CategoriaManagerService } from 'src/app/core/services/categoria-manager.service';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
-import { MicroLoadingService } from 'src/app/core/services/micro-loading.service';
 
 @Component({
   selector: 'app-mis-categorias',
@@ -24,7 +23,6 @@ export class MisCategorias {
   private categoryDeleteService = inject(CategoryDeleteService);
   private location = inject(Location);
   private confirmService = inject(ConfirmService);
-  private microLoading = inject(MicroLoadingService);
 
   public categoriaManager = inject(CategoriaManagerService);
   public categoryPreview = inject(CategoryPreviewService);
@@ -184,7 +182,6 @@ export class MisCategorias {
 
       if (!confirm) return;
 
-      this.microLoading.show('Eliminando...');
       this.categoriaManager.eliminar(categoria.id, 'eliminar');
     }
     else{
@@ -195,7 +192,6 @@ export class MisCategorias {
 
       if (!resultado) return;
 
-      this.microLoading.show('Eliminando...');
       this.categoriaManager.eliminar(categoria.id, resultado.accion, resultado.categoriaDestinoId);
     }
   }

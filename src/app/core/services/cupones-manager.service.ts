@@ -13,15 +13,11 @@ export class CuponManagerService {
   private adminStore = inject(AdminStoreService);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
-  private microLoading = inject(MicroLoadingService);
 
   public isLoading = signal(false);
 
-  private operationSuccess = new Subject<void>();
-  public operationSuccess$ = this.operationSuccess.asObservable();
-
   // --- ELIMINAR ---
-  async eliminar(cupon: Cupon, onSuccess?: () => void) {
+  async eliminar(cupon: Cupon) {
     const confirmacion = await this.confirmService.ask({
       title: '¿Eliminar cupón?',
       message: `¿Estás seguro de que querés eliminar el cupón "${cupon.codigo_cupon}"? Los clientes ya no podrán usarlo.`,
@@ -33,7 +29,7 @@ export class CuponManagerService {
 
     if (!confirmacion) return;
 
-    this.microLoading.show('Eliminando...');
+    const proceso = this.toastService.loading('Eliminando cupón...');
 
     this.isLoading.set(true);
     this.cuponBackend.deleteCupon(cupon.id).pipe(
@@ -41,17 +37,11 @@ export class CuponManagerService {
     ).subscribe({
       next: () => {
         this.adminStore.eliminarCuponDeLista(cupon.id);
-        this.toastService.show('Cupón eliminado con éxito');
-        
-        if (onSuccess) onSuccess();
-
-        this.microLoading.hide();
+        proceso.success('Cupón eliminado con éxito');
       },
       error: (err) => {
         console.error('Error al eliminar cupón:', err);
-        this.toastService.show('Hubo un error al intentar eliminar el cupón', 'error');
-        
-        this.microLoading.hide();
+        proceso.error('Hubo un error al intentar eliminar el cupón');
       }
     });
   }
@@ -73,21 +63,21 @@ export class CuponManagerService {
 
     if (!confirmacion) return;
 
-    this.microLoading.show('Actualizando...');
+    const proceso = this.toastService.loading(estaActivo ? 'Pausando cupón...' : 'Reactivando cupón...');
 
     this.isLoading.set(true);
+
     this.cuponBackend.updateCupon(cupon.id, { activo: !estaActivo }).pipe(
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (cuponActualizado) => {
         this.adminStore.updateCuponEnLista(cuponActualizado);
-        this.toastService.show(estaActivo ? 'Cupón pausado' : '¡Cupón activado con éxito!');
-        this.microLoading.hide();
+        proceso.success(estaActivo ? 'Cupón pausado' : '¡Cupón activado con éxito!');
       },
       error: (err) => {
         console.error('Error al cambiar estado del cupón:', err);
         this.toastService.show('No se pudo cambiar el estado del cupón', 'error');
-        this.microLoading.hide();
+        proceso.error('No se pudo cambiar el estado del cupón');
       }
     });
   }
@@ -107,7 +97,7 @@ export class CuponManagerService {
 
     const catalogoId = this.adminStore.catalogo()?.id;
     if (!catalogoId) {
-      this.toastService.show('Error: No se pudo obtener el ID del catálogo', 'error');
+      this.toastService.show('Ocurrió un error inesperado', 'error');
       return;
     }
 
@@ -123,21 +113,21 @@ export class CuponManagerService {
       activo: false,
     };
 
-    this.microLoading.show('Duplicando...');
+    const proceso = this.toastService.loading('Duplicando cupón...');
 
     this.isLoading.set(true);
+
     this.cuponBackend.createCupon(cuponDuplicado).pipe(
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (res) => {
         this.adminStore.agregarCuponALista(res);
-        this.toastService.show('¡Cupón duplicado con éxito!');
-        this.microLoading.hide();
+        proceso.success('¡Cupón duplicado con éxito!');
+
       },
       error: (err) => {
         console.error('Error al duplicar cupón:', err);
-        this.toastService.show('Hubo un error al intentar duplicar el cupón', 'error');
-        this.microLoading.hide();
+        proceso.error('Hubo un error al intentar duplicar el cupón');
       }
     });
   }
@@ -156,9 +146,11 @@ export class CuponManagerService {
     const catalogoId = this.adminStore.catalogo()?.id;
 
     if (!catalogoId) {
-      console.error('Error: No se pudo obtener el ID del catálogo');
+      this.toastService.show('Ocurrió un error inesperado', 'error');
       return;
     }
+
+    const proceso = this.toastService.loading(currentCupon ? 'Actualizando cupón...' : 'Creando cupón...');
 
     this.isLoading.set(true);
     
@@ -181,18 +173,17 @@ export class CuponManagerService {
       next: (res) => {
         if (currentCupon) {
           this.adminStore.updateCuponEnLista(res);
-          this.toastService.show(`Cupón actualizado`);
+          proceso.success('Cupón actualizado');
         } else {
           this.adminStore.agregarCuponALista(res);
-          this.toastService.show(`Cupón creado con éxito`);
+          proceso.success('Cupón creado con éxito');
         }
-        
-        this.operationSuccess.next(); 
       },
       error: (err) => {
         console.error('Error al guardar cupón:', err);
         const mensajeError = err.error?.error || 'No se pudo guardar el cupón';
         this.toastService.show(mensajeError, 'error');
+        proceso.error(mensajeError);
       }
     });
   }

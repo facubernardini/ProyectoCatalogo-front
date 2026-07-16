@@ -9,8 +9,6 @@ import { ToastService } from 'src/app/core/services/toast.service';
 export class CategoryPreviewService {
   public categoriaManager = inject(CategoriaManagerService);
 	private toastService = inject(ToastService);
-  
-  loading = this.categoriaManager.isLoading;
 
   isOpen = signal(false);
   
@@ -31,7 +29,6 @@ export class CategoryPreviewService {
 
   close() {
     this.isOpen.set(false);
-    this.loading.set(false);
     this.selectedCategory.set(null);
 
     document.body.style.overflow = 'auto';
@@ -46,5 +43,6 @@ export class CategoryPreviewService {
     }
 
     this.categoriaManager.guardar(categoria, categoria);
+    this.close();
   }
 }

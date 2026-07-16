@@ -5,7 +5,6 @@ import { ConfirmService } from './confirm.service';
 import { CategoriaService } from '../services-backend/categorias.ServiceBackend';
 import { finalize, Subject } from 'rxjs';
 import { CategoriaVendedor } from '../models/categoriaVendedor.model';
-import { MicroLoadingService } from './micro-loading.service';
 
 @Injectable({ providedIn: 'root' })
 export class CategoriaManagerService {
@@ -13,7 +12,6 @@ export class CategoriaManagerService {
   private adminStore = inject(AdminStoreService);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
-  private microLoading = inject(MicroLoadingService);
 
   public isLoading = signal(false);
 
@@ -22,6 +20,8 @@ export class CategoriaManagerService {
 
   // --- ELIMINAR ---
   eliminar(categoriaId: number, accionProductos: 'mover' | 'eliminar', categoriaDestino?: number) {
+    const proceso = this.toastService.loading('Eliminando categoría...');
+
     this.isLoading.set(true);
     
     this.categoriaBackend.deleteCategoria(categoriaId, accionProductos, categoriaDestino).pipe(
@@ -36,13 +36,11 @@ export class CategoriaManagerService {
           this.adminStore.eliminarProductosPorCategoria(categoriaId);
         }
         
-        this.toastService.show('Categoría eliminada con éxito');
-        this.microLoading.hide();
+        proceso.success('Categoría eliminada con éxito');
       },
       error: (err) => {
         console.error('Error al eliminar categoría:', err);
-        this.toastService.show('Hubo un error al intentar eliminar la categoría', 'error');
-        this.microLoading.hide();
+        proceso.error('Hubo un error al intentar eliminar la categoría');
       }
     });
   }
@@ -64,21 +62,20 @@ export class CategoriaManagerService {
 
     if (!confirmacion) return;
 
-    this.microLoading.show('Actualizando...');
+    const proceso = this.toastService.loading(esEspecial ? 'Quitando destacada...' : 'Destacando categoría...');
 
     this.isLoading.set(true);
+
     this.categoriaBackend.updateCategoria(categoria.id, { especial: !esEspecial }).pipe(
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (categoriaActualizada) => {
         this.adminStore.updateCategoriaEnLista(categoriaActualizada);
-        this.toastService.show(esEspecial ? 'Categoría normalizada' : '¡Categoría destacada con éxito!');
-        this.microLoading.hide();
+        proceso.success(esEspecial ? 'Se quitó de destacadas' : '¡Categoría destacada con éxito!');
       },
       error: (err) => {
         console.error('Error al actualizar estado especial:', err);
-        this.toastService.show('No se pudo actualizar el estado de la categoría', 'error');
-        this.microLoading.hide();
+        proceso.error('No se pudo actualizar el estado de la categoría');
       }
     });
   }
@@ -100,35 +97,34 @@ export class CategoriaManagerService {
 
     if (!confirmacion) return;
 
-    this.microLoading.show('Actualizando...');
+    const proceso = this.toastService.loading(estaActiva ? 'Pausando categoría...' : 'Reactivando categoría...');
 
     this.isLoading.set(true);
+
     this.categoriaBackend.updateCategoria(categoria.id, { activo: !estaActiva }).pipe(
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (categoriaActualizada) => {
         this.adminStore.updateCategoriaEnLista(categoriaActualizada);
-        this.toastService.show(
-          estaActiva ? 'Categoría pausada correctamente' : 'Categoría activada correctamente'
-        );
-        this.microLoading.hide();
+        proceso.success(estaActiva ? 'Categoría pausada correctamente' : '¡Categoría activada correctamente!');
       },
       error: (err) => {
         console.error('Error al cambiar estado de la categoría:', err);
         this.toastService.show('No se pudo cambiar el estado de la categoría', 'error');
-        this.microLoading.hide();
       }
     });
   }
 
   // --- CREAR O EDITAR ---
-  guardar(categoriaData: any, currentCategoria?: CategoriaVendedor) {
+  guardar(categoriaData: any, currentCategoria?: CategoriaVendedor | null) {
     const catalogoId = this.adminStore.catalogo()?.id;
 
     if (!catalogoId) {
-      console.error('Error: No se pudo obtener el ID del catálogo');
+      this.toastService.show('Ocurrió un error inesperado', 'error');
       return;
     }
+
+    const proceso = this.toastService.loading(currentCategoria ? 'Actualizando categoría...' : 'Creando categoría...');
 
     this.isLoading.set(true);
     
@@ -147,16 +143,16 @@ export class CategoriaManagerService {
       next: (res) => {
         if (currentCategoria) {
           this.adminStore.updateCategoriaEnLista(res);
-          this.toastService.show(`Categoría actualizada`);
+          proceso.success('Categoría actualizada');
         } else {
           this.adminStore.agregarCategoriaALista(res);
-          this.toastService.show(`Categoría creada con éxito`);
+          proceso.success('Categoría creada con éxito');
         }
         this.operationSuccess.next();
       },
       error: (err) => {
         console.error('Error al guardar categoría:', err);
-        this.toastService.show('No se pudo guardar la categoría', 'error');
+        proceso.error('Hubo un error al guardar o actualizar la categoría');
       }
     });
   }

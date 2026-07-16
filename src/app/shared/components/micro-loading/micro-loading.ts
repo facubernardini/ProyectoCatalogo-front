@@ -7,6 +7,7 @@ import { MicroLoadingService } from 'src/app/core/services/micro-loading.service
   templateUrl: './micro-loading.html',
   styleUrl: './micro-loading.css',
 })
+// DEPRECATED
 export class MicroLoading {
   public loadingService = inject(MicroLoadingService);
 }
