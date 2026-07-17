@@ -1,28 +1,110 @@
-<header class="flex items-center justify-between px-6 py-3 md:py-4 shadow max-w-5xl rounded-full mx-auto w-full bg-white">
-    <h2 class="text-xl">Listalo</h2>
-    <nav id="menu" class="max-md:absolute max-md:top-0 max-md:left-0 max-md:overflow-hidden items-center justify-center max-md:h-full max-md:w-0 transition-[width] bg-white/50 backdrop-blur flex-col md:flex-row flex gap-8 text-gray-900 text-sm font-normal">
-        <a class="hover:text-indigo-600" href="#">
-            Funcionalidades
-        </a>
-        <a class="hover:text-indigo-600" href="#">
-            Precios
-        </a>
-        <a class="hover:text-indigo-600" href="#">
-            Ayuda
-        </a>
-        <button id="closeMenu" class="md:hidden text-gray-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
-    </nav>
-    <div class="flex items-center space-x-4">
-        <a class="hidden md:flex bg-indigo-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-indigo-700 transition" href="#">
-            Registrar mi negocio
-        </a>
-        <button id="openMenu" class="md:hidden text-gray-600">
-            <app-icon name="menu" classes="size-6 fill-current" />
-        </button>
+<nav class="fixed left-0 w-full z-50 transition-all duration-500"
+    [class.top-0]="!isScrolled"
+    [class.top-2]="isScrolled"
+    [class.px-0]="!isScrolled"
+    [class.px-4]="isScrolled">
+
+    <!-- CONTENEDOR INTERNO (LA PÍLDORA) -->
+    <div class="relative max-w-7xl mx-auto border transition-all duration-500"
+        [class.border-transparent]="!isScrolled"
+        [class.bg-transparent]="!isScrolled"
+        [class.px-4]="!isScrolled"
+        [class.sm:px-6]="!isScrolled"
+        [class.md:px-8]="!isScrolled"
+        [class.border-white/50]="isScrolled" 
+        [class.bg-white/85]="isScrolled"
+        [class.backdrop-blur-md]="isScrolled"
+        [class.shadow-md]="isScrolled"
+        [class.shadow-zinc-800/5]="isScrolled"
+        [class.rounded-full]="isScrolled"
+        [class.px-5]="isScrolled">
+
+        <div class="flex items-center justify-between h-14">
+        
+            <a routerLink="/" class="text-xl md:text-2xl font-bold tracking-tight text-zinc-800 transition-opacity hover:opacity-80">
+                Listalo
+            </a>
+
+            <!-- BLOQUE 2: Enlaces (Centro - Solo PC) -->
+            <div class="hidden md:flex items-center gap-5">
+                @for (opcion of opciones; track opcion.nombre) {
+                    <a [routerLink]="opcion.ruta" 
+                        class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
+                        {{ opcion.nombre }}
+                    </a>
+                }
+            </div>
+
+            <!-- BLOQUE 3: Controles de Sesión (Derecha) -->
+            <div class="flex items-center gap-3">
+                
+                <!-- BOTONES PC -->
+                <div class="hidden md:flex items-center gap-2">
+                    <button (click)="irALogin()"
+                        class="flex items-center justify-center gap-2 px-4 py-1.5 text-sm font-medium text-zinc-700 bg-white/80 backdrop-blur-sm border border-zinc-200/80 rounded-full shadow-sm hover:bg-zinc-50 hover:text-zinc-900 transition-all focus:outline-none active:scale-95">
+                        Ingresar
+                        <app-icon name="login" classes="size-4 fill-current" />
+                    </button>
+
+                    <button (click)="irARegistro()"
+                        class="px-5 py-1.5 text-sm font-semibold text-white bg-zinc-900 hover:bg-zinc-800 rounded-full shadow-sm transition-all focus:outline-none active:scale-95">
+                        Probar gratis
+                    </button>
+                </div>
+
+                <!-- BURGUER MENU (MOBILE) -->
+                <div class="md:hidden flex items-center">
+                    <button (click)="toggleMenu()" 
+                            class="p-2 -mr-2 text-zinc-800 hover:text-zinc-600 transition-colors focus:outline-none" 
+                            aria-label="Alternar menú">
+                        <svg class="size-6 transition-transform duration-300" 
+                            [class.rotate-90]="isMenuOpen"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            @if (isMenuOpen) {
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            } @else {
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            }
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DROPDOWN FLOTANTE MOBILE -->
+        <div class="absolute top-full mt-3 bg-white rounded-2xl shadow-xl border border-zinc-200 flex flex-col md:hidden transition-all duration-300 origin-top"
+            [class.inset-x-0]="isScrolled"
+            [class.inset-x-4]="!isScrolled"
+            [class.scale-100]="isMenuOpen"
+            [class.opacity-100]="isMenuOpen"
+            [class.visible]="isMenuOpen"
+            [class.scale-95]="!isMenuOpen"
+            [class.opacity-0]="!isMenuOpen"
+            [class.invisible]="!isMenuOpen">
+            
+            @for (opcion of opciones; track opcion.nombre) {
+                <a [routerLink]="opcion.ruta" 
+                    (click)="cerrarMenu()" 
+                    class="px-4 py-3 text-center text-sm font-semibold text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 rounded-xl transition-colors">
+                        {{ opcion.nombre }}
+                </a>
+            }
+
+            <div class="h-px bg-zinc-200/60 my-2 mx-2"></div>
+
+            <div class="flex flex-col gap-2 pb-1 px-1">
+                <button (click)="irALogin()"
+                    class="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-zinc-700 bg-white border border-zinc-200 hover:bg-zinc-50 rounded-xl transition-all focus:outline-none active:scale-95">
+                    Ingresar
+                    <app-icon name="login" classes="size-5 fill-current" />
+                </button>
+
+                <button (click)="irARegistro()"
+                    class="w-full px-5 py-3 text-sm font-semibold text-white bg-zinc-900 hover:bg-zinc-800 rounded-xl shadow-sm transition-all focus:outline-none active:scale-95">
+                    Probar gratis
+                </button>
+            </div>
+        </div>
     </div>
-</header>
+</nav>
