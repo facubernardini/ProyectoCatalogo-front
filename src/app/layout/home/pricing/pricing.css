@@ -1,0 +1,9 @@
+/* Oculta la barra de scroll en navegadores basados en Webkit (Chrome, Safari, Edge) */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+/* Oculta la barra de scroll en Firefox */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

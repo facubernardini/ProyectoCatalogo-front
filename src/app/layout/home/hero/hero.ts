@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Icon } from "src/app/shared/components/icon";
 
@@ -10,6 +10,7 @@ import { Icon } from "src/app/shared/components/icon";
 })
 export class Hero implements OnInit, OnDestroy {
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
   
   tituloPrincipal = 'Gestiona tu negocio de forma';
   tituloResaltado = 'inteligente';
@@ -18,13 +19,11 @@ export class Hero implements OnInit, OnDestroy {
 
   rotacionActual = 0;
   intervalo: any;
-  pausado = false;
 
   ngOnInit() {
     this.intervalo = setInterval(() => {
-      if (!this.pausado) {
-        this.rotacionActual -= 120; 
-      }
+      this.rotacionActual -= 120;
+      this.cdr.detectChanges();
     }, 3000);
   }
 
@@ -32,14 +31,6 @@ export class Hero implements OnInit, OnDestroy {
     if (this.intervalo) {
       clearInterval(this.intervalo);
     }
-  }
-
-  pausarCarrusel() {
-    this.pausado = true;
-  }
-
-  reanudarCarrusel() {
-    this.pausado = false;
   }
 
   irARegistro() {

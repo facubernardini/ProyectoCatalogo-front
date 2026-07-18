@@ -1,20 +1,21 @@
-<nav class="fixed left-0 w-full z-50 transition-all duration-500"
+<!-- NAV CONTENEDOR: Agregamos 'top-0 px-0' a las clases fijas -->
+<nav class="fixed top-0 left-0 w-full z-50 px-0 transition-all duration-500"
     [class.top-0]="!isScrolled"
-    [class.top-2]="isScrolled"
+    [class.top-4]="isScrolled"
     [class.px-0]="!isScrolled"
     [class.px-4]="isScrolled">
 
-    <!-- CONTENEDOR INTERNO (LA PÍLDORA) -->
-    <div class="relative max-w-7xl mx-auto border transition-all duration-500"
+    <!-- CONTENEDOR INTERNO: Agregamos 'border-transparent bg-transparent' a las clases fijas -->
+    <div class="relative max-w-7xl mx-auto border border-transparent bg-transparent transition-all duration-500"
         [class.border-transparent]="!isScrolled"
         [class.bg-transparent]="!isScrolled"
         [class.px-4]="!isScrolled"
         [class.sm:px-6]="!isScrolled"
         [class.md:px-8]="!isScrolled"
-        [class.border-white/50]="isScrolled" 
+        [class.border-white/50]="isScrolled"
         [class.bg-white/85]="isScrolled"
         [class.backdrop-blur-md]="isScrolled"
-        [class.shadow-md]="isScrolled"
+        [class.shadow-lg]="isScrolled"
         [class.shadow-zinc-800/5]="isScrolled"
         [class.rounded-full]="isScrolled"
         [class.px-5]="isScrolled">
@@ -73,7 +74,7 @@
         </div>
 
         <!-- DROPDOWN FLOTANTE MOBILE -->
-        <div class="absolute top-full mt-3 bg-white rounded-2xl shadow-xl border border-zinc-200 flex flex-col md:hidden transition-all duration-300 origin-top"
+        <div class="absolute top-full mt-3 bg-white rounded-2xl shadow-xl border border-zinc-200 flex flex-col md:hidden transition-all duration-300 origin-top scale-95 opacity-0 invisible"
             [class.inset-x-0]="isScrolled"
             [class.inset-x-4]="!isScrolled"
             [class.scale-100]="isMenuOpen"
