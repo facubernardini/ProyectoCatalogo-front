@@ -7,10 +7,11 @@ import { SuscripcionAccion, SuscripcionEstado } from 'src/app/core/models/backof
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { SuscripcionesService } from 'src/app/core/services-backend/suscripciones.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-sub',
-  imports: [Icon, SwipeDownDirective],
+  imports: [Icon, SwipeDownDirective, FormsModule],
   templateUrl: './admin-sub.html',
   styleUrl: './admin-sub.css',
 })
@@ -22,8 +23,9 @@ export class AdminSub {
   private toastService = inject(ToastService);
 
   planSeleccionado = signal<any>(null);
-  modoRenovacion = signal<'rapida' | 'exacta'>('rapida'); // Importante, impacta directo en el back
+  modoRenovacion = signal<'rapida' | 'exacta'>('rapida');
   fechaExacta = signal<string>('');
+  precioPagado = signal<number>(0);
 
   datos = computed(() => this.subscriptionService.vendedorSeleccionado());
   suscripcion = computed(() => this.datos()?.suscripcion);
@@ -43,6 +45,7 @@ export class AdminSub {
         this.planSeleccionado.set(planMatch || null);
         this.modoRenovacion.set('rapida');
         this.fechaExacta.set('');
+        this.precioPagado.set(0);
       }
     });
   }
@@ -126,7 +129,8 @@ export class AdminSub {
         tipo_plan_id: planSel.id,
         modoRenovacion: this.modoRenovacion(),
         fechaExacta: this.fechaExacta() || undefined,
-        accion: tipoAccion
+        accion: tipoAccion,
+        precioPagado: this.precioPagado(),
       };
 
       // 2. Disparamos la petición

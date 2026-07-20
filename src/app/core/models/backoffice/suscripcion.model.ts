@@ -12,6 +12,15 @@ export enum SuscripcionAccion {
     CANCELACION = 'CANCELACION'
 }
 
+// Enum local solo en el front
+export enum TipoPlan {
+    PRUEBA = 'PRUEBA',
+    BASE = 'BASE',
+    PREMIUM = 'PREMIUM',
+    SIN_PLAN = 'SIN_PLAN',
+    CUSTOM = 'CUSTOM'
+}
+
 export interface PlanSuscripcion {
     id: number;
     tipo_plan: string;

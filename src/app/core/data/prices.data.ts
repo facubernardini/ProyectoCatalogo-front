@@ -2,7 +2,7 @@ export const PRICES = [
   {
     id: 'basico',
     plan: 'Básico',
-    descripcion: 'Perfecto para empezar a listar tus productos y probar la plataforma.',
+    descripcion: 'Perfecto para tiendas que solo buscan exponer productos a sus clientes y recibir pedidos.',
     precioMensual: '11900',
     precioAnual: '119000',
     destacado: false,
