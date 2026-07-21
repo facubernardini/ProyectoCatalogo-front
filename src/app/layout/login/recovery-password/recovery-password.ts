@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { Toast } from "src/app/shared/components/toast/toast";
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { Icon } from "src/app/shared/components/icon";
 
 @Component({
   selector: 'app-recovery',
   standalone: true,
-  imports: [ReactiveFormsModule, Toast],
+  imports: [ReactiveFormsModule, Toast, Icon],
   templateUrl: './recovery-password.html'
 })
 export class RecoveryPassword {
@@ -83,7 +84,6 @@ export class RecoveryPassword {
       next: (res) => {
         this.loading.set(false);
         this.toastService.show('¡Contraseña actualizada con éxito!');
-        // Redirige al login para que entre con su nueva clave
         this.router.navigate(['/login']);
       },
       error: (err) => {
@@ -102,5 +102,9 @@ export class RecoveryPassword {
       // Si está en el paso 1, lo devuelve a la pantalla de login
       this.router.navigate(['/login']);
     }
+  }
+
+  volverAlInicio() {
+    this.router.navigate(['/']);
   }
 }

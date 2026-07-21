@@ -209,6 +209,18 @@ export class MiTienda implements OnInit, OnDestroy {
     this.slugSubject.next(slugLimpio);
   }
 
+  validarCaracteresSlug(event: KeyboardEvent) {
+    if (event.ctrlKey || event.metaKey || event.key.length > 1) {
+      return; 
+    }
+
+    const patron = /^[a-zA-Z0-9-]$/;
+
+    if (!patron.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
   async guardarCambios(section: ConfigSection) {
     const dataActual = this.catalogo();
 

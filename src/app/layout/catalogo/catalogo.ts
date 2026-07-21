@@ -115,6 +115,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.renderer.removeClass(this.document.body, 'tema-catalogo');
+    this.renderer.removeAttribute(this.document.documentElement, 'data-theme');
   }
 
   private obtenerSlugDesdeSubdominio(): string | null {

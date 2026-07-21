@@ -71,7 +71,8 @@
 							
 							<input type="text" 
 								[ngModel]="catalogo()?.slug"
-								(ngModelChange)="onSlugChange($event)"
+								(ngModelChange)="onSlugChange($event)"´
+								(keypress)="validarCaracteresSlug($event)"
 								placeholder="tu-tienda"
 								class="w-full bg-transparent border-none py-2 px-0.5 outline-none text-right text-brand-text font-medium focus:ring-0">
 
