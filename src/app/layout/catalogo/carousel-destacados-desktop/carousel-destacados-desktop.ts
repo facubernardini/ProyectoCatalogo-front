@@ -18,6 +18,8 @@ export class CarouselDestacadosDesktop {
   public productSelectorService = inject(ProductSelectorService);
   public exploradorService = inject(ExploradorProductosService);
 
+  public imageLoaded = signal(false);
+
   productosDestacados = computed(() => 
     this.adminStore.productos().filter(p => p.destacado)
   );
@@ -64,5 +66,9 @@ export class CarouselDestacadosDesktop {
       const precioCurr = curr.precio_descuento ?? curr.precio;
       return Number(precioCurr) < Number(precioPrev) ? curr : prev;
     });
+  }
+
+  onImageLoad() {
+    this.imageLoaded.set(true);
   }
 }

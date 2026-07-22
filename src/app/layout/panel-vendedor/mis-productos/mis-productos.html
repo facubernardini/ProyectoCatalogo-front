@@ -233,16 +233,23 @@
                             
                             <div class="relative shrink-0 w-12 h-12 rounded-lg overflow-hidden">
                                 
-                                @if (producto.imagen) {
-                                    <img [src]="producto.imagen" 
-                                        class="object-cover w-full h-full transition-all"
-                                        [class.grayscale]="!producto.activo">
-                                } @else {
-                                    <div class="w-full h-full flex items-center justify-center text-gray-300"
-                                        [class.grayscale]="!producto.activo">
+                                <div class="relative w-full h-full bg-brand-bg shrink-0 overflow-hidden"
+                                    [class.animate-pulse]="!imageLoaded() && producto.imagen"
+                                    [class.grayscale]="!producto.activo">
+                                    
+                                    <div class="absolute inset-0 w-full h-full flex items-center justify-center text-gray-300 transition-opacity duration-300"
+                                        [class.opacity-0]="imageLoaded() && producto.imagen">
                                         <app-icon name="photo" classes="size-5 fill-current" />
                                     </div>
-                                }
+
+                                    @if (producto.imagen) {
+                                        <img [src]="producto.imagen" 
+                                            (load)="onImageLoad()"
+                                            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out"
+                                            [class.opacity-0]="!imageLoaded()"
+                                            [class.opacity-100]="imageLoaded()">
+                                    }
+                                </div>
 
                                 @if (producto.destacado) {
                                     <div [class]="producto.activo ? 'bg-yellow-400' : 'bg-gray-400 grayscale'"

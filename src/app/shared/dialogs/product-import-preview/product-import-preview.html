@@ -1,0 +1,138 @@
+@if (previewService.isOpen()) {
+    <div class="fixed inset-0 z-100 bg-black/60 animate-backdrop" 
+        (click)="previewService.close()">
+        
+        <div appSwipeDown
+            class="fixed bottom-0 w-full bg-white rounded-t-[40px] px-5 py-6 shadow-2xl animate-in slide-in-from-bottom duration-300 max-w-lg left-1/2 -translate-x-1/2" 
+            (click)="$event.stopPropagation()">
+             
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+
+            @if (previewService.productDuplicate(); as producto) {
+                
+                <div class="flex gap-4 mb-4">
+                    
+                    <div class="relative w-24 h-24 rounded-2xl bg-gray-50 overflow-hidden shrink-0 shadow-sm mt-1 flex flex-col items-center justify-center text-gray-300">
+                        @if (producto.foto_url) {
+                            <img [src]="producto.foto_url" class="w-full h-full object-cover">
+                        } @else {
+                            <app-icon name="photo" classes="size-8 fill-current" />
+                        }
+                    </div>
+
+                    <div class="flex-1 flex flex-col justify-center min-w-0">
+                        
+                        <div class="relative w-full mb-2">
+                            <input type="text" 
+                                [(ngModel)]="producto.nombre" 
+                                (focus)="onFocus($event)" 
+                                class="w-full bg-gray-50 border-none rounded-2xl py-2 pl-4 pr-10 text-sm font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all truncate"
+                                [class.border-2]="!producto.nombre"
+                                [class.border-red-500]="!producto.nombre"
+                                placeholder="Nombre del producto">
+                        
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                                <app-icon name="edit" classes="size-4 fill-current" />
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="relative">
+                                <input type="text" 
+                                    [(ngModel)]="producto.categoria" 
+                                    (focus)="onFocus($event)"
+                                    class="w-full bg-brand-bg/50 border border-gray-100 rounded-xl py-1.5 px-3 text-xs font-semibold text-brand-accent outline-none focus:border-brand-accent transition-all"
+                                    placeholder="Categoría">
+                            </div>
+                            <div class="relative">
+                                <input type="text" 
+                                    [(ngModel)]="producto.marca" 
+                                    (focus)="onFocus($event)"
+                                    class="w-full bg-gray-50 border border-transparent rounded-xl py-1.5 px-3 text-xs font-semibold text-brand-text-sec outline-none focus:border-gray-300 transition-all"
+                                    placeholder="Marca (Opcional)">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <textarea 
+                        [(ngModel)]="producto.descripcion"
+                        rows="2"
+                        class="w-full bg-gray-50 border border-transparent rounded-xl py-2 px-3 text-xs text-gray-600 outline-none focus:border-gray-300 transition-all resize-none custom-scrollbar"
+                        placeholder="Descripción del producto (Opcional)"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between mb-3 border-t border-gray-100 pt-4">
+                    <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">
+                        Presentaciones y Precios
+                    </h3>
+                    <button (click)="agregarPresentacion(producto)" class="text-xs font-bold text-brand-accent hover:opacity-80 transition-opacity focus:outline-none">
+                        + Agregar
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between px-2 mb-1">
+                    <div class="shrink-0 mr-2 flex-1">
+                        <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Unidad</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-32">
+                            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider pl-1">Precio</span>
+                        </div>
+                        <div class="w-8 ml-1"></div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2 max-h-[30vh] overflow-y-auto custom-scrollbar pb-2">
+                    @for (pres of producto.presentaciones; track $index) {
+                        
+                        <div class="flex items-center justify-between px-2 py-2 rounded-xl bg-gray-50 border border-gray-100 transition-all">
+                            
+                            <div class="shrink-0 mr-2 flex-1">
+                                <input type="text" 
+                                    [(ngModel)]="pres.unidad_venta"
+                                    (focus)="onFocus($event)"
+                                    class="w-full bg-white border border-gray-200 rounded-lg py-1.5 px-2 text-xs font-bold text-brand-text outline-none focus:border-brand-accent transition-all placeholder:text-gray-300"
+                                    [class.border-red-500]="!pres.unidad_venta"
+                                    placeholder="Ej: 1 Kg, Pack x6, 1 lt">
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                
+                                <div class="relative w-32">
+                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 font-bold text-xs text-gray-500">$</span>
+                                    <input type="number" 
+                                        [(ngModel)]="pres.precio"
+                                        (focus)="onFocus($event)"
+                                        class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold text-brand-text outline-none focus:border-brand-accent transition-all"
+                                        [class.border-red-500]="!pres.precio">
+                                </div>
+
+                                <button (click)="eliminarPresentacion(producto, $index)" 
+                                        [disabled]="producto.presentaciones.length === 1"
+                                        class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent focus:outline-none"
+                                        title="Eliminar presentación">
+                                    <app-icon name="trash" classes="size-4 fill-current" />
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="flex gap-3 mt-4 pt-2">
+                    <button (click)="previewService.close()" 
+                            class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
+                        Cancelar
+                    </button>
+                    <button (click)="onGuardar(producto)" 
+                            [disabled]="datosInvalidos(producto)"
+                            class="flex-1 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale">
+                        Aplicar cambios
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+}

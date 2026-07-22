@@ -20,14 +20,20 @@
                 <div (click)="productSelectorService.open(producto)"
                     class="shrink-0 w-[65%] sm:w-80 self-stretch flex flex-col bg-white rounded-2xl overflow-hidden shadow-md snap-center border border-gray-100">
                     
-                    <div class="relative w-full aspect-square bg-brand-bg shrink-0 overflow-hidden">
+                    <div class="relative w-full aspect-square bg-brand-bg shrink-0 overflow-hidden"
+                        [class.animate-pulse]="!imageLoaded() && producto.imagen">
+                        
+                        <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-gray-200 transition-opacity duration-300"
+                            [class.opacity-0]="imageLoaded() && producto.imagen">
+                            <app-icon name="photo" classes="size-8 fill-current" />
+                        </div>
+
                         @if (producto.imagen) {
-                            <img [src]="producto.imagen" class="absolute inset-0 w-full h-full object-cover">
-                        }
-                        @else {
-                            <div class="w-full h-full flex items-center justify-center text-brand-accent/40 bg-gray-200">
-                                <app-icon name="photo" classes="size-8 fill-current" />
-                            </div>
+                            <img [src]="producto.imagen" 
+                                (load)="onImageLoad()"
+                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out"
+                                [class.opacity-0]="!imageLoaded()"
+                                [class.opacity-100]="imageLoaded()">
                         }
                     </div>
 

@@ -155,12 +155,12 @@
                                         ? 'bg-gray-100 text-gray-400' 
                                         : (cat.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/30 text-brand-accent')">
                                     <app-icon [name]="!cat.activo ? 'hidden' : (cat.especial ? 'star' : 'category')" 
-                                            classes="size-6 fill-current" />
+                                        classes="size-5 fill-current" />
                                 </div>
                                 
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">
-                                        <h3 class="font-bold text-sm truncate uppercase tracking-tight"
+                                        <h3 class="font-semibold text-sm truncate tracking-tight"
                                             [class]="!cat.activo ? 'text-gray-400' : 'text-brand-text'">
                                             {{ cat.nombre }}
                                         </h3>
@@ -173,7 +173,7 @@
                                     </div>
 
                                     <div class="flex items-center gap-2 mt-0.5">
-                                        <span class="text-[10px] px-2 py-0.5 rounded-lg font-semibold uppercase transition-colors"
+                                        <span class="text-[10px] px-2 py-0.5 rounded-lg font-semibold transition-colors"
                                             [class]="!cat.activo 
                                                 ? 'bg-gray-50 text-gray-300' 
                                                 : (cat.especial ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-500')">

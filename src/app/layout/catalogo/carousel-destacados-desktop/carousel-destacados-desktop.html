@@ -100,14 +100,20 @@
                                     </div>
 
                                     <div class="p-4 shrink-0 flex flex-col justify-center">
-                                        <div class="w-40 aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center">
+                                        <div class="relative w-40 aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center"
+                                            [class.animate-pulse]="!imageLoaded() && producto.imagen">
                                             
+                                            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-50 transition-opacity duration-300"
+                                                [class.opacity-0]="imageLoaded() && producto.imagen">
+                                                <app-icon name="photo" classes="size-10 fill-current" />
+                                            </div>
+
                                             @if (producto.imagen) {
-                                                <img [src]="producto.imagen" class="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 ease-out">
-                                            } @else {
-                                                <div class="w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-50">
-                                                    <app-icon name="photo" classes="size-10 fill-current" />
-                                                </div>
+                                                <img [src]="producto.imagen" 
+                                                    (load)="onImageLoad()"
+                                                    class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-all duration-500 ease-out"
+                                                    [class.opacity-0]="!imageLoaded()"
+                                                    [class.opacity-100]="imageLoaded()">
                                             }
                                             
                                         </div>

@@ -1,0 +1,54 @@
+<div class="bg-white p-2.5 rounded-2xl border border-gray-100 shadow-sm flex gap-3 group">        
+    
+    <div class="shrink-0 w-16 h-16 bg-gray-50 rounded-xl overflow-hidden flex flex-col items-center justify-center text-gray-300 mt-1">
+        @if (producto().foto_url) {
+            <img [src]="producto().foto_url" alt="Foto" class="w-full h-full object-cover">
+        } @else {
+            <app-icon name="photo" classes="size-6 fill-current" />
+        }
+    </div>
+
+    <div class="flex flex-col flex-1 min-w-0">
+        
+        <div class="flex items-start justify-between gap-2 mb-1.5">
+            <h3 class="text-sm font-semibold text-brand-text line-clamp-2 mt-0.5" [title]="producto().nombre">
+                {{ producto().nombre }}
+            </h3>
+            
+            <button 
+                (click)="onEdit()"
+                class="shrink-0 p-1 rounded-md bg-gray-100 text-brand-accent md:text-gray-400 active:bg-gray-200 md:hover:text-brand-accent md:hover:bg-brand-bg transition-colors focus:outline-none"
+                title="Editar producto">
+                <app-icon name="edit" classes="size-5 fill-current" />
+            </button>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 mb-1">
+            <div class="flex-1 min-w-0">
+                @if (producto().marca) {
+                    <span class="block text-xs font-semibold text-brand-text-sec truncate" [title]="producto().marca">
+                        {{ producto().marca }}
+                    </span>
+                }
+            </div>
+            
+            <span class="shrink-0 px-1.5 py-0.5 bg-brand-bg rounded text-[10px] font-semibold text-brand-accent">
+                {{ producto().categoria }}
+            </span>
+        </div>
+
+        @if (producto().descripcion) {
+            <p class="text-xs text-brand-text-sec/80 line-clamp-2 mb-1" [title]="producto().descripcion">{{ producto().descripcion }}</p>
+        }
+
+        <div class="mt-1 flex flex-col gap-1 border-t border-gray-100 pt-1.5">
+            @for (pres of producto().presentaciones; track pres.unidad_venta) {
+                <div class="flex items-center justify-between bg-gray-100 px-2 py-1.5 rounded-lg">
+                    <span class="text-xs font-semibold text-brand-text-sec">{{ pres.unidad_venta }}</span>
+                    <span class="text-xs font-bold text-brand-text">${{ pres.precio }}</span>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>

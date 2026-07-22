@@ -29,6 +29,8 @@ export class MisProductos {
   public productManager = inject(ProductoManagerService); 
   public productPreviewService = inject(ProductPreviewService);
 
+  public imageLoaded = signal(false);
+
   productos = this.adminStore.productos; 
   categorias = this.adminStore.categorias;
 
@@ -97,6 +99,10 @@ export class MisProductos {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
+  }
+
+  onImageLoad() {
+    this.imageLoaded.set(true);
   }
 
   toggleDestacados() {

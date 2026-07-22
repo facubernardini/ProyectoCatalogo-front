@@ -1,8 +1,7 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { CartService } from '@shared/services/cart.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
 import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
@@ -17,7 +16,8 @@ export class CarouselOfertas {
   public adminStore = inject(AdminStoreService);
   public productosOfertasService = inject(ProductosOfertasService);
   public productSelectorService = inject(ProductSelectorService);
-  private cartService = inject(CartService);
+  
+  public imageLoaded = signal(false);
 
   productosOferta = computed(() => 
     this.adminStore.productos().filter(p => 
@@ -35,5 +35,9 @@ export class CarouselOfertas {
     return ofertas.reduce((min, p) => 
       Number(p.precio_descuento) < Number(min.precio_descuento) ? p : min
     );
+  }
+
+  onImageLoad() {
+    this.imageLoaded.set(true);
   }
 }
