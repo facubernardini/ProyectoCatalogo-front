@@ -12,8 +12,15 @@
             @if (productSelectorService.selectedProduct(); as prod) {
                 <div class="flex gap-2.5 mb-5">
                     <div class="relative w-28 h-28 md:w-40 md:h-40 bg-brand-bg rounded-2xl overflow-hidden shrink-0">
-                        <img [src]="prod.imagen || 'https://placehold.co/200x200?text=%F0%9F%93%A6'" 
-                            class="w-full h-full object-cover">
+                        @if (prod.imagen) {
+                            <img [src]="prod.imagen" 
+                                class="w-full h-full object-cover">
+                        }
+                        @else {
+                            <div class="w-full h-full flex items-center justify-center text-brand-accent/30">
+                                <app-icon name="photo" classes="size-10 fill-current" />
+                            </div>
+                        }
                     </div>
 
                     <div class="flex-1 min-w-0"> <h2 class="text-base font-black text-brand-text leading-tight">
