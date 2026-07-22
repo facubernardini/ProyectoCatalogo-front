@@ -1,0 +1,126 @@
+<section
+    id="precios"
+    class="py-24 relative">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        
+        <!-- CABECERA DE LA SECCIÓN -->
+        <div class="text-center max-w-2xl mx-auto mb-10">
+            <h2 class="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">Planes simples y transparentes</h2>
+            <p class="mt-4 text-lg text-zinc-600">Elegí la opción que mejor se adapte al crecimiento de tu negocio.</p>
+        </div>
+
+        <!-- TOGGLE MENSUAL / ANUAL -->
+        <div class="max-w-xs mx-auto mb-12">
+            <!-- Contenedor del fondo gris -->
+            <div class="p-1 bg-zinc-100 rounded-2xl">
+                <!-- Contenedor relativo que habilita el movimiento de la pastilla -->
+                <div class="relative grid grid-cols-2">
+                    
+                    <!-- EL FONDO DESLIZABLE (La pastilla) -->
+                    <!-- Ocupa exactamente la mitad del ancho (w-1/2) y se desliza con translate-x -->
+                    <div class="absolute top-0 bottom-0 left-0 w-1/2 rounded-xl transition-all duration-300 ease-out"
+                        [class.translate-x-0]="!isAnual"
+                        [class.bg-white]="!isAnual"
+                        [class.shadow-sm]="!isAnual"
+                        [class.translate-x-full]="isAnual"
+                        [class.bg-zinc-900]="isAnual"
+                        [class.shadow-lg]="isAnual"
+                        [class.shadow-zinc-900/20]="isAnual">
+                    </div>
+
+                    <!-- BOTÓN MENSUAL -->
+                    <!-- Le agregamos relative y z-10 para que flote por encima del fondo animado -->
+                    <button (click)="isAnual = false"
+                        [class]="!isAnual ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'"
+                        class="relative z-10 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors duration-300">
+                        Mensual
+                    </button>
+                    
+                    <!-- BOTÓN ANUAL -->
+                    <button (click)="isAnual = true"
+                        [class]="isAnual ? 'text-white' : 'text-zinc-500 hover:text-zinc-700'"
+                        class="relative z-10 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors duration-300">
+                        Anual
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR DE CARDS -->
+        <div>
+            <div #scrollContainer (scroll)="onScroll($event)" 
+                 class="flex md:grid md:grid-cols-2 overflow-x-auto md:overflow-visible snap-x snap-mandatory gap-6 md:gap-8 py-6 hide-scrollbar">
+                
+                @for (plan of planes; track plan.id) {
+                    <!-- w-full garantiza que en mobile ocupe exactamente el ancho sin desbordar. En PC pasa a w-auto gracias al Grid -->
+                    <div class="w-full shrink-0 snap-center md:w-auto">
+                        
+                        <!-- DISEÑO DE LA CARD -->
+                        <!-- Le sumamos flex y flex-col para que el botón siempre quede abajo (igualando alturas en PC) -->
+                        <div class="h-full flex flex-col rounded-3xl p-6 md:p-8 border transition-all duration-300 relative"
+                            [class]="plan.destacado ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-900 border-zinc-200'">
+                             
+                            <!-- Etiqueta de "Más popular" -->
+                            @if (plan.destacado) {
+                                <div class="absolute top-0 right-0 bg-white/10 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl rounded-tr-3xl backdrop-blur-md">
+                                    Recomendado
+                                </div>
+                            }
+
+                            <!-- Cabecera -->
+                            <h3 class="text-xl md:text-2xl font-bold">{{ plan.plan }}</h3>
+                            <p class="mt-2 text-sm min-h-10" 
+                                [class]="plan.destacado ? 'text-zinc-300' : 'text-zinc-500'">
+                                {{ plan.descripcion }}
+                            </p>
+                            
+                            <!-- Precio Dinámico -->
+                            <div class="mt-6 flex items-baseline gap-2">
+                                <span class="text-4xl md:text-5xl font-bold tracking-tight">
+                                    ${{ isAnual ? plan.precioAnual : plan.precioMensual }}
+                                </span>
+                                <span class="text-sm font-medium" 
+                                        [class]="plan.destacado ? 'text-zinc-400' : 'text-zinc-500'">
+                                    /{{ isAnual ? 'año' : 'mes' }}
+                                </span>
+                            </div>
+
+                            <!-- Lista de Características -->
+                            <ul class="mt-8 space-y-4 mb-8">
+                                @for (feat of plan.caracteristicas; track feat) {
+                                    <li class="flex items-start gap-3 text-sm">
+                                        <div class="rounded-full p-1 mt-0.5 shrink-0" [class]="plan.destacado ? 'bg-white/10' : 'bg-zinc-100'">
+                                            <svg class="size-3.5" [class]="plan.destacado ? 'text-white' : 'text-zinc-900'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                        <span class="leading-relaxed">{{ feat }}</span>
+                                    </li>
+                                }
+                            </ul>
+
+                            <!-- Botón de acción (mt-auto lo empuja siempre al fondo) -->
+                            <button class="mt-auto w-full py-3.5 px-4 rounded-xl font-semibold transition-all duration-300 active:scale-95"
+                                    [class]="plan.destacado ? 'bg-white text-zinc-900 hover:bg-zinc-100' : 'bg-zinc-900 text-white hover:bg-zinc-800'">
+                                Empezar con {{ plan.plan }}
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- INDICADORES MOBILE -->
+            <div class="flex justify-center gap-2 mt-2 md:hidden">
+                @for (plan of planes; track plan.id; let i = $index) {
+                    <button (click)="scrollTo(i, scrollContainer)"
+                        class="h-2.5 rounded-full transition-all duration-300"
+                        [class]="activeIndex === i ? 'bg-zinc-900 w-8' : 'bg-zinc-300 w-2.5'">
+                    </button>
+                }
+            </div>
+        </div>
+
+    </div>
+</section>

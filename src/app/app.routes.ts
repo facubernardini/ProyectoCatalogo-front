@@ -20,6 +20,7 @@ import { ErrorView } from '@layout/error/error';
 import { RecoveryPassword } from '@layout/login/recovery-password/recovery-password';
 import { NotFound } from '@layout/catalogo/not-found/not-found';
 import { isDominioBase } from './core/data/domains.data';
+import { CargaMasiva } from './layout/panel-vendedor/carga-masiva/carga-masiva';
 
 export function subdominioMatcher(url: UrlSegment[]): UrlMatchResult | null {
     const host = window.location.hostname;
@@ -50,6 +51,7 @@ export const routes: Routes = [
             { path: 'mis-productos', component: MisProductos },
             { path: 'mis-categorias', component: MisCategorias },
             { path: 'mis-cupones', component: MisCupones },
+            { path: 'carga-masiva', component: CargaMasiva },
             { path: 'mi-tienda', component: MiTienda },
             { path: 'perfil', component: Perfil },
         ]

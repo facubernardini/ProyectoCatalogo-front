@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal, effect } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CartService } from '@shared/services/cart.service';
@@ -140,66 +140,62 @@ export class Carrito {
     const descuentoEfectivo = this.cartService.cashDiscountAmount();
     const porcentajeEfectivo = this.cartService.catalogConfig()?.descuentoEfectivo;
     
-    // --- CONSTRUCCIÓN DEL MENSAJE FORMAL ---
-    
-    const nombreTienda = this.catalogo()?.nombre_tienda?.toUpperCase() || 'TIENDA';
-    let mensaje = `*NUEVO PEDIDO | ${nombreTienda}*\n\n`;
+    // --- INICIO DEL MENSAJE ---
+    let mensaje = `🛎️ NUEVO PEDIDO de *${this.nombreCliente().trim()}*\n\n`;
 
-    // Sección 1: Cliente y Modalidad
-    mensaje += `*1. Datos del Cliente*\n`;
-    mensaje += `• Cliente: ${this.nombreCliente()}\n`;
-    mensaje += `• Modalidad: ${envio ? 'Envío a domicilio' : 'Retiro por sucursal'}\n`;
     if (envio) {
-      mensaje += `• Dirección: ${this.direccionEnvio()}\n`;
+      mensaje += `🛵 Envío a domicilio: *${this.direccionEnvio().trim()}*\n`;
+    } else {
+      mensaje += `🏪 Retiro en el local\n`;
     }
-    mensaje += `• Medio de pago: ${pago}\n\n`;
 
-    // Sección 2: Detalle de compras
-    mensaje += `*2. Detalle de Artículos*\n`;
+    mensaje += `💵 Medio de pago: *${pago}*\n\n`;
+
+    // Productos
+    mensaje += `🛒 *Detalle del pedido*\n`;
+    mensaje += ` ───────────────────────\n`;
     items.forEach(item => {
-        const subtotalItem = item.precio * item.cantidad;
-        let lineaItem = `• ${item.cantidad}x ${item.nombre} (${item.unidad}) — $${subtotalItem}`;
-        
-        if (item.cantidad >= 2) {
-            lineaItem += ` ($${item.precio} c/u)`;
-        }
-        
-        mensaje += lineaItem + `\n`;
+      const subtotalItem = item.precio * item.cantidad;
+      
+      let lineaItem = `• ${item.cantidad} x ${item.nombre} (${item.unidad}): *$${subtotalItem.toLocaleString('es-AR')}*`;
+      
+      if (item.cantidad >= 2) {
+        lineaItem += ` _($${item.precio.toLocaleString('es-AR')} c/u)_`; 
+      }
+      
+      mensaje += lineaItem + `\n`;
     });
-    mensaje += `\n`;
+    mensaje += ` ───────────────────────\n\n`;
 
-    // Sección 3: Resumen de costos
-    mensaje += `*3. Resumen de Cuenta*\n`;
-    mensaje += `• Subtotal: $${this.cartService.subtotalPrice()}\n`;
+    // Resumen
+    mensaje += `🧾 *Resumen de Cuenta*\n`;
+    mensaje += `🛍️ Productos: *$${this.cartService.subtotalPrice().toLocaleString('es-AR')}*\n`;
 
-    // Descuento por Cupón
     if (cupon) {
-      mensaje += `• Cupón (${cupon.codigo}): -$${this.cartService.discountAmount()}\n`;
+      mensaje += `🎟️ Cupón (${cupon.codigo}): *-$${this.cartService.discountAmount().toLocaleString('es-AR')}*\n`;
     }
 
-    // Descuento por Efectivo
     if (descuentoEfectivo > 0 && porcentajeEfectivo) {
-      mensaje += `• Descuento pago en efectivo (${porcentajeEfectivo}%): -$${descuentoEfectivo}\n`;
+      mensaje += `💸 Dto. pago en efectivo (${porcentajeEfectivo}%): *-$${descuentoEfectivo.toLocaleString('es-AR')}*\n`;
     }
-    
-    // Costo de Envío
+
     if (envio) {
       if (this.cartService.esEnvioGratis()) {
-          mensaje += `• Costo de envío: Bonificado (Gratis)\n`;
+        mensaje += `🛵 Costo de envío: *Bonificado*\n`;
       } else {
-          mensaje += `• Costo de envío: $${this.catalogo()?.costo_envio}\n`;
+        const costoEnvioSeguro = Number(this.catalogo()?.costo_envio || 0);
+        mensaje += `🛵 Costo de envío: *$${costoEnvioSeguro.toLocaleString('es-AR')}*\n`;
       }
     }
 
     // Total final
-    mensaje += `\n*TOTAL A ABONAR: $${this.cartService.totalFinal()}*\n\n`;
-    
-    mensaje += `Quedo a la espera de su confirmación. Muchas gracias.`;
+    mensaje += `\n`;
+    mensaje += `💰 *TOTAL:   $${this.cartService.totalFinal().toLocaleString('es-AR')}*`;
 
     // --- FIN DEL MENSAJE ---
 
     const phone = this.catalogo()?.wpp_numero;
-    const url = `https://wa.me/+549${phone}?text=${encodeURIComponent(mensaje)}`;
+    const url = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
     
     const metodo = this.cartService.deliveryMethod() || 'retiro';
 
@@ -208,7 +204,6 @@ export class Carrito {
     this.cartService.limpiarCarrito(true);
     this.nombreCliente.set('');
     this.direccionEnvio.set('');
-    this.cartService.close();
 
     setTimeout(() => {
       this.pedidoRealizadoService.open(metodo, url);

@@ -1,6 +1,6 @@
 @if (productPreviewService.isOpen()) {
     <div class="fixed inset-0 z-100 bg-black/60 animate-backdrop" 
-         (click)="productPreviewService.close()">
+        (click)="productPreviewService.close()">
         
         <div appSwipeDown
             (onSwipe)="productPreviewService.close()"

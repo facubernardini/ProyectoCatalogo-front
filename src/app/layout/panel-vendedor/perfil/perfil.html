@@ -27,45 +27,107 @@
             <div class="space-y-4">
                 <div class="bg-white rounded-3xl p-4 border border-brand-accent/30 shadow-sm shadow-brand-accent/5 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-brand-accent/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+
+                    <div class="absolute top-0 right-0 z-10">
+                        @switch (adminStore.vendedor()?.suscripcion?.estado) {
+                            @case (estadoSuscripcion.ACTIVA) {
+                                <div title="Tu suscripción está al día" class="flex items-center gap-1 px-4 py-0.5 rounded-bl-2xl bg-emerald-50 text-emerald-600 border-b border-l border-emerald-100">
+                                    <app-icon name="check" classes="size-3 fill-current" />
+                                    <span class="text-[9px] font-semibold uppercase tracking-wider">Activo</span>
+                                </div>
+                            }
+                            @case (estadoSuscripcion.PENDIENTE_PAGO) {
+                                <div title="Tenés un pago pendiente" class="flex items-center gap-1 px-4 py-0.5 rounded-bl-2xl bg-amber-50 text-amber-600 border-b border-l border-amber-100">
+                                    <app-icon name="time" classes="size-3 fill-current" /> 
+                                    <span class="text-[9px] font-semibold uppercase tracking-wider">Pago pendiente</span>
+                                </div>
+                            }
+                            @case (estadoSuscripcion.CANCELADA) {
+                                <div title="Suscripción cancelada" class="flex items-center gap-1 px-4 py-0.5 rounded-bl-2xl bg-red-50 text-red-600 border-b border-l border-red-100">
+                                    <app-icon name="close-circle" classes="size-3 fill-current" />
+                                    <span class="text-[9px] font-semibold uppercase tracking-wider">Expirado</span>
+                                </div>
+                            }
+                        }
+                    </div>
                     
                     <div class="relative flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="size-12 bg-brand-accent text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
-                                <app-icon name="star" classes="size-6 fill-current" />
+                        <div class="flex items-center gap-2.5">
+                            <div class="size-10 bg-brand-accent text-white rounded-xl flex items-center justify-center shrink-0 shadow-md">
+                                <app-icon name="star" classes="size-5 fill-current" />
                             </div>
+                            
                             <div>
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-brand-accent">Tu Plan Actual</p>
-                                <p class="text-lg font-bold text-brand-text">{{ adminStore.vendedor()?.suscripcion?.plan }}</p>
                                 
-                                <div class="text-[11px] font-medium text-brand-text-sec mt-0.5 leading-tight flex flex-wrap items-center gap-1">
+                                <div class="flex items-centermt-0.5">
+                                    <p class="text-lg font-bold text-brand-text leading-none">{{ adminStore.vendedor()?.suscripcion?.plan }}</p>
+                                </div>
+                                
+                                <!-- Fecha de Vencimiento y Días Restantes -->
+                                <div class="text-[11px] font-medium text-brand-text-sec mt-1.5 leading-tight flex flex-wrap items-center gap-1">
                                     <p>Vence: {{ adminStore.vendedor()?.suscripcion?.fecha_fin | date:'dd/MM/yyyy' }}</p>
                                     
                                     @if (diasRestantes() !== null) {
-                                        <span class="font-bold opacity-90" 
-                                            [class.text-brand-accent]="diasRestantes()! > 5" 
-                                            [class.text-red-500]="diasRestantes()! <= 5">
+                                        <span class="font-semibold text-brand-accent">
                                             
                                             @if (diasRestantes()! > 0) {
                                                 (en {{ diasRestantes() }} día{{ diasRestantes() === 1 ? '' : 's' }})
-                                            } @else if (diasRestantes() === 0) {
-                                                (vence hoy)
-                                            } @else {
-                                                (vencido)
                                             }
                                         </span>
                                     }
                                 </div>
                             </div>
                         </div>
-                        <!--
-                        <button 
-                            (click)="mejorarPlan()"
-                            class="px-3 py-2.5 flex flex-row items-center bg-brand-bg text-brand-accent text-xs font-bold rounded-xl active:scale-95 transition-transform border border-brand-accent/20">
-                            <app-icon name="upgrade" classes="size-5 mr-px text-brand-text-sec fill-current" />
-                            Mejorar
-                        </button>
+
+                        <!-- LÓGICA DEL BOTÓN CONDICIONAL -->
+                        @if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO || adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA) {
+                            
+                            <button 
+                                (click)="renovarSuscripcion()"
+                                class="mt-4 p-2 flex flex-row items-center bg-green-50 text-green-600 md:hover:bg-green-100 text-xs font-semibold rounded-xl active:scale-95 transition-colors border border-green-200">
+                                <app-icon name="renew" classes="size-4 mr-1 fill-current" />
+                                Renovar
+                            </button>
+
+                        }
+                        <!-- 
+                        @else if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.ACTIVA) {
+                            
+                            @if (adminStore.vendedor()?.suscripcion?.plan === 'BASE') {
+                                <button 
+                                    (click)="cambiarPlan('PREMIUM')"
+                                    class="p-2 flex flex-row items-center bg-brand-accent text-white hover:bg-brand-accent/90 text-xs font-semibold rounded-xl active:scale-95 transition-colors shadow-md shadow-brand-accent/20">
+                                    <app-icon name="upgrade" classes="size-4 mr-1 fill-current" />
+                                    Mejorar plan
+                                </button>
+                            } @else if (adminStore.vendedor()?.suscripcion?.plan === 'PREMIUM') {
+                                <button 
+                                    (click)="cambiarPlan('BASE')"
+                                    class="px-3 py-2.5 flex flex-row items-center bg-zinc-100 text-zinc-600 hover:bg-zinc-200 text-xs font-semibold rounded-xl active:scale-95 transition-colors border border-zinc-200">
+                                    <app-icon name="downgrade" classes="size-4 mr-1 fill-current" />
+                                    Volver a Básico
+                                </button>
+                            }
+                        }
                         -->
                     </div>
+
+                    @if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO) {
+                        <div class="mt-4 p-3 border-t border-amber-100 flex items-start gap-2 text-amber-700 bg-amber-50/50 -mx-3.5 -mb-3.5 rounded-b-3xl">
+                            <app-icon name="info" classes="size-4 shrink-0 mt-0.5 fill-current" />
+                            <p class="text-xs font-medium leading-snug">
+                                Tenés <span class="font-bold">{{ (diasRestantes() !== null && diasRestantes()! < 0) ? (7 + diasRestantes()!) : 7 }} días</span> para renovar tu suscripción. Luego de ese tiempo, tus clientes no podrán visualizar tu tienda.
+                            </p>
+                        </div>
+                    } @else if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA) {
+                        <div class="mt-4 p-3 border-t border-red-100 flex items-start gap-2 text-red-600 bg-red-50/50 -mx-3.5 -mb-3.5 rounded-b-3xl">
+                            <app-icon name="info" classes="size-4 shrink-0 mt-0.5 fill-current" />
+                            <p class="text-xs font-medium leading-snug">
+                                Tu tienda pública estará oculta hasta que renueves tu suscripción.
+                            </p>
+                        </div>
+                    }
                 </div>
 
                 <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
@@ -95,7 +157,7 @@
                     </div>
 
                     <button (click)="mostrarCambioPassword.set(!mostrarCambioPassword())" 
-                            class="w-full p-4 flex items-center gap-4 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left focus:outline-none">
+                            class="w-full p-4 flex items-center gap-4 md:hover:bg-gray-50 active:bg-gray-100 transition-colors text-left focus:outline-none">
                         <div class="size-10 bg-gray-50 rounded-full flex items-center justify-center shrink-0">
                             <app-icon name="lock" classes="size-5 text-brand-text-sec fill-current" />
                         </div>
@@ -131,7 +193,7 @@
 
                             <div class="pt-2">
                                 <button (click)="guardarNuevaPassword()" [disabled]="loadingPassword()"
-                                        class="w-full py-3.5 bg-brand-accent text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-brand-accent/90 active:scale-[0.98] transition-all shadow-md shadow-brand-accent/20 disabled:opacity-50 flex justify-center items-center gap-2">
+                                        class="w-full py-3.5 bg-brand-accent text-white rounded-xl font-semibold uppercase tracking-widest text-xs md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all shadow-md shadow-brand-accent/20 disabled:opacity-50 flex justify-center items-center gap-2">
                                     
                                     @if (loadingPassword()) {
                                         <span>Actualizando...</span>
@@ -149,13 +211,13 @@
 
             <div class="mt-auto pt-8 flex flex-col">
                 
-                <p class="text-xs font-medium text-brand-text-sec text-center mb-4">
+                <p class="text-xs font-medium text-brand-text-sec text-center mb-3">
                     Miembro desde el {{ adminStore.vendedor()?.fecha_registro | date:'dd/MM/yyyy' }}
                 </p>
 
                 <button 
                     (click)="onLogout()" 
-                    class="w-full p-4 rounded-2xl border-2 border-red-100 text-red-500 font-bold bg-white active:bg-red-50 transition-colors flex items-center justify-center gap-3 shadow-sm">
+                    class="w-full p-3 rounded-2xl border-2 border-red-100 text-red-500 font-bold bg-white active:bg-red-50 transition-colors flex items-center justify-center gap-3 shadow-sm">
                     <app-icon name="logout" classes="size-5 fill-current" />
                     Cerrar Sesión
                 </button>

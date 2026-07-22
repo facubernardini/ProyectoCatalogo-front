@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
@@ -14,7 +14,9 @@ import { SafeHtmlPipe } from "../../../../core/pipes/safe-html.pipe";
 export class ProductCard {
   producto = input.required<Producto>();
 
-  public productSelectorService = inject(ProductSelectorService)
+  public productSelectorService = inject(ProductSelectorService);
+
+  public imageLoaded = signal(false);
 
   getMejorOferta(presentaciones: Presentacion[]): Presentacion | null {
     if (!presentaciones?.length) return null;
@@ -29,5 +31,9 @@ export class ProductCard {
 
   tieneOfertas(presentaciones: Presentacion[]): boolean {
     return presentaciones.some(p => p.precio_descuento !== null);
+  }
+
+  onImageLoad() {
+    this.imageLoaded.set(true);
   }
 }

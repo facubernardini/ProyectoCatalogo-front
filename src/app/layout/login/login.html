@@ -1,7 +1,15 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans">
-  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-brand-bg p-8">
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans relative">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-brand-bg p-6 relative">
     
-    <div class="text-center mb-8">
+    <!-- BOTÓN VOLVER -->
+    <a (click)="volverAlInicio()"
+      class="absolute top-6 left-6 p-2 -ml-2 text-gray-400 md:hover:text-brand-text md:hover:bg-gray-100 rounded-full transition-all focus:outline-none flex items-center gap-1.5 cursor-pointer"
+      aria-label="Volver al inicio">
+      <app-icon name="back" classes="size-6 text-brand-accent fill-current" />
+    </a>
+
+    <!-- CABECERA -->
+    <div class="text-center mb-8 mt-2">
       <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-bg rounded-full mb-4">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -11,6 +19,7 @@
       <p class="text-brand-text-sec text-sm mt-1">Ingresá a tu panel de control</p>
     </div>
 
+    <!-- FORMULARIO -->
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
       
       <div>
@@ -21,7 +30,7 @@
             formControlName="correo" 
             placeholder="tu@correo.com"
             [readonly]="isLoading()"
-            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white read-only:opacity-70 read-only:cursor-not-allowed"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white read-only:opacity-70 read-only:cursor-not-allowed"
           >
         </div>
       </div>
@@ -32,7 +41,7 @@
           <a (click)="!isLoading() && recuperarPassword()" 
              [class.opacity-50]="isLoading()"
              [class.cursor-not-allowed]="isLoading()"
-             class="text-xs text-brand-accent font-bold hover:underline cursor-pointer transition-opacity">
+             class="text-xs text-brand-accent font-bold md:hover:underline cursor-pointer transition-opacity">
             ¿Olvidaste tu contraseña?
           </a>
         </div>
@@ -43,7 +52,7 @@
             formControlName="password" 
             placeholder="••••••••"
             [readonly]="isLoading()"
-            class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-brand-accent focus:ring-4 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white read-only:opacity-70 read-only:cursor-not-allowed"
+            class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white read-only:opacity-70 read-only:cursor-not-allowed"
             (input)="loginForm.get('password')?.value === '' ? showPassword.set(false) : null"
           >
           
@@ -52,7 +61,7 @@
               type="button" 
               [disabled]="isLoading()"
               (click)="showPassword.set(!showPassword())"
-              class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none animate-in fade-in duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 md:hover:text-gray-600 transition-colors focus:outline-none animate-in fade-in duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Alternar visibilidad de la contraseña"
             >
               <app-icon 
@@ -67,7 +76,7 @@
       <button 
         type="submit" 
         [disabled]="loginForm.invalid || isLoading()"
-        class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 hover:bg-[#1e3d5e] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+        class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
       >
         @if (isLoading()) {
           <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -85,7 +94,7 @@
     <p class="mt-8 text-center text-xs text-brand-text-sec">
       ¿Todavía no tenés tu catálogo online? 
       <a (click)="!isLoading() && registrarme()"
-        class="text-brand-accent font-bold hover:underline cursor-pointer transition-opacity">
+        class="text-brand-accent font-bold md:hover:underline cursor-pointer transition-opacity">
         Crear tienda gratis
       </a>
     </p>

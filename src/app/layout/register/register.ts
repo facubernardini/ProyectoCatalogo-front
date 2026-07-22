@@ -10,7 +10,7 @@ import { Toast } from "src/app/shared/components/toast/toast";
 import { RubroService } from 'src/app/core/services-backend/rubros.ServiceBackend';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
-import { debounceTime, distinctUntilChanged, of, Subject, switchMap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, of, Subject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -35,6 +35,11 @@ export class Register implements OnInit, OnDestroy {
   public slugDisponible = signal<boolean | null>(null);
   public validandoSlug = signal(false);
   private slugSubject = new Subject<string>();
+
+  public correoDisponible = signal<boolean | null>(null);
+  public validandoCorreo = signal(false);
+  private correoSubject = new Subject<string>();
+  public correoErrorMensaje = signal<string | null>(null);
 
   public rubros = signal<Rubro[]>([]);
   public isRubroDropdownOpen = signal(false);
@@ -66,18 +71,19 @@ export class Register implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.cargarRubros();
-    this.recuperarProgreso();
     this.configurarDebounceSlug();
+    this.configurarDebounceCorreo();
   }
 
   ngOnDestroy() {
     this.slugSubject.complete();
+    this.correoSubject.complete();
   }
 
   cargarRubros() {
     this.rubroService.obtenerRubros().subscribe({
       next: (data) => this.rubros.set(data),
-      error: () => this.toastService.show('Error al cargar los rubros comerciales.')
+      error: () => console.error('Error al cargar rubros')
     });
   }
 
@@ -104,6 +110,16 @@ export class Register implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.correoDisponible() === false) {
+      this.toastService.show('El correo ingresado ya está en uso.', 'error');
+      return;
+    }
+    
+    if (this.validandoCorreo()) {
+      this.toastService.show('Verificando disponibilidad del correo. Esperá un momento.');
+      return;
+    }
+
     if (this.vendedorReq.password.length < 8) {
       this.toastService.show('La contraseña debe tener al menos 8 caracteres.', 'error');
       return;
@@ -116,8 +132,6 @@ export class Register implements OnInit, OnDestroy {
 
     this.pasoActual.set(2);
     history.pushState({ paso: 2 }, '', '');
-
-    this.guardarProgreso();
   }
 
   volverPaso() {
@@ -127,8 +141,7 @@ export class Register implements OnInit, OnDestroy {
       this.pasoActual.set(1);
     }
 
-    history.back(); 
-    this.guardarProgreso();
+    history.back();
   }
 
   private configurarDebounceSlug() {
@@ -203,6 +216,66 @@ export class Register implements OnInit, OnDestroy {
     this.slugSubject.next(this.catalogo.slug);
   }
 
+  validarCaracteresSlug(event: KeyboardEvent) {
+    if (event.ctrlKey || event.metaKey || event.key.length > 1) {
+      return; 
+    }
+
+    const patron = /^[a-zA-Z0-9-]$/;
+
+    if (!patron.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  private configurarDebounceCorreo() {
+    this.correoSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(correo => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!correo || correo.trim() === '' || !emailRegex.test(correo)) {
+          this.correoDisponible.set(null);
+          this.validandoCorreo.set(false);
+          this.correoErrorMensaje.set(null);
+          return of(null);
+        }
+        
+        this.validandoCorreo.set(true);
+        this.correoErrorMensaje.set(null);
+        
+        return this.registroService.verificarDisponibilidadCorreo(correo).pipe(
+          catchError(err => {
+            this.validandoCorreo.set(false);
+            this.correoDisponible.set(false);
+            
+            if (err.status === 409) {
+              this.correoErrorMensaje.set(err.error.error || 'Ya existe una cuenta registrada con ese correo.');
+            } else {
+              this.correoErrorMensaje.set('Error al verificar el correo.');
+            }
+            return of(null);
+          })
+        );
+      })
+    ).subscribe((res: any) => {
+      if (res) {
+        this.validandoCorreo.set(false);
+        this.correoDisponible.set(true);
+        this.correoErrorMensaje.set(null);
+      }
+    });
+  }
+
+  onCorreoChange(value: string) {
+    this.vendedorReq.correo = value;
+    this.correoDisponible.set(null);
+    this.correoErrorMensaje.set(null);
+    
+    this.correoSubject.next(value);
+  }
+
   @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {
     if (this.pasoActual() === 3) {
@@ -218,8 +291,13 @@ export class Register implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.validandoSlug()) {
+      this.toastService.show('Verificando disponibilidad del enlace. Esperá un momento.', 'error');
+      return;
+    }
+
     if (!this.catalogo.slug || this.catalogo.slug.trim() === '' || this.slugDisponible() !== true) {
-      this.toastService.show('El enlace de la tienda no es válido o está ocupado.', 'error');
+      this.toastService.show('El enlace de la tienda no es válido o ya está ocupado.', 'error');
       return;
     }
 
@@ -237,8 +315,6 @@ export class Register implements OnInit, OnDestroy {
         
         this.pasoActual.set(3);
         history.pushState({ paso: 3 }, '', '');
-
-        this.guardarProgreso();
       },
       error: (err) => {
         this.loading.set(false);
@@ -282,8 +358,6 @@ export class Register implements OnInit, OnDestroy {
         this.loading.set(false);
         this.toastService.show(res.mensaje || '¡Tienda creada con éxito!');
         
-        this.limpiarProgreso();
-        
         this.router.navigate(['/login']);
       },
       error: (err) => {
@@ -294,44 +368,4 @@ export class Register implements OnInit, OnDestroy {
     });
   }
 
-  // Storage por seguridad si recarga la pagina
-  private guardarProgreso() {
-    const progreso = {
-      pasoActual: this.pasoActual(),
-      nombre: this.nombre,
-      apellido: this.apellido,
-      confirmPassword: this.confirmPassword,
-      vendedorReq: this.vendedorReq,
-      catalogo: this.catalogo,
-      rubroSeleccionadoNombre: this.rubroSeleccionadoNombre()
-    };
-    sessionStorage.setItem('registro_progreso', JSON.stringify(progreso));
-  }
-
-  private recuperarProgreso() {
-    const progresoGuardado = sessionStorage.getItem('registro_progreso');
-    if (progresoGuardado) {
-      try {
-        const data = JSON.parse(progresoGuardado);
-        this.nombre = data.nombre || '';
-        this.apellido = data.apellido || '';
-        this.confirmPassword = data.confirmPassword || '';
-        this.vendedorReq = data.vendedorReq;
-        this.catalogo = data.catalogo;
-        
-        if (data.rubroSeleccionadoNombre) {
-          this.rubroSeleccionadoNombre.set(data.rubroSeleccionadoNombre);
-        }
-        
-        this.pasoActual.set(data.pasoActual || 1);
-      } catch (e) {
-        console.error('Error al leer el progreso', e);
-        sessionStorage.removeItem('registro_progreso');
-      }
-    }
-  }
-
-  private limpiarProgreso() {
-    sessionStorage.removeItem('registro_progreso');
-  }
 }

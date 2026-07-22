@@ -24,7 +24,7 @@ export class PedidoRealizadoService {
     this.isOpen.set(true); 
     document.body.style.overflow = 'hidden';
 
-    history.pushState({ modal: 'pedido-realizado' }, '');
+    history.pushState({ modal: 'pedido-realizado' }, window.location.href);
   }
   
   close() { 
