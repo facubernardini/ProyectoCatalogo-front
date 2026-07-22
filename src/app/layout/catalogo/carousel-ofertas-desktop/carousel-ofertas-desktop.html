@@ -1,5 +1,5 @@
 @if (productosOferta().length > 0) {
-    <section class="mb-2 relative">
+    <section class="relative mb-2">
         
         <div class="mb-4 flex items-end justify-between">
             <h2 class="text-xl font-bold text-brand-text flex items-center gap-2">
@@ -103,7 +103,7 @@
                                         <div class="relative w-32 lg:w-36 aspect-square bg-brand-bg rounded-xl overflow-hidden flex items-center justify-center shrink-0"
                                             [class.animate-pulse]="!imageLoaded() && producto.imagen">
                                             
-                                            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-200 transition-opacity duration-300"
+                                            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-accent/10 transition-opacity duration-300"
                                                 [class.opacity-0]="imageLoaded() && producto.imagen">
                                                 <app-icon name="photo" classes="size-10 fill-current" />
                                             </div>

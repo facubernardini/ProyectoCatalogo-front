@@ -93,18 +93,18 @@
         <div class="relative w-32 xl:w-36 aspect-square bg-brand-bg rounded-xl overflow-hidden shrink-0"
             [class.animate-pulse]="!imageLoaded() && producto().imagen">
             
-            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/20 bg-gray-200 transition-opacity duration-300"
-                 [class.opacity-0]="imageLoaded() && producto().imagen">
+            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-accent/10 transition-opacity duration-300"
+                [class.opacity-0]="imageLoaded() && producto().imagen">
                 <app-icon name="photo" classes="size-10 fill-current" />
             </div>
 
             @if (producto().imagen) {
                 <img [src]="producto().imagen" 
-                     (load)="onImageLoad()"
-                     alt="Imagen de {{ producto().nombre }}"
-                     class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-all duration-500 ease-out"
-                     [class.opacity-0]="!imageLoaded()"
-                     [class.opacity-100]="imageLoaded()">
+                    (load)="onImageLoad()"
+                    alt="Imagen de {{ producto().nombre }}"
+                    class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-all duration-500 ease-out"
+                    [class.opacity-0]="!imageLoaded()"
+                    [class.opacity-100]="imageLoaded()">
             }
         </div>
     </div>
