@@ -162,24 +162,47 @@
                             <div class="fixed inset-0 z-40" (click)="isCategoriaDropdownOpen.set(false)"></div>
                             
                             <ul class="absolute right-0 z-50 w-full min-w-50 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
+                                
                                 <li>
                                     <button type="button" (click)="seleccionarCategoriaCustom('todos')"
-                                            class="w-full text-left px-4 py-3 text-sm font-bold transition-colors"
-                                            [class.bg-brand-accent]="categoriaSeleccionada() === 'todos'" [class.text-white]="categoriaSeleccionada() === 'todos'"
-                                            [class.text-brand-text-sec]="categoriaSeleccionada() !== 'todos'" [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== 'todos'"
+                                            class="w-full flex items-center justify-between px-4 py-3 text-sm font-bold transition-colors"
+                                            [class.bg-brand-accent]="categoriaSeleccionada() === 'todos'" 
+                                            [class.text-white]="categoriaSeleccionada() === 'todos'"
+                                            [class.text-brand-text-sec]="categoriaSeleccionada() !== 'todos'" 
+                                            [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== 'todos'"
                                             [class.md:hover:text-brand-text]="categoriaSeleccionada() !== 'todos'">
-                                        Todos
+                                        
+                                        <span>Todos</span>
+                                        
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold"
+                                            [class.bg-white]="categoriaSeleccionada() === 'todos'" 
+                                            [class.text-brand-accent]="categoriaSeleccionada() === 'todos'"
+                                            [class.bg-gray-100]="categoriaSeleccionada() !== 'todos'" 
+                                            [class.text-gray-400]="categoriaSeleccionada() !== 'todos'">
+                                            {{ getTotalProductos() }}
+                                        </span>
                                     </button>
                                 </li>
                                 
                                 @for (cat of categoriasOrdenadas(); track cat.id) {
                                     <li>
                                         <button type="button" (click)="seleccionarCategoriaCustom(cat.nombre)"
-                                                class="w-full text-left px-4 py-3 text-sm font-bold transition-colors"
-                                                [class.bg-brand-accent]="categoriaSeleccionada() === cat.nombre" [class.text-white]="categoriaSeleccionada() === cat.nombre"
-                                                [class.text-brand-text-sec]="categoriaSeleccionada() !== cat.nombre" [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== cat.nombre"
+                                                class="w-full flex items-center justify-between px-4 py-3 text-sm font-bold transition-colors"
+                                                [class.bg-brand-accent]="categoriaSeleccionada() === cat.nombre" 
+                                                [class.text-white]="categoriaSeleccionada() === cat.nombre"
+                                                [class.text-brand-text-sec]="categoriaSeleccionada() !== cat.nombre" 
+                                                [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== cat.nombre"
                                                 [class.md:hover:text-brand-text]="categoriaSeleccionada() !== cat.nombre">
-                                            {{ cat.nombre }}
+                                            
+                                            <span class="truncate pr-2">{{ cat.nombre }}</span>
+                                            
+                                            <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-bold"
+                                                [class.bg-white]="categoriaSeleccionada() === cat.nombre" 
+                                                [class.text-brand-accent]="categoriaSeleccionada() === cat.nombre"
+                                                [class.bg-gray-100]="categoriaSeleccionada() !== cat.nombre" 
+                                                [class.text-gray-400]="categoriaSeleccionada() !== cat.nombre">
+                                                {{ getCantidadPorCategoria(cat.nombre) }}
+                                            </span>
                                         </button>
                                     </li>
                                 }

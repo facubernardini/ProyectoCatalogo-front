@@ -85,6 +85,19 @@ export class MisProductos {
     return [...lista].sort((a, b) => Number(b.especial) - Number(a.especial));
   });
 
+  conteosPorCategoria = computed(() => {
+    const conteos: Record<string, number> = {};
+    
+    for (const prod of this.productos()) {
+      if (prod.categorias) {
+        for (const cat of prod.categorias) {
+          conteos[cat.nombre] = (conteos[cat.nombre] || 0) + 1;
+        }
+      }
+    }
+    return conteos;
+  });
+
   ngOnInit() {
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(400),
@@ -99,6 +112,14 @@ export class MisProductos {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
+  }
+
+  getTotalProductos(): number {
+    return this.productos().length;
+  }
+
+  getCantidadPorCategoria(categoriaNombre: string): number {
+    return this.conteosPorCategoria()[categoriaNombre] || 0;
   }
 
   onImageLoad() {

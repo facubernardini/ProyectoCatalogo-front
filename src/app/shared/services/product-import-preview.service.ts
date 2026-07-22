@@ -1,12 +1,14 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { ProductoImportado } from 'src/app/core/models/carga-masiva.model';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductImportPreviewService {
-  public isOpen = signal(false);
+  private toastService = inject(ToastService);
 
+  public isOpen = signal(false);
   public productDuplicate = signal<ProductoImportado | null>(null); 
   
   private originalProductRef: ProductoImportado | null = null; 
@@ -38,6 +40,7 @@ export class ProductImportPreviewService {
     if (this.onSaveCallback && editedData && this.originalProductRef) {
       this.onSaveCallback(this.originalProductRef, editedData);
     }
+    this.toastService.show(`Producto "${this.originalProductRef?.nombre}" actualizado`, 'success');
     this.close();
   }
 }

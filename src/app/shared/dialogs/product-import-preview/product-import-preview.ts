@@ -13,12 +13,7 @@ import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive
   templateUrl: './product-import-preview.html'
 })
 export class ProductImportPreview {
-  
   public previewService = inject(ProductImportPreviewService);
-
-  onFocus(event: FocusEvent) {
-    (event.target as HTMLInputElement).select();
-  }
 
   agregarPresentacion(producto: ProductoImportado) {
     producto.presentaciones.push({
@@ -45,7 +40,7 @@ export class ProductImportPreview {
     );
   }
 
-  onGuardar(producto: ProductoImportado) {
+  onGuardar() {
     this.previewService.saveChanges();
   }
 }

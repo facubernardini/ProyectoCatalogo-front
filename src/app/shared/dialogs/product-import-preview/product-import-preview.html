@@ -10,9 +10,9 @@
 
             @if (previewService.productDuplicate(); as producto) {
                 
-                <div class="flex gap-4 mb-4">
+                <div class="flex gap-3 mb-3">
                     
-                    <div class="relative w-24 h-24 rounded-2xl bg-gray-50 overflow-hidden shrink-0 shadow-sm mt-1 flex flex-col items-center justify-center text-gray-300">
+                    <div class="relative w-24 h-24 rounded-2xl bg-gray-50 overflow-hidden shrink-0 mt-1 flex flex-col items-center justify-center text-gray-300">
                         @if (producto.foto_url) {
                             <img [src]="producto.foto_url" class="w-full h-full object-cover">
                         } @else {
@@ -24,9 +24,8 @@
                         
                         <div class="relative w-full mb-2">
                             <input type="text" 
-                                [(ngModel)]="producto.nombre" 
-                                (focus)="onFocus($event)" 
-                                class="w-full bg-gray-50 border-none rounded-2xl py-2 pl-4 pr-10 text-sm font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all truncate"
+                                [(ngModel)]="producto.nombre"
+                                class="w-full bg-gray-50 rounded-xl py-2 pl-4 pr-10 text-sm font-bold text-brand-text outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg focus:bg-white transition-all truncate"
                                 [class.border-2]="!producto.nombre"
                                 [class.border-red-500]="!producto.nombre"
                                 placeholder="Nombre del producto">
@@ -39,16 +38,14 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div class="relative">
                                 <input type="text" 
-                                    [(ngModel)]="producto.categoria" 
-                                    (focus)="onFocus($event)"
-                                    class="w-full bg-brand-bg/50 border border-gray-100 rounded-xl py-1.5 px-3 text-xs font-semibold text-brand-accent outline-none focus:border-brand-accent transition-all"
+                                    [(ngModel)]="producto.categoria"
+                                    class="w-full bg-gray-50 rounded-xl py-1.5 px-3 text-xs font-medium text-brand-text-sec outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg focus:bg-white transition-all"
                                     placeholder="Categoría">
                             </div>
                             <div class="relative">
                                 <input type="text" 
-                                    [(ngModel)]="producto.marca" 
-                                    (focus)="onFocus($event)"
-                                    class="w-full bg-gray-50 border border-transparent rounded-xl py-1.5 px-3 text-xs font-semibold text-brand-text-sec outline-none focus:border-gray-300 transition-all"
+                                    [(ngModel)]="producto.marca"
+                                    class="w-full bg-gray-50 rounded-xl py-1.5 px-3 text-xs font-medium text-brand-text-sec outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg focus:bg-white transition-all"
                                     placeholder="Marca (Opcional)">
                             </div>
                         </div>
@@ -56,15 +53,15 @@
                     </div>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-2">
                     <textarea 
                         [(ngModel)]="producto.descripcion"
                         rows="2"
-                        class="w-full bg-gray-50 border border-transparent rounded-xl py-2 px-3 text-xs text-gray-600 outline-none focus:border-gray-300 transition-all resize-none custom-scrollbar"
+                        class="w-full bg-gray-50 rounded-xl py-2 px-3 text-xs text-brand-text-sec outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg focus:bg-white transition-all resize-none custom-scrollbar"
                         placeholder="Descripción del producto (Opcional)"></textarea>
                 </div>
 
-                <div class="flex items-center justify-between mb-3 border-t border-gray-100 pt-4">
+                <div class="flex items-center justify-between mb-3 border-t border-gray-100 pt-3">
                     <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">
                         Presentaciones y Precios
                     </h3>
@@ -93,20 +90,18 @@
                             <div class="shrink-0 mr-2 flex-1">
                                 <input type="text" 
                                     [(ngModel)]="pres.unidad_venta"
-                                    (focus)="onFocus($event)"
-                                    class="w-full bg-white border border-gray-200 rounded-lg py-1.5 px-2 text-xs font-bold text-brand-text outline-none focus:border-brand-accent transition-all placeholder:text-gray-300"
+                                    class="w-full bg-white rounded-lg py-1.5 px-2 text-xs font-bold text-brand-text outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg transition-all placeholder:text-gray-300"
                                     [class.border-red-500]="!pres.unidad_venta"
-                                    placeholder="Ej: 1 Kg, Pack x6, 1 lt">
+                                    placeholder="Ej: 1 kg, Pack x6, 1 lt">
                             </div>
 
                             <div class="flex items-center gap-2">
                                 
                                 <div class="relative w-32">
                                     <span class="absolute left-2.5 top-1/2 -translate-y-1/2 font-bold text-xs text-gray-500">$</span>
-                                    <input type="number" 
+                                    <input type="number"
                                         [(ngModel)]="pres.precio"
-                                        (focus)="onFocus($event)"
-                                        class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold text-brand-text outline-none focus:border-brand-accent transition-all"
+                                        class="no-spinners w-full bg-white rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold text-brand-text outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg transition-all"
                                         [class.border-red-500]="!pres.precio">
                                 </div>
 
@@ -126,7 +121,7 @@
                             class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
                         Cancelar
                     </button>
-                    <button (click)="onGuardar(producto)" 
+                    <button (click)="onGuardar()" 
                             [disabled]="datosInvalidos(producto)"
                             class="flex-1 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale">
                         Aplicar cambios
