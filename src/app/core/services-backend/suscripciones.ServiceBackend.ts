@@ -9,7 +9,8 @@ export interface RenovarSuscripcionPayload {
     tipo_plan_id: number;
     modoRenovacion: 'rapida' | 'exacta';
     fechaExacta?: string;
-    accion: string; 
+    accion: string;
+    precioPagado: number;
 }
 
 @Injectable({

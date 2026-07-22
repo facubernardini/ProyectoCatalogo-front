@@ -14,8 +14,18 @@
 @custom-variant hover (&:hover);
 
 @layer base {
+
+  :root {
+    --theme-bg: #F1F5F9;       /* Slate 100 */
+    --theme-accent: #4F46E5;   /* Indigo 600 */
+    --theme-text: #0F172A;     /* Slate 900 */
+    --theme-text-sec: #475569; /* Slate 600 */
+    
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+  }
   
-  :root, :root[data-theme="midnight" i] {
+  :root[data-theme="midnight" i] {
     --theme-bg: #D1E9F6;
     --theme-accent: #2E5A88;
     --theme-text: #0A1929;
@@ -107,7 +117,6 @@ button:not(:disabled),
 body.tema-catalogo {
   background-color: var(--color-brand-bg);
   color: var(--color-brand-text);
-  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   
   position: relative;
   min-height: 100vh;

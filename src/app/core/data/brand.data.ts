@@ -3,6 +3,7 @@ export const BRAND_DATA = {
     domain: 'listalo.com.ar',
     contact: {
         whatsapp: '+54 9 2923 531536',
+        whatsappLink: 'https://wa.me/5492923531536',
         instagram: '@listalo.app',
         instagramLink: 'https://instagram.com/listalo.app',
     },

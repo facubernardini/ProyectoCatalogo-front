@@ -10,6 +10,12 @@ export interface RegistroPayload {
 	catalogo: Partial<Catalogo>;
 }
 
+export interface RespuestaCorreo {
+  disponible: boolean;
+  mensaje?: string;
+  error?: string;
+}
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -26,4 +32,10 @@ export class RegisterService {
 			params: { slug }
 		});
 	}
+
+	verificarDisponibilidadCorreo(correo: string): Observable<RespuestaCorreo> {
+    return this.http.get<RespuestaCorreo>(`${this.API_URL}/register/verificar-correo`, {
+      params: { correo }
+    });
+  }
 }

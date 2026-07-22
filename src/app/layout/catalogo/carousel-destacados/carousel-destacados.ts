@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
@@ -17,6 +17,8 @@ export class CarouselDestacados {
   public adminStore = inject(AdminStoreService);
   public productosDestacadosService = inject(ProductosDestacadosService);
 
+  public imageLoaded = signal(false);
+
   productosDestacados = computed(() => 
     this.adminStore.productos().filter(p => p.destacado)
   );
@@ -32,5 +34,9 @@ export class CarouselDestacados {
       
       return Number(precioCurr) < Number(precioPrev) ? curr : prev;
     });
+  }
+
+  onImageLoad() {
+    this.imageLoaded.set(true);
   }
 }

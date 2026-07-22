@@ -2,13 +2,21 @@
     (click)="productSelectorService.open(producto())"
     class="bg-white rounded-2xl p-2 shadow-sm border border-gray-100 flex items-stretch gap-3 active:scale-[0.98] transition-all">
     
-    <div class="relative shrink-0 w-24 h-24 my-auto bg-brand-bg rounded-xl overflow-hidden">
+    <div class="relative shrink-0 w-24 h-24 my-auto bg-brand-bg rounded-xl overflow-hidden"
+        [class.animate-pulse]="!imageLoaded() && producto().imagen">
+        
+        <div class="absolute inset-0 flex items-center justify-center text-brand-accent/40 transition-opacity duration-300"
+            [class.opacity-0]="imageLoaded() && producto().imagen">
+            <app-icon name="photo" classes="size-7 fill-current" />
+        </div>
+
         @if (producto().imagen) {
-            <img [src]="producto().imagen" class="w-full h-full object-cover">
-        } @else {
-            <div class="w-full h-full flex items-center justify-center text-brand-accent/40">
-                <app-icon name="photo" classes="size-8 fill-current" />
-            </div>
+            <img [src]="producto().imagen" 
+                (load)="onImageLoad()"
+                alt="Foto de {{ producto().nombre }}"
+                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out"
+                [class.opacity-0]="!imageLoaded()"
+                [class.opacity-100]="imageLoaded()">
         }
     </div>
 

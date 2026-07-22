@@ -197,7 +197,6 @@ export class CartService {
         this.appliedCupon.set(null);
         this.deliveryMethod.set(null);
 
-
         this.close();
       }
     }

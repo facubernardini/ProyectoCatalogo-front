@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
+import { SuscripcionEstado } from 'src/app/core/models/backoffice/suscripcion.model';
 
 @Component({
   selector: 'app-perfil',
@@ -23,6 +24,8 @@ export class Perfil {
 
   public mostrarCambioPassword = signal(false);
   public loadingPassword = signal(false);
+
+  estadoSuscripcion = SuscripcionEstado;
 
   public passwords = {
     actual: '',
@@ -61,6 +64,13 @@ export class Perfil {
     
     const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
+  }
+
+  cambiarPlan(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
+  renovarSuscripcion() {
+    throw new Error('Method not implemented.');
   }
 
   async onLogout() {

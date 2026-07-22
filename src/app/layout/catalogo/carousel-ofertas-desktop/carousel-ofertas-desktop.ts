@@ -18,6 +18,8 @@ export class CarouselOfertasDesktop {
   public productSelectorService = inject(ProductSelectorService);
   public exploradorProductosService = inject(ExploradorProductosService);
 
+  public imageLoaded = signal(false);
+
   itemsPorPagina = signal(window.innerWidth >= 1280 ? 3 : 2);
 
   productosOferta = computed(() => 
@@ -78,5 +80,9 @@ export class CarouselOfertasDesktop {
     return ofertas.reduce((min, p) => 
       Number(p.precio_descuento) < Number(min.precio_descuento) ? p : min
     );
+  }
+
+  onImageLoad() {
+    this.imageLoaded.set(true);
   }
 }

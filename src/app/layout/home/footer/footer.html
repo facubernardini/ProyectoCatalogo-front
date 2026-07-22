@@ -1,0 +1,105 @@
+<footer class="bg-brand-bg border-t border-brand-text/5 pt-8 pb-5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        
+        <!-- GRID PRINCIPAL -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-12">
+            
+            <!-- COLUMNA 1: Marca y Descripción -->
+            <div class="md:col-span-4 lg:col-span-5 flex flex-col items-start">
+                <a routerLink="/" class="text-2xl font-bold tracking-tight text-brand-text transition-opacity hover:opacity-80">
+                    Listalo
+                </a>
+                <p class="mt-4 text-sm text-brand-text-sec max-w-xs leading-relaxed">
+                    Creá el catálogo digital de tu negocio en minutos. Gestioná pedidos por WhatsApp de forma fácil, rápida y profesional.
+                </p>
+                
+                <!-- Redes Sociales -->
+                <div class="mt-8 flex gap-4">
+                    <a [href]="BRAND_DATA.contact.instagramLink" target="_blank" rel="noopener noreferrer" 
+                       class="size-10 flex items-center justify-center rounded-full bg-white border border-brand-text/5 text-brand-text hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm">
+                        <app-icon name="instagram" classes="size-4 fill-current" />
+                        <span class="sr-only">Instagram</span>
+                    </a>
+                    <a [href]="BRAND_DATA.contact.whatsappLink" target="_blank" rel="noopener noreferrer" 
+                       class="size-10 flex items-center justify-center rounded-full bg-white border border-brand-text/5 text-brand-text hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm">
+                        <app-icon name="whatsapp" classes="size-4 fill-current" />
+                        <span class="sr-only">WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- COLUMNA 2: Producto -->
+            <div class="md:col-span-3 lg:col-span-2">
+                <h3 class="text-xs font-black uppercase tracking-widest text-brand-text mb-5">Producto</h3>
+                <ul class="flex flex-col gap-3">
+                    <li>
+                        <a routerLink="/caracteristicas" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors cursor-pointer">
+                            Precios
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/precios" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors cursor-pointer">
+                            Funcionalidades
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/ejemplos" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors flex items-center gap-2 cursor-pointer">
+                            Tiendas de ejemplo
+                            <span class="px-2 py-0.5 rounded-full bg-brand-accent/10 text-brand-accent text-[10px] font-bold">Nuevo</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- COLUMNA 3: Soporte -->
+            <div class="md:col-span-3 lg:col-span-2">
+                <h3 class="text-xs font-black uppercase tracking-widest text-brand-text mb-5">Soporte</h3>
+                <ul class="flex flex-col gap-3">
+                    <li>
+                        <a routerLink="/centro-ayuda" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors cursor-pointer">
+                            Centro de ayuda
+                        </a>
+                    </li>
+                    <li>
+                        <a [href]="BRAND_DATA.contact.whatsappLink" target="_blank" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors">
+                            Contactanos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- COLUMNA 4: Acción Rápida (CTA) -->
+            <div class="md:col-span-2 lg:col-span-3">
+                <div class="bg-white rounded-2xl p-5 border border-brand-text/5 shadow-sm shadow-brand-text/5">
+                    <h3 class="text-sm font-bold text-brand-text mb-2">¿Listo para empezar?</h3>
+                    <p class="text-xs text-brand-text-sec mb-4">Unite y empezá a vender hoy mismo.</p>
+                    <a routerLink="/registro" 
+                       class="w-full flex justify-center items-center px-4 py-2.5 text-xs font-bold text-white bg-brand-text hover:bg-brand-accent rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer">
+                        Crear mi tienda gratis
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- LINEA SEPARADORA -->
+        <div class="h-px w-full bg-brand-text/5 mb-5"></div>
+
+        <!-- COPYRIGHT Y LEGALES -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-xs font-medium text-brand-text-sec">
+                &copy; {{ currentYear }} Listalo. Todos los derechos reservados.
+            </p>
+            
+            <div class="flex items-center gap-6">
+                <a routerLink="/terminos" class="text-xs font-medium text-brand-text-sec hover:text-brand-text transition-colors cursor-pointer">
+                    Términos y Condiciones
+                </a>
+                <a routerLink="/privacidad" class="text-xs font-medium text-brand-text-sec hover:text-brand-text transition-colors cursor-pointer">
+                    Privacidad
+                </a>
+            </div>
+        </div>
+
+    </div>
+</footer>
