@@ -141,7 +141,7 @@ export class MiTienda implements OnInit, OnDestroy {
     }
 
     try {
-      const resizedFile = await this.redimensionarImagen(file, 200, 200);
+      const resizedFile = await this.redimensionarImagen(file, 256, 256);
 
       this.imagenLogoPendiente = resizedFile;
       
@@ -201,7 +201,7 @@ export class MiTienda implements OnInit, OnDestroy {
           } else {
             reject(new Error('Error al comprimir la imagen'));
           }
-        }, 'image/webp', 0.80);
+        }, 'image/webp', 0.9);
       };
       
       img.onerror = (err) => reject(err);
