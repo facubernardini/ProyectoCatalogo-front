@@ -40,6 +40,9 @@ export class Carrito {
   nombreCliente = signal<string>('');
   direccionEnvio = signal<string>('');
 
+  itemParaEliminar = signal<number | null>(null);
+  private timeoutEliminar: any;
+
   constructor() {
     effect(() => {
       const cat = this.catalogo();
@@ -77,6 +80,33 @@ export class Carrito {
     
     return tieneItems && cumpleMinimo && tieneEntrega && tienePago && nombreValido && direccionValida;
   });
+
+  manejarClickRestar(item: any) {
+    if (item.cantidad > 1) {
+      this.cartService.restarUno(item.presentacionId);
+    } else {
+      if (this.itemParaEliminar() === item.presentacionId) {
+        this.cartService.restarUno(item.presentacionId);
+        this.itemParaEliminar.set(null);
+        clearTimeout(this.timeoutEliminar);
+      } else {
+        this.itemParaEliminar.set(item.presentacionId);
+        
+        clearTimeout(this.timeoutEliminar);
+        this.timeoutEliminar = setTimeout(() => {
+          this.itemParaEliminar.set(null);
+        }, 3000);
+      }
+    }
+  }
+
+  manejarClickSumar(item: any) {
+    if (this.itemParaEliminar() === item.presentacionId) {
+      this.itemParaEliminar.set(null);
+      clearTimeout(this.timeoutEliminar);
+    }
+    this.cartService.sumarUno(item.presentacionId);
+  }
 
   getPorcentaje(base: number, oferta: number): number {
     if (!base || base <= 0) return 0;
