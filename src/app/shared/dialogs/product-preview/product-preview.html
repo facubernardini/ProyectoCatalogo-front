@@ -80,7 +80,7 @@
                     <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">
                         Presentaciones y Precios
                     </h3>
-                    <button (click)="agregarPresentacion(producto)" class="text-xs font-medium text-brand-accent hover:opacity-80 transition-opacity">
+                    <button (click)="agregarPresentacion(producto)" class="text-xs font-medium text-brand-accent md:hover:opacity-80 transition-opacity">
                         + Agregar
                     </button>
                 </div>
@@ -144,14 +144,14 @@
 
                                 <div class="flex items-center gap-0.5 ml-1">
                                     <button (click)="onToggleActivoPresentacion(producto, $index)" 
-                                            [class]="pres.activo !== false ? 'text-gray-400 hover:text-orange-500 hover:bg-orange-50' : 'text-orange-500 bg-orange-50 hover:bg-orange-100'"
+                                            [class]="pres.activo !== false ? 'text-gray-400 md:hover:text-orange-500 md:hover:bg-orange-50' : 'text-orange-500 bg-orange-50 md:hover:bg-orange-100'"
                                             class="p-1.5 rounded-lg transition-colors"
                                             [title]="pres.activo !== false ? 'Pausar variante' : 'Reanudar variante'">
                                         <app-icon [name]="pres.activo !== false ? 'pause' : 'play'" classes="size-4 fill-current" />
                                     </button>
 
                                     <button (click)="eliminarPresentacion(producto, $index)" 
-                                            class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            class="p-1.5 text-red-500 md:hover:bg-red-50 rounded-lg transition-colors"
                                             title="Eliminar variante">
                                         <app-icon name="trash" classes="size-4 fill-current" />
                                     </button>

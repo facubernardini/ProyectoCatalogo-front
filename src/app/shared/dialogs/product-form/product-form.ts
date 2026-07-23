@@ -27,7 +27,7 @@ export class ProductForm {
   public producto = {
     nombre: '',
     marca: '',
-    descripcion: '',
+    descripcion: '' as string | null,
     imagen: '',
     destacado: false,
     categorias_ids: [] as number[],
