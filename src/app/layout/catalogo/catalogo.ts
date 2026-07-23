@@ -80,6 +80,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
+      const faviconElement = this.document.getElementById('app-favicon') as HTMLLinkElement;
       const catalogo = this.adminStore.catalogo();
       
       const tema = catalogo?.tema?.toLowerCase() ?? 'midnight';
@@ -90,6 +91,11 @@ export class CatalogoPublico implements OnInit, OnDestroy {
       } else {
         this.titleService.setTitle(`${BRAND_DATA.name}`);
       }
+
+      if (catalogo?.logo_tienda && faviconElement) {
+        faviconElement.href = catalogo.logo_tienda;
+      }
+      
     });
 
     effect(() => {
