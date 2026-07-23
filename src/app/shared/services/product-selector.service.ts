@@ -67,8 +67,7 @@ export class ProductSelectorService {
   seleccionarYAgregar(pres: Presentacion, cantidad: number) {
     const prod = this.selectedProduct();
     if (prod) {
-      this.cartService.agregarProducto(prod, pres, cantidad); 
-      this.close();
+      this.cartService.agregarProducto(prod, pres, cantidad);
     }
   }
 }

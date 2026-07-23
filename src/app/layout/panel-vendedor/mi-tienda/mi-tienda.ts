@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CommonModule, Location } from '@angular/common';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -51,38 +51,37 @@ export class MiTienda implements OnInit, OnDestroy {
     { id: TemaCatalogo.AQUA, nombre: 'Aqua', bg: '#F0FDFB', accent: '#2DD4BF' }
   ];
 
-  constructor() {
-    effect(() => {
-      const storeData = this.adminStore.catalogo();
-      if (storeData && !this.catalogo()) {
-        this.clonarDatosDesdeStore();
-      }
-    });
-  }
-
   ngOnInit() {
     this.configurarDebounceSlug();
+    
+    const storeData = this.adminStore.catalogo();
+    if (storeData) {
+      this.cargarDatosAlFormulario();
+    }
   }
 
   ngOnDestroy() {
     this.slugSubject.complete();
   }
 
-  private clonarDatosDesdeStore() {
+  private cargarDatosAlFormulario() {
     const storeData = this.adminStore.catalogo();
-    if (storeData) {
-      const copia = structuredClone(storeData);
-      
-      if (!copia.horarios || !Array.isArray(copia.horarios) || copia.horarios.length === 0) {
-        copia.horarios = this.getHorariosBase();
-      }
-      copia.medios_pago = copia.medios_pago || [];
-      
-      this.catalogo.set(copia);
+    if (!storeData) return;
 
-      if (copia.slug) {
-        this.slugDisponible.set(true);
-      }
+    const copiaSegura: Catalogo = { ...storeData };
+
+    if (!storeData.horarios || !Array.isArray(storeData.horarios) || storeData.horarios.length === 0) {
+      copiaSegura.horarios = this.getHorariosBase();
+    } else {
+      copiaSegura.horarios = storeData.horarios.map(h => ({ ...h }));
+    }
+
+    copiaSegura.medios_pago = storeData.medios_pago ? storeData.medios_pago.map(m => ({ ...m })) : [];
+
+    this.catalogo.set(copiaSegura);
+
+    if (copiaSegura.slug) {
+      this.slugDisponible.set(true);
     }
   }
 
@@ -287,7 +286,9 @@ export class MiTienda implements OnInit, OnDestroy {
     ).subscribe({
       next: (res: Catalogo) => {
         this.adminStore.catalogo.set(res);
-        this.catalogo.set(structuredClone(res));
+        
+        this.cargarDatosAlFormulario();
+        
         this.toastService.show('Cambios guardados');
         
         this.imagenLogoPendiente = null;
@@ -304,7 +305,7 @@ export class MiTienda implements OnInit, OnDestroy {
   }
 
   resetearValores() {
-    this.clonarDatosDesdeStore();
+    this.cargarDatosAlFormulario();
   }
 
   volverAtras() {
