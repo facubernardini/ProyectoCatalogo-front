@@ -1,7 +1,7 @@
 <div #sentinel class="h-px w-full pointer-events-none"></div>
 
 <div #stickyHeader
-    class="sticky top-0 z-40 py-2 w-full transition-all shadow-md duration-500 ease-in-out"
+    class="sticky top-0 z-40 py-1 w-full transition-all shadow-md duration-500 ease-in-out"
     [class.bg-gray-50]="isStuck()"
     [class.shadow-md]="isStuck()"
     [class.rounded-b-[32px]]="isStuck()">
@@ -23,7 +23,7 @@
                 placeholder="Buscar productos..."
                 [value]="searchService.query()"
                 (input)="onSearch($event)"
-                class="w-full pl-11 pr-10 py-3 bg-white border border-brand-bg rounded-xl 
+                class="w-full pl-11 pr-10 py-2.5 bg-white border border-brand-bg rounded-xl 
                     text-brand-text placeholder:text-brand-text-sec/60
                     focus:outline-none focus:ring-2 focus:ring-brand-bg focus:border-brand-accent 
                     transition-all duration-300 shadow-sm"

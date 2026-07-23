@@ -36,7 +36,7 @@
                                 <div (click)="productSelectorService.open(producto)"
                                     class="bg-brand-accent rounded-3xl overflow-hidden hover:shadow-lg hover:shadow-brand-accent/40 transition-shadow duration-300 cursor-pointer group/card flex h-full">
                                     
-                                    <div class="p-5 flex flex-col flex-1 min-w-0">
+                                    <div class="p-4 flex flex-col flex-1 min-w-0">
                                         <div class="mb-auto">
                                             <h3 class="font-bold text-white text-sm xl:text-lg line-clamp-2 group-hover/card:text-white/90 transition-colors">
                                                 {{ producto.nombre }}
@@ -91,9 +91,9 @@
 
                                                 @if (cheapest && cheapest.precio_descuento) {
                                                     <span class="text-[10px] xl:text-xs text-white/60 line-through font-semibold mr-1">${{ cheapest.precio }}</span>
-                                                    <span class="text-white font-black text-lg xl:text-xl leading-none">${{ cheapest.precio_descuento }}</span>
+                                                    <span class="text-white font-semibold text-base xl:text-lg leading-none">${{ cheapest.precio_descuento }}</span>
                                                 } @else {
-                                                    <span class="text-white font-black text-lg xl:text-xl leading-none">${{ cheapest?.precio }}</span>
+                                                    <span class="text-white font-semibold text-base xl:text-lg leading-none">${{ cheapest?.precio }}</span>
                                                 }
                                             </div>
                                         </div>
