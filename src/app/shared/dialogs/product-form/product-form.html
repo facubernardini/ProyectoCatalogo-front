@@ -95,9 +95,9 @@
                         </p>
                         
                         <span class="text-[11px] font-bold transition-colors"
-                            [class.text-gray-400]="(producto.descripcion.length || 0) < 100"
-                            [class.text-red-500]="(producto.descripcion.length || 0) === 100">
-                            {{ producto.descripcion.length || 0 }}/100
+                            [class.text-gray-400]="(producto.descripcion?.length || 0) < 100"
+                            [class.text-red-500]="(producto.descripcion?.length || 0) === 100">
+                            {{ producto.descripcion?.length || 0 }}/100
                         </span>
                     </div>
                 </div>

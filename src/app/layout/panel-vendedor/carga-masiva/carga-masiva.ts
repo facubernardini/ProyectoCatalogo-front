@@ -83,7 +83,7 @@ export class CargaMasiva {
 
     const confirm = await this.confirmService.ask({
       title: '¿Está seguro?',
-      message: `Se crearán ${productos.length} productos nuevos en el catálogo actual.`,
+      message: `Este proceso puede demorar hasta 1 minuto, no recargues la página.`,
       icon: 'info',
       type: 'info'
     });

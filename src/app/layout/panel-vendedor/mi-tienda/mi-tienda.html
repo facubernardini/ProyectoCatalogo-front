@@ -185,7 +185,7 @@
 				<section class="pt-3 border-t border-brand-bg">
 					<div class="space-y-3">
 						@for (item of catalogo()?.horarios; track item.dia) {
-							<div class="flex items-center justify-between gap-2 bg-gray-50 p-2 rounded-2xl border border-transparent transition-all"
+							<div class="flex items-center justify-between gap-1 bg-gray-50 p-2 rounded-2xl border border-transparent transition-all"
 								[class.opacity-60]="!item.abierto">
 								
 								<div class="w-20 md:w-32 flex flex-col-reverse md:flex-row items-start md:items-center gap-1 md:gap-3 shrink-0">
@@ -200,10 +200,10 @@
 									@if (item.abierto) {
 										<div class="flex items-center gap-2 bg-white rounded-lg px-1.5 py-1 shadow-sm border border-gray-100">
 											<input type="time" [(ngModel)]="item.apertura" 
-												class="bg-transparent border-none py-1 text-xs font-medium text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
+												class="bg-transparent border-none py-1 text-xs font-medium text-brand-text focus:ring-0 w-22 outline-none cursor-pointer">
 											<span class="text-gray-400 text-sm font-black">-</span>
 											<input type="time" [(ngModel)]="item.cierre" 
-												class="bg-transparent border-none py-1 text-xs font-medium text-brand-text focus:ring-0 w-20 outline-none cursor-pointer">
+												class="bg-transparent border-none py-1 text-xs font-medium text-brand-text focus:ring-0 w-22 outline-none cursor-pointer">
 										</div>
 									} @else {
 										<span class="text-xs font-black uppercase tracking-widest text-gray-400 bg-gray-200/50 px-3 py-1.5 rounded-lg">
@@ -306,7 +306,7 @@
 				[loading]="loading()"
 				(onSave)="guardarCambios(sectionConfigDireccion)"
 				(onCancel)="resetearValores()">
-				<section class="pt-3 border-t border-brand-bg">
+				<section class="pt-2 border-t border-brand-bg">
 					<div class="w-full">
 						<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Dirección (Calle y número)</label>
 						
