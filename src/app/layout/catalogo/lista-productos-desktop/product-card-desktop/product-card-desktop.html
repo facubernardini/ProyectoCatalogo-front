@@ -4,7 +4,7 @@
     <div class="p-4 flex flex-col flex-1 min-w-0">
         
         <div class="mb-auto">
-            <h3 class="font-bold text-brand-text text-sm xl:text-base line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
+            <h3 class="font-bold text-brand-text text-xs xl:text-sm line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
                 {{ producto().nombre }}
             </h3>
 
@@ -67,7 +67,7 @@
                 @let cheapest = getMejorOferta(producto().presentaciones);
 
                 @if (producto().presentaciones.length > 1) {
-                    <span class="mr-0.5 text-[9px] xl:text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                    <span class="mr-0.5 text-[9px] xl:text-[10px] text-gray-500 font-semibold uppercase tracking-widest">
                         Desde
                     </span>
                 }
@@ -76,11 +76,11 @@
                     <span class="text-[11px] xl:text-xs text-gray-400 line-through font-semibold mr-1">
                         ${{ cheapest.precio }}
                     </span>
-                    <span class="text-brand-text font-bold text-lg xl:text-xl leading-none">
+                    <span class="text-brand-text font-bold text-sm xl:text-base leading-none">
                         ${{ cheapest.precio_descuento }}
                     </span>
                 } @else {
-                    <span class="text-brand-text font-bold text-lg xl:text-xl leading-none">
+                    <span class="text-brand-text font-bold text-sm xl:text-base leading-none">
                         ${{ cheapest?.precio }}
                     </span>
                 }
@@ -89,7 +89,7 @@
 
     </div>
 
-    <div class="p-4 pl-0 shrink-0 flex flex-col justify-center">
+    <div class="p-3 pl-0 shrink-0 flex flex-col justify-center">
         <div class="relative w-32 xl:w-36 aspect-square bg-brand-bg rounded-xl overflow-hidden shrink-0"
             [class.animate-pulse]="!imageLoaded() && producto().imagen">
             

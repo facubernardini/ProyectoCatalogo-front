@@ -35,15 +35,28 @@
 				<section class="pt-3 border-t border-brand-bg space-y-4">
 					<div class="flex items-center gap-4">
 						<input type="file" #fileInput (change)="onLogoChange($event)" accept="image/*" class="hidden">
-						<div class="size-20 bg-brand-bg rounded-full overflow-hidden border-2 border-gray-100 flex items-center justify-center shrink-0 cursor-pointer hover:opacity-80"
-							(click)="fileInput.click()">
+						
+						<div class="relative shrink-0">
 							
+							<div class="size-20 bg-brand-bg rounded-full overflow-hidden border-2 border-gray-100 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+								(click)="fileInput.click()">
+								
+								@if (logoPreview || catalogo()?.logo_tienda) {
+									<img [src]="logoPreview || catalogo()?.logo_tienda" class="w-full h-full object-cover">
+								} @else {
+									<app-icon name="image-add" classes="size-6 fill-current text-brand-accent/40" />
+								}
+							</div>
+
 							@if (logoPreview || catalogo()?.logo_tienda) {
-								<img [src]="logoPreview || catalogo()?.logo_tienda" class="w-full h-full object-cover">
-							} @else {
-								<app-icon name="image-add" classes="size-6 fill-current text-brand-accent/40" />
+								<button (click)="quitarLogo($event)" 
+										class="absolute -top-1 -right-1 bg-white text-red-500 md:hover:text-gray-200 md:hover:bg-red-500 border border-gray-200 rounded-full p-1 shadow-md transition-colors z-10 animate-in zoom-in duration-200"
+										aria-label="Quitar logo">
+									<app-icon name="close" classes="size-3 fill-current" />
+								</button>
 							}
 						</div>
+						
 						<div class="flex-1">
 							<label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Nombre Público</label>
 							<input type="text" [(ngModel)]="catalogo()!.nombre_tienda"

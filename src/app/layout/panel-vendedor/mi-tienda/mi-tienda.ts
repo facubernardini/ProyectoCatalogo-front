@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CommonModule, Location } from '@angular/common';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -23,6 +23,8 @@ export class MiTienda implements OnInit, OnDestroy {
   public adminStore = inject(AdminStoreService);
   private catalogoService = inject(CatalogoService);
   private toastService = inject(ToastService);
+
+  private cdr = inject(ChangeDetectorRef);
 
   BRAND_DATA = BRAND_DATA;
   
@@ -124,7 +126,7 @@ export class MiTienda implements OnInit, OnDestroy {
     });
   }
 
-  onLogoChange(event: any) {
+  async onLogoChange(event: any) {
     const file = event.target.files[0];
     
     if (!file) return;
@@ -138,8 +140,88 @@ export class MiTienda implements OnInit, OnDestroy {
       return;
     }
 
-    this.imagenLogoPendiente = file;
-    this.logoPreview = URL.createObjectURL(file);
+    try {
+      const resizedFile = await this.redimensionarImagen(file, 200, 200);
+
+      this.imagenLogoPendiente = resizedFile;
+      
+      this.logoPreview = URL.createObjectURL(resizedFile);
+
+      this.cdr.detectChanges();
+      
+    } catch (error) {
+      console.error('Error procesando imagen:', error);
+      this.toastService.show('Hubo un error al procesar el logo.', 'error');
+    }
+  }
+
+  private redimensionarImagen(file: File, maxWidth: number, maxHeight: number): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Canvas no soportado'));
+          return;
+        }
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const resizedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {
+              type: 'image/webp',
+              lastModified: Date.now(),
+            });
+            resolve(resizedFile);
+          } else {
+            reject(new Error('Error al comprimir la imagen'));
+          }
+        }, 'image/webp', 0.80);
+      };
+      
+      img.onerror = (err) => reject(err);
+    });
+  }
+
+  quitarLogo(event: Event) {
+    event.stopPropagation(); 
+    
+    this.logoPreview = null;
+    this.imagenLogoPendiente = null;
+    
+    this.catalogo.update(cat => {
+      if (cat) {
+        cat.logo_tienda = '';
+      }
+      return cat;
+    });
+    
+    this.cdr.detectChanges();
   }
 
   private configurarDebounceSlug() {
