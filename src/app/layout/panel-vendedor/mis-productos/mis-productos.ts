@@ -53,6 +53,9 @@ export class MisProductos {
   soloDestacados = signal<boolean>(false);
   soloPausados = signal<boolean>(false);
 
+  paginaActual = signal(1);
+  itemsPorPagina = 10;
+
   productosFiltrados = computed(() => {
     const seleccion = this.categoriaSeleccionada();
     const term = this.filtro().toLowerCase();
@@ -78,6 +81,12 @@ export class MisProductos {
     }
 
     return lista;
+  });
+
+  productosVisibles = computed(() => {
+    const todosLosFiltrados = this.productosFiltrados();
+    const limite = this.paginaActual() * this.itemsPorPagina;
+    return todosLosFiltrados.slice(0, limite);
   });
 
   categoriasOrdenadas = computed(() => {
@@ -128,14 +137,17 @@ export class MisProductos {
 
   toggleDestacados() {
     this.soloDestacados.update(v => !v);
+    this.paginaActual.set(1);
   }
 
   togglePausados() {
     this.soloPausados.update(v => !v);
+    this.paginaActual.set(1);
   }
 
   onSearchInput(valor: string) {
     this.busquedaRaw.set(valor);
+    this.paginaActual.set(1);
     
     if (valor.trim().length > 0) {
       this.isBuscando.set(true);
@@ -150,6 +162,7 @@ export class MisProductos {
     this.busquedaRaw.set('');
     this.filtro.set('');
     this.isBuscando.set(false);
+    this.paginaActual.set(1);
     this.searchSubject.next('');
   }
 
@@ -157,12 +170,12 @@ export class MisProductos {
     this.soloDestacados.set(false);
     this.soloPausados.set(false);
     this.isFiltrosOpen.set(false);
+    this.paginaActual.set(1);
   }
 
   toggleFiltrosDropdown() {
     if (!this.hasProductos()) return;
     this.isFiltrosOpen.set(!this.isFiltrosOpen());
-    // Cerramos el otro menú por las dudas para que no se superpongan
     this.isCategoriaDropdownOpen.set(false);
   }
 
@@ -175,6 +188,7 @@ export class MisProductos {
   seleccionarCategoriaCustom(nombre: string) {
     this.categoriaSeleccionada.set(nombre);
     this.isCategoriaDropdownOpen.set(false);
+    this.paginaActual.set(1);
   }
 
   volverAtras() {
@@ -206,7 +220,6 @@ export class MisProductos {
     const rect = button.getBoundingClientRect();
     
     this.isMenuUpward.set(window.innerHeight - rect.bottom < 250);
-    
     this.activeMenuId.set(id);
   }
 
@@ -224,6 +237,22 @@ export class MisProductos {
     }
     this.isCategoriaDropdownOpen.set(false);
     this.isFiltrosOpen.set(false);
+
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const scrollThreshold = document.documentElement.scrollHeight - 200;
+
+    if (scrollPosition >= scrollThreshold) {
+      this.cargarMas();
+    }
+  }
+
+  cargarMas() {
+    const totalMostrados = this.paginaActual() * this.itemsPorPagina;
+    const totalDisponibles = this.productosFiltrados().length;
+
+    if (totalMostrados < totalDisponibles) {
+      this.paginaActual.update(p => p + 1);
+    }
   }
 
   async exportarPDF() {
@@ -247,7 +276,6 @@ export class MisProductos {
     }
   }
 
-  // --- MÉTODOS DELEGADOS AL MANAGER ---
   onEliminar(producto: Producto) {
     this.productManager.eliminar(producto);
   }
