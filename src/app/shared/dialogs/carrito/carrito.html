@@ -18,12 +18,12 @@
                 <div class="space-x-4">
                     @if (cartService.items().length > 0){
                         <button (click)="cartService.limpiarCarrito()"
-                                class="text-xs font-semibold text-white bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-xl uppercase tracking-wider transition-all duration-300 active:scale-95">
+                                class="text-[13px] font-semibold text-white bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-xl tracking-wider transition-all duration-300 active:scale-95">
                             Vaciar
                         </button>
                     }
                     <button (click)="cartService.close()"
-                        class="text-xs font-semibold text-gray-400 hover:text-red-500 uppercase tracking-wider transition-colors">
+                        class="text-[13px] font-semibold text-gray-400 hover:text-red-500 tracking-wider transition-colors">
                         Cerrar
                     </button>
                 </div>
@@ -97,20 +97,28 @@
                             </div>
                             
                             <div class="flex items-center gap-3 bg-gray-100 p-1 rounded-xl">
-                                <button (click)="cartService.restarUno(item.presentacionId)"
+    
+                                <button (click)="manejarClickRestar(item)"
                                     class="size-8 flex items-center justify-center bg-white rounded-lg shadow-sm active:scale-90 transition-transform hover:bg-gray-50">
+                                    
                                     @if (item.cantidad === 1) {
-                                        <app-icon name="trash" classes="size-4 fill-current text-red-500 animate-in zoom-in duration-200" />
+                                        @if (itemParaEliminar() === item.presentacionId) {
+                                            <app-icon name="check" classes="size-5 fill-current text-green-500 animate-in zoom-in duration-200" />
+                                        } @else {
+                                            <app-icon name="trash" classes="size-4 fill-current text-red-500 animate-in zoom-in duration-200" />
+                                        }
                                     } @else {
                                         <app-icon name="remove" classes="size-4 fill-current text-brand-text" />
                                     }
                                 </button>
+
                                 <div class="min-w-5 overflow-hidden flex items-center justify-center">
                                     <span [@popAnimation]="item.cantidad" class="block font-black text-brand-text text-center select-none">
                                         {{ item.cantidad }}
                                     </span>
                                 </div>
-                                <button (click)="cartService.sumarUno(item.presentacionId)"
+
+                                <button (click)="manejarClickSumar(item)"
                                     class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-transform text-white hover:brightness-110">
                                     <app-icon name="add-producto" classes="size-4 fill-current" />
                                 </button>
@@ -122,12 +130,12 @@
                 <div class="mt-6" id="seccion-entrega">
                     <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">¿Cómo lo recibís?</h3>
                     @if (catalogo()?.ofrece_envio) {
-                        <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="grid grid-cols-2 gap-2 mb-6">
                             <button (click)="seleccionarMetodo('retiro', seccionPago)"
                                 [class.border-brand-accent]="cartService.deliveryMethod() === 'retiro'"
                                 [class.border-gray-100]="cartService.deliveryMethod() !== 'retiro'"
                                 [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'retiro'"
-                                class="p-3 border-2 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95 hover:border-brand-accent/50">
+                                class="p-2 border-2 rounded-3xl flex flex-col items-center gap-1 transition-all active:scale-95 hover:border-brand-accent/50">
                                 <app-icon name="store" [class.text-brand-accent]="cartService.deliveryMethod() === 'retiro'" classes="size-7 fill-current text-gray-400" />
                                 <div class="text-center">
                                     <span class="block font-bold text-sm text-brand-text">Retiro en local</span>
@@ -138,7 +146,7 @@
                                 [class.border-brand-accent]="cartService.deliveryMethod() === 'envio'"
                                 [class.border-gray-100]="cartService.deliveryMethod() !== 'envio'"
                                 [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'envio'"
-                                class="p-3 border-2 rounded-3xl flex flex-col items-center gap-2 transition-all active:scale-95 hover:border-brand-accent/50">
+                                class="p-2 border-2 rounded-3xl flex flex-col items-center gap-1 transition-all active:scale-95 hover:border-brand-accent/50">
                                 <app-icon name="delivery" [class.text-brand-accent]="cartService.deliveryMethod() === 'envio'" classes="size-7 fill-current text-gray-400" />
                                 <div class="text-center">
                                     <span class="block font-bold text-sm text-brand-text">Envío a domicilio</span>
@@ -297,7 +305,7 @@
                     </div>
                 }
 
-                <div class="space-y-3 mb-3 px-1">
+                <div class="space-y-3 mb-2 px-1">
                     @if (cartService.deliveryMethod() === 'envio' || cartService.appliedCupon() || cartService.cashDiscountAmount() > 0) {
                         <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
                             <span class="text-gray-500 font-semibold whitespace-nowrap">Subtotal</span>
@@ -373,7 +381,7 @@
 
                 <button (click)="finalizarPedido()"
                     type="button"
-                    class="relative overflow-hidden w-full py-3 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all group active:scale-[0.98] hover:brightness-110">
+                    class="relative overflow-hidden w-full py-2.5 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all group active:scale-[0.98] hover:brightness-110">
                     
                     @if (puedeFinalizar()) {
                         <div class="absolute inset-0 h-full bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-shimmer pointer-events-none"></div>

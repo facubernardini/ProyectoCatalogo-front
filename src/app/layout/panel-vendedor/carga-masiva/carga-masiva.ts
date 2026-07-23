@@ -84,6 +84,8 @@ export class CargaMasiva {
     const confirm = await this.confirmService.ask({
       title: '¿Está seguro?',
       message: `Este proceso puede demorar hasta 1 minuto, no recargues la página.`,
+      confirmText: 'Sí, continuar',
+      cancelText: 'Cancelar',
       icon: 'info',
       type: 'info'
     });
