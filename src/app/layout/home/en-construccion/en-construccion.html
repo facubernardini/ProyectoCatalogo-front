@@ -1,0 +1,69 @@
+<section class="relative bg-brand-bg min-h-svh flex flex-col overflow-hidden transition-colors duration-500 z-0">
+    
+    <header class="w-full px-4 sm:px-6 md:px-8 py-4 relative z-20 shrink-0">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="size-8 rounded-xl bg-brand-accent text-white flex items-center justify-center font-bold shadow-sm shadow-brand-accent/20">
+                    <app-icon name="shop" classes="size-5 fill-current" />
+                </div>
+                <span class="text-xl font-bold tracking-tight text-brand-text">Listalo</span>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button (click)="irALogin()"
+                    class="flex items-center justify-center gap-2 px-4 py-1.5 text-sm font-medium text-brand-text bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-full shadow-sm hover:bg-brand-bg transition-all focus:outline-none active:scale-95">
+                    <span class="hidden sm:inline">Ingresar</span>
+                    <app-icon name="login" classes="size-4 fill-current" />
+                </button>
+
+                <button (click)="irARegistro()"
+                    class="px-5 py-1.5 text-sm font-semibold text-white bg-brand-accent hover:bg-brand-accent/90 rounded-full shadow-sm shadow-brand-accent/20 transition-all focus:outline-none active:scale-95">
+                    Probar gratis
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="absolute bottom-0 left-0 w-full h-[50%] bg-brand-accent md:hidden -z-10 transition-all duration-500">
+        <div class="absolute bottom-[99%] left-1/2 -translate-x-1/2 w-[150%] h-12 bg-brand-accent"
+            style="border-top-left-radius: 50% 100%; border-top-right-radius: 50% 100%;">
+        </div>
+    </div>
+
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10 flex-1 flex flex-col justify-end md:justify-center pb-8 md:pb-0 overflow-y-auto no-scrollbar">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-8 items-end md:items-center flex-1 h-full min-h-0">
+            
+            <div class="order-2 md:order-1 flex flex-col items-center md:items-start text-center md:text-left mt-2 md:mt-0 relative z-20 shrink-0">
+                
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white md:text-brand-text leading-[1.1] transition-colors">
+                    Estamos armando <br class="hidden lg:block"/> algo increíble.
+                </h1>
+
+                <p class="mt-4 sm:mt-6 text-sm sm:text-lg text-white/90 md:text-brand-text-sec max-w-lg font-medium leading-tight sm:leading-normal transition-colors">
+                    Estamos preparando todo para que puedas conocer a detalle nuestro sistema. Sin embargo, ya podés <strong class="text-white md:text-brand-text">crear tu tienda sin costo</strong> y empezar a vender.
+                </p>
+                
+                <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <button (click)="irARegistro()" 
+                        class="inline-flex justify-center items-center px-6 sm:px-8 py-3 text-base font-bold text-brand-accent bg-white md:text-white md:bg-brand-accent md:hover:bg-brand-accent/90 rounded-full shadow-xl transition-all focus:outline-none active:scale-95 w-full sm:w-auto">
+                        Probar gratis 30 días
+                    </button>
+                </div>
+                
+                <p class="mt-2 sm:mt-3 text-xs font-medium text-white/80 md:text-brand-text-sec md:opacity-80 opacity-90 transition-colors">
+                    Gratis. Sin introducir tu tarjeta.
+                </p>
+                
+            </div>
+
+            <div class="order-1 md:order-2 flex justify-center md:justify-end relative h-[35vh] md:h-[50vh] min-h-50 items-end pt-4 md:pt-0 shrink z-10">
+                <div class="w-full max-w-70 sm:max-w-sm md:max-w-md lg:max-w-lg flex items-end justify-center relative h-full animate-in slide-in-from-bottom-8 duration-700 ease-out">
+                    <img src="assets/home/mujer_carrito.webp" alt="Próximamente" 
+                        class="w-full h-full object-contain object-bottom relative z-10 animate-levitate" />
+                </div>
+            </div>
+
+        </div>
+    </main>
+</section>
