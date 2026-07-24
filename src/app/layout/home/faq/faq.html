@@ -1,7 +1,6 @@
 <section id="faq" class="py-24 bg-white relative">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
         
-        <!-- ENCABEZADO -->
         <div class="text-center mb-16">
             <h2 class="text-3xl md:text-4xl font-black tracking-tight text-brand-text mb-4">
                 Preguntas <span class="text-brand-accent">Frecuentes</span>
@@ -11,48 +10,44 @@
             </p>
         </div>
 
-        <!-- LISTA DE ACORDEONES -->
         <div class="space-y-4">
             
             @for (faq of faqs; track faq.pregunta; let i = $index) {
                 <div class="border border-gray-100 bg-gray-50 rounded-2xl overflow-hidden transition-colors duration-300"
-                     [class.bg-white]="openIndex() === i"
-                     [class.shadow-sm]="openIndex() === i"
-                     [class.border-brand-accent/20]="openIndex() === i">
+                    [class.bg-white]="openIndex() === i"
+                    [class.shadow-sm]="openIndex() === i"
+                    [class.border-brand-accent/20]="openIndex() === i">
                     
-                    <!-- BOTÓN DE LA PREGUNTA -->
                     <button type="button" 
                             (click)="toggle(i)"
                             class="w-full px-6 py-5 flex items-center justify-between gap-4 text-left focus:outline-none md:hover:bg-brand-bg/30 transition-colors">
                         
                         <span class="text-base md:text-lg font-bold transition-colors"
-                              [class.text-brand-accent]="openIndex() === i"
-                              [class.text-brand-text]="openIndex() !== i">
+                            [class.text-brand-accent]="openIndex() === i"
+                            [class.text-brand-text]="openIndex() !== i">
                             {{ faq.pregunta }}
                         </span>
                         
-                        <!-- ÍCONO FLECHA (Rota cuando se abre) -->
                         <div class="shrink-0 size-8 rounded-full flex items-center justify-center transition-colors"
-                             [class.bg-brand-accent/10]="openIndex() === i"
-                             [class.bg-gray-200]="openIndex() !== i">
+                            [class.bg-brand-accent/10]="openIndex() === i"
+                            [class.bg-gray-200]="openIndex() !== i">
                             
                             <svg class="w-5 h-5 transition-transform duration-300 ease-in-out"
-                                 [class.text-brand-accent]="openIndex() === i"
-                                 [class.text-gray-500]="openIndex() !== i"
-                                 [class.rotate-180]="openIndex() === i"
-                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                [class.text-brand-accent]="openIndex() === i"
+                                [class.text-gray-500]="openIndex() !== i"
+                                [class.rotate-180]="openIndex() === i"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                             </svg>
                         </div>
                     </button>
 
-                    <!-- RESPUESTA (Contenedor animado con CSS Grid) -->
                     <div class="grid transition-all duration-300 ease-in-out px-6"
-                         [class.grid-rows-[1fr]]="openIndex() === i"
-                         [class.grid-rows-[0fr]]="openIndex() !== i"
-                         [class.opacity-100]="openIndex() === i"
-                         [class.opacity-0]="openIndex() !== i"
-                         [class.pb-5]="openIndex() === i">
+                        [class.grid-rows-[1fr]]="openIndex() === i"
+                        [class.grid-rows-[0fr]]="openIndex() !== i"
+                        [class.opacity-100]="openIndex() === i"
+                        [class.opacity-0]="openIndex() !== i"
+                        [class.pb-5]="openIndex() === i">
                          
                         <div class="overflow-hidden">
                             <p class="text-sm md:text-base text-brand-text-sec leading-relaxed">
@@ -67,11 +62,10 @@
 
         </div>
         
-        <!-- LLAMADO A LA ACCIÓN EXTRA -->
         <div class="mt-12 text-center p-6 bg-brand-bg/50 rounded-2xl border border-brand-accent/10">
             <p class="text-sm font-semibold text-brand-text">
-                ¿No encontraste lo que buscabas? 
-                <a routerLink="/contacto" class="text-brand-accent hover:underline ml-1">Escribinos por WhatsApp</a>.
+                ¿Seguís con dudas? 
+                <a routerLink="/contacto" class="text-brand-accent hover:underline ml-1 cursor-pointer">Escribinos por WhatsApp</a>.
             </p>
         </div>
 
