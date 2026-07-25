@@ -9,11 +9,12 @@ import { Producto } from 'src/app/core/models/producto.model';
 import { CategoryViewService } from '@shared/services/category-view.service';
 import { MenuLateralService } from '@shared/services/menu-lateral.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
+import { ProductCard } from "src/app/layout/catalogo/lista-productos/product-card/product-card";
 
 @Component({
   selector: 'app-category-products-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon],
+  imports: [CommonModule, FormsModule, Icon, ProductCard],
   templateUrl: './category-products-view.html'
 })
 export class CategoryProductsView implements OnDestroy {

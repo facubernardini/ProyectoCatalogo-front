@@ -11,7 +11,7 @@
 
             <div class="mb-4 flex w-full shrink-0 items-center gap-5">
                 @if (adminStore.catalogo()?.logo_tienda) {
-                    <div class="shrink-0 size-24 overflow-hidden rounded-3xl border-4 border-zinc-50 shadow-md">
+                    <div class="shrink-0 size-24 overflow-hidden rounded-3xl border-2 border-zinc-50 shadow-md">
                         <img [src]="catalogo()?.logo_tienda" 
                             class="h-full w-full object-cover">
                     </div>
@@ -119,8 +119,7 @@
                             <p class="font-black text-base text-brand-accent">${{ catalogo()?.costo_envio }}</p>
                             
                             @if (catalogo()?.envio_gratis_desde) {
-                                <div class="mt-1 inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-black text-green-700 uppercase tracking-tighter border border-green-200">
-                                    <app-icon name="check" classes="size-2 fill-current" />
+                                <div class="mt-1 inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700 uppercase tracking-tighter border border-green-200">
                                     Gratis desde ${{ catalogo()?.envio_gratis_desde }}
                                 </div>
                             }
