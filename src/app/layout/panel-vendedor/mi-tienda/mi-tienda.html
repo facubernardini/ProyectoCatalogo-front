@@ -20,7 +20,7 @@
         </div>
     </header>
 
-    <main class="flex-1 bg-gray-50 p-3">
+    <main class="flex-1 bg-gray-50 px-3 pt-3 pb-20">
         @if (catalogo(); as cat) {
             <div class="max-w-2xl mx-auto space-y-3">
                 
@@ -243,17 +243,24 @@
                     (onCancel)="resetearValores()">
                     
                     <section class="pt-3 border-t border-brand-bg space-y-3">               
-                        <div class="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-2xl">
+                        <div class="relative grid grid-cols-2 p-1 bg-gray-100 rounded-2xl isolate overflow-hidden">
+                            <div class="absolute inset-y-1 w-[calc(50%-4px)] rounded-xl transition-all duration-300 ease-out z-[-1]"
+                                [class]="cat.ofrece_envio 
+                                        ? 'left-1/2 bg-brand-accent shadow-lg shadow-brand-accent/20' 
+                                        : 'left-1 bg-white shadow-sm'">
+                            </div>
+
                             <button (click)="cat.ofrece_envio = false"
-                                [class]="!cat.ofrece_envio ? 'bg-white text-brand-text shadow-sm' : 'text-gray-500'"
-                                class="flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all">
-                                <app-icon name="store" classes="size-4 fill-current" />
+                                    class="flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-colors duration-300 relative z-10"
+                                    [class]="!cat.ofrece_envio ? 'text-brand-text' : 'text-gray-500 hover:text-gray-700'">
+                                <app-icon name="store" classes="size-4 fill-current transition-colors duration-300" />
                                 Solo Retiro
                             </button>
+
                             <button (click)="cat.ofrece_envio = true"
-                                [class]="cat.ofrece_envio ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/20' : 'text-gray-500'"
-                                class="flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all">
-                                <app-icon name="delivery" classes="size-4 fill-current" />
+                                    class="flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-colors duration-300 relative z-10"
+                                    [class]="cat.ofrece_envio ? 'text-white' : 'text-gray-500 hover:text-gray-700'">
+                                <app-icon name="delivery" classes="size-4 fill-current transition-colors duration-300" />
                                 Hago Envíos
                             </button>
                         </div>
@@ -473,9 +480,57 @@
                             <div class="shrink-0 w-4 md:hidden"></div>
                         </div>
                         
-                        <p class="text-xs text-brand-text-sec ml-1 mt-4 md:hidden">
+                        <p class="text-xs text-brand-text-sec ml-1 mt-4 md:hidden mb-6">
                             Deslizá hacia los lados para ver todas las opciones.
                         </p>
+
+                        <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1 block mt-6 mb-3">
+                            Vista Previa
+                        </label>
+                        
+                        @let temaActual = getTemaInfo(cat.tema);
+                        
+                        <div class="w-full rounded-2xl overflow-hidden shadow-md border border-gray-100 transition-colors duration-500 ease-out flex flex-col pointer-events-none"
+                            [style.background]="temaActual?.bg || '#FFFFFF'">
+                            
+                            <nav class="w-full border-b border-white/10 px-4 py-2 transition-colors duration-500 ease-out"
+                                [style.background]="temaActual?.accent || '#171717'">
+                                
+                                <div class="flex items-center justify-between">
+                                    
+                                    @if (logoPreview || cat.logo_tienda) {
+                                        <img [src]="logoPreview || cat.logo_tienda"
+                                            alt="Logo preview"
+                                            class="size-10 rounded-full bg-white object-cover shadow-sm shrink-0">
+                                    } @else {
+                                        <div class="size-10 flex items-center justify-center rounded-full bg-white shadow-sm shrink-0">
+                                            <app-icon name="shop" classes="size-5 fill-current" [style.color]="temaActual?.accent" />
+                                        </div>
+                                    }
+
+                                    <div class="flex flex-col pt-1 items-center text-center">
+                                        <span class="text-sm font-bold tracking-tighter text-white leading-none">
+                                            {{ cat.nombre_tienda || 'Mi Tienda' }}
+                                        </span>
+                                        
+                                        @if (cat.frase_eslogan) {
+                                            <span class="text-[9px] font-semibold text-white/80 mt-0.5 line-clamp-1 max-w-30">
+                                                {{ cat.frase_eslogan }}
+                                            </span>
+                                        }
+                                    </div>
+
+                                    <div class="flex items-center text-white">
+                                        <app-icon name="info" classes="size-5 fill-current text-white" />
+                                    </div>
+                                </div>
+                            </nav>
+                            
+                            <div class="p-4 h-16 w-full flex items-center justify-center">
+                                <div class="w-32 h-2 rounded-full bg-black/10"></div>
+                            </div>
+                        </div>
+
                     </section>
                 </app-config-section>
             </div>
