@@ -5,6 +5,8 @@ import { ProductSelectorService } from '@shared/services/product-selector.servic
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 import { Icon } from "@shared/components/icon";
 import { trigger, transition, style, animate } from '@angular/animations';
+import { ImageViewerService } from '../../services/image-viewer.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-product-selector',
@@ -27,6 +29,8 @@ import { trigger, transition, style, animate } from '@angular/animations';
 })
 export class ProductSelector {
   public productSelectorService = inject(ProductSelectorService);
+  public imageViewerService = inject(ImageViewerService);
+  private toastService = inject(ToastService);
 
   public cantidades: Record<number, number> = {};
 
@@ -39,7 +43,7 @@ export class ProductSelector {
   }
 
   getCantidad(presId: number): number {
-    return this.cantidades[presId] ?? 1;
+    return this.cantidades[presId] ?? 0;
   }
 
   incrementar(presId: number) {
@@ -48,16 +52,35 @@ export class ProductSelector {
 
   decrementar(presId: number) {
     const actual = this.getCantidad(presId);
-    if (actual > 1) {
+    if (actual > 0) {
       this.cantidades[presId] = actual - 1;
     }
   }
 
-  agregarAlCarrito(pres: Presentacion) {
-    const cantidad = this.getCantidad(pres.id);
-    if (cantidad > 0) {
-      this.productSelectorService.seleccionarYAgregar(pres, cantidad);
+  getTotalItemsSeleccionados(): number {
+    return Object.values(this.cantidades).reduce((total, valor) => total + valor, 0);
+  }
+
+  agregarSeleccionadosAlCarrito() {
+    const productoActual = this.productSelectorService.selectedProduct();
+    if (!productoActual) return;
+
+    const cantidadAgregada = this.getTotalItemsSeleccionados();
+
+    if (cantidadAgregada > 0) {
+      for (const pres of productoActual.presentaciones) {
+        const cantidad = this.getCantidad(pres.id);
+        if (cantidad > 0) {
+          this.productSelectorService.seleccionarYAgregar(pres, cantidad);
+        }
+      }
+
+      const texto = cantidadAgregada === 1 ? 'producto agregado' : 'productos agregados';
+      
+      this.toastService.show(`${cantidadAgregada} ${texto} al carrito 🛒`);
     }
+
+    this.productSelectorService.close();
   }
   
   getPorcentaje(precio_base: number, precio_descuento: number): number {

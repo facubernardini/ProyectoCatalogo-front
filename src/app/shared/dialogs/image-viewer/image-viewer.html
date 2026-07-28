@@ -1,0 +1,24 @@
+@if (viewerService.isOpen()) {
+    <div class="fixed inset-0 z-100 bg-black/80 flex flex-col justify-center items-center p-5 animate-in fade-in duration-300" 
+         (click)="viewerService.close()">
+         
+        <button (click)="viewerService.close()" 
+                class="hidden md:flex absolute top-6 right-6 z-10 size-12 items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all active:scale-95 hover:scale-105">
+            <app-icon name="close" classes="size-5 fill-current" />
+        </button>
+
+        <div class="w-full max-w-md md:max-w-5xl flex flex-col items-center animate-in zoom-in-[0.98] duration-300"
+            (click)="$event.stopPropagation()">
+             
+            <img [src]="viewerService.imageUrl()" 
+                alt="Imagen maximizada"
+                draggable="false"
+                class="w-full max-h-[75vh] md:max-h-[90vh] object-contain rounded-2xl shadow-2xl transition-transform select-none">
+                 
+            <button (click)="viewerService.close()" 
+                    class="mt-5 px-6 py-2.5 bg-brand-accent text-gray-100 text-sm font-bold rounded-full active:scale-95 transition-all md:hidden">
+                Cerrar
+            </button>
+        </div>
+    </div>
+}

@@ -13,9 +13,9 @@
     </div>
     
     <div class="relative">
-        <div class="absolute left-0 top-0 bottom-0 z-10 w-5 bg-linear-to-r from-brand-bg via-brand-bg/50 to-transparent pointer-events-none"></div>
+        <div class="absolute left-0 top-0 bottom-0 z-10 w-4 bg-linear-to-r from-brand-bg via-brand-bg/40 to-transparent pointer-events-none"></div>
 
-        <div class="flex overflow-x-auto gap-4 px-4 pb-2 snap-x snap-mandatory no-scrollbar items-stretch">
+        <div class="flex overflow-x-auto gap-3 px-4 pb-2 snap-x snap-mandatory no-scrollbar items-stretch">
             @for (producto of productosDestacados(); track producto.id) {
                 <div (click)="productSelectorService.open(producto)"
                     class="shrink-0 w-[65%] sm:w-80 self-stretch flex flex-col bg-white rounded-2xl overflow-hidden shadow-md snap-center border border-gray-100">
@@ -114,6 +114,6 @@
             }
         </div>
 
-        <div class="absolute right-0 top-0 bottom-0 z-10 w-5 bg-linear-to-l from-brand-bg via-brand-bg/50 to-transparent pointer-events-none"></div>
+        <div class="absolute right-0 top-0 bottom-0 z-10 w-4 bg-linear-to-l from-brand-bg via-brand-bg/40 to-transparent pointer-events-none"></div>
     </div>
 }

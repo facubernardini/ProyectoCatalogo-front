@@ -4,17 +4,19 @@
         
         <div appSwipeDown
             (onSwipe)="productSelectorService.close()"
-            class="w-full md:max-w-125 bg-white rounded-t-[40px] md:rounded-3xl p-4 shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:fade-in md:zoom-in-[0.98] duration-300" 
+            class="w-full md:max-w-125 bg-white rounded-t-[40px] md:rounded-3xl p-4 shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:fade-in md:zoom-in-[0.98] duration-300 flex flex-col max-h-[90vh]" 
             (click)="$event.stopPropagation()">
         
-            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 md:hidden"></div>
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 shrink-0 md:hidden"></div>
 
             @if (productSelectorService.selectedProduct(); as prod) {
-                <div class="flex gap-2.5 mb-5">
-                    <div class="relative w-28 h-28 md:w-40 md:h-40 bg-brand-bg rounded-2xl overflow-hidden shrink-0">
+                <div class="flex gap-2.5 mb-4 shrink-0">
+                    <div class="relative w-28 h-28 bg-brand-bg rounded-2xl overflow-hidden shrink-0 active:scale-95 transition-transform"
+                        (click)="prod.imagen ? imageViewerService.open(prod.imagen) : null">
+                        
                         @if (prod.imagen) {
                             <img [src]="prod.imagen" 
-                                class="w-full h-full object-cover">
+                                class="w-full h-full object-cover active:opacity-70 md:hover:scale-105 duration-500 ease-out transition cursor-pointer">
                         }
                         @else {
                             <div class="w-full h-full flex items-center justify-center text-brand-accent/30">
@@ -54,21 +56,24 @@
                     </div>
                 </div>
 
-                <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">
+                <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 shrink-0">
                     Seleccioná una opción
                 </h3>
 
-                <div class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto no-scrollbar">
+                <div class="flex flex-col gap-2 overflow-y-auto no-scrollbar flex-1 min-h-0 mb-2 pb-2">
                     @for (pres of prod.presentaciones; track pres.id) {
                         
-                        <div class="flex items-center justify-between py-2 px-3 sm:p-3 rounded-2xl border-2 border-gray-100 md:hover:border-brand-accent/30 transition-all bg-white">
+                        <div class="flex items-center justify-between py-2 px-3 sm:p-3 rounded-2xl border-2 border-gray-100 md:hover:border-brand-accent/30 transition-all bg-white"
+                             [class.border-brand-accent]="getCantidad(pres.id) > 0">
                             
                             <div class="flex flex-col items-start text-left flex-1 pr-2">
-                                <span class="text-sm font-medium text-gray-600">
+                                <span class="text-sm font-medium" 
+                                      [class.text-brand-text]="getCantidad(pres.id) > 0"
+                                      [class.text-gray-600]="getCantidad(pres.id) === 0">
                                     {{ pres.unidad_venta }}
                                 </span>
                                 
-                                <div class="w-10 h-0.75 bg-brand-accent/40 rounded-full my-1.5"></div>
+                                <div class="w-10 h-0.75 rounded-full my-1.5 bg-brand-accent"></div>
                                 
                                 <div class="flex items-baseline flex-wrap gap-1.5">
                                     @if (pres.precio_descuento) {
@@ -89,45 +94,67 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                            <div class="flex items-center shrink-0 bg-gray-50 border border-gray-200 rounded-xl p-1 shadow-inner">
+                                <button type="button" (click)="decrementar(pres.id)"
+                                        class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95 disabled:opacity-30 disabled:md:hover:bg-transparent disabled:shadow-none"
+                                        [disabled]="getCantidad(pres.id) <= 0"> 
+                                    <app-icon name="remove" classes="size-4 fill-current" />
+                                </button>
                                 
-                                <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl p-1 shadow-inner">
-                                    <button type="button" (click)="decrementar(pres.id)"
-                                            class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95 disabled:opacity-30 disabled:md:hover:bg-transparent disabled:shadow-none"
-                                            [disabled]="getCantidad(pres.id) <= 1"> 
-                                        <app-icon name="remove" classes="size-4 fill-current" />
-                                    </button>
+                                <div class="w-7 overflow-hidden flex items-center justify-center">
+                                    @let cantidad = getCantidad(pres.id);
                                     
-                                    <div class="w-5 overflow-hidden flex items-center justify-center">
-                                        @let cantidad = getCantidad(pres.id);
-                                        
-                                        <span [@popAnimation]="cantidad" class="block text-sm font-black text-brand-text select-none">
-                                            {{ cantidad }}
-                                        </span>
-                                    </div>
-                                    
-                                    <button type="button" (click)="incrementar(pres.id)"
-                                            class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95">
-                                        <app-icon name="add-producto" classes="size-4 fill-current" />
-                                    </button>
+                                    <span [@popAnimation]="cantidad" class="block text-sm font-black text-brand-text select-none"
+                                          [class.text-brand-accent]="cantidad > 0">
+                                        {{ cantidad }}
+                                    </span>
                                 </div>
-
-                                <button type="button" (click)="agregarAlCarrito(pres)"
-                                        [disabled]="getCantidad(pres.id) === 0"
-                                        class="size-11 flex items-center justify-center bg-brand-accent text-white rounded-xl shadow-md shadow-brand-accent/30 md:hover:bg-brand-accent/90 transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none">
-                                    <app-icon name="shop-add" classes="size-5 fill-current" />
+                                
+                                <button type="button" (click)="incrementar(pres.id)"
+                                        class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95">
+                                    <app-icon name="add-producto" classes="size-4 fill-current" />
                                 </button>
                             </div>
-
                         </div>
                     }
                 </div>
             }
 
-            <button (click)="productSelectorService.close()" 
-                    class="w-full mt-3 py-2 text-gray-400 font-bold md:hover:text-brand-accent transition-colors">
-                Cerrar
-            </button>
+            <div class="flex items-center gap-3 pt-2 border-t border-gray-100 shrink-0">
+                <button (click)="productSelectorService.close()" 
+                        class="px-5 py-2 text-sm font-semibold text-gray-500 bg-gray-100 rounded-xl active:scale-95 transition-all md:hover:bg-gray-200">
+                    Cerrar
+                </button>
+
+                @let totalItems = getTotalItemsSeleccionados();
+                <button (click)="agregarSeleccionadosAlCarrito()"
+                        [disabled]="totalItems === 0"
+                        class="flex-1 flex items-center justify-center gap-2 p-2 bg-brand-accent text-white font-semibold rounded-xl md:hover:bg-brand-accent/90 shadow-md shadow-brand-accent/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none">
+                    
+                    <div class="grid relative overflow-hidden">
+                        <div class="col-start-1 row-start-1 flex items-center justify-center transition-all duration-300 ease-out"
+                            [class.opacity-0]="totalItems > 0"
+                            [class.-translate-y-4]="totalItems > 0"
+                            [class.opacity-100]="totalItems === 0"
+                            [class.translate-y-0]="totalItems === 0">
+                            <span>Elegí tus productos</span>
+                        </div>
+
+                        <div class="col-start-1 row-start-1 flex items-center justify-center gap-2 transition-all duration-300 ease-out"
+                            [class.opacity-0]="totalItems === 0"
+                            [class.translate-y-4]="totalItems === 0"
+                            [class.opacity-100]="totalItems > 0"
+                            [class.translate-y-0]="totalItems > 0">
+                            
+                            <span class="bg-white/20 text-white px-2 py-0.5 rounded-md text-xs">
+                                {{ totalItems }}
+                            </span>
+                            <span>Agregar al carrito</span>
+                            
+                        </div>
+                    </div>
+                </button>
+            </div>
         </div>
     </div>
 }

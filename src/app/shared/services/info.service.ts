@@ -3,8 +3,10 @@ import { Injectable, signal } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class InfoService {
   isOpen = signal(false);
+  
+  private overflowAnterior = ''; 
 
-	constructor() {
+  constructor() {
     window.addEventListener('popstate', () => {
       if (this.isOpen() && history.state?.modal !== 'info-modal') {
         this.cerrarInterno();
@@ -16,6 +18,8 @@ export class InfoService {
     if (this.isOpen()) return;
 
     this.isOpen.set(true); 
+    
+    this.overflowAnterior = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     history.pushState({ modal: 'info-modal' }, '');
@@ -33,6 +37,7 @@ export class InfoService {
     if (!this.isOpen()) return;
 
     this.isOpen.set(false); 
-    document.body.style.overflow = 'auto';
+    
+    document.body.style.overflow = this.overflowAnterior;
   }
 }
