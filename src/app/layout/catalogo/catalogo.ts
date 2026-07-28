@@ -33,6 +33,7 @@ import { CartService } from 'src/app/shared/services/cart.service';
 import { ConfirmDialog } from "src/app/shared/dialogs/confirm-dialog/confirm-dialog";
 import { Router } from '@angular/router';
 import { isDominioBase } from 'src/app/core/data/domains.data';
+import { ImageViewer } from "src/app/shared/dialogs/image-viewer/image-viewer";
 
 @Component({
   selector: 'app-catalogo',
@@ -56,7 +57,8 @@ import { isDominioBase } from 'src/app/core/data/domains.data';
     ListaProductosDesktop,
     FooterDesktop,
     ExploradorProductosDesktop,
-    ConfirmDialog
+    ConfirmDialog,
+    ImageViewer
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',

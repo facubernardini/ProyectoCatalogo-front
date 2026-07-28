@@ -207,7 +207,22 @@ export class AdminStoreService {
   }
 
   eliminarProductoDeLista(id: number) {
+    const productoAEliminar = this.productos().find(p => p.id === id);
+
     this.productos.update(prods => prods.filter(p => p.id !== id));
+
+    if (productoAEliminar && productoAEliminar.categorias?.length) {
+      const idsCategoriasAfectadas = productoAEliminar.categorias.map(c => c.id);
+
+      this.categorias.update(categoriasActuales => 
+        categoriasActuales.map(cat => {
+          if (idsCategoriasAfectadas.includes(cat.id) && cat.productos_count > 0) {
+            return { ...cat, productos_count: cat.productos_count - 1 };
+          }
+          return cat;
+        })
+      );
+    }
   }
 
   moverProductosACategoria(catOrigenId: number, catDestinoId: number) {
@@ -238,10 +253,26 @@ export class AdminStoreService {
   }
 
   eliminarProductosPorCategoria(categoriaId: number) {
-    // Filtramos y quitamos de la lista los productos que SOLO tenían esta categoría
-    this.productos.update(productos => productos.filter(p => 
-      !(p.categorias?.length === 1 && p.categorias[0].id === categoriaId)
-    ));
+    this.productos.update(productos => {
+      // 1. Filtramos y eliminamos los productos huérfanos (los que SOLO tenían esta categoría)
+      const productosSobrevivientes = productos.filter(p => 
+        !(p.categorias?.length === 1 && p.categorias[0].id === categoriaId)
+      );
+
+      // 2. A los productos que quedan, les quitamos la asignación de la categoría eliminada
+      return productosSobrevivientes.map(p => {
+        // Verificamos si el producto sobreviviente tiene la categoría eliminada
+        if (p.categorias?.some(c => c.id === categoriaId)) {
+          return {
+            ...p,
+            categorias: p.categorias.filter(c => c.id !== categoriaId)
+          };
+        }
+        
+        // Si no la tenía, devolvemos el producto intacto
+        return p; 
+      });
+    });
   }
 
   // --- MÉTODOS PARA CATEGORÍAS ---
