@@ -162,8 +162,6 @@ export class CartService {
         },
       ];
     });
-
-    this.toastService.show(`${cantidadAgregada} x ${producto.nombre} agregado al carrito 🛒`);
   }
 
   sumarUno(presentacionId: number) {

@@ -52,6 +52,7 @@ export class MisProductos {
 
   soloDestacados = signal<boolean>(false);
   soloPausados = signal<boolean>(false);
+  soloSinFoto = signal<boolean>(false);
 
   paginaActual = signal(1);
   itemsPorPagina = 10;
@@ -61,6 +62,7 @@ export class MisProductos {
     const term = this.filtro().toLowerCase();
     const destacados = this.soloDestacados();
     const pausados = this.soloPausados();
+    const sinFoto = this.soloSinFoto();
     
     let lista = this.adminStore.productos();
 
@@ -78,6 +80,10 @@ export class MisProductos {
 
     if (pausados) {
       lista = lista.filter(prod => !prod.activo);
+    }
+
+    if (sinFoto) {
+      lista = lista.filter(prod => !prod.imagen || prod.imagen.trim() === '');
     }
 
     return lista;
@@ -136,12 +142,32 @@ export class MisProductos {
   }
 
   toggleDestacados() {
-    this.soloDestacados.update(v => !v);
+    const activar = !this.soloDestacados();
+    
+    this.soloDestacados.set(activar);
+    this.soloPausados.set(false);
+    this.soloSinFoto.set(false);
+    
     this.paginaActual.set(1);
   }
 
   togglePausados() {
-    this.soloPausados.update(v => !v);
+    const activar = !this.soloPausados();
+    
+    this.soloPausados.set(activar);
+    this.soloDestacados.set(false);
+    this.soloSinFoto.set(false);
+    
+    this.paginaActual.set(1);
+  }
+
+  toggleSinFoto() {
+    const activar = !this.soloSinFoto();
+    
+    this.soloSinFoto.set(activar);
+    this.soloDestacados.set(false);
+    this.soloPausados.set(false);
+    
     this.paginaActual.set(1);
   }
 
@@ -169,6 +195,7 @@ export class MisProductos {
   limpiarFiltros() {
     this.soloDestacados.set(false);
     this.soloPausados.set(false);
+    this.soloSinFoto.set(false);
     this.isFiltrosOpen.set(false);
     this.paginaActual.set(1);
   }

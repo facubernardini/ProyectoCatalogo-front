@@ -98,9 +98,13 @@ export class Register implements OnInit, OnDestroy {
   }
 
   avanzarPaso() {
-    if (!this.nombre || !this.apellido || !this.vendedorReq.correo || 
-        !this.vendedorReq.password || !this.confirmPassword) {
-      this.toastService.show('Por favor, completá todos tus datos personales.', 'error');
+    if (!this.nombre || !this.apellido) {
+      this.toastService.show('Por favor, completá tu nombre y apellido.', 'error');
+      return;
+    }
+
+    if (!this.vendedorReq.correo) {
+      this.toastService.show('Por favor, agregá un correo electrónico.', 'error');
       return;
     }
 
@@ -117,6 +121,11 @@ export class Register implements OnInit, OnDestroy {
     
     if (this.validandoCorreo()) {
       this.toastService.show('Verificando disponibilidad del correo. Esperá un momento.');
+      return;
+    }
+
+    if (!this.vendedorReq.password || !this.confirmPassword) {
+      this.toastService.show('Por favor, creá tu contraseña.', 'error');
       return;
     }
 

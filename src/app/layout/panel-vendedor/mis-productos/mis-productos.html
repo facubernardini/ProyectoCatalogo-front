@@ -32,12 +32,12 @@
         </div>
     </header>
 
-    <main class="flex-1 bg-gray-50 px-4 pt-4 pb-30 flex flex-col">
+    <main class="flex-1 bg-gray-50 px-3 pt-3 pb-30 flex flex-col">
         
         <div class="w-full max-w-2xl mx-auto flex flex-col flex-1">
             
             <div class="relative w-full max-w-md mx-auto group shrink-0">
-                <div class="flex items-center gap-2 mb-4 relative">
+                <div class="flex items-center gap-2 mb-3 relative">
         
                     <div class="relative shrink-0">
                         <button type="button" 
@@ -58,7 +58,7 @@
                             
                             <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg animate-in fade-in zoom-in-95 duration-200 py-2">
                                 
-                                <div class="px-3 pb-2 mt-2 mb-1 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-50">
+                                <div class="px-3 pb-2 mt-2 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-50">
                                     Mostrar Solo
                                 </div>
                                 
@@ -102,8 +102,28 @@
                                     }
                                 </button>
 
-                                @if (soloDestacados() || soloPausados()) {
-                                    <div class="px-2 mt-2 pt-2 border-t border-gray-50">
+                                <button type="button" 
+                                        (click)="toggleSinFoto(); isFiltrosOpen.set(false)"
+                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
+                                        [class.text-brand-accent]="soloSinFoto()"
+                                        [class.font-bold]="soloSinFoto()"
+                                        [class.bg-brand-accent]="soloSinFoto()"
+                                        [style.backgroundColor]="soloSinFoto() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                        [class.text-brand-text-sec]="!soloSinFoto()"
+                                        [class.font-medium]="!soloSinFoto()">
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <app-icon name="photo" classes="size-4 fill-current" />
+                                        Sin Foto
+                                    </div>
+                                    
+                                    @if (soloSinFoto()) {
+                                        <app-icon name="check" classes="size-4 fill-current" />
+                                    }
+                                </button>
+
+                                @if (soloDestacados() || soloPausados() || soloSinFoto()) {
+                                    <div class="px-2 mt-1 pt-2 border-t border-gray-50">
                                         <button type="button" 
                                                 (click)="limpiarFiltros()"
                                                 class="w-full py-2 px-2 text-xs font-bold text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2">
