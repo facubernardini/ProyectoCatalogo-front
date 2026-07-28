@@ -87,6 +87,10 @@ export class MiTienda implements OnInit, OnDestroy {
     }
   }
 
+  getTemaInfo(temaId: TemaCatalogo) {
+    return this.temasDisponibles.find(t => t.id === temaId) || this.temasDisponibles[0];
+  }
+
   private getHorariosBase(): HorarioDia[] {
     const dias: HorarioDia['dia'][] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
     return dias.map(dia => ({
