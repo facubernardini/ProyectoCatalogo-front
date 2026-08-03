@@ -34,15 +34,15 @@
         <div class="flex flex-col gap-1">
             @for (cat of categoriasOrdenadas(); track cat.id) {
                 <button (click)="seleccionarYFechar(cat.nombre)"
-                        class="w-full flex items-center justify-between text-gray-600 hover:bg-gray-100 hover:text-brand-text py-2 px-3 rounded-xl text-sm font-semibold transition-all duration-200 group">
+                        class="w-full flex items-center justify-between text-gray-600 hover:bg-gray-100 hover:text-brand-text py-2 pl-2.5 pr-1.5 rounded-xl text-sm font-semibold transition-all duration-200 group">
                     
-                    <div class="flex items-center gap-3 min-w-0">
+                    <div class="flex items-center gap-2 min-w-0">
                         <div class="size-1.5 shrink-0 rounded-full"
                             [class.bg-brand-accent]="cat.especial"
                             [class.bg-gray-300]="!cat.especial">
                         </div>
                         
-                        <span class="capitalize truncate"
+                        <span class="text-start lowercase first-letter:uppercase"
                             [class.font-black]="cat.especial">
                             {{ cat.nombre }}
                         </span>

@@ -2,7 +2,7 @@
     (click)="productSelectorService.open(producto())"
     class="bg-white rounded-2xl p-1.5 shadow-sm border border-gray-100 flex items-stretch gap-3 active:scale-[0.98] transition-all">
     
-    <div class="relative shrink-0 w-24 h-24 my-auto bg-brand-accent/10 rounded-xl overflow-hidden"
+    <div class="relative shrink-0 w-24 h-24 my-auto rounded-xl overflow-hidden"
         [class.animate-pulse]="!imageLoaded() && producto().imagen">
         
         <div class="absolute inset-0 flex items-center justify-center text-brand-accent/40 transition-opacity duration-300"

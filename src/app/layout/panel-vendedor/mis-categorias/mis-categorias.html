@@ -20,15 +20,15 @@
     <main class="flex-1 bg-gray-50 px-3 pt-3 pb-30 flex flex-col">
         <div class="w-full max-w-2xl mx-auto flex flex-col flex-1">
             
-            <div class="relative w-full max-w-md mx-auto mb-3 group shrink-0">
+            <div class="relative w-full mx-auto mb-3 group shrink-0">
                 <div class="flex items-center gap-2 relative">
                     
                     <div class="relative shrink-0">
                         <button type="button" 
                                 (click)="toggleFiltrosDropdown()"
                                 [disabled]="!hasCategorias()"
-                                class="p-3 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
-                                [class.ring-2]="isFiltrosOpen()" [class.ring-brand-accent]="isFiltrosOpen()" [class.border-brand-accent]="isFiltrosOpen()">
+                                class="p-3 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl outline-none md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                                [class.ring]="isFiltrosOpen()" [class.ring-brand-accent/30]="isFiltrosOpen()">
                             
                             <app-icon name="filter" classes="size-5 text-brand-accent fill-current" />
                             
@@ -101,7 +101,7 @@
                             (ngModelChange)="onSearchInput($event)" 
                             placeholder="Buscar categoría..."
                             [disabled]="!hasCategorias()"
-                            class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                            class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:ring focus:ring-brand-accent/30 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
                         
                         @if (isBuscando()) {
                             <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -160,7 +160,7 @@
                                 
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">
-                                        <h3 class="font-semibold text-sm truncate tracking-tight"
+                                        <h3 class="font-semibold text-[13px] tracking-tight"
                                             [class]="!cat.activo ? 'text-gray-400' : 'text-brand-text'">
                                             {{ cat.nombre }}
                                         </h3>

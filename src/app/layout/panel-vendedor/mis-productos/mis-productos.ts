@@ -53,9 +53,10 @@ export class MisProductos {
   soloDestacados = signal<boolean>(false);
   soloPausados = signal<boolean>(false);
   soloSinFoto = signal<boolean>(false);
+  soloConOfertas = signal<boolean>(false);
 
   paginaActual = signal(1);
-  itemsPorPagina = 10;
+  itemsPorPagina = 20;
 
   productosFiltrados = computed(() => {
     const seleccion = this.categoriaSeleccionada();
@@ -63,6 +64,7 @@ export class MisProductos {
     const destacados = this.soloDestacados();
     const pausados = this.soloPausados();
     const sinFoto = this.soloSinFoto();
+    const conOfertas = this.soloConOfertas();
     
     let lista = this.adminStore.productos();
 
@@ -84,6 +86,10 @@ export class MisProductos {
 
     if (sinFoto) {
       lista = lista.filter(prod => !prod.imagen || prod.imagen.trim() === '');
+    }
+
+    if (conOfertas) {
+      lista = lista.filter(prod => prod.presentaciones?.some(pres => pres.precio_descuento && pres.precio_descuento > 0));
     }
 
     return lista;
@@ -147,6 +153,7 @@ export class MisProductos {
     this.soloDestacados.set(activar);
     this.soloPausados.set(false);
     this.soloSinFoto.set(false);
+    this.soloConOfertas.set(false);
     
     this.paginaActual.set(1);
   }
@@ -157,6 +164,7 @@ export class MisProductos {
     this.soloPausados.set(activar);
     this.soloDestacados.set(false);
     this.soloSinFoto.set(false);
+    this.soloConOfertas.set(false);
     
     this.paginaActual.set(1);
   }
@@ -167,6 +175,18 @@ export class MisProductos {
     this.soloSinFoto.set(activar);
     this.soloDestacados.set(false);
     this.soloPausados.set(false);
+    this.soloConOfertas.set(false);
+    
+    this.paginaActual.set(1);
+  }
+
+  toggleConOfertas() {
+    const activar = !this.soloConOfertas();
+    
+    this.soloConOfertas.set(activar);
+    this.soloDestacados.set(false);
+    this.soloPausados.set(false);
+    this.soloSinFoto.set(false);
     
     this.paginaActual.set(1);
   }
@@ -196,6 +216,7 @@ export class MisProductos {
     this.soloDestacados.set(false);
     this.soloPausados.set(false);
     this.soloSinFoto.set(false);
+    this.soloConOfertas.set(false);
     this.isFiltrosOpen.set(false);
     this.paginaActual.set(1);
   }

@@ -4,6 +4,7 @@ import autoTable from 'jspdf-autotable';
 import { Producto } from '../models/producto.model';
 import { CategoriaVendedor } from '../models/categoriaVendedor.model';
 import { Catalogo } from '../models/catalogo.model';
+import { BRAND_DATA } from '../data/brand.data';
 
 @Injectable({
   providedIn: 'root'
@@ -14,28 +15,30 @@ export class PdfExportService {
     const doc = new jsPDF();
     const nombreTienda = catalogo.nombre_tienda || 'Mi Tienda';
     
+    const MARGEN_X = 8; 
     let posicionYActual = 20;
 
     if (catalogo.logo_tienda) {
       try {
         const imgLogoAplanado = await this.cargarImagenParaPDF(catalogo.logo_tienda);
-        
-        doc.addImage(imgLogoAplanado, 'JPEG', 14, 10, 25, 25); 
+        doc.addImage(imgLogoAplanado, 'JPEG', MARGEN_X, 10, 25, 25); 
         
         doc.setFontSize(22);
         doc.setTextColor(30, 61, 89);
-        doc.text(`Catálogo de Productos`, 45, 22);
+        doc.text(`Catálogo de Productos`, MARGEN_X + 28, 22); 
         
         doc.setFontSize(12);
         doc.setTextColor(100, 100, 100);
-        doc.text(nombreTienda, 45, 30);
+        doc.text(nombreTienda, MARGEN_X + 28, 30);
 
         posicionYActual = 45;
       } catch (error) {
-        console.warn('No se pudo cargar el logo para el PDF', error);
-        this.dibujarCabeceraTexto(doc, nombreTienda);
+        this.dibujarCabeceraTexto(doc, nombreTienda, MARGEN_X);
         posicionYActual = 40;
       }
+    } else {
+      this.dibujarCabeceraTexto(doc, nombreTienda, MARGEN_X);
+      posicionYActual = 40;
     }
 
     const productosActivos = productos.filter(p => p.activo);
@@ -48,9 +51,14 @@ export class PdfExportService {
 
       if (productosDeCategoria.length > 0) {
         
+        if (posicionYActual > 250) {
+          doc.addPage();
+          posicionYActual = 20;
+        }
+
         doc.setFontSize(16);
         doc.setTextColor(40, 40, 40);
-        doc.text(categoria.nombre.toUpperCase(), 14, posicionYActual);
+        doc.text(categoria.nombre.toUpperCase(), MARGEN_X, posicionYActual);
         
         posicionYActual += 5;
 
@@ -70,8 +78,11 @@ export class PdfExportService {
             ? p.tags.map(t => t.nombre).join(', ') 
             : '-';
 
+          const marcaTexto = p.marca ? p.marca : '-';
+
           return [
-            p.nombre, 
+            p.nombre,
+            marcaTexto,
             presentacionesTexto || 'Sin presentaciones',
             tagsTexto
           ];
@@ -79,32 +90,78 @@ export class PdfExportService {
 
         autoTable(doc, {
           startY: posicionYActual,
-          head: [['Producto', 'Presentaciones y precios', 'Observaciones']], 
+          head: [['Producto', 'Marca', 'Presentaciones y precios', 'Observaciones']], 
           body: filasTabla,
           theme: 'striped',
           headStyles: { fillColor: [30, 61, 89] },
           styles: { 
             fontSize: 9, 
-            cellPadding: 4,
-            valign: 'middle'
+            cellPadding: 2,
+            valign: 'middle',
+            minCellHeight: 18
           },
           columnStyles: {
-            0: { cellWidth: 50, fontStyle: 'bold' },
-            1: { cellWidth: 'auto' },
-            2: { cellWidth: 40 }
+            0: { cellWidth: 60, fontStyle: 'bold' },
+            1: { cellWidth: 25 },
+            2: { cellWidth: 'auto' },
+            3: { cellWidth: 30 }
           },
-          margin: { left: 14, right: 14 }
+          margin: { left: MARGEN_X, right: MARGEN_X }
         });
 
         posicionYActual = (doc as any).lastAutoTable.finalY + 15;
       }
     });
 
+    const totalPages = (doc as any).internal.getNumberOfPages();
+    
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      
+      const texto1 = 'Generado con ';
+      const textoLink = 'Listalo';
+      const texto2 = ' - Tienda Digital';
+      
+      const y = doc.internal.pageSize.height - 10;
+      const pageWidth = doc.internal.pageSize.width;
+
+      doc.setFont('helvetica', 'normal');
+      const ancho1 = doc.getTextWidth(texto1);
+      const ancho2 = doc.getTextWidth(texto2);
+
+      doc.setFont('helvetica', 'bold');
+      const anchoLink = doc.getTextWidth(textoLink);
+
+      const anchoTotal = ancho1 + anchoLink + ancho2;
+      let xActual = (pageWidth - anchoTotal) / 2;
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(150, 150, 150);
+      doc.text(texto1, xActual, y);
+      xActual += ancho1;
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(30, 61, 89);
+      doc.textWithLink(textoLink, xActual, y, { url: `https://${BRAND_DATA.domain}` });
+      xActual += anchoLink;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(150, 150, 150);
+      doc.text(texto2, xActual, y);
+      
+      doc.text(
+        `Página ${i} de ${totalPages}`, 
+        doc.internal.pageSize.width - MARGEN_X, 
+        doc.internal.pageSize.height - 10, 
+        { align: 'right' }
+      );
+    }
+
     const fecha = new Date().toLocaleDateString('es-AR').replace(/\//g, '-');
     doc.save(`Catalogo_${nombreTienda.replace(/\s+/g, '_')}_${fecha}.pdf`);
   }
 
-  // Método auxiliar para cargar la imagen antes de meterla al PDF
   async cargarImagenParaPDF(url: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -136,13 +193,13 @@ export class PdfExportService {
     });
   }
 
-  private dibujarCabeceraTexto(doc: jsPDF, nombreTienda: string) {
+  private dibujarCabeceraTexto(doc: jsPDF, nombreTienda: string, margenX: number) {
     doc.setFontSize(22);
     doc.setTextColor(30, 61, 89);
-    doc.text(`Catálogo de Productos`, 14, 20);
+    doc.text(`Catálogo de Productos`, margenX, 20);
     
     doc.setFontSize(12);
     doc.setTextColor(100, 100, 100);
-    doc.text(nombreTienda, 14, 28);
+    doc.text(nombreTienda, margenX, 28);
   }
 }

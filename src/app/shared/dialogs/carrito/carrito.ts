@@ -183,7 +183,7 @@ export class Carrito {
 
     // Productos
     mensaje += `🛒 *Detalle del pedido*\n`;
-    mensaje += ` ───────────────────────\n`;
+    mensaje += ` ────────────────\n`;
     items.forEach(item => {
       const subtotalItem = item.precio * item.cantidad;
       
@@ -195,10 +195,10 @@ export class Carrito {
       
       mensaje += lineaItem + `\n`;
     });
-    mensaje += ` ───────────────────────\n\n`;
+    mensaje += ` ────────────────\n\n`;
 
     // Resumen
-    mensaje += `🧾 *Resumen de Cuenta*\n`;
+    mensaje += `🧾 *Resumen de cuenta*\n`;
     mensaje += `🛍️ Productos: *$${this.cartService.subtotalPrice().toLocaleString('es-AR')}*\n`;
 
     if (cupon) {
