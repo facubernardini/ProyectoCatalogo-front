@@ -1,13 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.dev';
 import { LoginResponse } from 'src/app/core/models/auth.model';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private API_URL = `${environment.apiUrl}`;
+
+  private router = inject(Router);
 
   constructor(private http: HttpClient) {}
 
@@ -23,7 +26,8 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('vendedor');
-    window.location.href = '/login';
+    
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 
   solicitarCodigo(email: string): Observable<any> {

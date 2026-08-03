@@ -23,14 +23,14 @@
         
         <div class="w-full max-w-2xl mx-auto flex flex-col flex-1">
             
-            <div class="relative w-full max-w-md mx-auto group mb-3 shrink-0">
+            <div class="relative w-full mx-auto group mb-3 shrink-0">
                 <div class="relative">
                     <input type="text" 
                         [ngModel]="busquedaRaw()" 
                         (ngModelChange)="onSearchInput($event)"
                         placeholder="Buscar cupón por código..."
                         [disabled]="!hasCupones()"
-                        class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                        class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:ring focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
                     
                     @if (isBuscando()) {
                         <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -51,12 +51,12 @@
                 </div>
             </div>
 
-            <div class="flex gap-1.5 py-1 mb-2 w-full max-w-md mx-auto shrink-0">
+            <div class="flex gap-1.5 py-1 mb-2 w-full mx-auto shrink-0">
                 @for (estado of ['todos', 'activos', 'pausados', 'expirados']; track estado) {
                     <button (click)="estadoFiltro.set(estado)"
-                        [disabled]="!hasCupones()"
-                        [class]="estadoFiltro() === estado && hasCupones() ? 'bg-brand-accent text-white' : 'bg-white text-brand-text border border-gray-100'"
-                        class="flex-1 px-1 py-2 rounded-full text-xs sm:text-sm font-bold capitalize text-center transition-all active:scale-95 disabled:opacity-60 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed">
+                            [disabled]="!hasCupones()"
+                            [class]="estadoFiltro() === estado && hasCupones() ? 'bg-brand-accent text-white sm:hover:opacity-90' : 'bg-white text-brand-text border border-gray-100 sm:hover:bg-gray-50 disabled:hover:bg-gray-100'"
+                            class="flex-1 px-1 py-2 rounded-full text-xs sm:text-sm font-bold capitalize text-center transition-all active:scale-95 disabled:opacity-60 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed">
                         {{ estado }}
                     </button>
                 }
