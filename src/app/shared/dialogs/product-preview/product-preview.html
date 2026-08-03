@@ -11,23 +11,14 @@
 
             @if (productPreviewService.selectedProduct(); as producto) {
                 <div class="flex gap-4 mb-4">
-                    <div class="relative w-24 h-24 rounded-2xl overflow-hidden shrink-0 shadow-sm mt-1">
+                    <div class="relative w-22 h-22 rounded-2xl overflow-hidden shrink-0 shadow-sm mt-1">
                         @if (producto.imagen) {
                             <img [src]="producto.imagen" 
                                 class="w-full h-full object-cover">
                             }
                         @else {
-                            <div class="w-full h-full flex items-center justify-center text-gray-300"
-                                [class.grayscale]="!producto.activo">
+                            <div class="w-full h-full flex items-center justify-center text-gray-300">
                                 <app-icon name="photo" classes="size-8 fill-current" />
-                            </div>
-                        }
-                        
-                        @if (producto.destacado) {
-                            <div class="absolute top-1.5 left-1.5 flex items-center gap-0.5 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg border border-yellow-400/30 shadow-sm z-10">
-                                <span class="text-[8px] font-black text-yellow-600 uppercase tracking-widest">
-                                    Destacado
-                                </span>
                             </div>
                         }
                     </div>
@@ -39,12 +30,12 @@
                                 <input type="text" 
                                     [(ngModel)]="producto.nombre" 
                                     (focus)="onFocus($event)" 
-                                    class="w-full bg-gray-50 border-none rounded-2xl py-2 pl-4 pr-12 text-base font-semibold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all truncate"
+                                    class="w-full bg-gray-50 border-none rounded-xl py-2 pl-2 pr-10 text-sm font-medium text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all truncate"
                                     [class.border-2]="!producto.nombre"
                                     [class.border-red-500]="!producto.nombre">
                             
                                 <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                    <app-icon name="edit" classes="size-5 fill-current" />
+                                    <app-icon name="edit" classes="size-4 fill-current" />
                                 </div>
                             </div>
                             
@@ -60,12 +51,12 @@
                         </p>
 
                         @if (producto.tags && producto.tags.length > 0) {
-                            <div class="flex flex-wrap gap-1.5 mt-2">
+                            <div class="flex flex-wrap gap-1.5 mt-3">
                                 @for (tag of producto.tags; track tag.id) {
-                                    <span class="flex items-center gap-1 text-[10px] bg-gray-100 text-gray-500 font-bold uppercase px-2 py-1 rounded-md border border-gray-200/50">
+                                    <span class="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-widest text-brand-text bg-brand-accent/5 px-1.5 py-0.5 rounded-lg border border-brand-accent/10">
                                         
                                         @if (tag.icono) {
-                                            <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
+                                            <div [innerHTML]="tag.icono | safeHtml" class="size-5 flex items-center justify-center shrink-0"></div>
                                         }
                                         
                                         {{ tag.nombre }}
@@ -104,7 +95,7 @@
                     @for (pres of producto.presentaciones; track $index) {
                         
                         <div [class]="pres.activo !== false ? 'bg-gray-50/30 border-gray-50' : 'bg-gray-100 border-gray-200 opacity-60 grayscale-[0.5]'"
-                             class="relative flex items-center justify-between px-2 py-2 rounded-2xl border-2 transition-all">
+                             class="relative flex items-center justify-between px-1 py-2 rounded-2xl border-2 transition-all">
                             
                             @if (pres.activo === false) {
                                 <span class="absolute -top-2 left-3 bg-gray-500 text-white px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest shadow-sm z-10">
@@ -115,7 +106,7 @@
                             <div class="shrink-0 mr-2 flex-1">
                                 <input type="text" 
                                     [(ngModel)]="pres.unidad_venta"
-                                    class="w-full bg-white border rounded-lg py-1.5 px-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-gray-300"
+                                    class="w-full bg-white border rounded-lg py-1.5 px-1 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-gray-300"
                                     [class.border-gray-200]="pres.unidad_venta"
                                     [class.border-red-500]="!pres.unidad_venta">
                             </div>
@@ -161,7 +152,7 @@
                     }
                 </div>
 
-                <div class="flex gap-3 mt-6">
+                <div class="flex gap-3 mt-4">
                     <button (click)="productPreviewService.close()" 
                             class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
                         Cerrar

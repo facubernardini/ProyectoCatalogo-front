@@ -111,7 +111,7 @@
                                             @if (producto.imagen) {
                                                 <img [src]="producto.imagen" 
                                                     (load)="onImageLoad()"
-                                                    class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-all duration-500 ease-out"
+                                                    class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-all duration-500 ease-out bg-white"
                                                     [class.opacity-0]="!imageLoaded()"
                                                     [class.opacity-100]="imageLoaded()">
                                             }

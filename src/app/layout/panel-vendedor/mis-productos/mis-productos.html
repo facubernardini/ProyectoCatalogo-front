@@ -36,19 +36,19 @@
         
         <div class="w-full max-w-2xl mx-auto flex flex-col flex-1">
             
-            <div class="relative w-full max-w-md mx-auto group shrink-0">
+            <div class="relative w-full mx-auto group shrink-0">
                 <div class="flex items-center gap-2 mb-3 relative">
         
                     <div class="relative shrink-0">
                         <button type="button" 
                                 (click)="toggleFiltrosDropdown()"
                                 [disabled]="!hasProductos()"
-                                class="p-3 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
-                                [class.ring-2]="isFiltrosOpen()" [class.ring-brand-accent]="isFiltrosOpen()" [class.border-brand-accent]="isFiltrosOpen()">
+                                class="p-3 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl outline-none md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                                [class.ring]="isFiltrosOpen()" [class.ring-brand-accent/30]="isFiltrosOpen()">
                             
                             <app-icon name="filter" classes="size-5 text-brand-accent fill-current" />
                             
-                            @if (soloDestacados() || soloPausados() || soloSinFoto()) {
+                            @if (soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas()) {
                                 <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
                             }
                         </button>
@@ -103,6 +103,26 @@
                                 </button>
 
                                 <button type="button" 
+                                        (click)="toggleConOfertas(); isFiltrosOpen.set(false)"
+                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
+                                        [class.text-brand-accent]="soloConOfertas()"
+                                        [class.font-bold]="soloConOfertas()"
+                                        [class.bg-brand-accent]="soloConOfertas()"
+                                        [style.backgroundColor]="soloConOfertas() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                        [class.text-brand-text-sec]="!soloConOfertas()"
+                                        [class.font-medium]="!soloConOfertas()">
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <app-icon name="discount" classes="size-4 fill-current" />
+                                        Con ofertas
+                                    </div>
+                                    
+                                    @if (soloConOfertas()) {
+                                        <app-icon name="check" classes="size-4 fill-current" />
+                                    }
+                                </button>
+
+                                <button type="button" 
                                         (click)="toggleSinFoto(); isFiltrosOpen.set(false)"
                                         class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
                                         [class.text-brand-accent]="soloSinFoto()"
@@ -114,7 +134,7 @@
                                     
                                     <div class="flex items-center gap-2">
                                         <app-icon name="photo" classes="size-4 fill-current" />
-                                        Sin Foto
+                                        Sin foto
                                     </div>
                                     
                                     @if (soloSinFoto()) {
@@ -122,7 +142,7 @@
                                     }
                                 </button>
 
-                                @if (soloDestacados() || soloPausados() || soloSinFoto()) {
+                                @if (soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas()) {
                                     <div class="px-2 mt-1 pt-2 border-t border-gray-50">
                                         <button type="button" 
                                                 (click)="limpiarFiltros()"
@@ -142,7 +162,7 @@
                                 (ngModelChange)="onSearchInput($event)" 
                                 placeholder="Buscar producto..."
                                 [disabled]="!hasProductos()"
-                                class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                                class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:ring focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
                         
                         @if (isBuscando()) {
                             <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
@@ -162,39 +182,37 @@
                         }
                     </div>
 
-                    <div class="relative min-w-35">
+                    <div class="relative shrink-0">
                         <button type="button" 
                                 (click)="toggleCategoriaDropdown()"
                                 [disabled]="!hasProductos()"
-                                class="w-full p-3 flex justify-between items-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
-                                [class.ring-2]="isCategoriaDropdownOpen()" [class.ring-brand-accent]="isCategoriaDropdownOpen()" [class.border-brand-accent]="isCategoriaDropdownOpen()">
+                                class="p-3 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl outline-none md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                                [class.ring]="isCategoriaDropdownOpen()" [class.ring-brand-accent/30]="isCategoriaDropdownOpen()">
                             
-                            <span class="text-sm font-bold truncate text-brand-text mr-2">
-                                {{ categoriaSeleccionada() === 'todos' ? 'Todos' : categoriaSeleccionada() }}
-                            </span>
+                            <app-icon name="category" classes="size-5 text-brand-accent fill-current" />
                             
-                            <div class="shrink-0 transition-transform duration-300" [class.rotate-180]="isCategoriaDropdownOpen()">
-                                <app-icon name="chevron-down" classes="size-4 text-gray-400 fill-current" />
-                            </div>
+                            @if (categoriaSeleccionada() !== 'todos') {
+                                <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
+                            }
                         </button>
 
                         @if (isCategoriaDropdownOpen()) {
                             <div class="fixed inset-0 z-40" (click)="isCategoriaDropdownOpen.set(false)"></div>
                             
-                            <ul class="absolute right-0 z-50 w-full min-w-50 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
+                            <ul class="absolute right-0 z-50 w-max min-w-65 max-w-[95vw] mt-2 bg-white border border-gray-100 rounded-xl shadow-lg max-h-[60vh] overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
                                 
                                 <li>
                                     <button type="button" (click)="seleccionarCategoriaCustom('todos')"
-                                            class="w-full flex items-center justify-between px-4 py-3 text-sm font-bold transition-colors"
+                                            class="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-bold transition-colors"
                                             [class.bg-brand-accent]="categoriaSeleccionada() === 'todos'" 
                                             [class.text-white]="categoriaSeleccionada() === 'todos'"
                                             [class.text-brand-text-sec]="categoriaSeleccionada() !== 'todos'" 
                                             [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== 'todos'"
                                             [class.md:hover:text-brand-text]="categoriaSeleccionada() !== 'todos'">
                                         
-                                        <span>Todos</span>
+                                        <span class="truncate text-left">Todos</span>
                                         
-                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold"
+                                        <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-bold"
                                             [class.bg-white]="categoriaSeleccionada() === 'todos'" 
                                             [class.text-brand-accent]="categoriaSeleccionada() === 'todos'"
                                             [class.bg-gray-100]="categoriaSeleccionada() !== 'todos'" 
@@ -207,14 +225,14 @@
                                 @for (cat of categoriasOrdenadas(); track cat.id) {
                                     <li>
                                         <button type="button" (click)="seleccionarCategoriaCustom(cat.nombre)"
-                                                class="w-full flex items-center justify-between px-4 py-3 text-sm font-bold transition-colors"
+                                                class="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-bold transition-colors"
                                                 [class.bg-brand-accent]="categoriaSeleccionada() === cat.nombre" 
                                                 [class.text-white]="categoriaSeleccionada() === cat.nombre"
                                                 [class.text-brand-text-sec]="categoriaSeleccionada() !== cat.nombre" 
                                                 [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== cat.nombre"
                                                 [class.md:hover:text-brand-text]="categoriaSeleccionada() !== cat.nombre">
                                             
-                                            <span class="truncate pr-2">{{ cat.nombre }}</span>
+                                            <span class="whitespace-normal text-left">{{ cat.nombre }}</span>
                                             
                                             <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-bold"
                                                 [class.bg-white]="categoriaSeleccionada() === cat.nombre" 
@@ -267,6 +285,30 @@
 
             } @else {
 
+                @if (categoriaSeleccionada() !== 'todos' || soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas()) {
+                    <div class="flex items-center justify-between px-1 mb-2.5 mt-1 animate-in fade-in duration-200">
+                        <span class="text-sm font-bold text-brand-text truncate flex items-center gap-1.5">
+                            @if (categoriaSeleccionada() !== 'todos') {
+                                <span>{{ categoriaSeleccionada() }}</span>
+                            }
+                            
+                            @if (categoriaSeleccionada() !== 'todos' && (soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas())) {
+                                <span class="text-gray-300 font-normal">•</span>
+                            }
+
+                            @if (soloDestacados()) { <span>Destacados</span> }
+                            @if (soloPausados()) { <span>Pausados</span> }
+                            @if (soloSinFoto()) { <span>Sin foto</span> }
+                            @if (soloConOfertas()) { <span>Con ofertas</span> }
+                        </span>
+                        <button (click)="seleccionarCategoriaCustom('todos'); limpiarFiltros()" 
+                                class="shrink-0 p-1 ml-2 text-gray-400 md:hover:text-brand-accent transition-colors active:scale-95 flex items-center"
+                                aria-label="Quitar filtros">
+                            <app-icon name="close" classes="size-5 fill-current" />
+                        </button>
+                    </div>
+                }
+
                 <div class="flex flex-col gap-2">
                     @for (producto of productosVisibles(); track producto.id) {
                         <div (click)="productPreviewService.open(producto)"
@@ -307,7 +349,9 @@
                             </div>
                             
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-brand-text font-bold text-sm truncate group-md:hover:text-brand-accent transition-colors">{{ producto.nombre }}</h3>
+                                <h3 class="text-brand-text font-semibold text-[13px] group-md:hover:text-brand-accent transition-colors">
+                                    {{ producto.nombre }}
+                                </h3>
                                 
                                 <div class="flex items-center gap-2 text-[10px] text-gray-400 font-medium mt-0.5">
                                     <div class="flex items-center gap-1">

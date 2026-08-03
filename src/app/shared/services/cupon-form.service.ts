@@ -30,29 +30,34 @@ export class CuponFormService {
   }
 
   openEdit(cupon: Cupon) {
-    this.editingCupon.set({ ...cupon });
-    
-    let fechaFormat = '';
-    if (cupon.fecha_expiracion) {
-        const d = new Date(cupon.fecha_expiracion);
-        if (!isNaN(d.getTime())) {
-            fechaFormat = d.toISOString().split('T')[0];
-        }
-    }
-
-    this.formData.set({
-      codigo_cupon: (cupon as any).codigo_cupon || (cupon as any).codigo || '',
-      es_porcentaje: cupon.es_porcentaje,
-      descuento: Number(cupon.descuento),
-      tiene_tope: cupon.tope_descuento !== null && cupon.tope_descuento > 0,
-      tope_descuento: cupon.tope_descuento ? Number(cupon.tope_descuento) : null,
-      tiene_vencimiento: !!fechaFormat,
-      fecha_expiracion: fechaFormat
-    });
-
-    this.isOpen.set(true);
-    document.body.style.overflow = 'hidden';
+  this.editingCupon.set({ ...cupon });
+  
+  let fechaFormat = '';
+  if (cupon.fecha_expiracion) {
+      const d = new Date(cupon.fecha_expiracion);
+      if (!isNaN(d.getTime())) {
+        // Extraemos el año, mes y día en la hora LOCAL del usuario
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        
+        fechaFormat = `${year}-${month}-${day}`;
+      }
   }
+
+  this.formData.set({
+    codigo_cupon: (cupon as any).codigo_cupon || (cupon as any).codigo || '',
+    es_porcentaje: cupon.es_porcentaje,
+    descuento: Number(cupon.descuento),
+    tiene_tope: cupon.tope_descuento !== null && cupon.tope_descuento > 0,
+    tope_descuento: cupon.tope_descuento ? Number(cupon.tope_descuento) : null,
+    tiene_vencimiento: !!fechaFormat,
+    fecha_expiracion: fechaFormat
+  });
+
+  this.isOpen.set(true);
+  document.body.style.overflow = 'hidden';
+}
 
   close() {
     this.isOpen.set(false);
@@ -89,12 +94,17 @@ export class CuponFormService {
       return;
     }
 
+    let fechaFinal = null;
+    if (data.tiene_vencimiento && data.fecha_expiracion) {
+      fechaFinal = new Date(`${data.fecha_expiracion}T23:59:59`).toISOString();
+    }
+
     const payload = {
       codigo_cupon: data.codigo_cupon,
       es_porcentaje: data.es_porcentaje,
       descuento: data.descuento,
       tope_descuento: (data.es_porcentaje && data.tiene_tope) ? data.tope_descuento : null,
-      fecha_expiracion: data.tiene_vencimiento && data.fecha_expiracion ? new Date(data.fecha_expiracion).toISOString() : null
+      fecha_expiracion: fechaFinal // Usamos la variable que calculamos arriba
     };
 
     this.cuponManager.guardar(payload, this.editingCupon());
