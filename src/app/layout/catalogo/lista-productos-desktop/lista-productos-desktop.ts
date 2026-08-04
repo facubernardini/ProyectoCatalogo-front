@@ -101,7 +101,7 @@ export class ListaProductosDesktop {
     if (!this.scrollTrack) return;
     const el = this.scrollTrack.nativeElement;
     
-    const scrollAmount = el.clientWidth * 0.6; 
+    const scrollAmount = el.clientWidth * 0.4; 
     
     el.scrollBy({
       left: direccion === 'left' ? -scrollAmount : scrollAmount,
