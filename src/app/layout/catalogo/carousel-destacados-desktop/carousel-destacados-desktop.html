@@ -1,13 +1,13 @@
 @if (productosDestacados().length > 0) {
     <section class="relative mb-2">
         
-        <div class="mb-4 flex items-end justify-between">
-            <h2 class="text-xl font-bold text-brand-text flex items-center gap-2">
-                Lo más pedido <span class="animate-pulse text-2xl">🔥</span>
+        <div class="mb-2.5 flex items-end justify-between">
+            <h2 class="text-lg font-bold text-brand-text flex items-center gap-1">
+                Lo más pedido <span class="animate-pulse text-xl">🔥</span>
             </h2>
             
             <button (click)="verTodosLosDestacados()"
-                    class="text-sm font-semibold text-brand-accent hover:text-white bg-brand-accent/10 hover:bg-brand-accent px-4 py-2 rounded-xl active:scale-95 transition-all duration-300 flex items-center gap-1 group/btn">
+                    class="text-[13px] font-semibold text-brand-accent hover:text-white bg-brand-accent/15 hover:bg-brand-accent px-3 py-1 rounded-lg active:scale-95 transition-all duration-300 flex items-center gap-1 group/btn">
                 Ver todo
                 <app-icon name="chevron-right" classes="size-4 fill-current group-hover/btn:translate-x-1 transition-transform" />
             </button>
@@ -17,38 +17,38 @@
             
             @if (paginas().length > 1) {
                 <button (click)="prev()"
-                        class="absolute -left-5 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white shadow-[0_5px_15px_rgba(0,0,0,0.1)] border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
+                        class="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white shadow-[0_5px_15px_rgba(0,0,0,0.1)] border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
                     <app-icon name="chevron-left" classes="size-6 fill-current" />
                 </button>
             }
 
-            <div class="overflow-hidden rounded-3xl pb-5 -mx-2 px-4">
+            <div class="overflow-hidden rounded-3xl pb-3 -mx-2 px-4">
                 
                 <div class="flex transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
                     [style.transform]="'translateX(-' + (currentPage() * 100) + '%)'">
                     
                     @for (pagina of paginas(); track $index) {
                         
-                        <div class="w-full shrink-0 grid grid-cols-2 gap-5 px-2 items-stretch">
+                        <div class="w-full shrink-0 grid grid-cols-2 xl:grid-cols-3 gap-3 px-2 items-stretch">
                             
                             @for (producto of pagina; track producto.id) {
     
                                 <div (click)="productSelectorService.open(producto)"
-                                    class="bg-brand-accent rounded-3xl overflow-hidden hover:shadow-lg hover:shadow-brand-accent/40 transition-shadow duration-300 cursor-pointer group/card flex h-full">
+                                    class="bg-brand-accent rounded-2xl overflow-hidden hover:shadow-md hover:shadow-brand-accent/50 transition-shadow duration-300 cursor-pointer group/card flex h-full">
                                     
-                                    <div class="p-4 flex flex-col flex-1 min-w-0">
+                                    <div class="p-3 flex flex-col flex-1 min-w-0">
                                         <div class="mb-auto">
-                                            <h3 class="font-bold text-white text-sm xl:text-lg line-clamp-2 group-hover/card:text-white/90 transition-colors">
+                                            <h3 class="font-bold text-white text-xs xl:text-sm line-clamp-2 group-hover/card:text-white/90 transition-colors">
                                                 {{ producto.nombre }}
                                             </h3>
                                             
                                             @if (producto.marca) {
-                                                <p class="text-[10px] xl:text-xs font-black text-white/80 uppercase tracking-wider mb-2 truncate mt-1">
+                                                <p class="text-[9px] xl:text-[10px] font-bold text-white/80 uppercase tracking-wider mb-2 truncate mt-1">
                                                     {{ producto.marca }}
                                                 </p>
                                             }
                                             
-                                            <p class="text-white/75 text-[10px] xl:text-xs line-clamp-2 mb-2 mt-2">
+                                            <p class="text-white/75 text-[10px] xl:text-[11px] line-clamp-2 my-1">
                                                 {{ producto.descripcion }}
                                             </p>
 
@@ -68,9 +68,9 @@
                                             }
                                         </div>
                                         
-                                        <div class="flex flex-wrap gap-1.5 mb-3 mt-auto pt-3">
+                                        <div class="flex flex-wrap gap-1.5 mb-1.5 mt-auto pt-2">
                                             @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
-                                                <span class="text-[9px] xl:text-[10px] font-bold text-white bg-white/10 px-2 py-1 rounded-lg border border-white/20 uppercase tracking-tight">
+                                                <span class="text-[9px] xl:text-[10px] font-semibold text-white bg-white/10 px-2 py-1 rounded-md border border-white/20 uppercase">
                                                     {{ pres.unidad_venta }}
                                                 </span>
                                             }
@@ -81,7 +81,7 @@
                                             }
                                         </div>
 
-                                        <div class="flex items-end justify-between pt-2 border-t border-white/20">
+                                        <div class="flex items-end justify-between pt-1.5 border-t border-white/20">
                                             <div class="flex items-baseline gap-1.5">
                                                 @let cheapest = getMejorOferta(producto.presentaciones);
 
@@ -99,8 +99,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="p-4 shrink-0 flex flex-col justify-center">
-                                        <div class="relative w-40 aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center"
+                                    <div class="p-3 pl-0 shrink-0 flex flex-col justify-center">
+                                        <div class="relative w-32 lg:w-36 aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center"
                                             [class.animate-pulse]="!imageLoaded() && producto.imagen">
                                             
                                             <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-bg transition-opacity duration-300"
@@ -128,7 +128,7 @@
 
             @if (paginas().length > 1) {
                 <button (click)="next()"
-                        class="absolute -right-5 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white shadow-[0_5px_15px_rgba(0,0,0,0.1)] border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
+                        class="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white shadow-[0_5px_15px_rgba(0,0,0,0.1)] border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
                     <app-icon name="chevron-right" classes="size-6 fill-current" />
                 </button>
             }
@@ -136,7 +136,7 @@
         </div>
 
         @if (paginas().length > 1) {
-            <div class="flex items-center justify-center gap-3 mt-2">
+            <div class="flex items-center justify-center gap-3 mt-1">
                 @for (pagina of paginas(); track $index) {
                     <button (click)="goTo($index)"
                             aria-label="Ir a página"
