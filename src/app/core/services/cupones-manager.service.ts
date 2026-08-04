@@ -181,8 +181,7 @@ export class CuponManagerService {
       },
       error: (err) => {
         console.error('Error al guardar cupón:', err);
-        const mensajeError = err.error?.error || 'No se pudo guardar el cupón';
-        this.toastService.show(mensajeError, 'error');
+        const mensajeError = err.error?.mensaje;
         proceso.error(mensajeError);
       }
     });

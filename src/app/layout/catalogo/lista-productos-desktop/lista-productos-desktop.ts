@@ -23,21 +23,39 @@ export class ListaProductosDesktop {
   productosRaw = this.adminStore.productos;
   categorias = this.adminStore.categorias;
   
-  categoriaSeleccionada = signal<string>('todos');
-  ordenSeleccionado = signal<OrdenCriterio>('default');
+  categoriaManual = signal<string | null>(null);
   
+  ordenSeleccionado = signal<OrdenCriterio>('default');
   isOrdenDropdownOpen = signal(false);
 
   paginaActual = signal(1);
   itemsPorPagina = 16;
 
+  categoriasOrdenadas = computed(() => {
+    const lista = this.categorias();
+    return [...lista].sort((a, b) => {
+      if (a.especial && !b.especial) return -1;
+      if (!a.especial && b.especial) return 1;
+      return a.nombre.localeCompare(b.nombre);
+    });
+  });
+
+  categoriaSeleccionada = computed(() => {
+    const seleccion = this.categoriaManual();
+    if (seleccion) return seleccion;
+
+    const listaOrdenadas = this.categoriasOrdenadas();
+    return listaOrdenadas.length > 0 ? listaOrdenadas[0].nombre : '';
+  });
+
   productos = computed(() => {
     const cat = this.categoriaSeleccionada();
-    let listaFiltrada = (cat === 'todos') 
-    ? this.productosRaw() 
-    : this.productosRaw().filter(p => 
+    
+    if (!cat) return [];
+
+    let listaFiltrada = this.productosRaw().filter(p => 
         p.categorias.some(c => c.nombre === cat)
-      );
+    );
 
     const criterio = this.ordenSeleccionado();
     if (criterio === 'default') return listaFiltrada;
@@ -61,15 +79,6 @@ export class ListaProductosDesktop {
     return todosLosProductos.slice(0, limite);
   });
 
-  categoriasOrdenadas = computed(() => {
-    const lista = this.categorias();
-    return [...lista].sort((a, b) => {
-      if (a.especial && !b.especial) return -1;
-      if (!a.especial && b.especial) return 1;
-      return a.nombre.localeCompare(b.nombre);
-    });
-  });
-
   ngAfterViewInit() {
     setTimeout(() => this.checkScroll(), 100);
   }
@@ -85,7 +94,6 @@ export class ListaProductosDesktop {
     
     this.canScrollLeft.set(el.scrollLeft > 0);
     
-    // Le restamos 2 píxeles al ancho total para ignorar cualquier decimal rebelde del navegador
     this.canScrollRight.set(Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth - 2);
   }
 
@@ -93,7 +101,6 @@ export class ListaProductosDesktop {
     if (!this.scrollTrack) return;
     const el = this.scrollTrack.nativeElement;
     
-    // Scrollea un 60% del ancho visible para que el usuario no pierda el contexto de dónde está
     const scrollAmount = el.clientWidth * 0.6; 
     
     el.scrollBy({
@@ -104,7 +111,6 @@ export class ListaProductosDesktop {
 
   @HostListener('window:scroll')
   onScroll() {
-    // Calculamos si el usuario llegó casi al final de la página
     const scrollPosition = window.innerHeight + window.scrollY;
     const scrollThreshold = document.documentElement.scrollHeight - 300;
 
@@ -123,7 +129,7 @@ export class ListaProductosDesktop {
   }
 
   seleccionarCategoria(nombre: string) {
-    this.categoriaSeleccionada.set(nombre);
+    this.categoriaManual.set(nombre);
     this.paginaActual.set(1);
   }
 
