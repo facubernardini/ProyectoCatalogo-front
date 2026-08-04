@@ -8,6 +8,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { SuscripcionEstado } from 'src/app/core/models/backoffice/suscripcion.model';
+import { SUB_CONFIG } from 'src/app/core/data/suscripcion.data';
 
 @Component({
   selector: 'app-perfil',
@@ -22,6 +23,7 @@ export class Perfil {
   private authService = inject(AuthService);
   private location = inject(Location);
 
+  public SUB_CONFIG = SUB_CONFIG;
   public mostrarCambioPassword = signal(false);
   public loadingPassword = signal(false);
 
@@ -66,10 +68,11 @@ export class Perfil {
     window.open(url, '_blank');
   }
 
-  cambiarPlan(arg0: string) {
+  renovarSuscripcion() {
     throw new Error('Method not implemented.');
   }
-  renovarSuscripcion() {
+
+  cambiarPlan(arg0: string) {
     throw new Error('Method not implemented.');
   }
 

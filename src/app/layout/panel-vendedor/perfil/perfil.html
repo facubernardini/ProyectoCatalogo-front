@@ -117,7 +117,7 @@
                         <div class="mt-4 p-3 border-t border-amber-100 flex items-start gap-2 text-amber-700 bg-amber-50/50 -mx-3.5 -mb-3.5 rounded-b-3xl">
                             <app-icon name="info" classes="size-4 shrink-0 mt-0.5 fill-current" />
                             <p class="text-xs font-medium leading-snug">
-                                Tenés <span class="font-bold">{{ (diasRestantes() !== null && diasRestantes()! < 0) ? (7 + diasRestantes()!) : 7 }} días</span> para renovar tu suscripción. Luego de ese tiempo, tus clientes no podrán visualizar tu tienda.
+                                Tenés <span class="font-bold">{{ (diasRestantes() !== null && diasRestantes()! < 0) ? (SUB_CONFIG.dias_para_pagar + diasRestantes()!) : SUB_CONFIG.dias_para_pagar }} días</span> para renovar tu suscripción. Luego de ese tiempo, tus clientes no podrán visualizar tu tienda.
                             </p>
                         </div>
                     } @else if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA) {

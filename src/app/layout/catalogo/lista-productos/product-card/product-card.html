@@ -48,7 +48,7 @@
             @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
                 
                 <div class="relative">
-                    <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg border uppercase tracking-tight transition-colors"
+                    <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg border uppercase transition-colors"
                           [class]="pres.precio_descuento && pres.precio_descuento > 0 
                                    ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' 
                                    : 'text-gray-500 bg-gray-100 border-gray-200/50'">
