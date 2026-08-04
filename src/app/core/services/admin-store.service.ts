@@ -226,42 +226,44 @@ export class AdminStoreService {
   }
 
   moverProductosACategoria(catOrigenId: number, catDestinoId: number) {
-    // Buscamos el objeto completo de la nueva categoría para asignarlo
     const nuevaCategoria = this.categorias().find(c => c.id === catDestinoId);
     if (!nuevaCategoria) return;
 
+    let cantidadMovidos = 0;
+
     this.productos.update(productos => productos.map(p => {
-      // Verificamos si este producto tiene la categoría que estamos eliminando
       const tieneCategoriaVieja = p.categorias?.some(c => c.id === catOrigenId);
       
       if (tieneCategoriaVieja) {
-        // Filtramos la categoría vieja
-        const categoriasRestantes = p.categorias!.filter(c => c.id !== catOrigenId);
+        cantidadMovidos++;
         
-        // Añadimos la nueva categoría solo si no la tenía ya
-        if (!categoriasRestantes.some(c => c.id === catDestinoId)) {
-          categoriasRestantes.push(nuevaCategoria);
-        }
+        const categoriasActualizadas = p.categorias!.filter(c => c.id !== catOrigenId);
+        categoriasActualizadas.push(nuevaCategoria);
 
-        // Retornamos el producto actualizado
-        return { ...p, categorias: categoriasRestantes };
+        return { ...p, categorias: categoriasActualizadas };
       }
       
-      // Si no estaba afectado, lo devolvemos igual
       return p;
     }));
+
+    if (cantidadMovidos > 0) {
+      this.categorias.update(categoriasActuales => 
+        categoriasActuales.map(cat => 
+          cat.id === catDestinoId 
+            ? { ...cat, productos_count: (cat.productos_count || 0) + cantidadMovidos }
+            : cat
+        )
+      );
+    }
   }
 
   eliminarProductosPorCategoria(categoriaId: number) {
     this.productos.update(productos => {
-      // 1. Filtramos y eliminamos los productos huérfanos (los que SOLO tenían esta categoría)
       const productosSobrevivientes = productos.filter(p => 
         !(p.categorias?.length === 1 && p.categorias[0].id === categoriaId)
       );
 
-      // 2. A los productos que quedan, les quitamos la asignación de la categoría eliminada
       return productosSobrevivientes.map(p => {
-        // Verificamos si el producto sobreviviente tiene la categoría eliminada
         if (p.categorias?.some(c => c.id === categoriaId)) {
           return {
             ...p,
@@ -269,7 +271,6 @@ export class AdminStoreService {
           };
         }
         
-        // Si no la tenía, devolvemos el producto intacto
         return p; 
       });
     });
@@ -278,7 +279,6 @@ export class AdminStoreService {
   // --- MÉTODOS PARA CATEGORÍAS ---
 
   agregarCategoriaALista(nueva: CategoriaVendedor) {
-    // Al agregar una nueva, forzamos que productos_count sea 0 para que no tire error el front
     const nuevaConConteo = { ...nueva, productos_count: 0 };
     this.categorias.update(list => [...list, nuevaConConteo]);
   }

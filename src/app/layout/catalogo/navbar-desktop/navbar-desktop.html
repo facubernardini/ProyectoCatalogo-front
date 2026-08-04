@@ -2,14 +2,14 @@
     
     <nav class="w-full bg-brand-accent border-b border-white/10 text-white">
         
-        <div class="mx-auto flex max-w-7xl items-center gap-6 px-6 py-1.5">
+        <div class="mx-auto flex max-w-7xl items-center gap-5 px-5 py-1.5">
             
             <div class="flex items-center gap-4 shrink-0">
-                <div class="flex items-center gap-4 cursor-pointer group" (click)="infoService.open()">
+                <div class="flex items-center gap-3 cursor-pointer group" (click)="infoService.open()">
                     @if (adminStore.catalogo()?.logo_tienda) {
                         <img [src]="adminStore.catalogo()?.logo_tienda"
                             alt="Logo de la tienda"
-                            class="size-16 rounded-full bg-white object-cover shadow-sm group-hover:opacity-90 group-hover:scale-105 transition-all duration-300">
+                            class="size-14 rounded-full bg-white object-cover shadow-sm group-hover:opacity-90 group-hover:scale-105 transition-all duration-300">
                     }
                     @else {
                         <div (click)="infoService.open()" 
@@ -19,12 +19,12 @@
                     }
 
                     <div class="flex flex-col justify-center">
-                        <h1 class="text-2xl font-black tracking-tighter leading-none group-hover:text-white/80 transition-colors">
+                        <h1 class="text-xl font-black leading-none group-hover:text-white/80 transition-colors">
                             {{ adminStore.catalogo()?.nombre_tienda || 'Cargando...' }}
                         </h1>
                         
                         @if (adminStore.catalogo()?.frase_eslogan) {
-                            <p class="text-[13px] font-semibold text-white/80 mt-1.5 line-clamp-2 leading-snug max-w-xs xl:max-w-sm text-pretty">
+                            <p class="text-[13px] font-semibold text-white/80 mt-1 line-clamp-2 leading-snug max-w-xs xl:max-w-sm text-pretty">
                                 {{ adminStore.catalogo()?.frase_eslogan }}
                             </p>
                         }
@@ -56,7 +56,7 @@
                 }
             </div>
 
-            <div class="flex items-center gap-3 shrink-0">
+            <div class="flex items-center gap-2 shrink-0">
                 
                 <button 
                     (click)="infoService.open()" 

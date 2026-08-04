@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
@@ -20,20 +20,30 @@ export class CarouselDestacadosDesktop {
 
   public imageLoaded = signal(false);
 
+  itemsPorPagina = signal(window.innerWidth >= 1280 ? 3 : 2);
+
   productosDestacados = computed(() => 
     this.adminStore.productos().filter(p => p.destacado)
   );
 
   paginas = computed(() => {
     const productos = this.productosDestacados();
+    const cantidad = this.itemsPorPagina();
     const agrupados = [];
-    for (let i = 0; i < productos.length; i += 2) {
-      agrupados.push(productos.slice(i, i + 2));
+    
+    for (let i = 0; i < productos.length; i += cantidad) {
+      agrupados.push(productos.slice(i, i + cantidad));
     }
+    
     return agrupados;
   });
 
   currentPage = signal(0);
+
+  @HostListener('window:resize')
+  onResize() {
+    this.itemsPorPagina.set(window.innerWidth >= 1280 ? 3 : 2);
+  }
 
   verTodosLosDestacados() {
     this.exploradorService.verDestacados();
