@@ -70,8 +70,10 @@ export class CargaMasivaService {
           const categoria = String(row['Categoría'] || '').trim();
           const fotoUrl = String(row['Foto_URL'] || '').trim();
           
-          let unidadVenta = String(row['Unidad_de_Venta'] || '').trim().toLowerCase();
-          if (unidadVenta === '') unidadVenta = 'unidad'; 
+          let rawUnidad = String(row['Unidad_de_Venta'] || '').trim();
+          let unidadVenta = rawUnidad.charAt(0).toUpperCase() + rawUnidad.slice(1).toLowerCase();
+          
+          if (unidadVenta === '') unidadVenta = 'Unidad';
 
           let precioRaw = row['Precio'];
           if (typeof precioRaw === 'string') {

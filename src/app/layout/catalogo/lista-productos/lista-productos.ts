@@ -18,20 +18,40 @@ export class ListaProductos {
   productosRaw = this.adminStore.productos;
   categorias = this.adminStore.categorias;
   
-  categoriaSeleccionada = signal<string>('todos');
+  categoriaManual = signal<string | null>(null);
+  
   ordenSeleccionado = signal<OrdenCriterio>('default');
   mostrarModalFiltros = signal(false);
 
   paginaActual = signal(1);
   itemsPorPagina = 10;
 
+  categoriasOrdenadas = computed(() => {
+    const lista = this.categorias();
+    
+    return [...lista].sort((a, b) => {
+      if (a.especial && !b.especial) return -1;
+      if (!a.especial && b.especial) return 1;
+      return a.nombre.localeCompare(b.nombre);
+    });
+  });
+
+  categoriaSeleccionada = computed(() => {
+    const seleccion = this.categoriaManual();
+    if (seleccion) return seleccion;
+
+    const listaOrdenadas = this.categoriasOrdenadas();
+    return listaOrdenadas.length > 0 ? listaOrdenadas[0].nombre : '';
+  });
+
   productos = computed(() => {
     const cat = this.categoriaSeleccionada();
-    let listaFiltrada = (cat === 'todos') 
-    ? this.productosRaw() 
-    : this.productosRaw().filter(p => 
+    
+    if (!cat) return []; 
+
+    let listaFiltrada = this.productosRaw().filter(p => 
         p.categorias.some(c => c.nombre === cat)
-      );
+    );
 
     const criterio = this.ordenSeleccionado();
     if (criterio === 'default') return listaFiltrada;
@@ -54,16 +74,6 @@ export class ListaProductos {
     const limite = this.paginaActual() * this.itemsPorPagina;
     
     return todosLosProductos.slice(0, limite);
-  });
-
-  categoriasOrdenadas = computed(() => {
-    const lista = this.categorias();
-    
-    return [...lista].sort((a, b) => {
-      if (a.especial && !b.especial) return -1;
-      if (!a.especial && b.especial) return 1;
-      return a.nombre.localeCompare(b.nombre);
-    });
   });
 
   @HostListener('window:scroll')
@@ -93,7 +103,7 @@ export class ListaProductos {
   }
 
   seleccionarCategoria(nombre: string) {
-    this.categoriaSeleccionada.set(nombre);
+    this.categoriaManual.set(nombre);
     this.paginaActual.set(1);
   }
 
