@@ -231,6 +231,8 @@ export class Carrito {
 
     window.open(url, '_blank');
 
+    this.enviarAlertaTelegram(mensaje);
+
     this.cartService.limpiarCarrito(true);
     this.nombreCliente.set('');
     this.direccionEnvio.set('');
@@ -238,5 +240,18 @@ export class Carrito {
     setTimeout(() => {
       this.pedidoRealizadoService.open(metodo, url);
     }, 5000);
+  }
+
+  // Prueba temporal
+  private enviarAlertaTelegram(mensaje: string) {
+    const token = "8649133296:AAHzrBQtAJbYCPQHOdIT5N-UU7ryEgJVHCk";
+    const chatId = "5097936005";
+
+    const nombreTienda = this.catalogo()?.nombre_tienda;
+    const mensajeTelegram = `🏢 *Tienda: ${nombreTienda}*\n────────────────\n${mensaje}`;
+    
+    const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&parse_mode=Markdown&text=${encodeURIComponent(mensajeTelegram)}`;
+    
+    fetch(url).catch(e => console.error("Error al enviar alerta de Telegram", e));
   }
 }

@@ -152,7 +152,8 @@ export class CategoriaManagerService {
       },
       error: (err) => {
         console.error('Error al guardar categoría:', err);
-        proceso.error('Hubo un error al guardar o actualizar la categoría');
+        const mensajeError = err.error?.error;
+        proceso.error(mensajeError);
       }
     });
   }

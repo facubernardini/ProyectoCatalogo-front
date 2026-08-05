@@ -10,12 +10,11 @@
             <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
 
             @if (productPreviewService.selectedProduct(); as producto) {
-                <div class="flex gap-4 mb-4">
-                    <div class="relative w-22 h-22 rounded-2xl overflow-hidden shrink-0 shadow-sm mt-1">
+                <div class="flex gap-3 mb-4">
+                    <div class="relative w-22 h-22 rounded-2xl overflow-hidden shrink-0 shadow-sm self-center">
                         @if (producto.imagen) {
-                            <img [src]="producto.imagen" 
-                                class="w-full h-full object-cover">
-                            }
+                            <img [src]="producto.imagen" class="w-full h-full object-cover">
+                        }
                         @else {
                             <div class="w-full h-full flex items-center justify-center text-gray-300">
                                 <app-icon name="photo" classes="size-8 fill-current" />
@@ -25,7 +24,7 @@
 
                     <div class="flex-1 flex flex-col justify-center min-w-0">
                         
-                        <div class="mb-2 shrink-0">                            
+                        <div class="mb-1 shrink-0">                            
                             <div class="relative w-full">
                                 <input type="text" 
                                     [(ngModel)]="producto.nombre" 
@@ -40,18 +39,18 @@
                             </div>
                             
                             @if (producto.marca) {
-                                <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-1.5 truncate">
+                                <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-1 truncate">
                                     {{ producto.marca }}
                                 </p>
                             }
                         </div>
 
-                        <p class="text-sm text-gray-500">
+                        <p class="text-xs text-gray-500">
                             {{ producto.descripcion || 'Sin descripción' }}
                         </p>
 
                         @if (producto.tags && producto.tags.length > 0) {
-                            <div class="flex flex-wrap gap-1.5 mt-3">
+                            <div class="flex flex-wrap gap-1.5 mt-1.5">
                                 @for (tag of producto.tags; track tag.id) {
                                     <span class="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-widest text-brand-text bg-brand-accent/5 px-1.5 py-0.5 rounded-lg border border-brand-accent/10">
                                         
@@ -64,12 +63,24 @@
                                 }
                             </div>
                         }
+
+                        @if (producto.categorias && producto.categorias.length > 0) {
+                            <div class="mt-2 flex items-center gap-1 text-[10px] text-gray-500">
+                                <app-icon name="category" classes="size-3 fill-current opacity-60" />
+                                <span class="truncate font-medium">
+                                    @for (cat of producto.categorias; track cat.id; let isLast = $last) {
+                                        {{ cat.nombre }}{{ !isLast ? ' • ' : '' }}
+                                    }
+                                </span>
+                            </div>
+                        }
+
                     </div>
                 </div>
 
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">
-                        Presentaciones y Precios
+                        Precios y unidades
                     </h3>
                     <button (click)="agregarPresentacion(producto)" class="text-xs font-medium text-brand-accent md:hover:opacity-80 transition-opacity">
                         + Agregar
