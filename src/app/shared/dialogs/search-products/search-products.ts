@@ -26,7 +26,8 @@ export class SearchProducts {
 
     return this.productos().filter(p => 
       p.nombre.toLowerCase().includes(q) || 
-      p.descripcion?.toLowerCase().includes(q)
+      p.descripcion?.toLowerCase().includes(q) ||
+      p.marca?.toLowerCase().includes(q)
     );
   });
 

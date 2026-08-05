@@ -23,7 +23,8 @@ export class ExploradorProductosService {
       const termino = this.terminoBusqueda().toLowerCase();
       return todosLosProductos.filter(p => 
         p.nombre.toLowerCase().includes(termino) || 
-        (p.descripcion || '').toLowerCase().includes(termino)
+        p.descripcion?.toLowerCase().includes(termino) ||
+        p.marca?.toLowerCase().includes(termino)
       );
     }
 
