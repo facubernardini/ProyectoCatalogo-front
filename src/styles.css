@@ -82,8 +82,8 @@
   }
 
   :root[data-theme="terracota" i] {
-    --theme-bg: #FCF8F5;
-    --theme-accent: #D47A6A;
+    --theme-bg: #F6E8E0;
+    --theme-accent: #C68F5E;
     --theme-text: #4A332F;
     --theme-text-sec: #9E746F;
   }

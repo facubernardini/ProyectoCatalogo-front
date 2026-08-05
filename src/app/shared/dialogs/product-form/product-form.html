@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="pt-2">
-                    <section class="space-y-3">
+                    <section class="space-y-2">
                         <div class="flex items-center justify-between">
                             <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Categorías</p>
                             <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
@@ -166,6 +166,19 @@
                                 </ul>
                             }
                         </div>
+
+                        @if (producto.categorias_ids.length > 0) {
+                            <div class="flex flex-wrap gap-1">
+                                @for (cat of adminStore.categorias(); track cat.id) {
+                                    @if (isCategoriaSelected(cat.id)) {
+                                        <span class="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-500 text-[10px] font-semibold rounded-lg select-none animate-in zoom-in-95 duration-200">
+                                            <app-icon name="category" classes="size-3 fill-current opacity-50" />
+                                            <span class="truncate max-w-37.5">{{ cat.nombre }}</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                        }
 
                         @if (adminStore.categorias().length === 0) {
                             <p class="text-xs text-gray-400 italic mt-1">No hay categorías creadas todavía.</p>
