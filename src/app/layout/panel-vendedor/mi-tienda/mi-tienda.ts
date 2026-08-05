@@ -49,7 +49,7 @@ export class MiTienda implements OnInit, OnDestroy {
     { id: TemaCatalogo.MATCHA, nombre: 'Matcha', bg: '#F9FBF7', accent: '#A3B18A' },
     { id: TemaCatalogo.LAVANDA, nombre: 'Lavanda', bg: '#F8F7FF', accent: '#BDB2FF' },
     { id: TemaCatalogo.MINIMAL, nombre: 'Minimal', bg: '#FFFFFF', accent: '#171717' },
-    { id: TemaCatalogo.TERRACOTA, nombre: 'Terracota', bg: '#FCF8F5', accent: '#D47A6A' },
+    { id: TemaCatalogo.TERRACOTA, nombre: 'Terracota', bg: '#F6E8E0', accent: '#C68F5E' },
     { id: TemaCatalogo.AQUA, nombre: 'Aqua', bg: '#F0FDFB', accent: '#2DD4BF' }
   ];
 

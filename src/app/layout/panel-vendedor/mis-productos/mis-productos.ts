@@ -73,7 +73,11 @@ export class MisProductos {
     }
 
     if (term) {
-      lista = lista.filter(prod => prod.nombre.toLowerCase().includes(term));
+      lista = lista.filter(prod => 
+        prod.nombre.toLowerCase().includes(term) || 
+        prod.marca?.toLowerCase().includes(term) || 
+        prod.descripcion?.toLowerCase().includes(term)
+      );
     }
 
     if (destacados) {
@@ -141,6 +145,27 @@ export class MisProductos {
 
   getCantidadPorCategoria(categoriaNombre: string): number {
     return this.conteosPorCategoria()[categoriaNombre] || 0;
+  }
+
+  getMejorOferta(presentaciones: any[]) {
+    if (!presentaciones || presentaciones.length === 0) return null;
+
+    let mejorOferta = null;
+    let mayorPorcentaje = 0;
+
+    for (const pres of presentaciones) {
+      if (pres.activo !== false && pres.precio_descuento && pres.precio_descuento < pres.precio) {
+          
+        const porcentajeDescuento = ((pres.precio - pres.precio_descuento) / pres.precio) * 100;
+
+        if (porcentajeDescuento > mayorPorcentaje) {
+          mayorPorcentaje = porcentajeDescuento;
+          mejorOferta = pres;
+        }
+      }
+    }
+
+    return mejorOferta;
   }
 
   onImageLoad() {

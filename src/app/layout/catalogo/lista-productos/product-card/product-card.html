@@ -34,7 +34,7 @@
         @if (producto().tags.length > 0) {
             <div class="flex flex-wrap gap-1 mt-1">
                 @for (tag of producto().tags; track tag.id) {
-                    <span class="flex items-center gap-1 text-[8px] font-semibold uppercase tracking-widest text-brand-text bg-brand-accent/4 px-1.5 py-0.5 rounded-md border border-brand-accent/10">
+                    <span class="flex items-center gap-1 text-[8px] font-semibold uppercase tracking-widest text-brand-text bg-brand-accent/5 px-1 py-0.5 rounded border border-brand-accent/20">
                         @if (tag.icono) {
                             <div [innerHTML]="tag.icono | safeHtml" class="size-4 flex items-center justify-center shrink-0"></div>
                         }
