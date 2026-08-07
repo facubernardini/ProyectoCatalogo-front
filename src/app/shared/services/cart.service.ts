@@ -19,7 +19,7 @@ export class CartService {
 
   appliedCupon = signal<CuponVerificado | null>(null);
   selectedPaymentMethod = signal<MedioPago | null>(null);
-  deliveryMethod = signal<'envio' | 'retiro' | null>(null);
+  deliveryMethod = signal<'Envio' | 'Retiro' | null>(null);
   isOpen = signal(false);
   umbralMontoFaltanteEnvioGratis = 70;
 
@@ -85,7 +85,7 @@ export class CartService {
   });
 
   hasExtraCharges = computed(() => 
-    this.deliveryMethod() === 'envio' || 
+    this.deliveryMethod() === 'Envio' || 
     !!this.appliedCupon() || 
     this.cashDiscountAmount() > 0 || 
     this.discountAmount() > 0
@@ -114,7 +114,7 @@ export class CartService {
     const base = this.priceAfterAllDiscounts();
     const config = this.catalogConfig();
 
-    if (this.deliveryMethod() === 'envio' && !this.esEnvioGratis() && config) {
+    if (this.deliveryMethod() === 'Envio' && !this.esEnvioGratis() && config) {
       return base + config.costoEnvio;
     }
     return base;
@@ -256,7 +256,7 @@ export class CartService {
     this.selectedPaymentMethod.set(method);
   }
 
-  setDeliveryMethod(method: 'envio' | 'retiro') {
+  setDeliveryMethod(method: 'Envio' | 'Retiro') {
     this.deliveryMethod.set(method);
   }
 

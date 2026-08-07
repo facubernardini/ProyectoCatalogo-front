@@ -1,15 +1,15 @@
 <div class="min-h-svh flex flex-col">
-    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
-        <div class="flex items-center justify-between px-4 h-16 max-w-4xl mx-auto w-full">
+    <header class="sticky top-0 z-50 pt-2 bg-brand-accent shadow-sm shrink-0">
+        <div class="flex items-center justify-between px-4 h-15 max-w-4xl mx-auto w-full">
             
             <button (click)="volverAtras()"
                     class="p-2 mr-6 text-brand-accent active:scale-95 transition-transform"
                     aria-label="Volver atrás">
-                <app-icon name="back" classes="size-7 fill-current" />
+                <app-icon name="back" classes="size-7 fill-current text-brand-bg" />
             </button>
 
             <div class="flex-1 text-center px-2 overflow-hidden flex flex-col items-center justify-center">
-                <h1 class="text-[17px] font-bold text-brand-text tracking-wide truncate w-full">
+                <h1 class="text-[17px] font-bold text-brand-bg tracking-wide truncate w-full">
                     Mis productos
                 </h1>
             </div>
@@ -19,8 +19,8 @@
                     <button (click)="exportarPDF()"
                             class="p-1 mb-1 flex flex-col items-center justify-center gap-1 text-brand-accent active:scale-95 transition-transform"
                             aria-label="Exportar catálogo a PDF">
-                        <app-icon name="pdf-export" classes="size-6 fill-current" />
-                        <span class="text-[8px] font-black uppercase tracking-widest leading-none opacity-90">
+                        <app-icon name="pdf-export" classes="size-6 fill-current text-brand-bg" />
+                        <span class="text-[8px] text-brand-bg font-bold uppercase tracking-widest leading-none opacity-90">
                             Generar PDF
                         </span>
                     </button>
@@ -314,6 +314,7 @@
                         <div (click)="productPreviewService.open(producto)"
                             class="relative flex items-start gap-2.5 bg-white p-2.5 rounded-xl border border-gray-100 md:hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] transition-all group shadow-xs cursor-pointer">
                             
+                            <!-- IMAGEN -->
                             <div class="relative shrink-0 w-12 h-12 rounded-lg overflow-hidden mt-0.5">
                                 <div class="relative w-full h-full bg-brand-bg shrink-0 overflow-hidden"
                                     [class.animate-pulse]="!imageLoaded() && producto.imagen"
@@ -334,9 +335,17 @@
                                 </div>
                             </div>
                             
+                            <!-- CONTENIDO CENTRAL -->
                             <div class="flex-1 min-w-0">
-                                @if (producto.destacado || getMejorOferta(producto.presentaciones)) {
-                                    <div class="flex items-center gap-2 mb-1">
+                                @if (!producto.activo) {
+                                    <div class="flex items-center gap-2 mb-0.5">
+                                        <span class="inline-flex items-center gap-1 text-white bg-gray-500 px-2 py-0.5 rounded-md font-bold text-[9px] uppercase tracking-widest shadow-sm">
+                                            <app-icon name="pause" classes="size-2.5 fill-current" />
+                                            Producto pausado
+                                        </span>
+                                    </div>
+                                } @else if (producto.destacado || getMejorOferta(producto.presentaciones)) {
+                                    <div class="flex items-center gap-2 mb-0.5">
                                         @if (producto.destacado) {
                                             <span class="flex items-center gap-0.5 text-[9px] font-bold text-amber-500 uppercase tracking-widest">
                                                 <app-icon name="star-filled" classes="size-2.5 fill-current" />
@@ -378,23 +387,29 @@
                                                 <span class="text-brand-text font-bold">${{ pres.precio }}</span>
                                             }
 
+                                            @if (pres.stock !== null && pres.stock !== undefined) {
+                                                <span class="flex items-center gap-0.5 ml-1 px-1 rounded-sm text-[9px] font-bold"
+                                                    [class.bg-red-50]="pres.stock === 0"
+                                                    [class.text-red-500]="pres.stock === 0"
+                                                    [class.bg-orange-50]="pres.stock > 0 && pres.stock < AVISO_BAJO_STOCK"
+                                                    [class.text-orange-500]="pres.stock > 0 && pres.stock < AVISO_BAJO_STOCK"
+                                                    [class.bg-green-100]="pres.stock >= AVISO_BAJO_STOCK"
+                                                    [class.text-green-500]="pres.stock >= AVISO_BAJO_STOCK">
+                                                    
+                                                    <app-icon name="box" classes="size-3 fill-current" />
+                                                    {{ pres.stock }}
+                                                </span>
+                                            }
+
                                             @if (pres.activo === false) {
-                                                <span class="text-[9px] text-gray-400 bg-gray-100 px-1 rounded-sm uppercase tracking-wider ml-1">Pausada</span>
+                                                <span class="text-[9px] font-semibold text-white bg-gray-500 px-1 rounded-sm uppercase tracking-wider ml-1">Pausada</span>
                                             }
                                         </div>
                                     }
                                 </div>
-
-                                @if (!producto.activo) {
-                                    <div class="mt-0.5">
-                                        <span class="inline-flex items-center gap-1 text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded-full font-bold text-[10px]">
-                                            <app-icon name="pause" classes="size-2.5 fill-current" />
-                                            Producto Pausado
-                                        </span>
-                                    </div>
-                                }
                             </div>
 
+                            <!-- ACCIONES RÁPIDAS -->
                             <div class="flex items-center gap-2 mt-1 shrink-0">
                                 <button (click)="onEdit(producto, $event)" 
                                         class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">

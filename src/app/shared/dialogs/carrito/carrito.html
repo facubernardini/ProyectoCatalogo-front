@@ -122,30 +122,30 @@
                 </div>
 
                 <div class="mt-3 mb-2 flex items-center gap-4 before:h-px before:flex-1 before:bg-linear-to-r before:from-transparent before:via-gray-200 before:to-gray-200 after:h-px after:flex-1 after:bg-linear-to-l after:from-transparent after:via-gray-200 after:to-gray-200">
-                    <app-icon name="store" classes="size-4 text-gray-300 fill-current" />
+                    <app-icon name="shop" classes="size-4 text-gray-300 fill-current" />
                 </div>
 
                 <div id="seccion-entrega">
                     <h3 class="text-[13px] font-bold uppercase tracking-widest text-gray-500 mb-2">¿Cómo lo recibís?</h3>
                     @if (catalogo()?.ofrece_envio) {
                         <div class="grid grid-cols-2 gap-2 mb-5">
-                            <button (click)="seleccionarMetodo('retiro', seccionPago)"
-                                [class.border-brand-accent]="cartService.deliveryMethod() === 'retiro'"
-                                [class.border-gray-100]="cartService.deliveryMethod() !== 'retiro'"
-                                [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'retiro'"
+                            <button (click)="seleccionarMetodo('Retiro', seccionPago)"
+                                [class.border-brand-accent]="cartService.deliveryMethod() === 'Retiro'"
+                                [class.border-gray-100]="cartService.deliveryMethod() !== 'Retiro'"
+                                [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'Retiro'"
                                 class="p-2 border-2 rounded-3xl flex flex-col items-center gap-1 transition-all active:scale-95 md:hover:border-brand-accent/50">
-                                <app-icon name="store" [class.text-brand-accent]="cartService.deliveryMethod() === 'retiro'" classes="size-7 fill-current text-gray-400" />
+                                <app-icon name="shop" [class.text-brand-accent]="cartService.deliveryMethod() === 'Retiro'" classes="size-7 fill-current text-gray-400" />
                                 <div class="text-center">
                                     <span class="block font-bold text-sm text-brand-text">Retiro en local</span>
                                     <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
                                 </div>
                             </button>
-                            <button (click)="seleccionarMetodo('envio', seccionPago)"
-                                [class.border-brand-accent]="cartService.deliveryMethod() === 'envio'"
-                                [class.border-gray-100]="cartService.deliveryMethod() !== 'envio'"
-                                [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'envio'"
+                            <button (click)="seleccionarMetodo('Envio', seccionPago)"
+                                [class.border-brand-accent]="cartService.deliveryMethod() === 'Envio'"
+                                [class.border-gray-100]="cartService.deliveryMethod() !== 'Envio'"
+                                [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'Envio'"
                                 class="p-2 border-2 rounded-3xl flex flex-col items-center gap-1 transition-all active:scale-95 md:hover:border-brand-accent/50">
-                                <app-icon name="delivery" [class.text-brand-accent]="cartService.deliveryMethod() === 'envio'" classes="size-7 fill-current text-gray-400" />
+                                <app-icon name="delivery" [class.text-brand-accent]="cartService.deliveryMethod() === 'Envio'" classes="size-7 fill-current text-gray-400" />
                                 <div class="text-center">
                                     <span class="block font-bold text-sm text-brand-text">Envío a domicilio</span>
                                     @if (cartService.esEnvioGratis()) {
@@ -201,7 +201,7 @@
                                 (input)="nombreCliente.set($any($event.target).value)"
                                 class="w-full p-2.5 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none transition-all text-brand-text font-medium">
                         </div>
-                        @if (cartService.deliveryMethod() === 'envio') {
+                        @if (cartService.deliveryMethod() === 'Envio') {
                             <div class="flex flex-col gap-1.5 animate-in slide-in-from-top-2 duration-300">
                                 <label class="text-xs font-semibold text-gray-400 ml-1 uppercase">Dirección de envío</label>
                                 <input type="text" [value]="direccionEnvio()"
@@ -304,7 +304,7 @@
                 }
 
                 <div class="space-y-3 mb-1.5 px-1">
-                    @if (cartService.deliveryMethod() === 'envio' || cartService.appliedCupon() || cartService.cashDiscountAmount() > 0) {
+                    @if (cartService.deliveryMethod() === 'Envio' || cartService.appliedCupon() || cartService.cashDiscountAmount() > 0) {
                         <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
                             <span class="text-gray-500 font-semibold whitespace-nowrap">Subtotal</span>
                             <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
@@ -353,7 +353,7 @@
                         </div>
                     }
 
-                    @if (cartService.deliveryMethod() === 'envio') {
+                    @if (cartService.deliveryMethod() === 'Envio') {
                         <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
                             <span class="text-gray-500 font-semibold whitespace-nowrap">Costo de envío</span>
                             <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>

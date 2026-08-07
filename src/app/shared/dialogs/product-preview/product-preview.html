@@ -23,29 +23,20 @@
                     </div>
 
                     <div class="flex-1 flex flex-col justify-center min-w-0">
-                        
+                        <!-- Nombre estático (Sin Input) -->
                         <div class="mb-1 shrink-0">                            
-                            <div class="relative w-full">
-                                <input type="text" 
-                                    [(ngModel)]="producto.nombre" 
-                                    (focus)="onFocus($event)" 
-                                    class="w-full bg-gray-50 border-none rounded-xl py-2 pl-2 pr-10 text-sm font-medium text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all truncate"
-                                    [class.border-2]="!producto.nombre"
-                                    [class.border-red-500]="!producto.nombre">
-                            
-                                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                                    <app-icon name="edit" classes="size-4 fill-current" />
-                                </div>
-                            </div>
+                            <h2 class="text-base font-bold text-brand-text truncate">
+                                {{ producto.nombre }}
+                            </h2>
                             
                             @if (producto.marca) {
-                                <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-1 truncate">
+                                <p class="text-[10px] font-black text-brand-accent/80 uppercase tracking-wider mt-0.5 truncate">
                                     {{ producto.marca }}
                                 </p>
                             }
                         </div>
 
-                        <p class="text-xs text-gray-500">
+                        <p class="text-xs text-gray-500 line-clamp-2">
                             {{ producto.descripcion || 'Sin descripción' }}
                         </p>
 
@@ -53,11 +44,9 @@
                             <div class="flex flex-wrap gap-1.5 mt-1.5">
                                 @for (tag of producto.tags; track tag.id) {
                                     <span class="flex items-center gap-1 text-[9px] font-semibold uppercase tracking-widest text-brand-text bg-brand-accent/5 px-1.5 py-0.5 rounded-lg border border-brand-accent/10">
-                                        
                                         @if (tag.icono) {
-                                            <div [innerHTML]="tag.icono | safeHtml" class="size-5 flex items-center justify-center shrink-0"></div>
+                                            <div [innerHTML]="tag.icono | safeHtml" class="size-4 flex items-center justify-center shrink-0"></div>
                                         }
-                                        
                                         {{ tag.nombre }}
                                     </span>
                                 }
@@ -74,7 +63,6 @@
                                 </span>
                             </div>
                         }
-
                     </div>
                 </div>
 
@@ -83,82 +71,121 @@
                         Precios y unidades
                     </h3>
                     <button (click)="agregarPresentacion(producto)" class="text-xs font-medium text-brand-accent md:hover:opacity-80 transition-opacity">
-                        + Agregar
+                        + Agregar variante
                     </button>
                 </div>
 
-                <div class="flex items-center justify-between px-3">
-                    <div class="shrink-0 mr-2 flex-1">
-                        <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Unidad</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-24">
-                            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider pl-1">Precio</span>
-                        </div>
-                        <div class="w-24">
-                            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider pl-1">Oferta</span>
-                        </div>
-                        <div class="w-14 ml-1"></div> 
-                    </div>
-                </div>
-
-                <div class="flex flex-col pt-1.5 gap-3 max-h-[40vh] overflow-y-auto custom-scrollbar">
+                <!-- Lista de Presentaciones rediseñada -->
+                <div class="flex flex-col gap-3 max-h-[45vh] overflow-y-auto custom-scrollbar pb-2">
                     @for (pres of producto.presentaciones; track $index) {
                         
-                        <div [class]="pres.activo !== false ? 'bg-gray-50/30 border-gray-50' : 'bg-gray-100 border-gray-200 opacity-60 grayscale-[0.5]'"
-                             class="relative flex items-center justify-between px-1 py-2 rounded-2xl border-2 transition-all">
+                        <div class="relative p-2 bg-gray-50 border-gray-100 rounded-2xl border transition-all animate-in fade-in slide-in-from-bottom-2 duration-300">
                             
                             @if (pres.activo === false) {
-                                <span class="absolute -top-2 left-3 bg-gray-500 text-white px-1.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest shadow-sm z-10">
-                                    Pausado
+                                <span class="absolute bg-orange-500 text-white px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest z-10">
+                                    Pausada
+                                </span>
+                            }
+                            @else {
+                                <span class="absolute bg-green-500 text-white px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest z-10">
+                                    Visible
                                 </span>
                             }
 
-                            <div class="shrink-0 mr-2 flex-1">
-                                <input type="text" 
-                                    [(ngModel)]="pres.unidad_venta"
-                                    class="w-full bg-white border rounded-lg py-1.5 px-1 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-gray-300"
-                                    [class.border-gray-200]="pres.unidad_venta"
-                                    [class.border-red-500]="!pres.unidad_venta">
+                            <div class="absolute top-1 right-1 flex gap-1 z-10">
+                                <button (click)="onToggleActivoPresentacion(producto, $index)" 
+                                        [class]="pres.activo !== false ? 'bg-white text-gray-400 border border-gray-100' : 'bg-orange-50 text-orange-500 border border-orange-200'"
+                                        class="p-1.5 rounded-full shadow-sm transition-colors md:hover:scale-105 active:scale-95"
+                                        [title]="pres.activo !== false ? 'Pausar variante' : 'Reanudar variante'">
+                                    <app-icon [name]="pres.activo !== false ? 'pause' : 'play'" classes="size-3.5 fill-current" />
+                                </button>
+
+                                <button (click)="eliminarPresentacion(producto, $index)" 
+                                        class="p-1.5 bg-red-500 text-white rounded-full shadow-sm transition-colors md:hover:scale-105 active:scale-95 md:hover:bg-red-600"
+                                        title="Eliminar variante">
+                                    <app-icon name="trash" classes="size-3.5 fill-current" />
+                                </button>
                             </div>
 
-                            <div class="flex items-center gap-2">
-                                <div class="relative w-24">
-                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 font-bold text-xs"
-                                          [class.text-gray-500]="pres.precio"
-                                          [class.text-red-500]="!pres.precio">$</span>
-                                    <input type="number" 
-                                        [(ngModel)]="pres.precio"
-                                        class="no-spinners w-full bg-white border rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
-                                        [class.text-brand-text]="pres.precio"
-                                        [class.border-gray-200]="pres.precio"
-                                        [class.border-red-500]="!pres.precio"
-                                        placeholder="Precio">
+                            <!-- Fila 1: Unidad | Precio | Oferta -->
+                            <div class="grid grid-cols-12 gap-1 mt-4">
+                                <!-- Unidad -->
+                                <div class="col-span-12 sm:col-span-4">
+                                    <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Unidad <span class="text-red-400">*</span></label>
+                                    <input type="text" [(ngModel)]="pres.unidad_venta"
+                                        class="w-full bg-white border border-gray-200 rounded-lg py-1.5 px-2.5 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-gray-300"
+                                        [class.border-red-400]="!pres.unidad_venta"
+                                        placeholder="Ej: 500 gr">
+                                </div>
+
+                                <!-- Precio -->
+                                <div class="col-span-6 sm:col-span-4">
+                                    <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio venta <span class="text-red-400">*</span></label>
+                                    <div class="relative">
+                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 font-bold text-xs"
+                                              [class.text-gray-500]="pres.precio"
+                                              [class.text-red-400]="!pres.precio">$</span>
+                                        <input type="number" [(ngModel)]="pres.precio"
+                                            class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-6 pr-2 text-xs font-bold outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
+                                            [class.text-brand-text]="pres.precio"
+                                            [class.border-red-400]="!pres.precio || pres.precio <= 0"
+                                            placeholder="0.00">
+                                    </div>
                                 </div>
                                 
-                                <div class="relative w-24">
-                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">$</span>
-                                    <input type="number" 
-                                        [(ngModel)]="pres.precio_descuento"
-                                        class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
-                                        placeholder="Opcional">
-                                </div>
-
-                                <div class="flex items-center gap-0.5 ml-1">
-                                    <button (click)="onToggleActivoPresentacion(producto, $index)" 
-                                            [class]="pres.activo !== false ? 'text-gray-400 md:hover:text-orange-500 md:hover:bg-orange-50' : 'text-orange-500 bg-orange-50 md:hover:bg-orange-100'"
-                                            class="p-1.5 rounded-lg transition-colors"
-                                            [title]="pres.activo !== false ? 'Pausar variante' : 'Reanudar variante'">
-                                        <app-icon [name]="pres.activo !== false ? 'pause' : 'play'" classes="size-4 fill-current" />
-                                    </button>
-
-                                    <button (click)="eliminarPresentacion(producto, $index)" 
-                                            class="p-1.5 text-red-500 md:hover:bg-red-50 rounded-lg transition-colors"
-                                            title="Eliminar variante">
-                                        <app-icon name="trash" classes="size-4 fill-current" />
-                                    </button>
+                                <!-- Oferta -->
+                                <div class="col-span-6 sm:col-span-4">
+                                    <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio oferta</label>
+                                    <div class="relative">
+                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">$</span>
+                                        <input type="number" [(ngModel)]="pres.precio_descuento"
+                                            class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-6 pr-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
+                                            [class.border-red-400]="pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio"
+                                            placeholder="Opcional">
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Fila 2: Costo | Stock -->
+                            <div class="grid grid-cols-12 gap-1 mt-1">
+                                <!-- Precio Costo -->
+                                <div class="col-span-6">
+                                    <label class="text-[9px] font-bold text-gray-400 uppercase ml-1" title="Costo interno. No visible para clientes">Precio Costo</label>
+                                    <div class="relative">
+                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">$</span>
+                                        <input type="number" [(ngModel)]="pres.precio_costo"
+                                            class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-6 pr-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
+                                            placeholder="Opcional">
+                                    </div>
+                                </div>
+
+                                <!-- Stock -->
+                                <div class="col-span-6">
+                                    <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Stock disponible</label>
+                                    <input type="number" [(ngModel)]="pres.stock"
+                                        class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 px-2.5 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-gray-400"
+                                        [class.border-red-400]="pres.stock === 0 || (pres.stock !== null && pres.stock < 0)"
+                                        placeholder="Ilimitado">
+                                </div>
+                            </div>
+
+                            <!-- Mensajes de Error (Condicionales) -->
+                            @if (pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio) {
+                                <p class="text-[9px] text-red-500 font-black mt-1.5 ml-1">
+                                    LA OFERTA DEBE SER MENOR AL PRECIO NORMAL
+                                </p>
+                            }
+                            @if (pres.stock === 0) {
+                                <p class="text-[9px] text-red-500 font-black mt-1.5 ml-1">
+                                    EL STOCK DEBE SER MAYOR A 0 O DEJARSE VACÍO
+                                </p>
+                            }
+                            @if (pres.precio_costo && (pres.precio_costo > pres.precio)) {
+                                <p class="text-[9px] text-red-500 font-black mt-1.5 ml-1">
+                                    EL PRECIO DE VENTA NO PUEDE SER MENOR AL DE COSTO
+                                </p>
+                            }
+                            
                         </div>
                     }
                 </div>
@@ -168,10 +195,11 @@
                             class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
                         Cerrar
                     </button>
+                    <!-- Actualizada la llamada a validación para usar la lógica mejorada que incluye stock -->
                     <button (click)="onGuardar(producto)" 
                             [disabled]="datosInvalidos(producto)"
                             class="flex-1 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale">
-                        Guardar producto
+                        Guardar
                     </button>
                 </div>
             }

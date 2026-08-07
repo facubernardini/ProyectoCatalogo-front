@@ -31,6 +31,8 @@ export class MisProductos {
 
   public imageLoaded = signal(false);
 
+  public readonly AVISO_BAJO_STOCK = 3;
+
   productos = this.adminStore.productos; 
   categorias = this.adminStore.categorias;
 

@@ -44,4 +44,23 @@ export class Dashboard {
       this.toastService.show('Primero debés configurar el nombre de tu tienda', 'error');
     }
   }
+
+  copiarLinkCatalogo() {
+    const slug = this.adminStore.catalogo()?.slug;
+    
+    if (slug) {
+      const currentHost = window.location.hostname;
+      const baseDomain = currentHost.replace('www.', '');
+      const url = `https://${slug}.${baseDomain}`;
+      
+      navigator.clipboard.writeText(url).then(() => {
+        this.toastService.show('¡Enlace copiado al portapapeles!', 'success');
+      }).catch(err => {
+          console.error('Error al copiar el enlace: ', err);
+          this.toastService.show('No se pudo copiar el enlace', 'error');
+      });
+    } else {
+      this.toastService.show('Primero debés configurar el nombre de tu tienda', 'error');
+    }
+  }
 }

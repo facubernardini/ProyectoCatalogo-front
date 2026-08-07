@@ -20,7 +20,6 @@ export interface Producto {
   imagen: string | null;
   destacado: boolean;
   activo: boolean;
-  catalogo_id: number;
   
   presentaciones: Presentacion[];
   

@@ -7,6 +7,7 @@ import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { ProductFormService } from '@shared/services/product-form.service';
 import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
+import { PresentacionForm } from 'src/app/core/models/presentacion.model';
 
 @Component({
   selector: 'app-product-form',
@@ -18,7 +19,6 @@ export class ProductForm {
   public productFormService = inject(ProductFormService);
   public adminStore = inject(AdminStoreService);
   public confirmService = inject(ConfirmService);
-
   private toastService = inject(ToastService);
 
   isTagsDropdownOpen = signal<boolean>(false);
@@ -33,8 +33,8 @@ export class ProductForm {
     categorias_ids: [] as number[],
     tags_ids: [] as number[],
     presentaciones: [
-      { unidad_venta: '', precio: null, precio_descuento: null, activo: true }
-    ]
+      { unidad_venta: '', precio: null, precio_descuento: null, precio_costo: null, stock: null, activo: true }
+    ] as PresentacionForm[]
   };
 
   public imagenPendiente: File | null = null;
@@ -65,6 +65,12 @@ export class ProductForm {
           p.categorias_ids = editing.categorias?.map((c: any) => c.id) || [];
           p.tags_ids = editing.tags?.map((t: any) => t.id) || [];
           p.marca = p.marca || '';
+          p.presentaciones = p.presentaciones.map((pres: any) => ({
+             ...pres,
+             precio_costo: pres.precio_costo !== undefined ? pres.precio_costo : null,
+             stock: pres.stock !== undefined ? pres.stock : null
+          }));
+          
           this.producto = p;
         } else {
           this.resetForm();
@@ -79,14 +85,12 @@ export class ProductForm {
 
   abrirDropdownYScroll(container: HTMLElement) {
     this.isCategoriaDropdownOpen.set(true);
-    
     setTimeout(() => {
       container.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 120);
   }
 
   cerrarDropdown(inputElement?: HTMLInputElement) {
-
     this.isCategoriaDropdownOpen.set(false);
     this.searchQuery.set('');
   }
@@ -122,7 +126,6 @@ export class ProductForm {
 
     const button = event.currentTarget as HTMLElement;
     const rect = button.getBoundingClientRect();
-    
     const espacioAbajo = window.innerHeight - rect.bottom;
     
     this.isTagsMenuUpward.set(espacioAbajo < 250);
@@ -146,6 +149,7 @@ export class ProductForm {
     return this.producto.tags_ids?.includes(id) || false;
   }
 
+  // 👉 2. Actualizamos resetForm
   resetForm() {
     this.producto = {
       nombre: '',
@@ -155,20 +159,17 @@ export class ProductForm {
       destacado: false,
       categorias_ids: [],
       tags_ids: [],
-      presentaciones: [{ unidad_venta: '', precio: null, precio_descuento: null, activo: true }]
+      presentaciones: [{ unidad_venta: '', precio: null, precio_descuento: null, precio_costo: null, stock: null, activo: true }]
     };
 
     this.imagenPendiente = null;
     this.imagenPreviewTemporal.set(null);
-
-    // Reseteo del buscador simplificado
     this.searchQuery.set('');
     this.isCategoriaDropdownOpen.set(false);
   }
 
   onFileChange(event: any) {
     const file = event.target.files[0];
-    
     if (!file) return;
 
     const MAX_SIZE_BYTES = this.MAX_SIZE_MB * 1024 * 1024;
@@ -183,8 +184,16 @@ export class ProductForm {
     this.imagenPreviewTemporal.set(URL.createObjectURL(file));
   }
 
+  // 👉 3. Actualizamos agregarPresentacion
   agregarPresentacion() {
-    this.producto.presentaciones.push({ unidad_venta: '', precio: null, precio_descuento: null, activo: true });
+    this.producto.presentaciones.push({ 
+      unidad_venta: '', 
+      precio: null, 
+      precio_descuento: null, 
+      precio_costo: null, 
+      stock: null, 
+      activo: true 
+    });
   }
 
   async eliminarPresentacion(index: number) {
@@ -214,30 +223,44 @@ export class ProductForm {
   }
 
   guardar() {
+    if (!this.producto.nombre || this.producto.nombre.trim().length === 0) {
+      this.toastService.show('El producto debe tener un nombre.', 'error');
+      return;
+    }
+
+    if (!this.producto.categorias_ids || this.producto.categorias_ids.length === 0) {
+      this.toastService.show('Debes seleccionar al menos una categoría.', 'error');
+      return;
+    }
+
+    for (let i = 0; i < this.producto.presentaciones.length; i++) {
+      const pres = this.producto.presentaciones[i];
+      const numeroV = i + 1;
+
+      if (!pres.unidad_venta || pres.unidad_venta.trim() === '') {
+        this.toastService.show(`Variante ${numeroV}: Falta indicar la unidad de venta.`, 'error');
+        return;
+      }
+
+      if (pres.precio === null || pres.precio <= 0) {
+        this.toastService.show(`Variante ${numeroV}: El precio de venta debe ser mayor a 0.`, 'error');
+        return;
+      }
+
+      if (pres.precio_descuento !== null && pres.precio !== null && Number(pres.precio_descuento) >= Number(pres.precio)) {
+        this.toastService.show(`Variante ${numeroV}: El precio de oferta no puede ser mayor o igual al precio normal.`, 'error');
+        return;
+      }
+
+      // Validación estricta de Stock (no puede ser 0 al crear/editar, null es válido porque es Ilimitado)
+      if (pres.stock !== null && (pres.stock === 0 || pres.stock < 0)) {
+         this.toastService.show(`Variante ${numeroV}: El stock debe mayor a 0.`, 'error');
+         return;
+      }
+    }
+
+    // Si pasa todas las validaciones, enviamos a guardar
     this.productFormService.save(this.producto, this.imagenPendiente);
-  }
-
-  get esFormularioInvalido(): boolean {
-    const nombreInvalido = !this.producto.nombre || this.producto.nombre.trim().length === 0;
-    if (nombreInvalido) return true;
-
-    const sinCategorias = !this.producto.categorias_ids || this.producto.categorias_ids.length === 0;
-    if (sinCategorias) return true;
-
-    return this.producto.presentaciones.some(pres => {
-      const datosIncompletos = 
-        !pres.unidad_venta || 
-        pres.unidad_venta.trim() === '' || 
-        pres.precio === null || 
-        pres.precio <= 0;
-
-      const descuentoInvalido = 
-        pres.precio_descuento !== null && 
-        pres.precio !== null && 
-        Number(pres.precio_descuento) >= Number(pres.precio);
-
-      return datosIncompletos || descuentoInvalido;
-    });
   }
 
   @HostListener('window:scroll')

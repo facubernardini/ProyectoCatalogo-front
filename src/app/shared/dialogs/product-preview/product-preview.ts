@@ -22,17 +22,6 @@ export class ProductPreview {
   private confirmService = inject(ConfirmService);
   private toastService = inject(ToastService);
 
-  preciosInvalidos(producto: Producto): boolean {
-    if (!producto || !producto.presentaciones) return false;
-    
-    return producto.presentaciones.some(p => 
-      p.precio_descuento !== null && 
-      p.precio_descuento !== undefined && 
-      p.precio_descuento > 0 &&
-      Number(p.precio_descuento) >= Number(p.precio)
-    );
-  }
-
   agregarPresentacion(producto: Producto) {
     if (!producto.presentaciones) {
       producto.presentaciones = [];
@@ -42,23 +31,14 @@ export class ProductPreview {
       producto_id: producto.id,
       unidad_venta: '',
       precio: null as any,
+      precio_costo: null,
       precio_descuento: null,
-      stock: 0,
+      stock: null,
       activo: true
     });
   }
 
-  onFocus(event: FocusEvent) {
-    const input = event.target as HTMLInputElement;
-  
-    // Usamos requestAnimationFrame para asegurar que el DOM 
-    // ya haya procesado el enfoque antes de mover el cursor
-    requestAnimationFrame(() => {
-      input.setSelectionRange(input.value.length, input.value.length);
-    });
-  }
-
-  // --- NUEVO: PAUSAR / REANUDAR CON AUTO-GUARDADO ---
+  // --- PAUSAR / REANUDAR CON AUTO-GUARDADO ---
   async onToggleActivoPresentacion(producto: Producto, index: number) {
     const pres = producto.presentaciones[index];
     const estaActiva = pres.activo;
@@ -81,7 +61,7 @@ export class ProductPreview {
     }
   }
 
-  // --- ACTUALIZADO: ELIMINAR CON AUTO-GUARDADO ---
+  // --- ELIMINAR CON AUTO-GUARDADO ---
   async eliminarPresentacion(producto: Producto, index: number) {
     if (producto.presentaciones.length <= 1) {
       this.toastService.show('El producto debe tener al menos una variante.', 'error');
@@ -102,7 +82,6 @@ export class ProductPreview {
 
     if (confirmacion) {
       producto.presentaciones.splice(index, 1);
-      
       this.productoManager.guardar(producto, producto);
     }
   }
@@ -110,15 +89,28 @@ export class ProductPreview {
   datosInvalidos(producto: Producto): boolean {
     if (!producto || !producto.presentaciones || producto.presentaciones.length === 0) return true;
     
-    return producto.presentaciones.some(p => 
-      !p.unidad_venta || p.unidad_venta.toString().trim() === '' ||
-      p.precio === null || p.precio === undefined || p.precio.toString().trim() === '' || Number(p.precio) <= 0 ||
-      (p.precio_descuento !== null && p.precio_descuento !== undefined && p.precio_descuento !== '' as any && Number(p.precio_descuento) > Number(p.precio))
-    );
+    return producto.presentaciones.some(p => {
+      // 1. Unidad vacía
+      if (!p.unidad_venta || p.unidad_venta.toString().trim() === '') return true;
+      
+      // 2. Precio vacío o <= 0
+      if (p.precio === null || p.precio === undefined || p.precio.toString().trim() === '' || Number(p.precio) <= 0) return true;
+
+      if (p.precio_costo && (p.precio_costo > p.precio)) return true;
+      
+      // 3. Descuento inválido (mayor o igual al precio)
+      const descuentoInvalido = p.precio_descuento !== null && p.precio_descuento !== undefined && p.precio_descuento !== '' as any && Number(p.precio_descuento) >= Number(p.precio);
+      if (descuentoInvalido) return true;
+
+      // 4. Stock inválido (No puede ser 0 ni negativo. Null es válido)
+      const stockInvalido = p.stock !== null && p.stock !== undefined && (Number(p.stock) === 0 || Number(p.stock) < 0);
+      if (stockInvalido) return true;
+
+      return false;
+    });
   }
 
   onGuardar(prod: Producto) {
-    if (this.preciosInvalidos(prod)) return;
     this.productPreviewService.onGuardar(prod);
   }
 }

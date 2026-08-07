@@ -1,16 +1,16 @@
 <div class="min-h-svh flex flex-col">
-    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
-        <div class="flex items-center justify-between px-4 h-16 max-w-4xl mx-auto w-full">
+    <header class="sticky top-0 z-50 pt-2 bg-brand-accent shadow-sm shrink-0">
+        <div class="flex items-center justify-between px-4 h-15 max-w-4xl mx-auto w-full">
             
             <button (click)="onLogout()" 
                     class="p-2 text-brand-accent active:scale-95 transition-transform md:hover:bg-white/50 rounded-xl"
                     aria-label="Cerrar sesión">
-                <app-icon name="logout" classes="size-7 fill-current rotate-180" />
+                <app-icon name="logout" classes="size-7 fill-current text-brand-bg rotate-180" />
             </button>
 
             <div class="flex-1 text-center px-2 overflow-hidden">
-                <p class="text-brand-text text-sm font-medium leading-none mb-1">Hola,</p>
-                <h1 class="text-brand-accent font-bold text-base truncate">
+                <p class="text-brand-bg text-sm font-medium leading-none mb-0.5">Hola,</p>
+                <h1 class="text-brand-bg font-bold text-base truncate">
                     {{ adminStore.catalogo()?.nombre_tienda || 'Tu Tienda' }}!
                 </h1>
             </div>
@@ -18,7 +18,7 @@
             <button [routerLink]="['../perfil']"
                 class="p-2 text-brand-accent active:scale-95 transition-transform hover:bg-white/50 rounded-xl"
                 aria-label="Mi perfil">
-                <app-icon name="profile" classes="size-7 fill-current" />
+                <app-icon name="profile" classes="size-7 fill-current text-brand-bg" />
             </button>
 
         </div>
@@ -105,30 +105,32 @@
                     </div>
                 </button>
 
-                <button [routerLink]="['../carga-masiva']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="cloud-upload" classes="size-6 fill-current text-brand-accent" />
+                @if (adminStore.productos().length === 0){
+                    <button [routerLink]="['../carga-masiva']"
+                        class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
+                        >
+                        <div class="flex items-center gap-4">
+                            <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
+                                <app-icon name="cloud-upload" classes="size-6 fill-current text-brand-accent" />
+                            </div>
+                            
+                            <div class="flex flex-col items-start text-left">
+                                <span class="text-brand-text font-bold text-lg leading-tight">
+                                    Carga inicial
+                                </span>
+                                <span class="text-brand-text-sec text-xs sm:text-sm">
+                                    Sube tus productos desde un Excel
+                                </span>
+                            </div>
                         </div>
-                        
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Carga masiva
-                            </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Sube tus productos desde un Excel
-                            </span>
-                        </div>
-                    </div>
 
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
-                </button>
+                        <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </div>
+                    </button>
+                }
 
                 <button [routerLink]="['../mi-tienda']"
                     class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
@@ -160,24 +162,33 @@
                 <div class="h-px bg-gray-200 w-full"></div>
             </div>
 
-            <button (click)="verCatalogoPublico()"
-                class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                >
-                <div class="flex items-center gap-4">
-                    <div class="shrink-0 p-2 bg-brand-accent rounded-xl text-brand-bg">
-                        <app-icon name="web" classes="size-6 fill-current text-brand-bg" />
+            <div class="flex items-stretch gap-2 w-full">
+    
+                <button (click)="verCatalogoPublico()"
+                        class="flex-1 flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group">
+                    <div class="flex items-center gap-4">
+                        <div class="shrink-0 p-2 bg-brand-accent rounded-xl text-brand-bg">
+                            <app-icon name="web" classes="size-6 fill-current text-brand-bg" />
+                        </div>
+                        
+                        <div class="flex flex-col items-start text-left">
+                            <span class="text-brand-text font-bold text-lg leading-tight">
+                                Ver mi catálogo
+                            </span>
+                            <span class="text-brand-text-sec text-xs sm:text-sm">
+                                Visita la tienda que ven tus clientes
+                            </span>
+                        </div>
                     </div>
-                    
-                    <div class="flex flex-col items-start text-left">
-                        <span class="text-brand-text font-bold text-lg leading-tight">
-                            Ver mi catálogo
-                        </span>
-                        <span class="text-brand-text-sec text-xs sm:text-sm">
-                            Visita la tienda que ven tus clientes
-                        </span>
-                    </div>
-                </div>
-            </button>
+                </button>
+
+                <button (click)="copiarLinkCatalogo()"
+                        title="Copiar enlace para clientes"
+                        class="shrink-0 flex items-center justify-center bg-white border border-brand-bg px-5 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 text-brand-accent md:hover:bg-brand-accent/5">
+                    <app-icon name="copy" classes="size-6 fill-current" />
+                </button>
+
+            </div>
             
         </div>
     </main>

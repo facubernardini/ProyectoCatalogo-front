@@ -4,7 +4,7 @@ import { Injectable, signal } from '@angular/core';
 export class PedidoRealizadoService {
   isOpen = signal(false);
 
-	metodoEntrega = signal<'envio' | 'retiro' | null>(null);
+	metodoEntrega = signal<'Envio' | 'Retiro' | null>(null);
   whatsappUrl = signal<string>('');
 
 	constructor() {
@@ -15,7 +15,7 @@ export class PedidoRealizadoService {
     });
   }
 
-  open(metodo: 'envio' | 'retiro', url: string) { 
+  open(metodo: 'Envio' | 'Retiro', url: string) { 
     if (this.isOpen()) return;
 
     this.metodoEntrega.set(metodo);

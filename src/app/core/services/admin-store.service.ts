@@ -85,8 +85,8 @@ export class AdminStoreService {
       },
       error: (err: HttpErrorResponse) => {
         this.isLoading.set(false);
-        // Tienda suspendida
-        if (err.status === 403 && err.error?.code === 'TIENDA_SUSPENDIDA') {
+        // Vendedor inactivo o catalogo pausado
+        if (err.status === 403) {
           this.router.navigate(['/not-found']);
         } else if (err.status === 404) {
           // La tienda no existe
