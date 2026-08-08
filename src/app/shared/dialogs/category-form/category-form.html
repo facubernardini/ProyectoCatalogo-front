@@ -22,7 +22,7 @@
                 </div>
 
                 <button (click)="guardar()" 
-                        [disabled]="!categoryFormService.nombre().trim()"
+                        [disabled]="!categoryFormService.nombre().trim() || isNameDuplicate()"
                         class="relative px-4 py-2 bg-brand-accent text-white text-sm font-bold rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
                     
                     <div class="flex items-center gap-2">
@@ -33,17 +33,25 @@
                 </button>
             </div>
 
-            <div class="flex-1 overflow-y-auto px-5 py-4 space-y-8">
+            <div class="flex-1 overflow-y-auto px-5 py-4 space-y-7">
                 
                 <section class="space-y-4">
                     <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">General</p>
-                    <div class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5 relative">
                         <label class="text-xs font-bold text-gray-600 ml-1">Nombre de la categoría</label>
+                        
                         <input type="text" 
                             [ngModel]="categoryFormService.nombre()" 
                             (ngModelChange)="categoryFormService.nombre.set($event)" 
-                            class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300" 
-                            placeholder="Ej: Pizzas, Bebidas, Postres...">
+                            [class.border-red-400]="isNameDuplicate()"
+                            [class.focus:border-red-400]="isNameDuplicate()"
+                            class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300">
+                        
+                        @if (isNameDuplicate()) {
+                            <div class="absolute -bottom-5 left-1 flex items-center gap-1 text-red-500 animate-in slide-in-from-top-1 fade-in duration-200">
+                                <span class="text-[10px] font-bold">Ya existe una categoría con este nombre</span>
+                            </div>
+                        }
                     </div>
                 </section>
 
@@ -52,7 +60,7 @@
                         <label class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad especial</label>
                         <button (click)="categoria.especial = !categoria.especial" 
                                 [class]="categoria.especial ? 'bg-brand-accent text-white border-brand-accent shadow-md' : 'bg-gray-50 text-gray-400 border-gray-100'"
-                                class="flex items-center justify-center gap-2 h-11.5 rounded-xl border font-bold text-sm transition-all active:scale-95 w-full">
+                                class="flex items-center justify-center gap-2 h-10 rounded-xl border font-bold text-sm transition-all active:scale-95 w-full">
                             <app-icon name="star" [classes]="'size-4 ' + (categoria.especial ? 'fill-white' : 'fill-gray-400')" />
                             {{ categoria.especial ? 'Categoría Especial' : 'Marcar como Especial' }}
                         </button>
@@ -65,7 +73,7 @@
                 @if (categoryFormService.editingCategory()) {
                     <section class="space-y-4">
                         <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad</p>
-                        <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
+                        <div class="p-3 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-bold text-brand-text">Estado de la categoría</p>
                                 <p class="text-xs text-gray-400">Si está pausada, no aparecerá en el catálogo.</p>

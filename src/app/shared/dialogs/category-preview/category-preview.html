@@ -11,16 +11,8 @@
 
             @if (categoryPreviewService.selectedCategory(); as cat) {
                 
-                <div class="mb-3 shrink-0">                    
-                    <div class="relative w-full">
-                        <input type="text" 
-                            [(ngModel)]="cat.nombre" 
-                            class="w-full bg-gray-50 border-none rounded-xl py-2 pl-2 pr-10 text-sm font-medium text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 transition-all">
-                        
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                            <app-icon name="edit" classes="size-4 fill-current" />
-                        </div>
-                    </div>
+                <div class="mb-3 shrink-0 text-center">                    
+                    <h2 class="text-base font-semibold text-brand-text">{{ cat.nombre }}</h2>
                 </div>
 
                 <div class="flex items-center justify-between mb-2 shrink-0">
@@ -99,15 +91,10 @@
                     }
                 </div>
 
-                <div class="flex gap-3 mt-auto shrink-0">
+                <div class="mt-auto shrink-0 w-full">
                     <button (click)="categoryPreviewService.close()" 
-                            class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
-                        Cancelar
-                    </button>
-                    <button (click)="onGuardarCategoria(cat)" 
-                            [disabled]="!cat.nombre.trim()"
-                            class="flex-1 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale">
-                        Guardar cambios
+                            class="w-full py-3 bg-gray-100 text-gray-600 font-bold rounded-2xl active:scale-95 hover:bg-gray-200 transition-all">
+                        Cerrar
                     </button>
                 </div>
             }

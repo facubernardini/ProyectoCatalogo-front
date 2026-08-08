@@ -21,6 +21,7 @@ import { RecoveryPassword } from '@layout/login/recovery-password/recovery-passw
 import { NotFound } from '@layout/catalogo/not-found/not-found';
 import { isDominioBase } from './core/data/domains.data';
 import { CargaMasiva } from './layout/panel-vendedor/carga-masiva/carga-masiva';
+import { MisPedidos } from './layout/panel-vendedor/mis-pedidos/mis-pedidos';
 
 export function subdominioMatcher(url: UrlSegment[]): UrlMatchResult | null {
     const host = window.location.hostname;
@@ -48,6 +49,7 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             { path: 'inicio', component: Dashboard },
+            { path: 'mis-pedidos', component: MisPedidos },
             { path: 'mis-productos', component: MisProductos },
             { path: 'mis-categorias', component: MisCategorias },
             { path: 'mis-cupones', component: MisCupones },
