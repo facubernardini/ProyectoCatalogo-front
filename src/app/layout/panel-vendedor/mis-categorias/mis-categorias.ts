@@ -1,5 +1,5 @@
 import { Component, computed, HostListener, inject, signal } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Icon } from "@shared/components/icon";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -21,7 +21,6 @@ export class MisCategorias {
   private adminStore = inject(AdminStoreService);
   private categoryFormService = inject(CategoryFormService);
   private categoryDeleteService = inject(CategoryDeleteService);
-  private location = inject(Location);
   private confirmService = inject(ConfirmService);
 
   public categoriaManager = inject(CategoriaManagerService);
@@ -153,10 +152,6 @@ export class MisCategorias {
       this.isMenuUpward.set(false);
     }
     this.isFiltrosOpen.set(false);
-  }
-
-  volverAtras() {
-    this.location.back();
   }
 
   onToggleEspecial(categoria: CategoriaVendedor) {

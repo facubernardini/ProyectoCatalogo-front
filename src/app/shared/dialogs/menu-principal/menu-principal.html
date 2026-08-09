@@ -1,0 +1,68 @@
+@if (menuService.isOpen()) {
+    <div class="fixed inset-0 z-60 bg-black/60 animate-in fade-in duration-300"
+        (click)="menuService.close()"></div>
+
+    <div class="fixed top-0 right-0 z-70 h-dvh w-4/5 max-w-sm bg-gray-50 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
+        
+        <div class="flex items-center justify-between p-5 bg-white border-b border-gray-100 pt-[calc(env(safe-area-inset-top)+1.25rem)] shrink-0">
+            <div class="flex flex-col">
+                <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Tienda</span>
+                <h2 class="text-lg font-bold text-brand-text leading-none">
+                    {{ adminStore.catalogo()?.nombre_tienda || 'Mi Negocio' }}
+                </h2>
+            </div>
+            
+            <button (click)="menuService.close()" 
+                class="p-2 bg-gray-100 text-gray-500 rounded-full active:scale-95 transition-transform md:hover:bg-gray-200"
+                aria-label="Cerrar menú">
+                <app-icon name="close" classes="size-5 fill-current" />
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-3 flex flex-col gap-5">
+            
+            <div class="flex flex-col gap-2">
+                <h3 class="text-[11px] font-bold uppercase tracking-widest text-gray-400 ml-2 mb-1">
+                    Gestión Avanzada
+                </h3>
+
+                <button (click)="navegar('/panel-vendedor/mis-categorias')"
+                    class="flex items-center gap-3 p-3 bg-white rounded-2xl shadow-sm border border-gray-100 active:scale-95 transition-all md:hover:border-brand-accent/30 text-left">
+                    <div class="p-2 bg-brand-accent/10 rounded-xl text-brand-accent">
+                        <app-icon name="category" classes="size-5 fill-current" />
+                    </div>
+                    <span class="font-bold text-sm text-brand-text flex-1">Categorías</span>
+                    <app-icon name="chevron-right" classes="size-4 fill-current text-gray-300" />
+                </button>
+
+                <button (click)="navegar('/panel-vendedor/mis-cupones')"
+                    class="flex items-center gap-3 p-3 bg-white rounded-2xl shadow-sm border border-gray-100 active:scale-95 transition-all md:hover:border-brand-accent/30 text-left">
+                    <div class="p-2 bg-amber-100 rounded-xl text-amber-500">
+                        <app-icon name="ticket" classes="size-5 fill-current" />
+                    </div>
+                    <span class="font-bold text-sm text-brand-text flex-1">Cupones de Descuento</span>
+                    <app-icon name="chevron-right" classes="size-4 fill-current text-gray-300" />
+                </button>
+
+                <button (click)="navegar('/panel-vendedor/carga-masiva')"
+                    class="flex items-center gap-3 p-3 bg-white rounded-2xl shadow-sm border border-gray-100 active:scale-95 transition-all md:hover:border-brand-accent/30 text-left">
+                    <div class="p-2 bg-green-100 rounded-xl text-green-600">
+                        <app-icon name="upload" classes="size-5 fill-current" />
+                    </div>
+                    <span class="font-bold text-sm text-brand-text flex-1">Importar Excel</span>
+                    <app-icon name="chevron-right" classes="size-4 fill-current text-gray-300" />
+                </button>
+            </div>
+
+            <div class="mt-auto pt-6">
+                <button 
+                    (click)="onLogout()" 
+                    class="w-full p-3 rounded-2xl border-2 border-red-100 text-red-500 font-bold bg-white active:bg-red-50 transition-colors flex items-center justify-center gap-3 shadow-sm">
+                    <app-icon name="logout" classes="size-5 fill-current" />
+                    Cerrar Sesión
+                </button>
+            </div>
+
+        </div>
+    </div>
+}

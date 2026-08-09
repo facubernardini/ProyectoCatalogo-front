@@ -244,7 +244,6 @@ export class CartService {
 
   removerCupon() {
     this.appliedCupon.set(null);
-    this.toastService.show('Cupón removido');
   }
 
   private loadFromStorage(): CartItem[] {

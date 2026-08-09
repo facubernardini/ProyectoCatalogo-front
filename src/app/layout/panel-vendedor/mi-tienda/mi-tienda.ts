@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CatalogoService } from 'src/app/core/services-backend/catalogo.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
@@ -18,8 +18,6 @@ import { BRAND_DATA } from 'src/app/core/data/brand.data';
   styleUrl: './mi-tienda.css',
 })
 export class MiTienda implements OnInit, OnDestroy {
-  private location = inject(Location);
-
   public adminStore = inject(AdminStoreService);
   private catalogoService = inject(CatalogoService);
   private toastService = inject(ToastService);
@@ -392,9 +390,5 @@ export class MiTienda implements OnInit, OnDestroy {
 
   resetearValores() {
     this.cargarDatosAlFormulario();
-  }
-
-  volverAtras() {
-    this.location.back();
   }
 }

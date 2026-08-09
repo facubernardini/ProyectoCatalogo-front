@@ -11,10 +11,13 @@ import { CuponForm } from "@shared/dialogs/cupon-form/cupon-form";
 import { CategoryPreview } from "@shared/dialogs/category-preview/category-preview";
 import { LoadingSpinner } from "@shared/components/loading-spinner/loading-spinner";
 import { ProductImportPreview } from "src/app/shared/dialogs/product-import-preview/product-import-preview";
+import { PanelNavbar } from "./navbar/navbar";
+import { Header } from "./header/header";
+import { MenuPrincipal } from "src/app/shared/dialogs/menu-principal/menu-principal";
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner, ProductImportPreview],
+  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner, ProductImportPreview, PanelNavbar, Header, MenuPrincipal],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })

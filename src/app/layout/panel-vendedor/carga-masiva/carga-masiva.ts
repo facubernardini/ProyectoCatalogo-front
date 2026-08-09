@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { Location } from '@angular/common';
+import { Component, inject, signal, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { Icon } from "src/app/shared/components/icon";
 import { ToastService } from 'src/app/core/services/toast.service';
 import { CardProducto } from "./card-producto/card-producto";
@@ -15,18 +15,17 @@ import { CargaMasivaService } from 'src/app/core/services/carga-masiva.service';
   templateUrl: './carga-masiva.html',
   styleUrl: './carga-masiva.css',
 })
-export class CargaMasiva {
-  private location = inject(Location);
+export class CargaMasiva implements OnDestroy {
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
   private adminStore = inject(AdminStoreService);
+  private router = inject(Router);
   
   public cargaMasivaService = inject(CargaMasivaService); 
 
   public isDragging = signal(false);
 
-  volverAtras() {
-    this.location.back();
+  ngOnDestroy(): void {
     this.cargaMasivaService.reiniciarTodo();
   }
 
@@ -92,8 +91,9 @@ export class CargaMasiva {
 
     if (confirm) {
       const catalogoId = this.adminStore.catalogoId();
+      
       this.cargaMasivaService.enviarDatosAlBackend(catalogoId, () => {
-        this.volverAtras();
+        this.router.navigate(['/panel-vendedor/mis-productos']);
       });
     }
   }

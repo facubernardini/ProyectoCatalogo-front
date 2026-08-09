@@ -1,6 +1,6 @@
 import { Component, computed, HostListener, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Producto } from 'src/app/core/models/producto.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductoManagerService } from 'src/app/core/services/producto-manager.service';
@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
 import { PdfExportService } from 'src/app/core/services/pdf-export.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { CategoryFormService } from 'src/app/shared/services/category-form.service';
+import { ContextMenuService } from 'src/app/shared/services/context-menu.service';
 
 @Component({
   selector: 'app-mis-productos',
@@ -20,11 +21,13 @@ import { CategoryFormService } from 'src/app/shared/services/category-form.servi
 })
 export class MisProductos {
   private adminStore = inject(AdminStoreService);
-  private location = inject(Location);
   private productFormService = inject(ProductFormService);
   private toastService = inject(ToastService);
   private pdfExportService = inject(PdfExportService);
   private categoryFormService = inject(CategoryFormService);
+  private contextMenu = inject(ContextMenuService);
+
+  private scrollListener = this.onScroll.bind(this);
   
   public productManager = inject(ProductoManagerService); 
   public productPreviewService = inject(ProductPreviewService);
@@ -133,12 +136,32 @@ export class MisProductos {
       this.filtro.set(valor);
       this.isBuscando.set(false);
     });
+
+    const scrollContainer = document.querySelector('main');
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', this.scrollListener);
+    }
+
+    this.contextMenu.setOpciones([
+      {
+        label: 'Descargar Catálogo',
+        icon: 'pdf-export',
+        action: () => this.exportarPDF()
+      }
+    ]);
   }
 
   ngOnDestroy() {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
+
+    const scrollContainer = document.querySelector('main');
+    if (scrollContainer) {
+      scrollContainer.removeEventListener('scroll', this.scrollListener);
+    }
+
+    this.contextMenu.limpiar();
   }
 
   getTotalProductos(): number {
@@ -265,10 +288,6 @@ export class MisProductos {
     this.isCategoriaDropdownOpen.set(false);
     this.paginaActual.set(1);
   }
-
-  volverAtras() {
-    this.location.back();
-  }
   
   onAddCategoria() {
     this.categoryFormService.openCreate();
@@ -304,8 +323,7 @@ export class MisProductos {
     this.isMenuUpward.set(false); 
   }
 
-  @HostListener('window:scroll')
-  onScroll() {
+  onScroll(event: Event) {
     if (this.activeMenuId() !== null) {
       this.activeMenuId.set(null);
       this.isMenuUpward.set(false);
@@ -313,8 +331,11 @@ export class MisProductos {
     this.isCategoriaDropdownOpen.set(false);
     this.isFiltrosOpen.set(false);
 
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const scrollThreshold = document.documentElement.scrollHeight - 200;
+    const target = event.target as HTMLElement;
+    
+    const scrollPosition = target.scrollTop + target.clientHeight;
+    
+    const scrollThreshold = target.scrollHeight - 200;
 
     if (scrollPosition >= scrollThreshold) {
       this.cargarMas();

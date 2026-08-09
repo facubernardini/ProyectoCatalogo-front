@@ -22,6 +22,7 @@ import { NotFound } from '@layout/catalogo/not-found/not-found';
 import { isDominioBase } from './core/data/domains.data';
 import { CargaMasiva } from './layout/panel-vendedor/carga-masiva/carga-masiva';
 import { MisPedidos } from './layout/panel-vendedor/mis-pedidos/mis-pedidos';
+import { Estadisticas } from './layout/panel-vendedor/estadisticas/estadisticas';
 
 export function subdominioMatcher(url: UrlSegment[]): UrlMatchResult | null {
     const host = window.location.hostname;
@@ -55,6 +56,7 @@ export const routes: Routes = [
             { path: 'mis-cupones', component: MisCupones },
             { path: 'carga-masiva', component: CargaMasiva },
             { path: 'mi-tienda', component: MiTienda },
+            { path: 'estadisticas', component: Estadisticas },
             { path: 'perfil', component: Perfil },
         ]
     },

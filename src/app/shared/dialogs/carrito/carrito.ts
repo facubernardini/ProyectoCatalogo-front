@@ -130,6 +130,24 @@ export class Carrito {
     }, 100);
   }
 
+  limpiarFormulario() {
+    this.cartService.setDeliveryMethod(null as any);
+    this.cartService.selectPaymentMethod(null as any);
+    this.nombreCliente.set('');
+    this.direccionEnvio.set('');
+    
+    if (this.cartService.appliedCupon()) {
+      this.cartService.removerCupon();
+    }
+
+    const cat = this.catalogo();
+    if (cat && !cat.ofrece_envio) {
+      this.cartService.setDeliveryMethod('Retiro');
+    }
+
+    this.toastService.show('Información borrada, completá los datos nuevamente.', 'success');
+  }
+
   finalizarPedido() {
     if (this.cartService.totalItems() === 0) {
       this.toastService.show('El carrito está vacío', 'error');
