@@ -269,7 +269,7 @@ export class Carrito {
         const url = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
         
         window.open(url, '_blank');
-        this.enviarAlertaTelegram(mensaje);
+        //this.enviarAlertaTelegram(mensaje);
 
         this.cartService.limpiarCarrito(true);
         this.nombreCliente.set('');

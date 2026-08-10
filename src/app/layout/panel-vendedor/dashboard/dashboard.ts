@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon } from "@shared/components/icon";
+import { EstadoPedido } from 'src/app/core/models/pedido.model';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
@@ -17,6 +18,60 @@ export class Dashboard {
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
   public adminStore = inject(AdminStoreService);
+
+  mostrarBeneficios = signal<boolean>(false);
+
+  // PEDIDOS
+  cantidadPedidosPendientes = computed(() => 
+    this.adminStore.pedidosActivos().filter(p => p.estado === EstadoPedido.PENDIENTE).length
+  );
+  
+  cantidadPedidosEnPreparacion = computed(() => 
+    this.adminStore.pedidosActivos().filter(p => p.estado === EstadoPedido.EN_PREPARACION).length
+  );
+  
+  cantidadPedidosListos = computed(() => 
+    this.adminStore.pedidosActivos().filter(p => p.estado === EstadoPedido.LISTO_PARA_ENTREGAR).length
+  );
+
+  // PRODUCTOS
+  cantidadProductosDestacados = computed(() => {
+    const productos = this.adminStore.productos();
+    if (!Array.isArray(productos)) return 0;
+    return productos.filter(p => p.destacado === true).length;
+  });
+
+  cantidadProductosConOferta = computed(() => {
+    const productos = this.adminStore.productos();
+    if (!Array.isArray(productos)) return 0;
+    
+    return productos.filter(producto => {
+      if (!producto.presentaciones || producto.presentaciones.length === 0) return false;
+      
+      return producto.presentaciones.some(pres => 
+        pres.precio_descuento != null && pres.precio_descuento > 0
+      );
+    }).length;
+  });
+
+  cantidadProductosPausados = computed(() => {
+    const productos = this.adminStore.productos();
+    if (!Array.isArray(productos)) return 0;
+    return productos.filter(p => p.activo === false).length;
+  });
+
+  cantidadProductosBajoStock = computed(() => {
+    const productos = this.adminStore.productos();
+    if (!Array.isArray(productos)) return 0;
+    
+    return productos.filter(producto => {
+      if (!producto.presentaciones || producto.presentaciones.length === 0) return false;
+      
+      return producto.presentaciones.some(pres => 
+        pres.stock != null && pres.stock < 3
+      );
+    }).length;
+  });
   
   async onLogout() {
     const confirm = await this.confirmService.ask({
@@ -29,6 +84,10 @@ export class Dashboard {
     if (confirm) {
       this.authService.logout();
     }
+  }
+
+  toggleBeneficios() {
+    this.mostrarBeneficios.update(v => !v);
   }
 
   verCatalogoPublico() {

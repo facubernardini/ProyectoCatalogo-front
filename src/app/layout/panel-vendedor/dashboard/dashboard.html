@@ -3,16 +3,14 @@
         
         <div class="max-w-4xl mx-auto w-full flex flex-col gap-3">
             
-            <!-- ========================================== -->
             <!-- CARD 1: PREVIEW DE PEDIDOS -->
-            <!-- ========================================== -->
             <div routerLink="../mis-pedidos" 
-                 class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm active:scale-[0.99] md:hover:border-gray-200 transition-all cursor-pointer group">
+                class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm active:scale-[0.99] md:hover:border-gray-200 transition-all cursor-pointer group">
                 
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
                         <app-icon name="receipt" classes="size-4 fill-current text-gray-400" />
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">Estado de Pedidos</h2>
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Estado de Pedidos</h2>
                     </div>
                     <span class="text-xs font-semibold text-brand-accent group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
                         Ver todos
@@ -23,34 +21,43 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 text-center">
-                    <!-- Sin procesar -->
-                    <div class="bg-gray-50/80 rounded-xl p-2.5 border border-gray-100/60">
-                        <span class="block text-lg font-bold text-gray-800 tracking-tight">3</span>
-                        <span class="text-[11px] text-gray-500 font-medium">Sin procesar</span>
+                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60">
+                        <span class="block text-lg font-bold text-gray-800 tracking-tight">
+                            {{ cantidadPedidosPendientes() }}
+                        </span>
+                        <span class="text-[11px] text-gray-500 font-medium">
+                            Sin procesar
+                        </span>
                     </div>
-                    <!-- En preparación -->
-                    <div class="bg-gray-50/80 rounded-xl p-2.5 border border-gray-100/60">
-                        <span class="block text-lg font-bold text-brand-accent tracking-tight">5</span>
-                        <span class="text-[11px] text-gray-500 font-medium">En preparación</span>
+
+                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60">
+                        <span class="block text-lg font-bold text-brand-accent tracking-tight">
+                            {{ cantidadPedidosEnPreparacion() }}
+                        </span>
+                        <span class="text-[11px] text-gray-500 font-medium">
+                            En preparación
+                        </span>
                     </div>
-                    <!-- Listos -->
-                    <div class="bg-gray-50/80 rounded-xl p-2.5 border border-gray-100/60">
-                        <span class="block text-lg font-bold text-emerald-600 tracking-tight">2</span>
-                        <span class="text-[11px] text-gray-500 font-medium">Para entregar</span>
+                    
+                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60">
+                        <span class="block text-lg font-bold text-emerald-600 tracking-tight">
+                            {{ cantidadPedidosListos() }}
+                        </span>
+                        <span class="text-[11px] text-gray-500 font-medium">
+                            Para entregar
+                        </span>
                     </div>
                 </div>
             </div>
 
-            <!-- ========================================== -->
             <!-- CARD 2: RESUMEN DE PRODUCTOS -->
-            <!-- ========================================== -->
             <div routerLink="../mis-productos" 
-                 class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm active:scale-[0.99] md:hover:border-gray-200 transition-all cursor-pointer group">
+                 class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm active:scale-[0.99] md:hover:border-gray-200 transition-all cursor-pointer group">
                 
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
                         <app-icon name="shop-bag" classes="size-4 fill-current text-gray-400" />
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">Mis Productos</h2>
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Mis Productos</h2>
                     </div>
                     <span class="text-xs font-semibold text-brand-accent group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
                         Gestionar
@@ -63,67 +70,85 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
                     <!-- Destacados -->
                     <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center">
-                        <span class="text-base font-bold text-gray-800">12</span>
+                        <span class="text-base font-bold text-gray-800">
+                            {{ cantidadProductosDestacados() }}
+                        </span>
                         <span class="text-[10px] text-gray-500 font-medium tracking-wide">Destacados</span>
                     </div>
                     <!-- Con oferta -->
                     <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center">
-                        <span class="text-base font-bold text-emerald-600">4</span>
+                        <span class="text-base font-bold text-emerald-600">
+                            {{ cantidadProductosConOferta() }}
+                        </span>
                         <span class="text-[10px] text-gray-500 font-medium tracking-wide">Con oferta</span>
                     </div>
                     <!-- Bajo stock -->
                     <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center">
-                        <span class="text-base font-bold text-amber-500">2</span>
+                        <span class="text-base font-bold text-amber-500">
+                            {{ cantidadProductosBajoStock() }}
+                        </span>
                         <span class="text-[10px] text-gray-500 font-medium tracking-wide">Bajo stock</span>
                     </div>
                     <!-- Pausados -->
                     <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center">
-                        <span class="text-base font-bold text-gray-400">1</span>
+                        <span class="text-base font-bold text-gray-400">
+                            {{ cantidadProductosPausados() }}
+                        </span>
                         <span class="text-[10px] text-gray-500 font-medium tracking-wide">Pausados</span>
                     </div>
                 </div>
             </div>
 
-            <!-- ========================================== -->
             <!-- CARD 3: ESTADÍSTICAS DEL MES -->
-            <!-- ========================================== -->
-            <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+            <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm">
                 
                 <div class="flex items-center gap-2 mb-3">
                     <app-icon name="chart" classes="size-4 fill-current text-gray-400" />
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400">Resumen del Mes</h2>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Resumen del Mes</h2>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <!-- Pedidos entregados -->
-                    <div class="bg-gray-50/80 rounded-xl p-3 border border-gray-100/60 flex flex-col">
+                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col">
                         <span class="text-[11px] text-gray-500 font-medium">Entregados este mes</span>
                         <span class="text-lg font-bold text-gray-800 mt-0.5">38 <span class="text-xs font-normal text-emerald-600">+12%</span></span>
                     </div>
+                    
                     <!-- Producto más vendido -->
-                    <div class="bg-gray-50/80 rounded-xl p-3 border border-gray-100/60 flex flex-col">
+                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col justify-between">
                         <span class="text-[11px] text-gray-500 font-medium">Más vendido</span>
                         <span class="text-sm font-bold text-gray-800 mt-1 truncate" title="Almendras importadas grandes">Almendras importadas grandes</span>
                     </div>
+                    
                     <!-- Beneficios del mes -->
-                    <div class="bg-gray-50/80 rounded-xl p-3 border border-gray-100/60 flex flex-col">
+                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col justify-between">
+                        
                         <span class="text-[11px] text-gray-500 font-medium">Beneficios del mes</span>
-                        <span class="text-lg font-bold text-emerald-600 mt-0.5">$485.900</span>
+                        
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-lg font-bold text-emerald-600 transition-all duration-300">
+                                @if (mostrarBeneficios()) {
+                                    $ 485.900
+                                } @else {
+                                    $ ****
+                                }
+                            </span>
+                            
+                            <button (click)="toggleBeneficios()" 
+                                    class="text-emerald-600/50 md:hover:text-emerald-600 active:scale-95 transition-all p-1 rounded-md"
+                                    [title]="mostrarBeneficios() ? 'Ocultar saldo' : 'Mostrar saldo'">
+                                <app-icon [name]="mostrarBeneficios() ? 'eye' : 'eye-off'" classes="size-4 fill-current" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="py-1">
-                <div class="h-px bg-gray-100 w-full"></div>
-            </div>
-
-            <!-- ========================================== -->
             <!-- BOTONES INFERIORES (Catálogo Público y Copiar) -->
-            <!-- ========================================== -->
             <div class="flex items-stretch gap-2 w-full pb-2">
     
                 <button (click)="verCatalogoPublico()"
-                        class="flex-1 flex items-center justify-between bg-white border border-gray-200 p-3.5 rounded-2xl shadow-sm active:scale-[0.98] md:hover:border-gray-300 transition-all group">
+                        class="flex-1 flex items-center justify-between bg-white border border-gray-200 p-2 rounded-2xl shadow-sm active:scale-[0.98] md:hover:border-gray-300 transition-all group">
                     <div class="flex items-center gap-3">
                         <div class="shrink-0 p-2 bg-brand-accent/10 rounded-xl text-brand-accent">
                             <app-icon name="web" classes="size-5 fill-current" />

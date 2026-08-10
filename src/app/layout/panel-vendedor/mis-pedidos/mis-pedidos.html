@@ -1,8 +1,104 @@
-<div class="flex flex-col h-full w-full">
-    <main class="flex-1 bg-gray-50 px-3 pt-3 pb-30 flex flex-col">
+<div class="flex flex-col h-full w-full bg-gray-50 relative">
+    
+    <!-- ========================================== -->
+    <!-- CABECERA FIJA (Sticky) -->
+    <!-- ========================================== -->
+    <!-- Al quitar flex-1 y poner z-10, aseguramos que siempre se quede arriba -->
+    <header class="px-3 pt-3 pb-3 shrink-0 bg-gray-50 z-10">
+        <div class="flex items-center justify-between max-w-4xl mx-auto w-full">
+            
+            <!-- IZQUIERDA: Dropdown Selector -->
+            <div class="relative">
+                <button (click)="isDropdownOpen.set(!isDropdownOpen())" 
+                        class="flex items-center gap-2 bg-white border border-gray-100 px-2.5 py-1.5 rounded-xl shadow-sm active:scale-95 transition-all">
+                    
+                    <!-- Puntito de color y Texto del filtro actual -->
+                    <span class="flex items-center gap-2 text-sm font-bold text-gray-800">
+                        <div class="size-2 rounded-full" [ngClass]="filtroActual().color"></div>
+                        {{ filtroActual().etiqueta }}
+                    </span>
+                    
+                    <!-- Icono flecha -->
+                    <app-icon name="chevron-down" classes="size-4 fill-current text-gray-400 transition-transform" [class.rotate-180]="isDropdownOpen()" />
+                </button>
+                
+                <!-- Menú desplegable -->
+                @if (isDropdownOpen()) {
+                    <!-- Backdrop invisible para cerrar al hacer clic afuera -->
+                    <div class="fixed inset-0 z-40" (click)="isDropdownOpen.set(false)"></div>
+                    
+                    <div class="absolute top-full left-0 mt-1.5 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div class="flex flex-col py-1">
+                            @for (opcion of opcionesFiltro; track opcion.valor) {
+                                <button (click)="seleccionarFiltro(opcion.valor)"
+                                        class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold md:hover:bg-gray-50 transition-colors text-left"
+                                        [class.bg-gray-50]="filtroActivo() === opcion.valor">
+                                    <div class="size-2 rounded-full" [ngClass]="opcion.color"></div>
+                                    <span class="text-gray-700 flex-1">{{ opcion.etiqueta }}</span>
+                                    
+                                    @if (filtroActivo() === opcion.valor) {
+                                        <app-icon name="check" classes="size-4 fill-current text-brand-accent" />
+                                    }
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- DERECHA: Botón Finalizados -->
+            <button (click)="verFinalizados()" 
+                    class="flex items-center gap-1.5 text-gray-500 bg-gray-200/50 px-2.5 py-1.5 rounded-xl text-sm font-semibold active:scale-95 md:hover:bg-gray-200 transition-all">
+                <app-icon name="history" classes="size-4 fill-current" />
+                Finalizados
+            </button>
+
+        </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- ÁREA SCROLLEABLE: LISTA DE PEDIDOS -->
+    <!-- ========================================== -->
+    <!-- flex-1 toma el resto del alto. overflow-y-auto habilita el scroll solo aquí -->
+    <main class="flex-1 overflow-y-auto px-3 pt-1">
         
-        <p>Pedidos acá!</p>
+        <div class="flex flex-col gap-3 max-w-4xl mx-auto w-full pb-20">
+            
+            @for (pedido of pedidosFiltrados(); track pedido.id) {
+                
+                <app-pedido-card 
+                    [pedido]="pedido" 
+                    (verDetalle)="abrirModalDetalle($event)" 
+                />
 
+            } @empty {
+                
+                <div class="w-full h-40 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center text-gray-400 gap-2 mt-2">
+                    <app-icon name="receipt" classes="size-8 fill-current opacity-30" />
+                    <span class="text-sm font-medium">
+                        No hay pedidos {{ filtroActual().etiqueta.toLowerCase() }}
+                    </span>
+                </div>
+                
+            }
 
+        </div>
     </main>
+
+    <!-- ========================================== -->
+    <!-- BOTÓN FLOTANTE (FAB) -->
+    <!-- ========================================== -->
+    <div class="fixed bottom-20 right-6 z-50 lg:right-[calc(50vw-420px)]">
+        <button (click)="onAddPedido()"
+                class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 md:hover:scale-105 transition-all duration-200 group"
+                aria-label="Registrar nuevo pedido">
+            
+            <app-icon name="add-producto" classes="size-6 fill-current" />
+        </button>
+    </div>
+
+    @if (pedidoPreviewService.isOpen()) {
+        <app-pedido-preview/>
+    }
+
 </div>

@@ -18,6 +18,8 @@ import { SuscripcionesService } from "../services-backend/suscripciones.ServiceB
 import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Vendedor } from "../models/vendedor.model";
+import { PedidoDTO } from "../models/pedido.model";
+import { PedidosServiceBackend } from "../services-backend/pedidos.ServiceBackend";
 
 declare var gtag: Function;
 
@@ -32,6 +34,7 @@ export class AdminStoreService {
   private cuponService = inject(CuponServiceBackend);
   private mediosPagoService = inject(MediosPagoServiceBackend);
   private tagsService = inject(TagService);
+  private pedidosService = inject(PedidosServiceBackend);
 
   // PUBLIC & SELLER
   catalogo = signal<Catalogo | null>(null);
@@ -43,6 +46,7 @@ export class AdminStoreService {
   cupones = signal<Cupon[]>([]);
   mediosPago = signal<MedioPago[]>([]);
   tags = signal<Tag[]>([]);
+  pedidosActivos = signal<PedidoDTO[]>([]);
 
   // BACKOFFICE
   vendedoresBackoffice = signal<VendedorBackoffice[]>([]);
@@ -109,14 +113,16 @@ export class AdminStoreService {
       cupones: this.cuponService.getCuponesByCatalogo(catalogoId),
       mediosPago: this.mediosPagoService.getMediosDePago(),
       tags: this.tagsService.getTagsByCatalogo(catalogoId),
+      pedidosActivos: this.pedidosService.obtenerPedidosActivos(),
     }).subscribe({
-      next: ({ catalogo, productos, categorias, cupones, mediosPago, tags }) => {
+      next: ({ catalogo, productos, categorias, cupones, mediosPago, tags, pedidosActivos }) => {
         this.catalogo.set(catalogo);
         this.productos.set(productos);
         this.categorias.set(categorias);
         this.cupones.set(cupones);
         this.mediosPago.set(mediosPago);
         this.tags.set(tags);
+        this.pedidosActivos.set(pedidosActivos);
 
         this.isLoading.set(false);
       },
