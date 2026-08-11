@@ -4,7 +4,7 @@
     <!-- CABECERA FIJA (Sticky) -->
     <!-- ========================================== -->
     <!-- Al quitar flex-1 y poner z-10, aseguramos que siempre se quede arriba -->
-    <header class="px-3 pt-3 pb-3 shrink-0 bg-gray-50 z-10">
+    <header class="p-3 pb-2 shrink-0 bg-gray-50 z-10">
         <div class="flex items-center justify-between max-w-4xl mx-auto w-full">
             
             <!-- IZQUIERDA: Dropdown Selector -->
@@ -59,17 +59,13 @@
     <!-- ========================================== -->
     <!-- ÁREA SCROLLEABLE: LISTA DE PEDIDOS -->
     <!-- ========================================== -->
-    <!-- flex-1 toma el resto del alto. overflow-y-auto habilita el scroll solo aquí -->
     <main class="flex-1 overflow-y-auto px-3 pt-1">
         
-        <div class="flex flex-col gap-3 max-w-4xl mx-auto w-full pb-20">
+        <div class="flex flex-col gap-3 max-w-4xl mx-auto w-full pb-20" >
             
             @for (pedido of pedidosFiltrados(); track pedido.id) {
                 
-                <app-pedido-card 
-                    [pedido]="pedido" 
-                    (verDetalle)="abrirModalDetalle($event)" 
-                />
+                <app-pedido-card [pedido]="pedido" />
 
             } @empty {
                 

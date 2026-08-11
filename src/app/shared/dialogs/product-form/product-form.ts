@@ -175,7 +175,7 @@ export class ProductForm {
     const MAX_SIZE_BYTES = this.MAX_SIZE_MB * 1024 * 1024;
 
     if (file.size > MAX_SIZE_BYTES) {
-      this.toastService.show(`La imagen es demasiado grande. Máximo ${this.MAX_SIZE_MB}MB.`, 'error');
+      this.toastService.show(`La imagen es demasiado grande. Máximo ${this.MAX_SIZE_MB}MB`, 'error');
       event.target.value = ''; 
       return;
     }
@@ -199,7 +199,7 @@ export class ProductForm {
   async eliminarPresentacion(index: number) {
     const sinCategorias = !this.producto.categorias_ids || this.producto.categorias_ids.length === 0;
     if (sinCategorias) {
-      this.toastService.show(`Primero debes asignarle una categoría a tu producto`, 'error');
+      this.toastService.show('Primero debes asignarle una categoría a tu producto', 'error');
     }
     else {
       const presentaciones = this.producto.presentaciones;
@@ -224,12 +224,12 @@ export class ProductForm {
 
   guardar() {
     if (!this.producto.nombre || this.producto.nombre.trim().length === 0) {
-      this.toastService.show('El producto debe tener un nombre.', 'error');
+      this.toastService.show('El producto debe tener un nombre', 'error');
       return;
     }
 
     if (!this.producto.categorias_ids || this.producto.categorias_ids.length === 0) {
-      this.toastService.show('Debes seleccionar al menos una categoría.', 'error');
+      this.toastService.show('Debes seleccionar al menos una categoría', 'error');
       return;
     }
 
@@ -238,24 +238,24 @@ export class ProductForm {
       const numeroV = i + 1;
 
       if (!pres.unidad_venta || pres.unidad_venta.trim() === '') {
-        this.toastService.show(`Variante ${numeroV}: Falta indicar la unidad de venta.`, 'error');
+        this.toastService.show(`Variante ${numeroV}: Falta indicar la unidad de venta`, 'error');
         return;
       }
 
       if (pres.precio === null || pres.precio <= 0) {
-        this.toastService.show(`Variante ${numeroV}: El precio de venta debe ser mayor a 0.`, 'error');
+        this.toastService.show(`Variante ${numeroV}: El precio de venta debe ser mayor a 0`, 'error');
         return;
       }
 
       if (pres.precio_descuento !== null && pres.precio !== null && Number(pres.precio_descuento) >= Number(pres.precio)) {
-        this.toastService.show(`Variante ${numeroV}: El precio de oferta no puede ser mayor o igual al precio normal.`, 'error');
+        this.toastService.show(`Variante ${numeroV}: El precio de oferta no puede ser mayor o igual al precio normal`, 'error');
         return;
       }
 
       // Validación estricta de Stock (no puede ser 0 al crear/editar, null es válido porque es Ilimitado)
       if (pres.stock !== null && (pres.stock === 0 || pres.stock < 0)) {
-         this.toastService.show(`Variante ${numeroV}: El stock debe mayor a 0.`, 'error');
-         return;
+        this.toastService.show(`Variante ${numeroV}: El stock debe mayor a 0`, 'error');
+        return;
       }
     }
 

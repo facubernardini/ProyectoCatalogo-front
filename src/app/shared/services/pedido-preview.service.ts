@@ -5,15 +5,23 @@ import { PedidoDTO } from 'src/app/core/models/pedido.model';
 export class PedidoPreviewService {
   isOpen = signal<boolean>(false);
   
-  selectedPedido = signal<PedidoDTO | null>(null);
+  pedidoSeleccionado = signal<PedidoDTO | null>(null);
 
-  open(pedido: PedidoDTO) {
-    this.selectedPedido.set(pedido);
+  isEditing = signal<boolean>(false);
+
+  open(pedido: PedidoDTO, editMode: boolean = false) {
+    this.pedidoSeleccionado.set(pedido);
+    this.isEditing.set(editMode);
     this.isOpen.set(true);
+
+    document.body.style.overflow = 'hidden';
   }
 
   close() {
     this.isOpen.set(false);
-    setTimeout(() => this.selectedPedido.set(null), 300); 
+    this.isEditing.set(false);
+
+    document.body.style.overflow = 'auto';
+    setTimeout(() => this.pedidoSeleccionado.set(null), 300); 
   }
 }

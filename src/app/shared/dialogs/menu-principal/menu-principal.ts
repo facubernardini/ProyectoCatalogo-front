@@ -28,7 +28,7 @@ export class MenuPrincipal {
     const confirm = await this.confirmService.ask({
       title: '¿Cerrar sesión?',
       message: ``,
-      icon: 'info',
+      icon: 'logout',
       type: 'info'
     });
 

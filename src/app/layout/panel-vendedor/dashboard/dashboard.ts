@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
+import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,6 +21,10 @@ export class Dashboard {
   public adminStore = inject(AdminStoreService);
 
   mostrarBeneficios = signal<boolean>(false);
+
+  estadoPedido = EstadoPedido;
+
+  readonly umbralStock = APP_CONFIG.AVISO_BAJO_STOCK;
 
   // PEDIDOS
   cantidadPedidosPendientes = computed(() => 
@@ -64,13 +69,11 @@ export class Dashboard {
     const productos = this.adminStore.productos();
     if (!Array.isArray(productos)) return 0;
     
-    return productos.filter(producto => {
-      if (!producto.presentaciones || producto.presentaciones.length === 0) return false;
-      
-      return producto.presentaciones.some(pres => 
-        pres.stock != null && pres.stock < 3
-      );
-    }).length;
+    return productos.filter(prod => 
+      prod.presentaciones?.some(pres => 
+        pres.activo && pres.stock !== null && pres.stock <= this.umbralStock
+      )
+    ).length;
   });
   
   async onLogout() {

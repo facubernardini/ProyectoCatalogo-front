@@ -4,25 +4,20 @@
         <div class="max-w-4xl mx-auto w-full flex flex-col gap-3">
             
             <!-- CARD 1: PREVIEW DE PEDIDOS -->
-            <div routerLink="../mis-pedidos" 
-                class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm active:scale-[0.99] md:hover:border-gray-200 transition-all cursor-pointer group">
-                
+            <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
                         <app-icon name="receipt" classes="size-4 fill-current text-gray-400" />
-                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Estado de Pedidos</h2>
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Estado de Pedidos</h2>
                     </div>
-                    <span class="text-xs font-semibold text-brand-accent group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                        Ver todos
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </span>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 text-center">
-                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60">
-                        <span class="block text-lg font-bold text-gray-800 tracking-tight">
+                    
+                    <div routerLink="../mis-pedidos" 
+                        [queryParams]="{ estado: estadoPedido.PENDIENTE }"
+                        class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 cursor-pointer hover:bg-gray-100 transition-colors active:scale-95">
+                        <span class="block text-lg font-bold text-blue-500 tracking-tight">
                             {{ cantidadPedidosPendientes() }}
                         </span>
                         <span class="text-[11px] text-gray-500 font-medium">
@@ -30,8 +25,10 @@
                         </span>
                     </div>
 
-                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60">
-                        <span class="block text-lg font-bold text-brand-accent tracking-tight">
+                    <div routerLink="../mis-pedidos" 
+                        [queryParams]="{ estado: estadoPedido.EN_PREPARACION }"
+                        class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 cursor-pointer hover:bg-gray-100 transition-colors active:scale-95">
+                        <span class="block text-lg font-bold text-amber-500 tracking-tight">
                             {{ cantidadPedidosEnPreparacion() }}
                         </span>
                         <span class="text-[11px] text-gray-500 font-medium">
@@ -39,8 +36,10 @@
                         </span>
                     </div>
                     
-                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60">
-                        <span class="block text-lg font-bold text-emerald-600 tracking-tight">
+                    <div routerLink="../mis-pedidos" 
+                        [queryParams]="{ estado: estadoPedido.LISTO_PARA_ENTREGAR }"
+                        class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 cursor-pointer hover:bg-gray-100 transition-colors active:scale-95">
+                        <span class="block text-lg font-bold text-emerald-500 tracking-tight">
                             {{ cantidadPedidosListos() }}
                         </span>
                         <span class="text-[11px] text-gray-500 font-medium">
@@ -51,47 +50,48 @@
             </div>
 
             <!-- CARD 2: RESUMEN DE PRODUCTOS -->
-            <div routerLink="../mis-productos" 
-                 class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm active:scale-[0.99] md:hover:border-gray-200 transition-all cursor-pointer group">
+            <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group">
                 
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
-                        <app-icon name="shop-bag" classes="size-4 fill-current text-gray-400" />
-                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Mis Productos</h2>
+                        <app-icon name="box" classes="size-4 fill-current text-gray-400" />
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Mis Productos</h2>
                     </div>
-                    <span class="text-xs font-semibold text-brand-accent group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                        Gestionar
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </span>
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                    
                     <!-- Destacados -->
-                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center">
-                        <span class="text-base font-bold text-gray-800">
+                    <div routerLink="../mis-productos" [queryParams]="{ filtro: 'destacados' }"
+                         class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center cursor-pointer hover:bg-gray-100 transition-colors active:scale-95">
+                        <span class="text-base font-bold text-gray-800 tracking-tight">
                             {{ cantidadProductosDestacados() }}
                         </span>
                         <span class="text-[10px] text-gray-500 font-medium tracking-wide">Destacados</span>
                     </div>
+                    
                     <!-- Con oferta -->
-                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center">
-                        <span class="text-base font-bold text-emerald-600">
+                    <div routerLink="../mis-productos" [queryParams]="{ filtro: 'ofertas' }"
+                         class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center cursor-pointer hover:bg-gray-100 transition-colors active:scale-95">
+                        <span class="text-base font-bold text-emerald-600 tracking-tight">
                             {{ cantidadProductosConOferta() }}
                         </span>
                         <span class="text-[10px] text-gray-500 font-medium tracking-wide">Con oferta</span>
                     </div>
+                    
                     <!-- Bajo stock -->
-                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center">
-                        <span class="text-base font-bold text-amber-500">
+                    <div routerLink="../mis-productos" [queryParams]="{ filtro: 'bajo_stock' }"
+                         class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center cursor-pointer hover:bg-gray-100 transition-colors active:scale-95">
+                        <span class="text-base font-bold text-amber-500 tracking-tight">
                             {{ cantidadProductosBajoStock() }}
                         </span>
                         <span class="text-[10px] text-gray-500 font-medium tracking-wide">Bajo stock</span>
                     </div>
+                    
                     <!-- Pausados -->
-                    <div class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center">
-                        <span class="text-base font-bold text-gray-400">
+                    <div routerLink="../mis-productos" [queryParams]="{ filtro: 'pausados' }"
+                         class="bg-gray-50/80 rounded-xl p-2 border border-gray-100/60 flex flex-col items-center cursor-pointer hover:bg-gray-100 transition-colors active:scale-95">
+                        <span class="text-base font-bold text-gray-400 tracking-tight">
                             {{ cantidadProductosPausados() }}
                         </span>
                         <span class="text-[10px] text-gray-500 font-medium tracking-wide">Pausados</span>
@@ -104,7 +104,7 @@
                 
                 <div class="flex items-center gap-2 mb-3">
                     <app-icon name="chart" classes="size-4 fill-current text-gray-400" />
-                    <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Resumen del Mes</h2>
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Resumen del Mes</h2>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">

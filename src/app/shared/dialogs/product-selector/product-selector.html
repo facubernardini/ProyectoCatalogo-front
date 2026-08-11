@@ -67,7 +67,7 @@
                              [class.border-brand-accent]="getCantidad(pres.id) > 0">
                             
                             <div class="flex flex-col items-start text-left flex-1 pr-2">
-                                <span class="text-sm font-medium" 
+                                <span class="text-sm font-medium tracking-tight" 
                                       [class.text-brand-text]="getCantidad(pres.id) > 0"
                                       [class.text-gray-600]="getCantidad(pres.id) === 0">
                                     {{ pres.unidad_venta }}
@@ -77,18 +77,18 @@
                                 
                                 <div class="flex items-baseline flex-wrap gap-1.5">
                                     @if (pres.precio_descuento) {
-                                        <span class="font-bold text-sm text-brand-text leading-none">
-                                            ${{ pres.precio_descuento }}
+                                        <span class="font-bold text-sm text-brand-text leading-none tracking-tighter">
+                                            ${{ pres.precio_descuento | number:'1.0-0' }}
                                         </span>
-                                        <span class="text-xs text-gray-400 line-through">
-                                            ${{ pres.precio }}
+                                        <span class="text-xs text-gray-400 line-through tracking-tighter">
+                                            ${{ pres.precio | number:'1.0-0' }}
                                         </span>
                                         <span class="text-[10px] bg-green-100 text-green-600 px-1.5 py-0.5 rounded-md font-bold">
                                             -{{ getPorcentaje(pres.precio, pres.precio_descuento) }}%
                                         </span>
                                     } @else {
-                                        <span class="font-bold text-sm text-brand-text leading-none">
-                                            ${{ pres.precio }}
+                                        <span class="font-bold text-sm text-brand-text leading-none tracking-tighter">
+                                            ${{ pres.precio | number:'1.0-0' }}
                                         </span>
                                     }
                                 </div>
@@ -122,7 +122,7 @@
 
             <div class="flex items-center gap-3 pt-2 border-t border-gray-100 shrink-0">
                 <button (click)="productSelectorService.close()" 
-                        class="px-5 py-2 text-sm font-semibold text-gray-500 bg-gray-100 rounded-xl active:scale-95 transition-all md:hover:bg-gray-200">
+                        class="px-5 py-2 font-semibold text-gray-500 bg-gray-100 rounded-xl active:scale-95 transition-all md:hover:bg-gray-200">
                     Cerrar
                 </button>
 

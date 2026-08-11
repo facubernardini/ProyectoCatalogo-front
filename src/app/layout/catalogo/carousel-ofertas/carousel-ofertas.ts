@@ -5,10 +5,11 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
 import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-carousel-ofertas',
-  imports: [Icon, SafeHtmlPipe],
+  imports: [CommonModule, Icon, SafeHtmlPipe],
   templateUrl: './carousel-ofertas.html',
   styleUrl: './carousel-ofertas.css',
 })

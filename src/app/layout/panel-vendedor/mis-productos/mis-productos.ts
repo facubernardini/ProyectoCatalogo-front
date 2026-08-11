@@ -12,6 +12,8 @@ import { PdfExportService } from 'src/app/core/services/pdf-export.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { CategoryFormService } from 'src/app/shared/services/category-form.service';
 import { ContextMenuService } from 'src/app/shared/services/context-menu.service';
+import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-mis-productos',
@@ -26,6 +28,7 @@ export class MisProductos {
   private pdfExportService = inject(PdfExportService);
   private categoryFormService = inject(CategoryFormService);
   private contextMenu = inject(ContextMenuService);
+  private route = inject(ActivatedRoute);
 
   private scrollListener = this.onScroll.bind(this);
   
@@ -34,7 +37,7 @@ export class MisProductos {
 
   public imageLoaded = signal(false);
 
-  public readonly AVISO_BAJO_STOCK = 3;
+  readonly umbralStock = APP_CONFIG.AVISO_BAJO_STOCK;
 
   productos = this.adminStore.productos; 
   categorias = this.adminStore.categorias;
@@ -59,6 +62,7 @@ export class MisProductos {
   soloPausados = signal<boolean>(false);
   soloSinFoto = signal<boolean>(false);
   soloConOfertas = signal<boolean>(false);
+  soloBajoStock = signal<boolean>(false);
 
   paginaActual = signal(1);
   itemsPorPagina = 20;
@@ -70,6 +74,7 @@ export class MisProductos {
     const pausados = this.soloPausados();
     const sinFoto = this.soloSinFoto();
     const conOfertas = this.soloConOfertas();
+    const bajoStock = this.soloBajoStock();
     
     let lista = this.adminStore.productos();
 
@@ -101,6 +106,14 @@ export class MisProductos {
       lista = lista.filter(prod => prod.presentaciones?.some(pres => pres.precio_descuento && pres.precio_descuento > 0));
     }
 
+    if (bajoStock) {
+      lista = lista.filter(prod => 
+        prod.presentaciones?.some(pres => 
+          pres.activo && pres.stock !== null && pres.stock <= this.umbralStock
+        )
+      );
+    }
+
     return lista;
   });
 
@@ -129,6 +142,29 @@ export class MisProductos {
   });
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      const filtroUrl = params['filtro'];
+      
+      if (filtroUrl) {
+        this.limpiarFiltros();
+        
+        switch (filtroUrl) {
+          case 'destacados':
+            this.soloDestacados.set(true);
+            break;
+          case 'ofertas':
+            this.soloConOfertas.set(true);
+            break;
+          case 'bajo_stock':
+            this.soloBajoStock.set(true);
+            break;
+          case 'pausados':
+            this.soloPausados.set(true);
+            break;
+        }
+      }
+    });
+
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(400),
       distinctUntilChanged()
@@ -204,6 +240,7 @@ export class MisProductos {
     this.soloPausados.set(false);
     this.soloSinFoto.set(false);
     this.soloConOfertas.set(false);
+    this.soloBajoStock.set(false);
     
     this.paginaActual.set(1);
   }
@@ -215,6 +252,7 @@ export class MisProductos {
     this.soloDestacados.set(false);
     this.soloSinFoto.set(false);
     this.soloConOfertas.set(false);
+    this.soloBajoStock.set(false);
     
     this.paginaActual.set(1);
   }
@@ -226,6 +264,7 @@ export class MisProductos {
     this.soloDestacados.set(false);
     this.soloPausados.set(false);
     this.soloConOfertas.set(false);
+    this.soloBajoStock.set(false);
     
     this.paginaActual.set(1);
   }
@@ -237,6 +276,19 @@ export class MisProductos {
     this.soloDestacados.set(false);
     this.soloPausados.set(false);
     this.soloSinFoto.set(false);
+    this.soloBajoStock.set(false);
+    
+    this.paginaActual.set(1);
+  }
+
+  toggleBajoStock() {
+    const activar = !this.soloBajoStock();
+    
+    this.soloBajoStock.set(activar);
+    this.soloDestacados.set(false);
+    this.soloPausados.set(false);
+    this.soloSinFoto.set(false);
+    this.soloConOfertas.set(false);
     
     this.paginaActual.set(1);
   }
@@ -267,6 +319,8 @@ export class MisProductos {
     this.soloPausados.set(false);
     this.soloSinFoto.set(false);
     this.soloConOfertas.set(false);
+    this.soloBajoStock.set(false);
+
     this.isFiltrosOpen.set(false);
     this.paginaActual.set(1);
   }
@@ -365,7 +419,7 @@ export class MisProductos {
 
     try {
       await this.pdfExportService.exportarCatalogo(categorias, todosLosProductos, catalogo);
-      proceso.success('PDF generado con éxito');
+      proceso.success('PDF generado con éxito.');
     } catch (error) {
       console.error(error);
       proceso.error('Hubo un error al generar el PDF.');

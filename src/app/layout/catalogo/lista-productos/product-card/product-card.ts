@@ -4,10 +4,11 @@ import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { SafeHtmlPipe } from "../../../../core/pipes/safe-html.pipe";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-product-card',
-  imports: [Icon, SafeHtmlPipe],
+  imports: [CommonModule, Icon, SafeHtmlPipe],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
 })

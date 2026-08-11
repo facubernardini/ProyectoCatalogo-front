@@ -42,6 +42,7 @@ export class Carrito {
 
   nombreCliente = signal<string>('');
   direccionEnvio = signal<string>('');
+  telefonoCliente = signal<string>('');
 
   itemParaEliminar = signal<number | null>(null);
   private timeoutEliminar: any;
@@ -130,11 +131,26 @@ export class Carrito {
     }, 100);
   }
 
+  onTelefonoInput(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    
+    let valorLimpio = inputElement.value.replace(/[^0-9]/g, '');
+    
+    if (valorLimpio.length > 10) {
+      valorLimpio = valorLimpio.substring(0, 10);
+    }
+
+    inputElement.value = valorLimpio;
+    
+    this.telefonoCliente.set(valorLimpio);
+  }
+
   limpiarFormulario() {
     this.cartService.setDeliveryMethod(null as any);
     this.cartService.selectPaymentMethod(null as any);
     this.nombreCliente.set('');
     this.direccionEnvio.set('');
+    this.telefonoCliente.set('');
     
     if (this.cartService.appliedCupon()) {
       this.cartService.removerCupon();
@@ -145,7 +161,7 @@ export class Carrito {
       this.cartService.setDeliveryMethod('Retiro');
     }
 
-    this.toastService.show('Información borrada, completá los datos nuevamente.', 'success');
+    this.toastService.show('Se han limpiado tus datos', 'info');
   }
 
   finalizarPedido() {
@@ -200,6 +216,7 @@ export class Carrito {
       catalogo_id: Number(catalogoId),
       comprador_nombre: this.nombreCliente().trim(),
       comprador_direccion: envio ? this.direccionEnvio().trim() : null,
+      comprador_telefono: this.telefonoCliente() ? this.telefonoCliente() : null,
       metodo_entrega: deliveryMethod,
       metodo_pago: String(metodoPago),
       cupon_codigo: cupon ? cupon.codigo : null,
@@ -281,7 +298,7 @@ export class Carrito {
       },
       error: (err) => {
         console.error('Error al registrar pedido', err);
-        this.toastService.show('Ups! Algo salió mal. Vuelve a intentarlo.', 'error');
+        this.toastService.show('Ups! Algo salió mal, vuelve a intentarlo', 'error');
       }
     });
   }

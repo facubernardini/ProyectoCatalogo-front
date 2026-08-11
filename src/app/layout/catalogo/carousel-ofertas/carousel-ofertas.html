@@ -79,15 +79,15 @@
                             <div class="mt-auto pt-1.5 flex items-center justify-between gap-1 border-t border-gray-100">
                                 <div class="flex flex-col">
                                     @if (oferta) {
-                                        <span class="text-[10px] text-gray-400 line-through leading-none mb-0.5">
-                                            ${{ oferta.precio }}
+                                        <span class="text-[10px] text-gray-400 line-through leading-none mb-0.5 tracking-tighter">
+                                            ${{ oferta.precio | number:'1.0-0' }}
                                         </span>
-                                        <span class="text-brand-text font-black text-base leading-tight">
-                                            ${{ oferta.precio_descuento }}
+                                        <span class="text-brand-text font-bold text-base leading-tight tracking-tighter">
+                                            ${{ oferta.precio_descuento | number:'1.0-0' }}
                                         </span>
                                     } @else {
-                                        <span class="text-brand-text font-black text-base leading-tight">
-                                            ${{ producto.presentaciones[0]?.precio }}
+                                        <span class="text-brand-text font-bold text-base leading-tight tracking-tighter">
+                                            ${{ producto.presentaciones[0]?.precio | number:'1.0-0' }}
                                         </span>
                                     }
                                 </div>

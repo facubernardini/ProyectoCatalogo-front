@@ -6,7 +6,7 @@ export enum MedioPago {
 }
 
 export const MEDIO_PAGO_ICONS: Record<MedioPago, string> = {
-    [MedioPago.EFECTIVO]: 'payment-efectivo',
+    [MedioPago.EFECTIVO]: 'payment',
     [MedioPago.TRANSFERENCIA]: 'payment-transferencia',
     [MedioPago.CUENTA_DNI]: 'payment-cuenta-dni',
     [MedioPago.MERCADO_PAGO]: 'payment-mercado-pago',

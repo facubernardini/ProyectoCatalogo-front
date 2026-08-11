@@ -7,10 +7,11 @@ import { Icon } from "@shared/components/icon";
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ImageViewerService } from '../../services/image-viewer.service';
 import { ToastService } from 'src/app/core/services/toast.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-product-selector',
-  imports: [SwipeDownDirective, SafeHtmlPipe, Icon],
+  imports: [CommonModule, SwipeDownDirective, SafeHtmlPipe, Icon],
   templateUrl: './product-selector.html',
   styleUrl: './product-selector.css',
   animations: [

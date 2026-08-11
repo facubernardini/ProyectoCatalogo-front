@@ -39,6 +39,7 @@ export interface PedidoDTO {
     
     comprador_nombre: string;
     comprador_direccion: string | null;
+    comprador_telefono: string | null;
     metodo_entrega: string;
     metodo_pago: string;
     
@@ -58,7 +59,7 @@ export interface PedidoDTO {
     productos: ProductoPedidoDTO[];
 }
 
-// Registrar pedido
+// --- REGISTRAR PEDIDO ---
 
 // DTO para los productos individuales que se envían en el pedido
 export interface ProductoPedidoRequest {
@@ -72,6 +73,7 @@ export interface CrearPedidoRequest {
     catalogo_id: number;
     comprador_nombre: string;
     comprador_direccion?: string | null;
+    comprador_telefono?: string | null;
     metodo_entrega: string;
     metodo_pago: string;
     cupon_codigo?: string | null;
@@ -87,4 +89,16 @@ export interface CrearPedidoRequest {
 export interface CrearPedidoResponse {
     id: string;
     numero_pedido: number;
+}
+
+// --- CONSULTAR HISTORIAL
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+  };
 }

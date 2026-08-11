@@ -86,14 +86,14 @@
                                                 @let cheapest = getMejorOferta(producto.presentaciones);
 
                                                 @if (producto.presentaciones.length > 1) {
-                                                    <span class="text-[10px] xl:text-xs text-white/80 font-bold uppercase tracking-widest mr-0.5">Desde</span>
+                                                    <span class="text-[10px] xl:text-xs text-white/80 font-semibold uppercase tracking-tight mr-0.5">Desde</span>
                                                 }
 
                                                 @if (cheapest && cheapest.precio_descuento) {
-                                                    <span class="text-[10px] xl:text-xs text-white/60 line-through font-semibold mr-1">${{ cheapest.precio }}</span>
-                                                    <span class="text-white font-semibold text-base xl:text-lg leading-none">${{ cheapest.precio_descuento }}</span>
+                                                    <span class="text-[10px] xl:text-sm text-white/60 line-through font-semibold tracking-tighter">${{ cheapest.precio | number:'1.0-0' }}</span>
+                                                    <span class="text-white font-semibold text-base xl:text-lg leading-none tracking-tighter">${{ cheapest.precio_descuento | number:'1.0-0' }}</span>
                                                 } @else {
-                                                    <span class="text-white font-semibold text-base xl:text-lg leading-none">${{ cheapest?.precio }}</span>
+                                                    <span class="text-white font-semibold text-base xl:text-lg leading-none tracking-tighter">${{ cheapest?.precio | number:'1.0-0' }}</span>
                                                 }
                                             </div>
                                         </div>

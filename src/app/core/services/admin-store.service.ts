@@ -321,6 +321,24 @@ export class AdminStoreService {
     );
   }
 
+  // --- MÉTODOS PARA GESTIÓN DE PEDIDOS ---
+  actualizarUnPedidoEnLista(pedidoActualizado: Partial<PedidoDTO>) {
+    this.pedidosActivos.update(pedidos => 
+      pedidos.map(p => {
+        if (p.id === pedidoActualizado.id) {
+          return { ...p, ...pedidoActualizado } as PedidoDTO;
+        }
+        return p;
+      })
+    );
+  }
+
+  removerPedidoDeLista(idPedido: string) {
+    this.pedidosActivos.update(pedidos => 
+      pedidos.filter(p => p.id !== idPedido)
+    );
+  }
+
   // --- MÉTODOS PARA VENDEDORES (BACKOFFICE) ---
 
   updateVendedorEnLista(vendedorActualizado: Partial<VendedorBackoffice>) {

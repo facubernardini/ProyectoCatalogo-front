@@ -1,16 +1,17 @@
 @if (pedidoPreviewService.isOpen() && pedido) {
     <div class="fixed inset-0 z-100 bg-black/60 animate-backdrop" (click)="cerrar()">
         
-        <!-- Contenedor del Modal -->
+        <!-- Contenedor del Modal: Expande su alto si está buscando -->
         <div appSwipeDown
             (onSwipe)="pedidoPreviewService.close()"
-            class="fixed bottom-0 w-full bg-white rounded-t-[40px] px-5 py-6 shadow-2xl animate-in slide-in-from-bottom duration-300 max-w-lg left-1/2 -translate-x-1/2 flex flex-col max-h-[90vh]" 
+            class="fixed bottom-0 w-full bg-white rounded-t-[40px] px-5 py-6 shadow-2xl animate-in slide-in-from-bottom duration-300 max-w-lg left-1/2 -translate-x-1/2 flex flex-col transition-all" 
+            [class]="isSearchingActive() ? 'h-[92vh]' : 'max-h-[90vh]'"
             (click)="$event.stopPropagation()">
         
-            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-5 shrink-0"></div>
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4 shrink-0"></div>
 
             <!-- HEADER DEL DIALOG -->
-            <div class="flex items-center justify-between mb-4 shrink-0">
+            <div class="flex items-center justify-between mb-0.5 shrink-0">
                 <h2 class="text-lg font-black text-brand-text">
                     Detalle del Pedido
                     <span class="text-xs text-gray-400 font-bold ml-1">#{{ pedido.numero_pedido }}</span>
@@ -24,11 +25,11 @@
                 </button>
             </div>
 
-            <!-- ÁREA SCROLLEABLE -->
-            <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 flex flex-col gap-3 pb-2">
+            <!-- ÁREA GENERAL -->
+            <div class="flex-1 overflow-hidden flex flex-col gap-2 pb-2 px-0.5 mt-2">
                 
-                <!-- SECCIÓN: Datos del Cliente -->
-                <div class="grid grid-cols-12 gap-3">
+                <!-- SECCIÓN: Datos del Cliente (Se oculta al buscar) -->
+                <div [class.hidden]="isSearchingActive()" class="grid grid-cols-12 gap-3 shrink-0 animate-in fade-in duration-200">
                     <div class="col-span-12">
                         <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Cliente <span class="text-red-400">*</span></label>
                         <input type="text" [(ngModel)]="pedido.comprador_nombre" [disabled]="!isEditing()"
@@ -38,7 +39,6 @@
 
                     <div class="col-span-6">
                         <label class="text-[10px] font-bold text-gray-400 uppercase ml-1 flex items-center gap-1">
-                            <app-icon [name]="getIconoEntrega(pedido.metodo_entrega)" classes="size-3 fill-current" /> 
                             Entrega
                         </label>
                         
@@ -54,7 +54,6 @@
 
                     <div class="col-span-6">
                         <label class="text-[10px] font-bold text-gray-400 uppercase ml-1 flex items-center gap-1">
-                            <app-icon [name]="getIconoPago(pedido.metodo_pago)" classes="size-3 fill-current" /> 
                             Pago
                         </label>
                         
@@ -69,90 +68,197 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN: Buscador de Productos (Solo en Edición) -->
-                <div class="mt-2">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400 ml-1">
-                            Productos ({{ pedido.productos.length }})
-                        </h3>
-                    </div>
+                <!-- SECCIÓN: Buscador de Productos -->
+                
+                <div class="mt-0.5 shrink-0">
+                    <!-- Cabecera del buscador -->
+                    <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400 ml-1 mb-1">
+                        @if (isSearchingActive()) {
+                            Buscando Productos
+                        } @else {
+                            {{ cantidadArticulos() }} {{ cantidadArticulos() === 1 ? 'producto' : 'productos' }}
+                        }
+                    </h3>   
                     
                     @if (isEditing()) {
-                        <div class="relative mb-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                    
+                        <!-- Input buscador -->
+                        <div class="relative mb-1">
                             <app-icon name="search" classes="absolute left-3 top-1/2 -translate-y-1/2 size-4 fill-current text-gray-400" />
-                            <input type="text" [(ngModel)]="searchQuery" (input)="onBuscarProducto()"
-                                class="w-full bg-white border border-gray-200 rounded-xl py-2.5 pl-9 pr-3 text-sm font-medium outline-none focus:border-brand-accent transition-all shadow-sm"
-                                placeholder="Buscar producto para agregar...">
-                        </div>
-                    }
-                </div>
-
-                <!-- SECCIÓN: Lista de Productos -->
-                <div class="flex flex-col gap-2 max-h-[35vh] overflow-y-auto custom-scrollbar pr-1">
-                    @for (prod of pedido.productos; track prod.producto_id; let i = $index) {
-                        
-                        <div class="flex items-center gap-3 p-2 bg-white border border-gray-100 rounded-2xl shadow-sm relative transition-all">
-                            
-                            <!-- Imagen -->
-                            <div class="size-12 rounded-xl bg-gray-50 shrink-0 overflow-hidden flex items-center justify-center border border-gray-100">
-                                @if (prod.imagen) {
-                                    <img [src]="prod.imagen" class="w-full h-full object-cover">
-                                } @else {
-                                    <app-icon name="photo" classes="size-5 fill-current text-gray-300" />
-                                }
-                            </div>
-
-                            <!-- Detalles -->
-                            <div class="flex-1 min-w-0 flex flex-col justify-center">
-                                <span class="text-xs font-bold text-gray-800 truncate leading-tight">{{ prod.producto_nombre }}</span>
-                                <span class="text-[10px] font-medium text-gray-400 mt-0.5">{{ prod.presentacion_unidad }}</span>
+                            <input type="text" 
+                                [(ngModel)]="searchQuery" 
+                                (input)="onSearchInput()"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 pl-9 pr-3 text-sm font-medium outline-none focus:bg-white focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
+                                placeholder="Buscar productos para agregar...">
                                 
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-xs font-black text-brand-text">${{ prod.precio_unitario }}</span>
-                                    <span class="text-[10px] text-gray-500 font-bold bg-gray-100 px-1.5 py-0.5 rounded-md inline-block">x {{ prod.cantidad }}</span>
-                                </div>
-                            </div>
-
-                            <!-- Botón Borrar (Solo en edición) -->
-                            @if (isEditing()) {
-                                <button (click)="eliminarProducto(i)" 
-                                        class="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all shrink-0 animate-in fade-in duration-200">
-                                    <app-icon name="trash" classes="size-4 fill-current" />
+                            @if (searchQuery) {
+                                <button (click)="cancelarBusqueda()" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
+                                    <app-icon name="close" classes="size-4 fill-current" />
                                 </button>
                             }
                         </div>
+                    }
+                </div>
+                
 
-                    } @empty {
-                        <div class="py-6 text-center text-sm font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-2xl">
-                            Ningún producto seleccionado
+                <!-- ÁREA DE LISTAS (Resultados o Pedido Actual) -->
+                <div (touchmove)="$event.stopPropagation()"
+                    class="flex-1 overflow-y-auto custom-scrollbar pr-1 flex flex-col gap-2 min-h-0">
+                    
+                    @if (isSearchingActive()) {
+                        
+                        <!-- ESTADO DE BÚSQUEDA -->
+                        @if (isLoadingResults()) {
+                            <!-- Spinner de carga -->
+                            <div class="flex flex-col items-center justify-center h-full gap-3 text-gray-400 animate-in fade-in">
+                                <app-icon name="spinner" classes="size-8 animate-spin text-brand-accent" />
+                                <span class="text-sm font-medium">Buscando...</span>
+                            </div>
+                        } 
+                        @else if (resultadosBusqueda().length > 0) {
+                            <!-- Resultados encontrados -->
+                            <div class="flex flex-col gap-1.5 animate-in slide-in-from-bottom-2">
+                                @for (item of resultadosBusqueda(); track item.presentacionId) {
+                                    <div (click)="agregarProducto(item)"
+                                        class="p-2 bg-white border border-gray-100 hover:border-brand-accent/30 rounded-2xl cursor-pointer flex items-center justify-between transition-all active:scale-[0.98]">
+                                        
+                                        <div class="flex items-center gap-3">
+                                            @if (item.imagen) {
+                                                <img [src]="item.imagen" class="size-10 object-cover rounded-xl bg-gray-50 shrink-0 border border-gray-100">
+                                            } @else {
+                                                <div class="size-10 rounded-xl bg-gray-50 shrink-0 flex items-center justify-center border border-gray-100">
+                                                    <app-icon name="photo" classes="size-5 fill-current text-gray-300" />
+                                                </div>
+                                            }
+
+                                            <div class="flex flex-col">
+                                                <span class="text-sm font-bold text-gray-800 leading-tight">{{ item.nombreProducto }}</span>
+                                                <div class="flex items-center gap-1 mt-1">
+                                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-sm bg-gray-100 text-gray-600 uppercase tracking-wider">
+                                                        {{ item.unidadVenta }}
+                                                    </span>
+                                                    <span class="text-[11px] text-brand-accent font-black ml-1">
+                                                        ${{ item.precioFinal | number:'1.0-0' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="size-8 rounded-full bg-brand-accent/10 flex items-center justify-center shrink-0">
+                                            <app-icon name="add-producto" classes="size-4 text-brand-accent stroke-[3px]" />
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        @else {
+                            <!-- Sin resultados -->
+                            <div class="flex flex-col items-center justify-center h-full gap-2 text-gray-400 animate-in fade-in">
+                                <app-icon name="search-off" classes="size-8 fill-current opacity-50" />
+                                <span class="text-sm font-medium">No se encontró "{{ searchQuery }}"</span>
+                            </div>
+                        }
+                        
+                    } @else {
+                        
+                        <!-- ESTADO NORMAL: Productos del pedido -->
+                        <div class="flex flex-col gap-2 animate-in fade-in duration-200">
+                            @for (prod of pedido.productos; track prod.producto_id; let i = $index) {
+                                <div class="flex items-center gap-2 p-1 bg-gray-100 border border-gray-100 rounded-2xl relative transition-all">
+                                    
+                                    <!-- Imagen -->
+                                    <div class="size-12 rounded-xl bg-gray-50 shrink-0 overflow-hidden flex items-center justify-center border border-gray-100">
+                                        @if (prod.imagen) {
+                                            <img [src]="prod.imagen" class="w-full h-full object-cover">
+                                        } @else {
+                                            <app-icon name="photo" classes="size-5 fill-current text-gray-300" />
+                                        }
+                                    </div>
+
+                                    <!-- Detalles -->
+                                    <div class="flex-1 min-w-0 flex flex-col justify-center">
+                                        <span class="text-xs font-bold text-gray-800 truncate leading-tight">{{ prod.producto_nombre }}</span>
+                                        <span class="text-[10px] font-medium text-gray-400 mt-0.5">{{ prod.presentacion_unidad }}</span>
+                                        
+                                        <div class="flex items-center gap-2 mt-0.5">
+                                            <span class="text-xs font-black text-brand-text">${{ prod.precio_unitario | number:'1.0-0' }}</span>
+                                            
+                                            <!-- Etiqueta de cantidad (Solo visible si NO edita) -->
+                                            @if (!isEditing()) {
+                                                <span class="text-[10px] text-gray-600 font-black bg-gray-200 px-1.5 py-0.5 rounded-md inline-block animate-in fade-in">
+                                                    x {{ prod.cantidad }}
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Controles de Edición -->
+                                    @if (isEditing()) {
+                                        <div class="flex items-center shrink-0 animate-in fade-in duration-200">
+                                            
+                                            <!-- Botones + / - -->
+                                            <div class="flex items-center bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm mr-1">
+                                                
+                                                <button (click)="restarCantidad(i)" 
+                                                        [disabled]="prod.cantidad <= 1"
+                                                        class="size-7 flex items-center justify-center text-gray-500 md:hover:bg-gray-50 active:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                                                    <app-icon name="remove" classes="size-3.5 fill-current" />
+                                                </button>
+                                                
+                                                <span [@popAnimation]="prod.cantidad" class="w-6 text-center text-xs font-bold text-gray-800 select-none">
+                                                    {{ prod.cantidad }}
+                                                </span>
+                                                
+                                                <button (click)="sumarCantidad(i)" 
+                                                        class="size-7 flex items-center justify-center text-gray-500 md:hover:bg-gray-50 active:bg-gray-100 transition-colors border-l border-gray-100">
+                                                    <app-icon name="add-producto" classes="size-3.5 fill-current" />
+                                                </button>
+                                            </div>
+
+                                            <!-- Botón Borrar -->
+                                            <button (click)="eliminarProducto(i)" 
+                                                    class="p-2 text-red-400 md:hover:text-red-500 md:hover:bg-red-50 rounded-xl transition-all shrink-0">
+                                                <app-icon name="trash" classes="size-4 fill-current" />
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            } @empty {
+                                <div class="py-6 text-center text-sm font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-2xl">
+                                    Ningún producto seleccionado
+                                </div>
+                            }
                         </div>
                     }
                 </div>
 
-                <!-- TOTAL FIJO -->
-                <div class="mt-2 flex items-center justify-between px-3 py-2 bg-gray-900 rounded-2xl shadow-sm shrink-0">
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total</span>
-                    <span class="text-xl font-black text-white">${{ pedido.total_final }}</span>
-                </div>
-
-            </div>
-
-            <!-- FOOTER (Botones Condicionales) -->
-            <div class="flex gap-3 shrink-0 pt-2 border-t border-gray-100">
-                <button (click)="cerrar()" 
-                        class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
-                    {{ isEditing() ? 'Cancelar' : 'Cerrar' }}
-                </button>
-                
-                <!-- El botón guardar SOLO aparece si estamos editando -->
-                @if (isEditing()) {
-                    <button (click)="guardar()" 
-                            [disabled]="datosInvalidos()"
-                            class="flex-1 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale animate-in fade-in duration-200">
-                        Guardar cambios
-                    </button>
+                <!-- TOTAL FIJO (Se oculta al buscar) -->
+                @if (!isSearchingActive()) {
+                    <div class="mt-1 flex items-center justify-between px-3.5 py-1.5 bg-gray-900 rounded-xl shadow-sm shrink-0 animate-in fade-in">
+                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Total</span>
+                        <span [@popAnimation]="pedido.total_final" class="text-base font-bold text-white">${{ pedido.total_final | number:'1.0-0' }}</span>
+                    </div>
                 }
+
             </div>
+
+            <!-- FOOTER (Se oculta al buscar) -->
+            @if (!isSearchingActive()) {
+                <div class="flex gap-3 shrink-0 pt-2 border-t border-gray-100 animate-in fade-in">
+                    <button (click)="cerrar()" 
+                            class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
+                        {{ isEditing() ? 'Cancelar' : 'Cerrar' }}
+                    </button>
+                    
+                    @if (isEditing()) {
+                        <button (click)="guardar()" 
+                                [disabled]="datosInvalidos()"
+                                class="flex-1 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale animate-in fade-in duration-200">
+                            Guardar cambios
+                        </button>
+                    }
+                </div>
+            }
 
         </div>
     </div>
