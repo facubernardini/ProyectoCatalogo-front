@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, OnDestroy, signal, effect, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Icon } from "@shared/components/icon";
@@ -51,14 +51,19 @@ export class PedidoPreview implements OnInit, OnDestroy {
   private pedidoServiceBackend = inject(PedidosServiceBackend);
 
   searchQuery = '';
-  resultadosBusqueda = signal<ResultadoBusqueda[]>([]);
   isSearchingActive = signal<boolean>(false);
   isLoadingResults = signal<boolean>(false);
+
+  resultadosBusquedaCompletos = signal<ResultadoBusqueda[]>([]);
+  resultadosVisibles = signal<ResultadoBusqueda[]>([]);
+  private itemsPorPagina = 15;
+  private paginaActual = 1;
   
   private searchSubject = new Subject<string>();
   private searchSubscription!: Subscription;
   
-  pedido!: PedidoDTO;
+  pedidoEditable = signal<PedidoDTO | null>(null);
+  
   isEditing = this.pedidoPreviewService.isEditing;
 
   listaMediosPago = Object.values(MedioPago);
@@ -67,17 +72,31 @@ export class PedidoPreview implements OnInit, OnDestroy {
   metodoEntregaIcons = METODO_ENTREGA_ICONS;
 
   cantidadArticulos = computed(() => {
-    const p = this.pedido;
+    const p = this.pedidoEditable();
     if (!p?.productos) return 0;
     return p.productos.reduce((total, item) => total + item.cantidad, 0);
   });
 
-  ngOnInit() {
-    const actual = this.pedidoPreviewService.pedidoSeleccionado();
-    if (actual) {
-      this.pedido = JSON.parse(JSON.stringify(actual));
-    }
+  constructor() {
+    effect(() => {
+      const pedidoDelServicio = this.pedidoPreviewService.pedidoSeleccionado();
+      const estaAbierto = this.pedidoPreviewService.isOpen();
 
+      untracked(() => {
+        if (pedidoDelServicio) {
+          this.pedidoEditable.set(JSON.parse(JSON.stringify(pedidoDelServicio)));
+        } else {
+          this.pedidoEditable.set(null);
+        }
+
+        if (!estaAbierto) {
+          this.cancelarBusqueda();
+        }
+      });
+    });
+  }
+
+  ngOnInit() {    
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -97,7 +116,8 @@ export class PedidoPreview implements OnInit, OnDestroy {
   }
 
   toggleEdit() {
-    if (this.pedido.estado === EstadoPedido.LISTO_PARA_ENTREGAR) {
+    const p = this.pedidoEditable();
+    if (p?.estado === EstadoPedido.LISTO_PARA_ENTREGAR) {
       this.toastService.show('Los pedidos listos para entregar no se pueden editar', 'info');
       return;
     }
@@ -128,7 +148,6 @@ export class PedidoPreview implements OnInit, OnDestroy {
 
     for (const prod of productosMemoria) {
       if (prod.nombre.toLowerCase().includes(queryLower)) {
-        
         for (const pres of prod.presentaciones) {
           if (pres.activo) {
             resultadosPlanos.push({
@@ -144,41 +163,69 @@ export class PedidoPreview implements OnInit, OnDestroy {
       }
     }
 
-    this.resultadosBusqueda.set(resultadosPlanos.slice(0, 20)); 
+    this.resultadosBusquedaCompletos.set(resultadosPlanos);
+    this.paginaActual = 1;
+    this.cargarMasResultados(true);
+    
     this.isLoadingResults.set(false);
+  }
+
+  cargarMasResultados(reset: boolean = false) {
+    if (reset) {
+      this.resultadosVisibles.set(this.resultadosBusquedaCompletos().slice(0, this.itemsPorPagina));
+    } else {
+      const start = this.paginaActual * this.itemsPorPagina;
+      const end = start + this.itemsPorPagina;
+      const nuevosItems = this.resultadosBusquedaCompletos().slice(start, end);
+      
+      if (nuevosItems.length > 0) {
+        this.resultadosVisibles.update(actuales => [...actuales, ...nuevosItems]);
+        this.paginaActual++;
+      }
+    }
+  }
+
+  onScrollResultados(event: any) {
+    const element = event.target;
+    if (element.scrollHeight - element.scrollTop <= element.clientHeight + 50) {
+      this.cargarMasResultados(false);
+    }
   }
 
   cancelarBusqueda() {
     this.searchQuery = '';
     this.isSearchingActive.set(false);
     this.isLoadingResults.set(false);
-    this.resultadosBusqueda.set([]);
+    this.resultadosBusquedaCompletos.set([]);
+    this.resultadosVisibles.set([]);
   }
 
-  // --- Lógica de Modificación del Pedido ---
-
+  // --- LÓGICA DE MODIFICACIÓN DEL PEDIDO ---
+  
   agregarProducto(resultado: ResultadoBusqueda) {
-    if (!this.pedido.productos) {
-      this.pedido.productos = [];
-    }
+    this.pedidoEditable.update(p => {
+      if (!p) return p;
+      if (!p.productos) p.productos = [];
 
-    const itemExistente = this.pedido.productos.find(p => p.presentacion_id === resultado.presentacionId);
+      const itemExistente = p.productos.find(item => item.presentacion_id === resultado.presentacionId);
 
-    if (itemExistente) {
-      itemExistente.cantidad += 1;
-    } else {
-      this.pedido.productos.push({
-        producto_id: resultado.productoId,
-        presentacion_id: resultado.presentacionId,
-        producto_nombre: resultado.nombreProducto,
-        presentacion_unidad: resultado.unidadVenta, 
-        precio_unitario: resultado.precioFinal, 
-        cantidad: 1,
-        imagen: resultado.imagen
-      } as any); 
-    }
+      if (itemExistente) {
+        itemExistente.cantidad += 1;
+      } else {
+        p.productos.push({
+          producto_id: resultado.productoId,
+          presentacion_id: resultado.presentacionId,
+          producto_nombre: resultado.nombreProducto,
+          presentacion_unidad: resultado.unidadVenta, 
+          precio_unitario: resultado.precioFinal, 
+          cantidad: 1,
+          imagen: resultado.imagen
+        } as any); 
+      }
+      return { ...p };
+    });
 
-    this.recalcularTotal();
+    this.recalcularTotalesDinamicos();
     this.cancelarBusqueda();
   }
 
@@ -193,48 +240,130 @@ export class PedidoPreview implements OnInit, OnDestroy {
     });
 
     if (confirmacion) {
-      if (!this.isEditing() || !this.pedido.productos) return;
-      this.pedido.productos.splice(index, 1);
-      this.recalcularTotal();
-      this.toastService.show('Producto eliminado');
+      if (!this.isEditing() || !this.pedidoEditable()?.productos) return;
+      
+      this.pedidoEditable.update(p => {
+        if (!p) return p;
+        p.productos.splice(index, 1);
+        return { ...p };
+      });
+      
+      this.recalcularTotalesDinamicos();
     }
   }
 
   sumarCantidad(index: number) {
-    if (!this.isEditing() || !this.pedido.productos) return;
-    this.pedido.productos[index].cantidad += 1;
-    this.recalcularTotal();
+    if (!this.isEditing() || !this.pedidoEditable()?.productos) return;
+    
+    this.pedidoEditable.update(p => {
+      if (!p) return p;
+      p.productos[index].cantidad += 1;
+      return { ...p };
+    });
+    
+    this.recalcularTotalesDinamicos();
   }
 
   restarCantidad(index: number) {
-    if (!this.isEditing() || !this.pedido.productos) return;
+    if (!this.isEditing() || !this.pedidoEditable()?.productos) return;
     
-    if (this.pedido.productos[index].cantidad > 1) {
-      this.pedido.productos[index].cantidad -= 1;
-      this.recalcularTotal();
-    }
+    this.pedidoEditable.update(p => {
+      if (!p) return p;
+      if (p.productos[index].cantidad > 1) {
+        p.productos[index].cantidad -= 1;
+      }
+      return { ...p };
+    });
+    
+    this.recalcularTotalesDinamicos();
   }
 
-  recalcularTotal() {
-    if (!this.pedido.productos) {
-      this.pedido.total_final = 0;
-      return;
-    }
-    this.pedido.total_final = this.pedido.productos.reduce(
-      (acc, p) => acc + (p.cantidad * p.precio_unitario), 0
-    );
+  // --- LÓGICA FINANCIERA (Refleja el Backend en tiempo real) ---
+
+  descuentoEfectivoCatalogo(): number { return Number(this.adminStore.catalogo()?.descuento_en_efectivo) || 0; }
+  costoEnvioCatalogo(): number { return Number(this.adminStore.catalogo()?.costo_envio) || 0; }
+  envioGratisDesdeCatalogo(): number { return Number(this.adminStore.catalogo()?.envio_gratis_desde) || 0; }
+
+  // Se ejecuta cuando cambian los Selects de Pago o Entrega en el HTML
+  onMetodoCambio() {
+    this.recalcularTotalesDinamicos();
+  }
+
+  recalcularTotalesDinamicos() {
+    this.pedidoEditable.update(p => {
+      if (!p) return p;
+      
+      if (!p.productos || p.productos.length === 0) {
+        p.subtotal = 0;
+        p.descuento_cupon = 0;
+        p.descuento_pago_efectivo = 0;
+        p.costo_envio = 0;
+        p.total_final = 0;
+        return { ...p };
+      }
+
+      // 1. Calcular Subtotal
+      p.subtotal = p.productos.reduce((acc, item) => acc + (item.cantidad * Number(item.precio_unitario)), 0);
+
+      // 2. Mantener/Recalcular Cupón Original
+      if (p.cupon_codigo) {
+        if (p.cupon_es_porcentaje) {
+          p.descuento_cupon = p.subtotal * (Number(p.cupon_descuento) / 100);
+        } else {
+          p.descuento_cupon = Number(p.cupon_descuento);
+        }
+        if (p.descuento_cupon > p.subtotal) p.descuento_cupon = p.subtotal;
+      } else {
+        p.descuento_cupon = 0;
+      }
+
+      // 3. Calcular Descuento en Efectivo
+      const pagoEfectivo = p.metodo_pago && p.metodo_pago.toLowerCase().includes('efectivo');
+      const porcEfectivo = this.descuentoEfectivoCatalogo();
+      
+      if (pagoEfectivo && porcEfectivo > 0) {
+        const baseParaEfectivo = p.subtotal - p.descuento_cupon;
+        p.descuento_pago_efectivo = baseParaEfectivo * (porcEfectivo / 100);
+      } else {
+        p.descuento_pago_efectivo = 0;
+      }
+
+      // 4. Calcular Envío (Evalúa si llega al gratis)
+      if (p.metodo_entrega === 'Envio') {
+        const subtotalConDescuentos = p.subtotal - p.descuento_cupon - p.descuento_pago_efectivo;
+        const minimoEnvioGratis = this.envioGratisDesdeCatalogo();
+
+        if (minimoEnvioGratis > 0 && subtotalConDescuentos >= minimoEnvioGratis) {
+          p.costo_envio = 0; // Bonificado
+        } else {
+          p.costo_envio = this.costoEnvioCatalogo(); // Cobrado
+        }
+      } else {
+        p.costo_envio = 0;
+      }
+
+      // 5. Total Final
+      p.total_final = (p.subtotal - p.descuento_cupon - p.descuento_pago_efectivo) + p.costo_envio;
+
+      return { ...p };
+    });
   }
 
   datosInvalidos(): boolean {
-    return !this.pedido.comprador_nombre || (this.pedido.productos?.length === 0);
+    const p = this.pedidoEditable();
+    if (!p) return true;
+    return !p.comprador_nombre || (p.productos?.length === 0);
   }
 
   guardar() {
     if (this.datosInvalidos()) return;
+    
+    const p = this.pedidoEditable();
+    if (!p) return;
 
     const proceso = this.toastService.loading('Guardando cambios...');
 
-    this.pedidoServiceBackend.editarPedido(this.pedido.id, this.pedido).subscribe({
+    this.pedidoServiceBackend.editarPedido(p.id, p).subscribe({
       next: (pedidoActualizadoDesdeBackend) => {
         proceso.success('Pedido actualizado correctamente');
         

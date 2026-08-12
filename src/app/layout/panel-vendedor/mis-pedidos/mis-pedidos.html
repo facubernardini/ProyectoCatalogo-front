@@ -61,7 +61,7 @@
     <!-- ========================================== -->
     <main class="flex-1 overflow-y-auto px-3 pt-1">
         
-        <div class="flex flex-col gap-3 max-w-4xl mx-auto w-full pb-20" >
+        <div class="flex flex-col gap-4 max-w-4xl mx-auto w-full pb-20" >
             
             @for (pedido of pedidosFiltrados(); track pedido.id) {
                 
@@ -85,16 +85,12 @@
     <!-- BOTÓN FLOTANTE (FAB) -->
     <!-- ========================================== -->
     <div class="fixed bottom-20 right-6 z-50 lg:right-[calc(50vw-420px)]">
-        <button (click)="onAddPedido()"
+        <button (click)="registrarNuevoPedido()"
                 class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 md:hover:scale-105 transition-all duration-200 group"
                 aria-label="Registrar nuevo pedido">
             
             <app-icon name="add-producto" classes="size-6 fill-current" />
         </button>
     </div>
-
-    @if (pedidoPreviewService.isOpen()) {
-        <app-pedido-preview/>
-    }
 
 </div>

@@ -42,12 +42,14 @@ export interface PedidoDTO {
     comprador_telefono: string | null;
     metodo_entrega: string;
     metodo_pago: string;
+    costo_envio: number;
     
     subtotal: number;
     cupon_codigo: string | null;
     cupon_descuento: number | null;
     cupon_es_porcentaje: boolean | null;
-    descuento_monto: number;
+    descuento_cupon: number;
+    descuento_pago_efectivo: number;
     total_final: number;
 
     costo_total: number | null;
@@ -76,7 +78,11 @@ export interface CrearPedidoRequest {
     comprador_telefono?: string | null;
     metodo_entrega: string;
     metodo_pago: string;
+    costo_envio?: number;
     cupon_codigo?: string | null;
+
+    estado?: EstadoPedido; 
+    estado_pago?: EstadoPago;
 
     productos: {
         producto_id: number;
@@ -85,10 +91,29 @@ export interface CrearPedidoRequest {
     }[];
 }
 
-// DTO con la respuesta que programamos en el controller (el ID y el número generado)
+// DTO con la respuesta
 export interface CrearPedidoResponse {
-    id: string;
     numero_pedido: number;
+}
+
+// --- REGISTRAR PEDIDO MANUAL ---
+
+// Extendemos tu DTO original para agregar lo que la UI necesita dibujar
+export interface ProductoPedidoForm extends ProductoPedidoRequest {
+  producto_nombre: string;
+  presentacion_unidad: string;
+  precio_unitario: number;
+  imagen: string | null;
+}
+
+// Definimos el estado del Form usando una versión adaptada de CrearPedidoRequest
+export interface PedidoFormData extends Omit<CrearPedidoRequest, 'catalogo_id' | 'productos'> {
+  comprador_direccion: string;
+  comprador_telefono: string;
+  productos: ProductoPedidoForm[];
+
+  estado: EstadoPedido;
+  estado_pago: EstadoPago;
 }
 
 // --- CONSULTAR HISTORIAL

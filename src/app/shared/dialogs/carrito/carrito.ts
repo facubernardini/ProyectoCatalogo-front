@@ -44,6 +44,8 @@ export class Carrito {
   direccionEnvio = signal<string>('');
   telefonoCliente = signal<string>('');
 
+  isSubmitting = signal<boolean>(false);
+
   itemParaEliminar = signal<number | null>(null);
   private timeoutEliminar: any;
 
@@ -211,6 +213,16 @@ export class Carrito {
       return;
     }
 
+    let costoEnvioFinal = 0;
+    
+    if (envio && this.catalogo()) {
+      if (this.cartService.esEnvioGratis()) {
+        costoEnvioFinal = 0;
+      } else {
+        costoEnvioFinal = Number(this.catalogo()?.costo_envio) || 0;
+      }
+    }
+
     // 3. Armamos el Payload (CrearPedidoRequest) para el backend
     const payload: CrearPedidoRequest = {
       catalogo_id: Number(catalogoId),
@@ -218,6 +230,7 @@ export class Carrito {
       comprador_direccion: envio ? this.direccionEnvio().trim() : null,
       comprador_telefono: this.telefonoCliente() ? this.telefonoCliente() : null,
       metodo_entrega: deliveryMethod,
+      costo_envio: costoEnvioFinal,
       metodo_pago: String(metodoPago),
       cupon_codigo: cupon ? cupon.codigo : null,
       productos: items.map(item => ({
@@ -226,6 +239,8 @@ export class Carrito {
         cantidad: item.cantidad
       }))
     };
+
+    this.isSubmitting.set(true);
 
     // 4. Llamamos al backend para registrar la compra
     this.pedidosServiceBackend.registrarPedido(payload).subscribe({
@@ -291,6 +306,9 @@ export class Carrito {
         this.cartService.limpiarCarrito(true);
         this.nombreCliente.set('');
         this.direccionEnvio.set('');
+        this.telefonoCliente.set('');
+
+        this.isSubmitting.set(false);
 
         setTimeout(() => {
           this.pedidoRealizadoService.open(deliveryMethod, url);
@@ -299,6 +317,7 @@ export class Carrito {
       error: (err) => {
         console.error('Error al registrar pedido', err);
         this.toastService.show('Ups! Algo salió mal, vuelve a intentarlo', 'error');
+        this.isSubmitting.set(false);
       }
     });
   }

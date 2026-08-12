@@ -15,10 +15,11 @@ import { PanelNavbar } from "./navbar/navbar";
 import { Header } from "./header/header";
 import { MenuPrincipal } from "src/app/shared/dialogs/menu-principal/menu-principal";
 import { PedidoPreview } from "src/app/shared/dialogs/pedido-preview/pedido-preview";
+import { PedidoForm } from "src/app/shared/dialogs/pedido-form/pedido-form";
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner, ProductImportPreview, PanelNavbar, Header, MenuPrincipal, PedidoPreview],
+  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner, ProductImportPreview, PanelNavbar, Header, MenuPrincipal, PedidoPreview, PedidoForm],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })

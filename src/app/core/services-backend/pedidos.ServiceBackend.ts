@@ -15,6 +15,10 @@ export class PedidosServiceBackend {
         return this.http.post<CrearPedidoResponse>(`${this.API_URL}/public/pedidos/registrar-pedido`, pedidoData);
     }
 
+    registrarPedidoManual(pedidoData: CrearPedidoRequest): Observable<PedidoDTO> {
+        return this.http.post<PedidoDTO>(`${this.API_URL}/seller/pedidos/registrar-pedido-manual`, pedidoData);
+    }
+
     obtenerPedidosActivos(): Observable<PedidoDTO[]> {
         return this.http.get<PedidoDTO[]>(`${this.API_URL}/seller/pedidos/pedidos-activos`);
     }

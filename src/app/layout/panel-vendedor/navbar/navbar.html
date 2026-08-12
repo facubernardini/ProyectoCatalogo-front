@@ -6,7 +6,7 @@
             [class.opacity-0]="indiceActivo() === -1"
             [style.transform]="'translateX(' + (indiceActivo() === -1 ? 0 : indiceActivo() * 100) + '%)'">
             
-            <div class="w-7 h-full bg-brand-accent/80 rounded-b-full"></div>
+            <div class="w-7 h-full bg-brand-accent/90 rounded-b-full"></div>
         </div>
 
         <!-- CONTENEDOR DE BOTONES -->
@@ -16,45 +16,55 @@
             <button (click)="navegar('/panel-vendedor/inicio')"
                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/inicio')"
                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/inicio')"
-               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300 active:scale-95">
-                <app-icon name="home" classes="size-6 fill-current transition-transform duration-300" [class.scale-110]="esRutaActiva('/panel-vendedor/inicio')" />
-                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/inicio')">Inicio</span>
+               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                <app-icon name="home" classes="size-6 fill-current transition-transform duration-300"/>
+                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/inicio')">
+                    Inicio
+                </span>
             </button>
 
             <!-- PEDIDOS -->
             <button (click)="navegar('/panel-vendedor/mis-pedidos')"
                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-pedidos')"
                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/mis-pedidos')"
-               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300 active:scale-95">
-                <app-icon name="receipt" classes="size-6 fill-current transition-transform duration-300" [class.scale-110]="esRutaActiva('/panel-vendedor/mis-pedidos')" />
-                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mis-pedidos')">Pedidos</span>
+               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                <app-icon name="receipt" classes="size-6 fill-current transition-transform duration-300"/>
+                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mis-pedidos')">
+                    Pedidos
+                </span>
             </button>
 
             <!-- PRODUCTOS -->
             <button (click)="navegar('/panel-vendedor/mis-productos')"
                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-productos')"
                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/mis-productos')"
-               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300 active:scale-95">
-                <app-icon name="box" classes="size-6 fill-current transition-transform duration-300" [class.scale-110]="esRutaActiva('/panel-vendedor/mis-productos')" />
-                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mis-productos')">Productos</span>
+               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                <app-icon name="box" classes="size-6 fill-current transition-transform duration-300"/>
+                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mis-productos')">
+                    Productos
+                </span>
             </button>
 
             <!-- ESTADISTICAS -->
             <button (click)="navegar('/panel-vendedor/estadisticas')"
                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/estadisticas')"
                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/estadisticas')"
-               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300 active:scale-95">
-                <app-icon name="chart" classes="size-6 fill-current transition-transform duration-300" [class.scale-110]="esRutaActiva('/panel-vendedor/estadisticas')" />
-                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/estadisticas')">Estadísticas</span>
+               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                <app-icon name="chart" classes="size-6 fill-current transition-transform duration-300"/>
+                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/estadisticas')">
+                    Estadísticas
+                </span>
             </button>
 
             <!-- MI TIENDA -->
             <button (click)="navegar('/panel-vendedor/mi-tienda')"
                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mi-tienda')"
                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/mi-tienda')"
-               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300 active:scale-95">
-                <app-icon name="shop" classes="size-6 fill-current transition-transform duration-300" [class.scale-110]="esRutaActiva('/panel-vendedor/mi-tienda')" />
-                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mi-tienda')">Tienda</span>
+               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                <app-icon name="shop" classes="size-6 fill-current transition-transform duration-300"/>
+                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mi-tienda')">
+                    Tienda
+                </span>
             </button>
 
         </div>

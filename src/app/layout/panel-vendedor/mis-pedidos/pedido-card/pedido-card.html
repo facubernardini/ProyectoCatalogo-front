@@ -74,19 +74,21 @@
             </div>
         </div>
 
-        <!-- MEDIO: Entrega y Medio de Pago -->
-        <div class="flex items-center justify-between bg-gray-50/70 p-2.5 rounded-2xl border border-gray-100">
+        <!-- MEDIO: Entrega, Dirección, Costo de Envío y Medio de Pago -->
+        <div class="flex items-center justify-between bg-gray-50 p-2 rounded-xl border border-gray-100">
     
-            <!-- SECCIÓN IZQUIERDA: Método de Entrega + Dirección -->
+            <!-- SECCIÓN IZQUIERDA: Método de Entrega + Dirección + Costo Envío -->
             <div class="flex items-center gap-2">
                 <div class="p-1 bg-white rounded-lg shadow-sm text-gray-400 shrink-0">
                     <app-icon [name]="getIconoEntrega(pedido().metodo_entrega)" classes="size-5 fill-current" /> 
                 </div>
                 
                 <div class="flex flex-col">
-                    <span class="text-xs font-semibold text-gray-600 leading-tight">
-                        {{ pedido().metodo_entrega }}
-                    </span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-semibold text-gray-600 leading-tight">
+                            {{ pedido().metodo_entrega }}
+                        </span>
+                    </div>
                     
                     <!-- Mostramos la dirección si es ENVIO y si tiene una dirección cargada -->
                     @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO && pedido().comprador_direccion) {
@@ -108,37 +110,73 @@
         </div>
 
         <!-- INFERIOR: Totales, Estados y Botón -->
-        <div class="flex items-end justify-between mt-1">
+        <div class="flex flex-col gap-2 mt-1">
             
-            <div class="flex flex-col gap-1.5">
+            <!-- Desglose Financiero (Ticket limpio con línea centrada) -->
+            @if (pedido().subtotal !== pedido().total_final || (pedido().metodo_entrega === metodoEntregaEnum.ENVIO && pedido().costo_envio > 0)) {
+                <div class="flex flex-col gap-1 text-xs text-gray-500 bg-gray-50 p-2 rounded-xl border border-gray-100">
+                    
+                    <!-- Subtotal de productos -->
+                    <div class="flex items-center gap-1">
+                        <span class="pr-1 font-bold text-xs">Subtotal ({{ cantidadArticulos() }} {{ cantidadArticulos() === 1 ? 'producto' : 'productos' }})</span>
+                        <div class="flex-1 flex items-center">
+                            <div class="w-full border-t border-dashed border-gray-300"></div>
+                        </div>
+                        <span class="font-medium text-gray-700 pl-1 text-xs">${{ pedido().subtotal | number:'1.0-0' }}</span>
+                    </div>
+
+                    <!-- Descuento por Cupón -->
+                    @if (pedido().descuento_cupon > 0) {
+                        <div class="flex items-center gap-1 text-emerald-600 font-medium">
+                            <div class="flex items-center gap-1 pr-1 text-xs">
+                                <span>Dto. por cupón (<span class="uppercase font-bold">{{ pedido().cupon_codigo || 'CUPÓN' }}</span>)</span>
+                                @if (pedido().cupon_es_porcentaje && pedido().cupon_descuento) {
+                                    <span class="text-[10px] text-emerald-500 font-bold">(-{{ pedido().cupon_descuento }}%)</span>
+                                }
+                            </div>
+                            <div class="flex-1 flex items-center">
+                                <div class="w-full border-t border-dashed border-gray-300"></div>
+                            </div>
+                            <span class="pl-1 text-xs">-${{ pedido().descuento_cupon | number:'1.0-0' }}</span>
+                        </div>
+                    }
+
+                    <!-- Descuento por Pago en Efectivo -->
+                    @if (pedido().descuento_pago_efectivo > 0) {
+                        <div class="flex items-center gap-1 text-emerald-600 font-medium">
+                            <span class="text-xs pr-1">Dto. pago en efectivo</span>
+                            <div class="flex-1 flex items-center">
+                                <div class="w-full border-t border-dashed border-gray-300"></div>
+                            </div>
+                            <span class=" pl-1 text-xs">-${{ pedido().descuento_pago_efectivo | number:'1.0-0' }}</span>
+                        </div>
+                    }
+
+                    <!-- Costo de Envío (Si aplica) -->
+                    @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO) {
+                        <div class="flex items-center gap-1">
+                            <span class="text-xs pr-1">Envío a domicilio</span>
+                            <div class="flex-1 flex items-center">
+                                <div class="w-full border-t border-dashed border-gray-300"></div>
+                            </div>
+                            <span class="font-medium pl-1 text-[11px]" [class.text-emerald-600]="pedido().costo_envio === 0">
+                                @if (pedido().costo_envio > 0) {
+                                    +${{ pedido().costo_envio | number:'1.0-0' }}
+                                } @else {
+                                    Gratis
+                                }
+                            </span>
+                        </div>
+                    }
+                </div>
+            } @else {
                 <span class="text-xs font-semibold text-gray-500 leading-none">
                     {{ cantidadArticulos() }} {{ cantidadArticulos() === 1 ? 'producto' : 'productos' }}
                 </span>
-                
-                @if (pedido().subtotal !== pedido().total_final) {
-                    <div class="flex items-center gap-1.5 my-0.5 flex-wrap">
-                        
-                        <span class="text-[11px] font-semibold text-gray-400 line-through decoration-gray-400 leading-none">
-                            ${{ pedido().subtotal | number:'1.0-0' }}
-                        </span>
-                        
-                        @if (pedido().cupon_codigo) {
-                            <span class="inline-flex items-baseline text-[9px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
-                                {{ pedido().cupon_codigo }} 
-                                <span class="text-emerald-500 ml-1">
-                                    (-{{ pedido().cupon_es_porcentaje ? pedido().cupon_descuento + '%' : '$' + (pedido().cupon_descuento | number:'1.0-0') }})
-                                </span>
-                            </span>
-                        } 
-                        @else if (pedido().descuento_monto > 0) {
-                            <span class="inline-flex items-center text-[9px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
-                                - ${{ pedido().descuento_monto | number:'1.0-0' }} OFF
-                            </span>
-                        }
-                        
-                    </div>
-                }
-                
+            }
+
+            <!-- Total Final y Estado de Pago -->
+            <div class="flex items-end justify-between">
                 <div class="flex items-center gap-2">
                     <span class="text-base font-black text-brand-text tracking-tight leading-none">
                         ${{ pedido().total_final | number:'1.0-0' }}
@@ -161,21 +199,22 @@
                         </button>
                     }
                 </div>
-            </div>
 
-            <div class="flex items-center gap-2">
-                <button (click)="verDetalle()"
-                        class="px-2.5 py-1.5 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg active:scale-95 transition-transform md:hover:bg-gray-200">
-                    Detalle
-                </button>
-
-                @if (pedido().estado !== 'ENTREGADO') {
-                    <button (click)="avanzarEstado()"
-                            [class]="getEstiloBotonAvanzar(pedido().estado)"
-                            class="px-2.5 py-1.5 text-white text-xs font-bold rounded-lg active:scale-95 transition-all shadow-sm flex items-center cursor-pointer">
-                        <span>{{ getTextoBotonAvanzar(pedido().estado) }}</span>
+                <!-- Botones de Acción -->
+                <div class="flex items-center gap-2">
+                    <button (click)="verDetalle()"
+                            class="px-2.5 py-1.5 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg active:scale-95 transition-transform md:hover:bg-gray-200">
+                        Detalle
                     </button>
-                }
+
+                    @if (pedido().estado !== 'ENTREGADO') {
+                        <button (click)="avanzarEstado()"
+                                [class]="getEstiloBotonAvanzar(pedido().estado)"
+                                class="px-2.5 py-1.5 text-white text-xs font-bold rounded-lg active:scale-95 transition-all shadow-sm flex items-center cursor-pointer">
+                            <span>{{ getTextoBotonAvanzar(pedido().estado) }}</span>
+                        </button>
+                    }
+                </div>
             </div>
         </div>
     </div>

@@ -298,7 +298,7 @@
                 }
 
                 @if (catalogo()?.envio_gratis_desde && cartService.totalItems() > 0 && cartService.porcentajeEnvioGratis() >= cartService.umbralMontoFaltanteEnvioGratis) {
-                    <div class="mb-3 px-3 py-2 rounded-2xl border transition-all duration-500 animate-in fade-in slide-in-from-bottom-4"
+                    <div class="mb-2 px-3 py-2 rounded-2xl border transition-all duration-500 animate-in fade-in slide-in-from-bottom-4"
                         [class]="cartService.esEnvioGratis() ? 'bg-green-50 border-green-100' : 'bg-blue-50 border-blue-100'">
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center gap-2">
@@ -393,23 +393,41 @@
                             'pt-1.5 border-t-2 border-gray-100 mt-1.5': cartService.hasExtraCharges()
                         }">
                         <span class="text-lg font-bold text-brand-text">Total</span>
-                        <span class="text-xl font-black text-brand-accent tracking-tight">${{ cartService.totalFinal() | number:'1.0-0' }}</span>
+                        <span [@popAnimation]="cartService.totalFinal()" class="text-xl font-black text-brand-accent tracking-tight">${{ cartService.totalFinal() | number:'1.0-0' }}</span>
                     </div>
                 </div>
 
                 <button (click)="finalizarPedido()"
                     type="button"
-                    class="relative overflow-hidden w-full py-2.5 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all group active:scale-[0.98] md:hover:brightness-110">
+                    [disabled]="isSubmitting()"
+                    class="relative overflow-hidden w-full py-2 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all group disabled:opacity-75 disabled:cursor-not-allowed md:hover:brightness-110"
+                    [class.active:scale-[0.98]]="!isSubmitting()">
                     
-                    @if (puedeFinalizar()) {
+                    @if (puedeFinalizar() && !isSubmitting()) {
                         <div class="absolute inset-0 h-full bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-shimmer pointer-events-none"></div>
                     }
                     
-                    <div class="relative z-10 flex items-center justify-center gap-3">
+                    <!-- ESTADO NORMAL: Este contenedor nunca es absoluto. Siempre mantiene firme la altura y forma del botón, solo se vuelve transparente -->
+                    <div class="flex items-center justify-center gap-3 transition-opacity duration-300"
+                        [class.opacity-0]="isSubmitting()">
                         <app-icon name="whatsapp" classes="size-6 fill-current" />
                         <span>Confirmar por WhatsApp</span>
                     </div>
-                </button>
+
+                    <!-- ESTADO CARGANDO: Siempre está flotando perfectamente centrado (inset-0). Solo se vuelve visible cuando carga -->
+                    <div class="absolute inset-0 flex items-center justify-center gap-2 transition-opacity duration-300 pointer-events-none"
+                        [class.opacity-0]="!isSubmitting()">
+                        
+                        <svg viewBox="200 200 400 400" class="size-6 animate-spin" xmlns="http://www.w3.org/2000/svg">
+                            <circle class="custom-spin" cx="400" cy="400" fill="none"
+                                r="145" stroke-width="35" stroke="currentColor"
+                                stroke-dasharray="606 1400"
+                                stroke-linecap="round" />
+                        </svg>
+
+                        <span class="text-base font-bold tracking-wide">Procesando...</span>
+                    </div>
+            </button>
             </div>
         }
     </div>

@@ -5,18 +5,19 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "src/app/shared/components/icon";
 import { PedidoCard } from "./pedido-card/pedido-card";
 import { PedidoPreviewService } from 'src/app/shared/services/pedido-preview.service';
-import { PedidoPreview } from "src/app/shared/dialogs/pedido-preview/pedido-preview";
 import { ActivatedRoute } from '@angular/router';
+import { PedidoFormService } from 'src/app/shared/services/pedido-form.service';
 
 @Component({
   selector: 'app-mis-pedidos',
-  imports: [CommonModule, Icon, PedidoCard, PedidoPreview],
+  imports: [CommonModule, Icon, PedidoCard],
   templateUrl: './mis-pedidos.html',
   styleUrl: './mis-pedidos.css'
 })
 export class MisPedidos implements OnInit {
   public adminStore = inject(AdminStoreService);
   public pedidoPreviewService = inject(PedidoPreviewService);
+  public pedidoFormService = inject(PedidoFormService);
 
   private route = inject(ActivatedRoute);
   
@@ -64,7 +65,7 @@ export class MisPedidos implements OnInit {
     this.pedidoPreviewService.open(pedido);
   }
 
-  onAddPedido() {
-    
+  registrarNuevoPedido() {
+    this.pedidoFormService.open();
   }
 }

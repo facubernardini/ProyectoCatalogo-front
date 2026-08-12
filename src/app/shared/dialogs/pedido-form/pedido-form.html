@@ -1,0 +1,336 @@
+@if (pedidoFormService.isOpen()) {
+    <div class="fixed inset-0 z-50 flex justify-end overflow-hidden">
+        
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 animate-backdrop"
+             (click)="pedidoFormService.close()">
+        </div>
+
+        <!-- Panel Lateral -->
+        <div (click)="$event.stopPropagation()"
+             class="relative w-full sm:w-120 bg-white shadow-2xl flex flex-col animate-side-panel">
+            
+            <!-- HEADER -->
+            <div class="shrink-0 flex items-center justify-between px-5 py-4 bg-white border-b border-gray-100 shadow-sm z-20">
+                <div class="flex items-center gap-3">
+                    <button (click)="pedidoFormService.close()" 
+                            class="group p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-all duration-300 active:scale-90 border border-gray-200/50">
+                        <app-icon name="back" classes="size-5 text-gray-500 fill-current" />
+                    </button>
+                    <h2 class="text-base font-black text-brand-text leading-tight">
+                        Nuevo Pedido
+                    </h2>
+                </div>
+
+                <button (click)="guardarPedido()" 
+                        [disabled]="pedidoFormService.formData().productos.length === 0 || !pedidoFormService.formData().comprador_nombre"
+                        class="px-4 py-2 bg-brand-accent text-white text-sm font-bold rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
+                    Crear pedido
+                </button>
+            </div>
+
+            <!-- CUERPO SCROLLEABLE -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar custom-scrollbar"
+                (scroll)="onScrollResultados($event)">
+                
+                <!-- DATOS DEL CLIENTE -->
+                <div class="space-y-2 flex flex-col">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                        Datos
+                    </h3>
+
+                    <div>
+                        <label class="text-xs font-bold text-gray-600 ml-1">
+                            Nombre y Apellido
+                        </label>
+                        <input type="text" [(ngModel)]="pedidoFormService.formData().comprador_nombre"
+                            class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text">
+                    </div>
+
+                    <!-- ENTREGA Y PAGO -->
+                    <div class="space-y-2">                    
+                        <div class="grid grid-cols-12 gap-4">
+                            
+                            <!-- Método de Entrega -->
+                            <div class="col-span-6 relative">
+                                <label class="text-xs font-bold text-gray-600 ml-1">
+                                    Entrega
+                                </label>
+                                
+                                <div class="relative w-full">                                
+                                    <select 
+                                        [(ngModel)]="pedidoFormService.formData().metodo_entrega" 
+                                        (ngModelChange)="onMetodoEntregaChange($event)"
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm font-bold text-brand-text outline-none focus:border-brand-accent/30 transition-all appearance-none cursor-pointer">
+                                        
+                                        @for (metodo of listaMetodosEntrega; track metodo) {
+                                            <option [value]="metodo">{{ metodo }}</option>
+                                        }
+                                    </select>
+                                    
+                                    <!-- Flecha nativa personalizada -->
+                                    <app-icon name="chevron-down" classes="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-gray-400 fill-current pointer-events-none" />
+                                </div>
+                            </div>
+
+                            <!-- Método de Pago -->
+                            <div class="col-span-6 relative">
+                                <label class="text-xs font-bold text-gray-600 ml-1">
+                                    Pago
+                                </label>
+                                
+                                <div class="relative w-full">                                
+                                    <select 
+                                        [(ngModel)]="pedidoFormService.formData().metodo_pago"
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm font-bold text-brand-text outline-none focus:border-brand-accent/30 transition-all appearance-none cursor-pointer">
+                                        
+                                        @for (metodo of listaMediosPago; track metodo) {
+                                            <option [value]="metodo">
+                                                {{ metodo }} 
+                                                @if (metodo === 'Efectivo' && descuentoEfectivoCatalogo() > 0) {
+                                                    (-{{descuentoEfectivoCatalogo()}}%)
+                                                }
+                                            </option>
+                                        }
+                                    </select>
+
+                                    <!-- Flecha nativa personalizada -->
+                                    <app-icon name="chevron-down" classes="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-gray-400 fill-current pointer-events-none" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 👉 NUEVO: ESTADOS DEL PEDIDO -->
+                    <div class="space-y-2 pt-2">                    
+                        <div class="grid grid-cols-12 gap-4">
+                            
+                            <!-- Estado del Pedido -->
+                            <div class="col-span-6 relative">
+                                <label class="text-xs font-bold text-gray-600 ml-1">
+                                    Estado del Pedido
+                                </label>
+                                
+                                <div class="relative w-full">                                
+                                    <select 
+                                        [(ngModel)]="pedidoFormService.formData().estado" 
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm font-bold text-brand-text outline-none focus:border-brand-accent/30 transition-all appearance-none cursor-pointer">
+                                        
+                                        @for (estado of listaEstadosPedido; track estado) {
+                                            <option [value]="estado">{{ formatearEnum(estado) }}</option>
+                                        }
+                                    </select>
+                                    
+                                    <!-- Flecha nativa -->
+                                    <app-icon name="chevron-down" classes="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-gray-400 fill-current pointer-events-none" />
+                                </div>
+                            </div>
+
+                            <!-- Estado del Pago -->
+                            <div class="col-span-6 relative">
+                                <label class="text-xs font-bold text-gray-600 ml-1">
+                                    Estado del Pago
+                                </label>
+                                
+                                <div class="relative w-full">                                
+                                    <select 
+                                        [(ngModel)]="pedidoFormService.formData().estado_pago"
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm font-bold text-brand-text outline-none focus:border-brand-accent/30 transition-all appearance-none cursor-pointer">
+                                        
+                                        @for (estado of listaEstadosPago; track estado) {
+                                            <option [value]="estado">{{ formatearEnum(estado) }}</option>
+                                        }
+                                    </select>
+
+                                    <!-- Flecha nativa -->
+                                    <app-icon name="chevron-down" classes="absolute right-3 top-1/2 -translate-y-1/2 size-3.5 text-gray-400 fill-current pointer-events-none" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        <!-- Dirección (Solo si es envío) -->
+                        @if (pedidoFormService.formData().metodo_entrega === 'Envio') {
+                            <div class="animate-in slide-in-from-top-2 pt-1">
+                                <label class="text-xs font-bold text-gray-600 ml-1">
+                                    Dirección de envío
+                                </label>
+                                <input type="text" [(ngModel)]="pedidoFormService.formData().comprador_direccion"
+                                    class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text">
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- PRODUCTOS -->
+                <div class="space-y-3 flex flex-col min-h-75">
+                    <h3 class="text-xs pt-1.5 font-bold text-gray-400 uppercase tracking-widest" #buscadorContainer>
+                        Productos
+                    </h3>
+                    
+                    <!-- Buscador -->
+                    <div class="relative">
+                        <app-icon name="search" classes="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400 fill-current" />
+                        <input type="text" 
+                            [ngModel]="searchQuery()" 
+                            (ngModelChange)="onSearchInput($event)"
+                            (focus)="hacerScrollBuscador(buscadorContainer)"
+                            placeholder="Buscar productos para agregar..."
+                            class="w-full p-3 pl-9 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text">
+                        
+                        @if (searchQuery().length > 0) {
+                            <button (click)="limpiarBusqueda()" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
+                                <app-icon name="close" classes="size-4 fill-current" />
+                            </button>
+                        }
+                    </div>
+
+                    <!-- AQUÍ VA TU BLOQUE DE BÚSQUEDA DEL PREVIEW EXACTAMENTE IGUAL -->
+                    <div (touchmove)="$event.stopPropagation()" 
+                        class="flex-1 overflow-y-auto custom-scrollbar pr-1 flex flex-col gap-2 min-h-0">
+                         
+                        @if (isSearchingActive()) {
+                            
+                            @if (isLoadingResults()) {
+                                <div class="flex flex-col items-center justify-center h-full gap-3 text-gray-400 animate-in fade-in">
+                                    <app-icon name="spinner" classes="size-8 animate-spin text-brand-accent" />
+                                    <span class="text-sm font-medium">Buscando...</span>
+                                </div>
+                            } 
+                            @else if (resultadosVisibles().length > 0) {
+                                <div class="flex flex-col gap-1.5 animate-in slide-in-from-bottom-2">
+                                    
+                                    @for (item of resultadosVisibles(); track item.presentacionId) {
+                                        <div (click)="agregarProducto(item)"
+                                             class="p-2 bg-white border border-gray-100 hover:border-brand-accent/30 rounded-2xl cursor-pointer flex items-center justify-between transition-all active:scale-[0.98]">
+                                            
+                                            <div class="flex items-center gap-2">
+                                                @if (item.imagen) {
+                                                    <img [src]="item.imagen" class="size-10 object-cover rounded-xl bg-gray-50 shrink-0 border border-gray-100">
+                                                } @else {
+                                                    <div class="size-10 rounded-xl bg-gray-50 shrink-0 flex items-center justify-center border border-gray-100">
+                                                        <app-icon name="photo" classes="size-5 fill-current text-gray-300" />
+                                                    </div>
+                                                }
+
+                                                <div class="flex flex-col">
+                                                    <span class="text-xs font-semibold text-gray-800 leading-tight">{{ item.nombreProducto }}</span>
+                                                    <div class="flex items-center gap-1 mt-1">
+                                                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-sm bg-gray-100 text-gray-600 uppercase tracking-wider">
+                                                            {{ item.unidadVenta }}
+                                                        </span>
+                                                        <span class="text-[11px] text-brand-accent font-black ml-1">
+                                                            ${{ item.precioFinal | number:'1.0-0' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="size-8 rounded-full bg-brand-accent/10 flex items-center justify-center shrink-0">
+                                                <app-icon name="add-producto" classes="size-4 text-brand-accent stroke-[3px]" />
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            } @else {
+                                <!-- Sin resultados -->
+                                <div class="flex flex-col items-center justify-center h-full gap-2 text-gray-400 animate-in fade-in">
+                                    <app-icon name="search-off" classes="size-8 fill-current opacity-50" />
+                                    <span class="text-sm font-medium">No se encontró "{{ searchQuery() }}"</span>
+                                </div>
+                            }
+                        } @else {
+                            <!-- ESTADO NORMAL: Productos ya agregados al pedido -->
+                            <div class="flex flex-col gap-2 animate-in fade-in duration-200">
+                                @for (prod of pedidoFormService.formData().productos; track prod.producto_id; let i = $index) {
+                                    <div class="flex items-center gap-1 p-1.5 bg-gray-100 border border-gray-100 rounded-2xl relative transition-all">
+                                        <!-- Imagen -->
+                                        <div class="size-10 rounded-xl bg-gray-50 shrink-0 overflow-hidden flex items-center justify-center border border-gray-100">
+                                            @if (prod.imagen) { 
+                                                <img [src]="prod.imagen" class="w-full h-full object-cover"> 
+                                            }
+                                        </div>
+                                        
+                                        <!-- Detalles -->
+                                        <div class="flex-1 min-w-0 flex flex-col justify-center">
+                                            <span class="text-xs font-semibold text-gray-800 truncate leading-tight tracking-tight">{{ prod.producto_nombre }}</span>
+                                            <span class="text-[10px] font-medium text-gray-500">{{ prod.presentacion_unidad }}</span>
+                                            <div class="flex items-center gap-2 mt-0.5">
+                                                <span class="text-xs font-black text-brand-text">${{ prod.precio_unitario | number:'1.0-0' }}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Controles + / - -->
+                                        <div class="flex items-center bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm mr-1">
+                                            <button 
+                                                (click)="restarCantidad(i)" 
+                                                [disabled]="prod.cantidad <= 1" 
+                                                class="size-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors">
+                                                <app-icon name="remove" classes="size-3.5 fill-current" />
+                                            </button>
+                                            <span [@popAnimation]="prod.cantidad" class="w-6 text-center text-xs font-bold text-gray-800">{{ prod.cantidad }}</span>
+                                            <button 
+                                                (click)="sumarCantidad(i)" 
+                                                class="size-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors border-l border-gray-100">
+                                                <app-icon name="add-producto" classes="size-3.5 fill-current" />
+                                            </button>
+                                        </div>
+
+                                        <button (click)="eliminarProducto(i)" class="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                                            <app-icon name="trash" classes="size-4 fill-current" />
+                                        </button>
+                                    </div>
+                                } @empty {
+                                    <div class="py-6 text-center text-xs font-medium text-gray-400 border-2 border-dashed border-gray-100 rounded-2xl">
+                                        Ningún producto agregado aún
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER DE TOTALES (Fijo abajo) -->
+            <div class="shrink-0 bg-gray-50 border-t border-gray-100 p-4 shadow-md z-30">
+                <div class="flex flex-col gap-1.5 max-w-sm mx-auto">
+                    <!-- Subtotal -->
+                    <div class="flex justify-between items-center text-xs font-semibold text-gray-500">
+                        <span>Subtotal</span>
+                        <span>${{ calcularSubtotal() | number:'1.0-0' }}</span>
+                    </div>
+
+                    <!-- Descuento Efectivo -->
+                    @if (pedidoFormService.formData().metodo_pago === 'Efectivo' && descuentoEfectivoCatalogo() > 0) {
+                        <div class="flex justify-between items-center text-xs font-bold text-emerald-500 animate-in fade-in">
+                            <span>Descuento Efectivo (-{{descuentoEfectivoCatalogo()}}%)</span>
+                            <span>-${{ calcularMontoDescuento() | number:'1.0-0' }}</span>
+                        </div>
+                    }
+
+                    <!-- Costo de Envío -->
+                    @if (pedidoFormService.formData().metodo_entrega === 'Envio') {
+                        <div class="flex justify-between items-center text-xs font-medium text-gray-500">
+                            <span>Envío a domicilio</span>
+                            <span [class.text-emerald-600]="esEnvioGratis()" [class.font-bold]="esEnvioGratis()">
+                                @if (calcularCostoEnvioFinal() > 0) {
+                                    +${{ calcularCostoEnvioFinal() | number:'1.0-0' }}
+                                } @else {
+                                    Gratis (Bonificado)
+                                }
+                            </span>
+                        </div>
+                    }
+                    
+                    <div class="h-px bg-gray-100 w-full my-0.5"></div>
+
+                    <!-- Total Final -->
+                    <div class="flex justify-between items-end">
+                        <span class="text-sm font-black text-gray-800">TOTAL</span>
+                        <span [@popAnimation]="calcularTotalFinal()" class="text-xl font-black text-brand-text leading-none">${{ calcularTotalFinal() | number:'1.0-0' }}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}

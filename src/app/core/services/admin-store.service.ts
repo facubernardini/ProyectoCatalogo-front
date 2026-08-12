@@ -322,6 +322,7 @@ export class AdminStoreService {
   }
 
   // --- MÉTODOS PARA GESTIÓN DE PEDIDOS ---
+
   actualizarUnPedidoEnLista(pedidoActualizado: Partial<PedidoDTO>) {
     this.pedidosActivos.update(pedidos => 
       pedidos.map(p => {
@@ -331,6 +332,12 @@ export class AdminStoreService {
         return p;
       })
     );
+  }
+
+  agregarNuevoPedidoALista(nuevoPedido: PedidoDTO) {
+    this.pedidosActivos.update(pedidos => {
+      return [nuevoPedido, ...pedidos];
+    });
   }
 
   removerPedidoDeLista(idPedido: string) {

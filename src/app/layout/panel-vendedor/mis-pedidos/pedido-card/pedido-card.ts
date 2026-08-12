@@ -201,12 +201,11 @@ export class PedidoCard {
           this.animarYRemover(() => {
             this.adminStore.actualizarUnPedidoEnLista(pedidoActualizadoLocalmente as PedidoDTO);
           });
-          proceso.success('Pedido actualizado con éxito.');
+          proceso.success('Pedido actualizado con éxito');
         },
         error: (err) => {
           console.error('Error al avanzar estado', err);
           proceso.error('Hubo un error al actualizar el pedido');
-          this.toastService.show('Error al guardar. Intenta de nuevo', 'error');
         }
       });
     }
