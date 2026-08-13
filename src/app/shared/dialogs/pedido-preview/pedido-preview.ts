@@ -40,6 +40,12 @@ interface ResultadoBusqueda {
         style({ transform: 'translateY(-10px)', opacity: 0 }),
         animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
       ])
+    ]),
+    trigger('popAnimationSimple', [
+      transition(':increment, :decrement', [
+        style({ opacity: 0 }),
+        animate('250ms ease-in-out', style({ opacity: 1 }))
+      ])
     ])
   ]
 })
@@ -53,6 +59,9 @@ export class PedidoPreview implements OnInit, OnDestroy {
   searchQuery = '';
   isSearchingActive = signal<boolean>(false);
   isLoadingResults = signal<boolean>(false);
+
+  isDropdownEntregaOpen = signal<boolean>(false);
+  isDropdownPagoOpen = signal<boolean>(false);
 
   resultadosBusquedaCompletos = signal<ResultadoBusqueda[]>([]);
   resultadosVisibles = signal<ResultadoBusqueda[]>([]);
@@ -70,6 +79,9 @@ export class PedidoPreview implements OnInit, OnDestroy {
   medioPagoIcons = MEDIO_PAGO_ICONS;
   listaMetodosEntrega = Object.values(MetodoEntrega);
   metodoEntregaIcons = METODO_ENTREGA_ICONS;
+
+  estadoPedido = EstadoPedido;
+  mediosPago = MedioPago;
 
   cantidadArticulos = computed(() => {
     const p = this.pedidoEditable();

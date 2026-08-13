@@ -1,9 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { Icon } from "src/app/shared/components/icon";
 
 @Component({
   selector: 'app-estadisticas',
-  imports: [],
+  imports: [Icon],
   templateUrl: './estadisticas.html',
   styleUrl: './estadisticas.css',
 })
-export class Estadisticas {}
+export class Estadisticas {
+  mostrarBeneficios = signal<boolean>(false);
+  
+  toggleBeneficios() {
+    this.mostrarBeneficios.update(v => !v);
+  }
+}

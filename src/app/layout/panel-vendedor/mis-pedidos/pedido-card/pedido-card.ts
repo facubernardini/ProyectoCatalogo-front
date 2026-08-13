@@ -1,7 +1,7 @@
 import { trigger, transition, style, animate, state } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, computed, EventEmitter, inject, input, Output, signal } from '@angular/core';
-import { EstadoPago, EstadoPedido, PedidoDTO } from 'src/app/core/models/pedido.model';
+import { Component, computed, inject, input, signal } from '@angular/core';
+import { EstadoPedido, PedidoDTO } from 'src/app/core/models/pedido.model';
 import { PedidosServiceBackend } from 'src/app/core/services-backend/pedidos.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
@@ -13,6 +13,7 @@ import { PedidoPreviewService } from 'src/app/shared/services/pedido-preview.ser
 
 @Component({
   selector: 'app-pedido-card',
+  standalone: true,
   imports: [CommonModule, Icon],
   templateUrl: './pedido-card.html',
   styleUrl: './pedido-card.css',
@@ -40,43 +41,23 @@ export class PedidoCard {
   private pedidoServiceBackend = inject(PedidosServiceBackend);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
-  
   public pedidoPreviewService = inject(PedidoPreviewService);
 
   pedido = input.required<PedidoDTO>();
 
-  isMenuOpen = signal<boolean>(false);
   estadoAnimacion = signal<'normal' | 'removing'>('normal');
 
-  estadoPago = EstadoPago;
   metodoEntregaEnum = MetodoEntrega;
-
   metodoEntregaIcons = METODO_ENTREGA_ICONS;
-  medioPagoIcons = MEDIO_PAGO_ICONS;  
+  medioPagoIcons = MEDIO_PAGO_ICONS;
+
+  estadoPedido = EstadoPedido;
 
   cantidadArticulos = computed(() => {
     const p = this.pedido();
     if (!p?.productos) return 0;
     return p.productos.reduce((total, item) => total + item.cantidad, 0);
   });
-
-  getTextoBotonAvanzar(estadoActual: string): string {
-    const mapaTextos: Record<string, string> = {
-      [EstadoPedido.PENDIENTE]: 'Preparar',
-      [EstadoPedido.EN_PREPARACION]: 'Pedido Listo',
-      [EstadoPedido.LISTO_PARA_ENTREGAR]: 'Entregado'
-    };
-    return mapaTextos[estadoActual] || 'Avanzar';
-  }
-
-  getEstiloBotonAvanzar(estadoActual: string): string {
-    const mapaColores: Record<string, string> = {
-      [EstadoPedido.PENDIENTE]: 'bg-blue-500 hover:bg-blue-600 border-blue-600',
-      [EstadoPedido.EN_PREPARACION]: 'bg-amber-500 hover:bg-amber-600 border-amber-600',
-      [EstadoPedido.LISTO_PARA_ENTREGAR]: 'bg-emerald-500 hover:bg-emerald-600 border-emerald-600'
-    };
-    return mapaColores[estadoActual] || 'bg-brand-accent hover:bg-brand-accent/90';
-  }
 
   getIconoEntrega(metodo: string): string {
     return this.metodoEntregaIcons[metodo as MetodoEntrega] || 'shop';
@@ -86,26 +67,27 @@ export class PedidoCard {
     return this.medioPagoIcons[metodo as MedioPago] || 'wallet';
   }
 
-  toggleMenu(event: Event) {
-    event.stopPropagation();
-    this.isMenuOpen.update(v => !v);
-  }
-
-  closeMenu() {
-    this.isMenuOpen.set(false);
-  }
-
   contactarWhatsApp() {
     const telefono = this.pedido().comprador_telefono;
+    if (!telefono) return;
+    const numeroLimpio = telefono.replace(/\D/g, '');
+    const url = `https://api.whatsapp.com/send?phone=549${numeroLimpio}`;
+    window.open(url, '_blank');
+  }
 
-    if (!telefono) {
-      return;
+  abrirGoogleMaps() {
+    let direccion = this.pedido().comprador_direccion;
+    
+    if (!direccion) return;
+
+    const ciudadVendedor = this.adminStore.catalogo()?.ciudad || ''; 
+
+    if (ciudadVendedor && !direccion.toLowerCase().includes(ciudadVendedor.toLowerCase())) {
+      direccion = `${direccion}, ${ciudadVendedor}`;
     }
 
-    const numeroLimpio = telefono.replace(/\D/g, '');
-
-    const url = `https://api.whatsapp.com/send?phone=549${numeroLimpio}`;
-
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccion)}`;
+    
     window.open(url, '_blank');
   }
 
@@ -114,97 +96,30 @@ export class PedidoCard {
   }
 
   editarPedido() {
-    this.closeMenu();
-
-    if (this.pedido().estado === EstadoPedido.LISTO_PARA_ENTREGAR) {
-      this.toastService.show('Los pedidos listos para entregar no se pueden editar', 'info');
-      return;
-    }
-
     this.pedidoPreviewService.open(this.pedido(), true);
   }
 
-  async toggleEstadoPago() {
-    this.closeMenu();
-
-    const esPagado = this.pedido().estado_pago === EstadoPago.PAGADO;
-    
-    const nuevoEstado = esPagado ? EstadoPago.PENDIENTE : EstadoPago.PAGADO;
-
+  async finalizarPedido() {
     const confirmacion = await this.confirmService.ask({
-      title: esPagado ? '¿Marcar como impago?' : '¿Marcar como pagado?',
-      message: esPagado 
-        ? 'El pedido volverá a figurar como pendiente de pago.' 
-        : 'El pedido se marcará como cobrado.',
-      confirmText: 'Confirmar',
-      cancelText: 'Cancelar',
-      icon: esPagado ? 'no-payment' : 'payment-done',
+      title: '¿Marcar como entregado?',
+      message: `El pedido #${this.pedido().numero_pedido} de ${this.pedido().comprador_nombre} pasará a estar finalizado.`,
+      confirmText: 'Entregado',
+      cancelText: 'Volver',
+      icon: 'check',
       type: 'info'
     });
 
     if (confirmacion) {
-      const proceso = this.toastService.loading('Actualizando pedido...');
-      this.pedidoServiceBackend.cambiarEstadoPago(this.pedido().id, nuevoEstado).subscribe({
+      const proceso = this.toastService.loading('Actualizando...');
+      this.pedidoServiceBackend.cambiarEstadoPedido(this.pedido().id, EstadoPedido.ENTREGADO).subscribe({
         next: (pedidoActualizado) => {
-          this.adminStore.actualizarUnPedidoEnLista(pedidoActualizado);
-          proceso.success(esPagado ? 'Marcado como impago' : 'Marcado como pagado');
-        },
-        error: (err) => {
-          console.error('Error al cambiar el estado de pago', err);
-          proceso.error('Error al actualizar el pago. Intenta de nuevo.');
-        }
-      });
-    }
-  }
-
-  async avanzarEstado() {
-    const estadoActual = this.pedido().estado;
-    let nuevoEstado: EstadoPedido | null = null;
-    let tituloDialog = '';
-    let mensajeDialog = '';
-
-    if (estadoActual === EstadoPedido.PENDIENTE) {
-      nuevoEstado = EstadoPedido.EN_PREPARACION;
-      tituloDialog = '¿Empezar a preparar?';
-      mensajeDialog = 'El pedido pasará a la lista de "En preparación".';
-    } 
-    else if (estadoActual === EstadoPedido.EN_PREPARACION) {
-      nuevoEstado = EstadoPedido.LISTO_PARA_ENTREGAR;
-      tituloDialog = '¿Pedido listo?';
-      mensajeDialog = 'El pedido se marcará como listo para que el cliente lo retire o se envíe.';
-    } 
-    else if (estadoActual === EstadoPedido.LISTO_PARA_ENTREGAR) {
-      nuevoEstado = EstadoPedido.ENTREGADO;
-      tituloDialog = '¿Entregaste el pedido?';
-      mensajeDialog = 'Esta acción finalizará el pedido y lo moverá al historial.';
-    } 
-    else {
-      return;
-    }
-
-    const confirmacion = await this.confirmService.ask({
-      title: tituloDialog,
-      message: mensajeDialog,
-      confirmText: 'Confirmar',
-      cancelText: 'Cancelar',
-      icon: 'info',
-      type: 'info'
-    });
-
-    if (confirmacion) {
-      const pedidoActualizadoLocalmente = { ...this.pedido(), estado: nuevoEstado };
-
-      const proceso = this.toastService.loading('Actualizando pedido...');
-
-      this.pedidoServiceBackend.cambiarEstadoPedido(this.pedido().id, nuevoEstado).subscribe({
-        next: (res) => {
           this.animarYRemover(() => {
-            this.adminStore.actualizarUnPedidoEnLista(pedidoActualizadoLocalmente as PedidoDTO);
+            this.adminStore.actualizarUnPedidoEnLista(pedidoActualizado);
           });
-          proceso.success('Pedido actualizado con éxito');
+          proceso.success('Pedido entregado con éxito');
         },
         error: (err) => {
-          console.error('Error al avanzar estado', err);
+          console.error('Error al entregar pedido', err);
           proceso.error('Hubo un error al actualizar el pedido');
         }
       });
@@ -212,27 +127,22 @@ export class PedidoCard {
   }
 
   async cancelarPedido() {
-    this.closeMenu();
-
     const confirmacion = await this.confirmService.ask({
       title: '¿Cancelar pedido?',
       message: `El pedido de ${this.pedido().comprador_nombre} será cancelado definitivamente.`,
       confirmText: 'Sí, cancelar',
       cancelText: 'Volver',
-      icon: 'trash',
+      icon: 'close',
       type: 'danger'
     });
 
     if (confirmacion) {
       const proceso = this.toastService.loading('Cancelando pedido...');
-      const nuevoEstado = EstadoPedido.CANCELADO;
-
-      this.pedidoServiceBackend.cambiarEstadoPedido(this.pedido().id, nuevoEstado).subscribe({
+      this.pedidoServiceBackend.cambiarEstadoPedido(this.pedido().id, EstadoPedido.CANCELADO).subscribe({
         next: () => {
           this.animarYRemover(() => {
             this.adminStore.removerPedidoDeLista(this.pedido().id);
           });
-
           proceso.success('Pedido cancelado');
         },
         error: (err) => {
@@ -243,9 +153,9 @@ export class PedidoCard {
     }
   }
 
+  // Se ejecuta la animación de colapso, y una vez finalizada se actualiza la Store
   private animarYRemover(accionFinal: () => void) {
     this.estadoAnimacion.set('removing');
-    
     setTimeout(() => {
       accionFinal();
     }, 200); 

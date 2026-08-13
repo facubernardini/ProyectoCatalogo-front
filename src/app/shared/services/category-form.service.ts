@@ -17,9 +17,9 @@ export class CategoryFormService {
     });
   }
 
-  openCreate() {
-    this.nombre.set('');
+  openCreate(nombreInicial: string = '') {
     this.editingCategory.set(null);
+    this.nombre.set(nombreInicial);
     this.isOpen.set(true);
   }
 

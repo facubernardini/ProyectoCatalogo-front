@@ -56,6 +56,8 @@ export interface Catalogo {
   descuento_en_efectivo: number;
 
   horarios: HorarioDia[];
+
+  permitir_ventas_sin_stock: boolean;
   
   medios_pago: MedioPago[];
 }

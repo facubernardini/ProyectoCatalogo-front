@@ -28,6 +28,12 @@ import { CrearPedidoRequest } from 'src/app/core/models/pedido.model';
         style({ transform: 'translateY(-10px)', opacity: 0 }),
         animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
       ])
+    ]),
+    trigger('popAnimationSimple', [
+      transition(':increment, :decrement', [
+        style({ opacity: 0 }),
+        animate('250ms ease-in-out', style({ opacity: 1 }))
+      ])
     ])
   ]
 })

@@ -286,7 +286,12 @@ export class AdminStoreService {
 
   agregarCategoriaALista(nueva: CategoriaVendedor) {
     const nuevaConConteo = { ...nueva, productos_count: 0 };
-    this.categorias.update(list => [...list, nuevaConConteo]);
+    
+    this.categorias.update(list => {
+      const listaActualizada = [...list, nuevaConConteo];
+      
+      return listaActualizada.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    });
   }
 
   updateCategoriaEnLista(editada: CategoriaVendedor) {

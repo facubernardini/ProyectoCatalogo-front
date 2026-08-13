@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Icon } from 'src/app/shared/components/icon';
 import { ProductImportPreviewService } from '../../services/product-import-preview.service';
-import { ProductoImportado } from 'src/app/core/models/carga-masiva.model';
+import { ProductoImportado } from 'src/app/core/models/carga-inicial.model';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 
 @Component({

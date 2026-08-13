@@ -141,6 +141,36 @@ export class MisProductos {
     return conteos;
   });
 
+  cantidadDestacados = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => p.destacado).length;
+  });
+
+  cantidadPausados = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => !p.activo).length;
+  });
+
+  cantidadSinFoto = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => !p.imagen || p.imagen.trim() === '').length;
+  });
+
+  cantidadConOfertas = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => p.presentaciones?.some(pres => pres.precio_descuento && pres.precio_descuento > 0)).length;
+  });
+
+  cantidadBajoStock = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => p.presentaciones?.some(pres => pres.activo && pres.stock !== null && pres.stock <= this.umbralStock)).length;
+  });
+
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       const filtroUrl = params['filtro'];

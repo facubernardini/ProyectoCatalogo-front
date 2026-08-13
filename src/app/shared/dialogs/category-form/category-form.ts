@@ -58,8 +58,17 @@ export class CategoryForm {
   }
 
   private resetLocalForm() {
-    this.categoria = { nombre: '', activo: true, especial: false };
-    this.categoryFormService.nombre.set('');
+    // 1. Leemos si el servicio ya traía un nombre pre-cargado
+    const nombrePrecargado = this.categoryFormService.nombre();
+    
+    // 2. Reseteamos el estado local, pero conservando ese nombre inicial
+    this.categoria = { 
+        nombre: nombrePrecargado, 
+        activo: true, 
+        especial: false 
+    };
+    
+    // (Ya no hacemos this.categoryFormService.nombre.set('') porque destruiría el dato)
   }
 
   guardar() {

@@ -1,5 +1,5 @@
-<div class="flex flex-col h-full w-full">
-    <main class="flex-1 bg-gray-50 px-3 pt-3 pb-20 flex flex-col">
+<div class="flex flex-col h-full w-full relative">
+    <main class="flex-1 bg-gray-50 px-3 pt-3 pb-20 flex flex-col overflow-y-auto">
         <div class="w-full max-w-2xl mx-auto flex flex-col flex-1">
             
             <div class="relative w-full mx-auto mb-3 group shrink-0">
@@ -218,16 +218,17 @@
                         </div>
                     }
                 </div>
-
-                <div class="fixed bottom-20 right-6 z-50 xl:right-[calc(50vw-420px)]">
-                    <button (click)="onAddCategory()"
-                        class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 md:hover:scale-105 transition-all duration-200"
-                        aria-label="Agregar categoría">
-                        <app-icon name="add-categoria" classes="size-6 fill-current" />
-                    </button>
-                </div>
-
             }
         </div>
     </main>
+
+    @if (hasCategorias()) {
+        <div class="absolute bottom-4 right-6 z-50 xl:right-[calc(50vw-420px)] animate-in fade-in zoom-in duration-200">
+            <button (click)="onAddCategory()"
+                class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 md:hover:scale-105 transition-all duration-200"
+                aria-label="Agregar categoría">
+                <app-icon name="add-categoria" classes="size-6 fill-current" />
+            </button>
+        </div>
+    }
 </div>

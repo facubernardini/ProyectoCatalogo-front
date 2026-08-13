@@ -44,7 +44,7 @@
 
             <div class="p-5 bg-gray-50 rounded-t-4xl border-t border-gray-100 shrink-0">
                 <button (click)="cartService.close()" 
-                    class="relative overflow-hidden w-full py-2.5 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all active:scale-[0.98]">
+                    class="relative overflow-hidden w-full py-2 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all active:scale-[0.98]">
                     Ir a agregar productos
                 </button>
             </div>
@@ -393,7 +393,7 @@
                             'pt-1.5 border-t-2 border-gray-100 mt-1.5': cartService.hasExtraCharges()
                         }">
                         <span class="text-lg font-bold text-brand-text">Total</span>
-                        <span [@popAnimation]="cartService.totalFinal()" class="text-xl font-black text-brand-accent tracking-tight">${{ cartService.totalFinal() | number:'1.0-0' }}</span>
+                        <span [@popAnimationSimple]="cartService.totalFinal()" class="text-xl font-black text-brand-accent tracking-tight">${{ cartService.totalFinal() | number:'1.0-0' }}</span>
                     </div>
                 </div>
 

@@ -28,6 +28,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
         style({ transform: 'translateY(-10px)', opacity: 0 }),
         animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
       ])
+    ]),
+    trigger('popAnimationSimple', [
+      transition(':increment, :decrement', [
+        style({ opacity: 0 }),
+        animate('250ms ease-in-out', style({ opacity: 1 }))
+      ])
     ])
   ]
 })
@@ -39,8 +45,13 @@ export class PedidoForm implements OnInit, OnDestroy {
 
   listaMediosPago = Object.values(MedioPago);
   listaMetodosEntrega = Object.values(MetodoEntrega);
-  listaEstadosPedido = Object.values(EstadoPedido);
-  listaEstadosPago = Object.values(EstadoPago).filter(estado => estado !== EstadoPago.REEMBOLSADO);
+  listaEstadosPedido = [EstadoPedido.PENDIENTE, EstadoPedido.ENTREGADO];
+
+  mediosPago = MedioPago;
+
+  isDropdownEntregaOpen = signal<boolean>(false);
+  isDropdownPagoOpen = signal<boolean>(false);
+  isDropdownEstadoOpen = signal<boolean>(false);
 
   // --- LÓGICA DE BÚSQUEDA DE PRODUCTOS ---
   searchQuery = signal<string>('');
@@ -343,9 +354,8 @@ export class PedidoForm implements OnInit, OnDestroy {
       
       metodo_pago: formData.metodo_pago,
       estado: formData.estado,
-      estado_pago: formData.estado_pago,
+      estado_pago: EstadoPago.PAGADO, 
       
-      // Limpiamos los productos: solo enviamos lo que pide ProductoPedidoRequest
       productos: formData.productos.map(p => ({
         producto_id: p.producto_id,
         presentacion_id: p.presentacion_id,

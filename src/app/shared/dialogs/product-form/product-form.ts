@@ -8,6 +8,8 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { ProductFormService } from '@shared/services/product-form.service';
 import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
 import { PresentacionForm } from 'src/app/core/models/presentacion.model';
+import { CategoriaManagerService } from 'src/app/core/services/categoria-manager.service';
+import { CategoryFormService } from '../../services/category-form.service';
 
 @Component({
   selector: 'app-product-form',
@@ -20,6 +22,8 @@ export class ProductForm {
   public adminStore = inject(AdminStoreService);
   public confirmService = inject(ConfirmService);
   private toastService = inject(ToastService);
+  public categoriaManager = inject(CategoriaManagerService);
+  public categoryFormService = inject(CategoryFormService);
 
   isTagsDropdownOpen = signal<boolean>(false);
   isTagsMenuUpward = signal<boolean>(false);
@@ -82,6 +86,33 @@ export class ProductForm {
   }
 
   // --- LÓGICA DE CATEGORÍAS Y BUSCADOR ---
+
+  crearNuevaCategoriaRapida() {
+    const query = this.searchQuery().trim(); 
+
+    if (!query) {
+      this.abrirFormularioNuevaCategoria();
+    }
+    else {
+      this.isCategoriaDropdownOpen.set(false);
+    
+      const nuevaCategoria = {
+        nombre: query,
+        activo: true,
+        especial: false
+      };
+
+      this.categoriaManager.guardar(nuevaCategoria, null);
+
+      this.searchQuery.set('');
+    }
+  }
+
+  abrirFormularioNuevaCategoria() {
+    this.isCategoriaDropdownOpen.set(false);
+    this.categoryFormService.openCreate();
+    this.searchQuery.set(''); 
+  }
 
   abrirDropdownYScroll(container: HTMLElement) {
     this.isCategoriaDropdownOpen.set(true);
@@ -149,7 +180,6 @@ export class ProductForm {
     return this.producto.tags_ids?.includes(id) || false;
   }
 
-  // 👉 2. Actualizamos resetForm
   resetForm() {
     this.producto = {
       nombre: '',
@@ -184,7 +214,6 @@ export class ProductForm {
     this.imagenPreviewTemporal.set(URL.createObjectURL(file));
   }
 
-  // 👉 3. Actualizamos agregarPresentacion
   agregarPresentacion() {
     this.producto.presentaciones.push({ 
       unidad_venta: '', 

@@ -45,6 +45,7 @@ export class Header {
       else if (url.includes('/mis-cupones')) this.tituloPagina.set('Mis Cupones');
       else if (url.includes('/mi-tienda')) this.tituloPagina.set('Mi Tienda');
       else if (url.includes('/estadisticas')) this.tituloPagina.set('Estadísticas');
+      else if (url.includes('/carga-inicial')) this.tituloPagina.set('Carga Inicial');
       else if (url.includes('/perfil')) this.tituloPagina.set('Mi Perfil');
       else this.tituloPagina.set('Panel');
     }

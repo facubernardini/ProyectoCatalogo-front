@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { ToastService } from 'src/app/core/services/toast.service';
 import * as XLSX from 'xlsx';
-import { ProductoImportado } from 'src/app/core/models/carga-masiva.model';
+import { ProductoImportado } from 'src/app/core/models/carga-inicial.model';
 import { BulkImportService } from 'src/app/core/services-backend/bulk-import.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { finalize } from 'rxjs';
@@ -9,7 +9,7 @@ import { finalize } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class CargaMasivaService {
+export class CargaInicialService {
   private toastService = inject(ToastService);
   private bulkImportService = inject(BulkImportService);
   private adminStore = inject(AdminStoreService);

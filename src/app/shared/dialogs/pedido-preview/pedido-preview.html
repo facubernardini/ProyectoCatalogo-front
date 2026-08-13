@@ -17,12 +17,25 @@
                     <span class="text-xs text-gray-400 font-bold ml-1">#{{ pedidoEditable()!.numero_pedido }}</span>
                 </h2>
                 
-                <button (click)="toggleEdit()" 
-                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors"
-                        [class]="isEditing() ? 'bg-brand-accent text-white' : 'bg-gray-100 text-gray-500'">
-                    <app-icon [name]="isEditing() ? 'check' : 'edit'" classes="size-3.5 fill-current" />
-                    {{ isEditing() ? 'Editando' : 'Editar' }}
-                </button>
+                @if (pedidoEditable()!.estado !== estadoPedido.ENTREGADO && pedidoEditable()!.estado !== estadoPedido.CANCELADO) {
+                    <button (click)="toggleEdit()" 
+                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors"
+                            [class]="isEditing() ? 'bg-brand-accent text-white' : 'bg-gray-100 text-gray-500'">
+                        <app-icon [name]="isEditing() ? 'check' : 'edit'" classes="size-3.5 fill-current" />
+                        {{ isEditing() ? 'Editando' : 'Editar' }}
+                    </button>
+                } @else {
+                    <div class="px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-widest cursor-default select-none"
+                        [class.bg-emerald-50]="pedidoEditable()!.estado === estadoPedido.ENTREGADO"
+                        [class.text-emerald-600]="pedidoEditable()!.estado === estadoPedido.ENTREGADO"
+                        [class.border-emerald-200]="pedidoEditable()!.estado === estadoPedido.ENTREGADO"
+                        [class.bg-red-50]="pedidoEditable()!.estado === estadoPedido.CANCELADO"
+                        [class.text-red-500]="pedidoEditable()!.estado === estadoPedido.CANCELADO"
+                        [class.border-red-200]="pedidoEditable()!.estado === estadoPedido.CANCELADO">
+                        
+                        {{ pedidoEditable()!.estado === estadoPedido.ENTREGADO ? 'Entregado' : 'Cancelado' }}
+                    </div>
+                }
             </div>
 
             <!-- ÁREA GENERAL -->
@@ -31,7 +44,7 @@
                 <!-- SECCIÓN: Datos del Cliente (Se oculta al buscar) -->
                 <div [class.hidden]="isSearchingActive()" class="grid grid-cols-12 gap-3 shrink-0 animate-in fade-in duration-200">
                     <div class="col-span-12">
-                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Cliente <span class="text-red-400">*</span></label>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Cliente</label>
                         <input type="text" 
                             [(ngModel)]="pedidoEditable()!.comprador_nombre" 
                             [disabled]="!isEditing()"
@@ -39,40 +52,125 @@
                             placeholder="Ej: Juan Pérez">
                     </div>
 
-                    <div class="col-span-6">
+                    <div class="col-span-6 relative">
                         <label class="text-[10px] font-bold text-gray-400 uppercase ml-1 flex items-center gap-1">
                             Entrega
                         </label>
                         
-                        <select 
-                            [(ngModel)]="pedidoEditable()!.metodo_entrega" 
-                            [disabled]="!isEditing()"
-                            (ngModelChange)="onMetodoCambio()"
-                            class="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 px-3 text-sm font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all disabled:opacity-70 disabled:bg-transparent disabled:border-transparent disabled:px-1 disabled:appearance-none">
+                        <button type="button"
+                                (click)="isEditing() ? isDropdownEntregaOpen.set(!isDropdownEntregaOpen()) : null"
+                                class="w-full flex items-center justify-between py-2 text-sm font-bold text-brand-text outline-none transition-all rounded-xl"
+                                [class.bg-gray-50]="isEditing()"
+                                [class.border]="isEditing()"
+                                [class.border-gray-200]="isEditing()"
+                                [class.px-3]="isEditing()"
+                                [class.bg-transparent]="!isEditing()"
+                                [class.border-transparent]="!isEditing()"
+                                [class.px-1]="!isEditing()"
+                                [class.opacity-70]="!isEditing()">
                             
-                            @for (metodo of listaMetodosEntrega; track metodo) {
-                                <option [value]="metodo">{{ metodo }}</option>
+                            <span>{{ pedidoEditable()!.metodo_entrega || 'Seleccionar' }}</span>
+                            
+                            @if (isEditing()) {
+                                <span class="flex items-center justify-center shrink-0 transition-transform duration-300 ease-in-out" 
+                                    [class.rotate-180]="isDropdownEntregaOpen()">
+                                    <app-icon name="chevron-down" classes="size-3.5 text-gray-400 fill-current" />
+                                </span>
                             }
-                            
-                        </select>
+                        </button>
+
+                        <!-- Menú Desplegable -->
+                        @if (isEditing() && isDropdownEntregaOpen()) {
+                            <div class="fixed inset-0 z-40" (click)="isDropdownEntregaOpen.set(false)"></div>
+
+                            <div class="absolute top-full left-0 w-full mt-1 z-50 bg-white border border-gray-100 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100">
+                                
+                                @for (metodo of listaMetodosEntrega; track metodo) {
+                                    <button type="button"
+                                            (click)="pedidoEditable()!.metodo_entrega = metodo; onMetodoCambio(); isDropdownEntregaOpen.set(false)"
+                                            class="w-full flex items-center justify-between px-2.5 py-2 text-sm transition-colors rounded-lg"
+                                            [class.bg-brand-accent/10]="pedidoEditable()!.metodo_entrega === metodo"
+                                            [class.text-brand-accent]="pedidoEditable()!.metodo_entrega === metodo"
+                                            [class.font-bold]="pedidoEditable()!.metodo_entrega === metodo"
+                                            [class.text-gray-600]="pedidoEditable()!.metodo_entrega !== metodo"
+                                            [class.font-medium]="pedidoEditable()!.metodo_entrega !== metodo"
+                                            [class.md:hover:bg-gray-50]="pedidoEditable()!.metodo_entrega !== metodo">
+                                        
+                                        <span>{{ metodo }}</span>
+                                        
+                                        @if (pedidoEditable()!.metodo_entrega === metodo) {
+                                            <app-icon name="check" classes="size-4 fill-current" />
+                                        }
+                                    </button>
+                                }
+                                
+                            </div>
+                        }
                     </div>
 
-                    <div class="col-span-6">
+                    <div class="col-span-6 relative">
                         <label class="text-[10px] font-bold text-gray-400 uppercase ml-1 flex items-center gap-1">
                             Pago
                         </label>
                         
-                        <select 
-                            [(ngModel)]="pedidoEditable()!.metodo_pago" 
-                            [disabled]="!isEditing()"
-                            (ngModelChange)="onMetodoCambio()"
-                            class="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 px-3 text-sm font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all disabled:opacity-70 disabled:bg-transparent disabled:border-transparent disabled:px-1 disabled:appearance-none">
+                        <button type="button"
+                                (click)="isEditing() ? isDropdownPagoOpen.set(!isDropdownPagoOpen()) : null"
+                                class="w-full flex items-center justify-between py-2 text-sm font-bold text-brand-text outline-none transition-all rounded-xl"
+                                [class.bg-gray-50]="isEditing()"
+                                [class.border]="isEditing()"
+                                [class.border-gray-200]="isEditing()"
+                                [class.px-3]="isEditing()"
+                                [class.bg-transparent]="!isEditing()"
+                                [class.border-transparent]="!isEditing()"
+                                [class.px-1]="!isEditing()"
+                                [class.opacity-70]="!isEditing()">
                             
-                            @for (metodo of listaMediosPago; track metodo) {
-                                <option [value]="metodo">{{ metodo }}</option>
+                            <span>
+                                {{ pedidoEditable()!.metodo_pago || 'Seleccionar' }}
+                                @if (pedidoEditable()!.metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0) {
+                                    (-{{ descuentoEfectivoCatalogo() }}%)
+                                }
+                            </span>
+                            
+                            @if (isEditing()) {
+                                <span class="flex items-center justify-center shrink-0 transition-transform duration-300 ease-in-out" 
+                                    [class.rotate-180]="isDropdownPagoOpen()">
+                                    <app-icon name="chevron-down" classes="size-3.5 text-gray-400 fill-current" />
+                                </span>
                             }
-                            
-                        </select>
+                        </button>
+
+                        @if (isEditing() && isDropdownPagoOpen()) {
+                            <div class="fixed inset-0 z-40" (click)="isDropdownPagoOpen.set(false)"></div>
+
+                            <div class="absolute top-full left-0 w-full mt-1 z-50 bg-white border border-gray-100 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100">
+                                
+                                @for (metodo of listaMediosPago; track metodo) {
+                                    <button type="button"
+                                            (click)="pedidoEditable()!.metodo_pago = metodo; onMetodoCambio(); isDropdownPagoOpen.set(false)"
+                                            class="w-full flex items-center justify-between px-2.5 py-2 text-sm transition-colors rounded-lg"
+                                            [class.bg-brand-accent/10]="pedidoEditable()!.metodo_pago === metodo"
+                                            [class.text-brand-accent]="pedidoEditable()!.metodo_pago === metodo"
+                                            [class.font-bold]="pedidoEditable()!.metodo_pago === metodo"
+                                            [class.text-gray-600]="pedidoEditable()!.metodo_pago !== metodo"
+                                            [class.font-medium]="pedidoEditable()!.metodo_pago !== metodo"
+                                            [class.md:hover:bg-gray-50]="pedidoEditable()!.metodo_pago !== metodo">
+                                        
+                                        <span>
+                                            {{ metodo }}
+                                            @if (metodo === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0) {
+                                                (-{{ descuentoEfectivoCatalogo() }}%)
+                                            }
+                                        </span>
+                                        
+                                        @if (pedidoEditable()!.metodo_pago === metodo) {
+                                            <app-icon name="check" classes="size-4 fill-current" />
+                                        }
+                                    </button>
+                                }
+                                
+                            </div>
+                        }
                     </div>
                 </div>
 
@@ -286,7 +384,7 @@
                         <!-- Total Final -->
                         <div class="flex items-center justify-between mt-0.5">
                             <span class="text-xs font-semibold text-gray-300 uppercase tracking-widest">Total Final</span>
-                            <span [@popAnimation]="pedidoEditable()!.total_final" class="text-base font-bold text-white">
+                            <span [@popAnimationSimple]="pedidoEditable()!.total_final" class="text-base font-bold text-white">
                                 ${{ pedidoEditable()!.total_final | number:'1.0-0' }}
                             </span>
                         </div>

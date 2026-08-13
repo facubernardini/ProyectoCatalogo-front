@@ -103,8 +103,16 @@
 
                 <div class="pt-2">
                     <section class="space-y-2">
+                        <!-- CABECERA CON BOTÓN RÁPIDO -->
                         <div class="flex items-center justify-between">
-                            <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Categorías</p>
+                            <div class="flex items-center gap-2">
+                                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Categorías</p>
+                                <button type="button" (click)="abrirFormularioNuevaCategoria()" 
+                                        title="Crear nueva categoría"
+                                        class="flex items-center justify-center bg-brand-accent/10 text-brand-accent size-5 rounded-md md:hover:bg-brand-accent/20 active:scale-90 transition-all">
+                                    <app-icon name="add-producto" classes="size-3.5 fill-current" />
+                                </button>
+                            </div>
                             <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
                                 {{ producto.categorias_ids.length }} seleccionada(s)
                             </span>
@@ -158,8 +166,23 @@
                                             </button>
                                         </li>
                                     } @empty {
-                                        <li class="px-4 py-4 text-sm font-bold text-gray-400 text-center">
-                                            No se encontraron categorías.
+                                        <li class="px-4 py-5 flex flex-col items-center justify-center gap-3 text-center">
+                                            @if (adminStore.categorias().length > 0) {
+                                                <span class="text-sm font-bold text-gray-400">
+                                                    No encontramos "{{ searchQuery() }}"
+                                                </span>
+                                            }
+                                            
+                                            <button type="button" (click)="crearNuevaCategoriaRapida()" 
+                                                    class="flex items-center gap-1.5 text-xs font-bold text-brand-accent bg-brand-accent/10 px-4 py-2 rounded-xl active:scale-95 transition-all md:hover:bg-brand-accent/20">
+                                                <app-icon name="add-producto" classes="size-3.5 fill-current" />
+                                                
+                                                @if (searchQuery().trim()) {
+                                                    Crear categoría "{{ searchQuery().trim() }}"
+                                                } @else {
+                                                    Crear categoría
+                                                }
+                                            </button>
                                         </li>
                                     }
                                 </ul>
@@ -177,10 +200,6 @@
                                     }
                                 }
                             </div>
-                        }
-
-                        @if (adminStore.categorias().length === 0) {
-                            <p class="text-xs text-gray-400 italic mt-1">No hay categorías creadas todavía.</p>
                         }
                     </section>
                 </div>
