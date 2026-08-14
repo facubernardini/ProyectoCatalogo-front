@@ -8,6 +8,9 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { ImageViewerService } from '../../services/image-viewer.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { CommonModule } from '@angular/common';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { APP_CONFIG } from '../../constants/app.constants';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-product-selector',
@@ -29,11 +32,15 @@ import { CommonModule } from '@angular/common';
   ]
 })
 export class ProductSelector {
+  public adminStore = inject(AdminStoreService);
   public productSelectorService = inject(ProductSelectorService);
   public imageViewerService = inject(ImageViewerService);
   private toastService = inject(ToastService);
+  public cartService = inject(CartService);
 
   public cantidades: Record<number, number> = {};
+
+  readonly umbralStock = APP_CONFIG.BAJO_STOCK_CATALOGO_PUBLICO;
 
   constructor() {
     effect(() => {
@@ -43,12 +50,26 @@ export class ProductSelector {
     });
   }
 
+  permiteVentaSinStock(): boolean {
+    return this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
+  }
+
+  puedeIncrementar(pres: Presentacion): boolean {
+    if (this.permiteVentaSinStock() || pres.stock === null) return true;
+    
+    const cantidadTotal = this.getCantidad(pres.id) + this.cartService.getCantidadEnCarrito(pres.id);
+    
+    return cantidadTotal < pres.stock;
+  }
+
   getCantidad(presId: number): number {
     return this.cantidades[presId] ?? 0;
   }
 
-  incrementar(presId: number) {
-    this.cantidades[presId] = this.getCantidad(presId) + 1;
+  incrementar(pres: Presentacion) {
+    if (this.puedeIncrementar(pres)) {
+      this.cantidades[pres.id] = this.getCantidad(pres.id) + 1;
+    }
   }
 
   decrementar(presId: number) {

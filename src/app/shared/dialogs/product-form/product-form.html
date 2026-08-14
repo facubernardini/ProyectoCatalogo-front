@@ -351,7 +351,7 @@
                                     </span>
                                     <input type="number" [(ngModel)]="pres.precio" 
                                         [class.border-red-300]="pres.precio === null || pres.precio <= 0"
-                                        class="w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        class="no-spinners w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
                                         placeholder="0.00">
                                 </div>
                             </div>
@@ -365,7 +365,7 @@
                                     </span>
                                     <input type="number" [(ngModel)]="pres.precio_descuento" 
                                         [class.border-red-400]="pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio"
-                                        class="w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        class="no-spinners w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
                                         placeholder="Opcional">
                                 </div>
                                 
@@ -383,7 +383,7 @@
                                         $
                                     </span>
                                     <input type="number" [(ngModel)]="pres.precio_costo" 
-                                        class="w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        class="no-spinners w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
                                         placeholder="Opcional">
                                 </div>
                             </div>
@@ -393,7 +393,7 @@
                                 <div class="relative group/input">
                                     <input type="number" min="0" [(ngModel)]="pres.stock" 
                                         [class.border-red-400]="pres.stock === 0 || (pres.stock !== null && pres.stock < 0)"
-                                        class="w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        class="no-spinners w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
                                         placeholder="Ilimitado">
                                 </div>
                                 @if (pres.stock === 0) {

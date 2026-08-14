@@ -113,11 +113,30 @@ export class Carrito {
   }
 
   manejarClickSumar(item: any) {
+    if (!this.puedeIncrementar(item)) {
+      this.toastService.show('Se alcanzó el límite de stock disponible', 'error');
+      return;
+    }
+
     if (this.itemParaEliminar() === item.presentacionId) {
       this.itemParaEliminar.set(null);
       clearTimeout(this.timeoutEliminar);
     }
     this.cartService.sumarUno(item.presentacionId);
+  }
+
+  puedeIncrementar(item: any): boolean {
+    const permiteVentaSinStock = this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
+    if (permiteVentaSinStock) return true;
+
+    // Buscamos el producto y la presentación actual en el store
+    const producto = this.adminStore.productos().find(p => p.id === item.productoId);
+    const presentacion = producto?.presentaciones.find(p => p.id === item.presentacionId);
+
+    // Si por alguna razón no lo encuentra o tiene stock infinito (null), lo dejamos pasar
+    if (!presentacion || presentacion.stock === null) return true;
+
+    return item.cantidad < presentacion.stock;
   }
 
   getPorcentaje(base: number, oferta: number): number {

@@ -8,10 +8,11 @@ import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { ProductoManagerService } from 'src/app/core/services/producto-manager.service';
 import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
+import { DisableNumberScrollDirective } from 'src/app/core/directives/disable-number-scroll.directive';
 
 @Component({
   selector: 'app-product-preview',
-  imports: [SwipeDownDirective, FormsModule, Icon, SafeHtmlPipe],
+  imports: [DisableNumberScrollDirective, SwipeDownDirective, FormsModule, Icon, SafeHtmlPipe],
   templateUrl: './product-preview.html',
   styleUrl: './product-preview.css',
 })
@@ -101,10 +102,6 @@ export class ProductPreview {
       // 3. Descuento inválido (mayor o igual al precio)
       const descuentoInvalido = p.precio_descuento !== null && p.precio_descuento !== undefined && p.precio_descuento !== '' as any && Number(p.precio_descuento) >= Number(p.precio);
       if (descuentoInvalido) return true;
-
-      // 4. Stock inválido (No puede ser 0 ni negativo. Null es válido)
-      const stockInvalido = p.stock !== null && p.stock !== undefined && (Number(p.stock) === 0 || Number(p.stock) < 0);
-      if (stockInvalido) return true;
 
       return false;
     });

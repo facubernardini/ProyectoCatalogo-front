@@ -18,82 +18,94 @@
 
             <div class="flex overflow-x-auto gap-3 px-4 pb-4 snap-x snap-mandatory no-scrollbar items-stretch">
                 @for (producto of productosOferta(); track producto.id) {
-                    @let oferta = getMejorOferta(producto.presentaciones);
                     
-                    <div 
-                        class="shrink-0 w-[45%] sm:w-64 self-stretch bg-white rounded-2xl overflow-hidden shadow-sm snap-center border border-gray-100 flex flex-col"
-                        (click)="productSelectorService.open(producto)">
+                    @if (getPresentacionesDisponibles(producto); as disponibles) {
                         
-                        <div class="relative w-full aspect-square bg-brand-bg shrink-0 overflow-hidden"
-                            [class.animate-pulse]="!imageLoaded() && producto.imagen">
+                        @let oferta = getMejorOferta(disponibles);
+                        @let estaAgotado = oferta === null;
+                        
+                        <div 
+                            class="shrink-0 w-[45%] sm:w-64 self-stretch bg-white rounded-2xl overflow-hidden shadow-sm snap-center border border-gray-100 flex flex-col"
+                            (click)="productSelectorService.open(producto)">
                             
-                            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-accent/10 transition-opacity duration-300"
-                                [class.opacity-0]="imageLoaded() && producto.imagen">
-                                <app-icon name="photo" classes="size-8 fill-current" />
+                            <div class="relative w-full aspect-square bg-brand-bg shrink-0 overflow-hidden"
+                                [class.animate-pulse]="!imageLoaded() && producto.imagen">
+                                
+                                <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-accent/10 transition-opacity duration-300"
+                                    [class.opacity-0]="imageLoaded() && producto.imagen">
+                                    <app-icon name="photo" classes="size-8 fill-current" />
+                                </div>
+
+                                @if (producto.imagen) {
+                                    <img [src]="producto.imagen" 
+                                        (load)="onImageLoad()"
+                                        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out bg-white"
+                                        [class.opacity-0]="!imageLoaded()"
+                                        
+                                        [class.opacity-100]="imageLoaded() && !estaAgotado"
+                                        [class.opacity-70]="imageLoaded() && estaAgotado"
+                                        [class.grayscale]="estaAgotado">
+                                }
                             </div>
 
-                            @if (producto.imagen) {
-                                <img [src]="producto.imagen" 
-                                    (load)="onImageLoad()"
-                                    class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out bg-white"
-                                    [class.opacity-0]="!imageLoaded()"
-                                    [class.opacity-100]="imageLoaded()">
-                            }
-                        </div>
+                            <div class="p-2 flex flex-col flex-1">
+                                
+                                <h3 class="font-bold text-brand-text text-[12px] leading-tight line-clamp-2">
+                                    {{ producto.nombre }}
+                                </h3>
+                                
+                                @if (producto.marca) {
+                                    <p class="text-[9px] font-bold text-brand-accent/80 uppercase tracking-wider mt-1 truncate">
+                                        {{ producto.marca }}
+                                    </p>
+                                }
+                                
+                                @if (producto.tags && producto.tags.length > 0) {
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        @for (tag of producto.tags; track tag.id) {
+                                            <span class="flex items-center gap-1 text-[8px] font-semibold uppercase tracking-widest text-brand-text bg-brand-accent/5 px-1 py-0.5 rounded border border-brand-accent/20">
+                                                
+                                                @if (tag.icono) {
+                                                    <div [innerHTML]="tag.icono | safeHtml" class="size-4 flex items-center justify-center shrink-0"></div>
+                                                }
+                                                
+                                                {{ tag.nombre }}
+                                            </span>
+                                        }
+                                    </div>
+                                }
 
-                        <div class="p-2 flex flex-col flex-1">
-                            
-                            <h3 class="font-bold text-brand-text text-[12px] leading-tight line-clamp-2">
-                                {{ producto.nombre }}
-                            </h3>
-                            
-                            @if (producto.marca) {
-                                <p class="text-[9px] font-bold text-brand-accent/80 uppercase tracking-wider mt-1 truncate">
-                                    {{ producto.marca }}
-                                </p>
-                            }
-                            
-                            @if (producto.tags && producto.tags.length > 0) {
-                                <div class="flex flex-wrap gap-1 mt-1">
-                                    @for (tag of producto.tags; track tag.id) {
-                                        <span class="flex items-center gap-1 text-[8px] font-semibold uppercase tracking-widest text-brand-text bg-brand-accent/5 px-1 py-0.5 rounded border border-brand-accent/20">
-                                            
-                                            @if (tag.icono) {
-                                                <div [innerHTML]="tag.icono | safeHtml" class="size-4 flex items-center justify-center shrink-0"></div>
-                                            }
-                                            
-                                            {{ tag.nombre }}
+                                @if (oferta){
+                                    <div class="flex flex-wrap gap-1.5 my-1.5">
+                                        <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg text-gray-500 bg-gray-100 border-gray-200/50 border uppercase transition-colors">
+                                            {{ oferta.unidad_venta }}
                                         </span>
-                                    }
-                                </div>
-                            }
-
-                            @if (oferta){
-                                <div class="flex flex-wrap gap-1.5 my-1.5">
-                                    <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg text-gray-500 bg-gray-100 border-gray-200/50 border uppercase transition-colors">
-                                        {{ oferta.unidad_venta }}
-                                    </span>
-                                </div>
-                            }
-                            
-                            <div class="mt-auto pt-1.5 flex items-center justify-between gap-1 border-t border-gray-100">
-                                <div class="flex flex-col">
-                                    @if (oferta) {
-                                        <span class="text-[10px] text-gray-400 line-through leading-none mb-0.5 tracking-tighter">
-                                            ${{ oferta.precio | number:'1.0-0' }}
-                                        </span>
-                                        <span class="text-brand-text font-bold text-base leading-tight tracking-tighter">
-                                            ${{ oferta.precio_descuento | number:'1.0-0' }}
-                                        </span>
-                                    } @else {
-                                        <span class="text-brand-text font-bold text-base leading-tight tracking-tighter">
-                                            ${{ producto.presentaciones[0]?.precio | number:'1.0-0' }}
-                                        </span>
-                                    }
+                                    </div>
+                                }
+                                
+                                <div class="mt-auto pt-1.5 flex items-center justify-between gap-1 border-t border-gray-100 min-h-9">
+                                    <div class="flex flex-col">
+                                        
+                                        @if (oferta) {
+                                            <span class="text-[10px] text-gray-400 line-through leading-none mb-0.5 tracking-tighter">
+                                                ${{ oferta.precio | number:'1.0-0' }}
+                                            </span>
+                                            <span class="text-brand-text font-bold text-base leading-tight tracking-tighter">
+                                                ${{ oferta.precio_descuento | number:'1.0-0' }}
+                                            </span>
+                                        } @else {
+                                            <div class="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 border border-gray-200/80 rounded-lg select-none">
+                                                <span class="text-[10px] font-bold text-brand-text uppercase tracking-wider mt-px">
+                                                    Agotado
+                                                </span>
+                                            </div>
+                                        }
+                                        
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 }
             </div>
 

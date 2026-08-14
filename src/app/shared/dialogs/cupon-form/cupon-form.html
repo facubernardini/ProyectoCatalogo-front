@@ -64,7 +64,7 @@
                             <span class="pl-4 font-black text-gray-400">$</span>
                         }
                         <input type="number" min="1" [(ngModel)]="formService.formData().descuento"
-                            class="w-full p-3 bg-transparent border-none outline-none font-bold text-brand-accent focus:ring-0">
+                            class="no-spinners w-full p-3 bg-transparent border-none outline-none font-bold text-brand-accent focus:ring-0">
                         @if (formService.formData().es_porcentaje) {
                             <span class="pr-4 font-bold text-gray-400">%</span>
                         }
@@ -87,7 +87,7 @@
                                 <span class="pl-3 font-bold text-gray-400">$</span>
                                 <input type="number" min="1" [(ngModel)]="formService.formData().tope_descuento" 
                                     placeholder="Monto máximo..."
-                                    class="w-full p-3 bg-transparent border-none outline-none font-bold text-brand-text text-sm focus:ring-0">
+                                    class="no-spinners w-full p-3 bg-transparent border-none outline-none font-bold text-brand-text text-sm focus:ring-0">
                             </div>
                         }
                     </div>

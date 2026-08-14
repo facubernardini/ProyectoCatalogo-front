@@ -24,7 +24,6 @@ export class MisPedidos implements OnInit, OnDestroy {
   public pedidoFormService = inject(PedidoFormService);
   private pedidoServiceBackend = inject(PedidosServiceBackend);
 
-  // Control de Vistas y Buscador
   viendoHistorial = signal<boolean>(false);
   busquedaRaw = signal<string>('');
   busquedaDebounced = signal<string>('');
@@ -38,15 +37,12 @@ export class MisPedidos implements OnInit, OnDestroy {
   historialHasNext = signal<boolean>(true);
   isLoadingHistorial = signal<boolean>(false);
 
-  // Computada maestra: Decide qué array mostrar y aplica el filtro si corresponde
   pedidosFiltrados = computed(() => {
     
-    // Si estamos en el historial, devolvemos los que trajo la API (ya vienen filtrados y ordenados del back)
     if (this.viendoHistorial()) {
       return this.historialPedidos();
     } 
     
-    // Si estamos en la vista principal (Pendientes), leemos de la Store en memoria
     const todos = this.adminStore.pedidosActivos(); 
     if (!Array.isArray(todos)) return [];
     
@@ -111,16 +107,13 @@ export class MisPedidos implements OnInit, OnDestroy {
   toggleHistorial() {
     const entraraHistorial = !this.viendoHistorial();
     
-    // 1. Limpiamos variables temporalmente SIN llamar a la API
     this.busquedaRaw.set('');
     this.busquedaDebounced.set('');
     this.isBuscando.set(false);
     this.searchSubject.next('');
     
-    // 2. Cambiamos la vista
     this.viendoHistorial.set(entraraHistorial);
     
-    // 3. Si entramos, cargamos SIEMPRE la API para traer la data fresca
     if (entraraHistorial) {
       this.cargarHistorial(true);
     }
@@ -134,7 +127,6 @@ export class MisPedidos implements OnInit, OnDestroy {
       this.historialPage.set(1);
       this.historialHasNext.set(true);
       
-      // 👉 ESTA ES LA SOLUCIÓN: Vaciamos la lista vieja inmediatamente
       this.historialPedidos.set([]); 
     }
 
@@ -142,8 +134,6 @@ export class MisPedidos implements OnInit, OnDestroy {
 
     this.isLoadingHistorial.set(true);
     
-    // Si NO estamos reseteando (es decir, estamos paginando hacia abajo), O si el usuario está buscando activamente,
-    // activamos el spinner chiquito del buscador.
     if (!reset || this.busquedaDebounced().length > 0) {
       this.isBuscando.set(true); 
     }

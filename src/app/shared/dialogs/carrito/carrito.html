@@ -93,29 +93,38 @@
                                 </div>
                             </div>
                             
-                            <div class="flex items-center gap-1.5 bg-gray-100 p-1 rounded-xl">
-    
-                                <button (click)="manejarClickRestar(item)"
-                                        class="size-8 flex items-center justify-center bg-white rounded-lg shadow-sm active:scale-90 transition-transform md:hover:bg-gray-50">
-                                                                                                                                                
-                                    @if (itemParaEliminar() === item.presentacionId) {
-                                        <app-icon name="trash" classes="size-5 fill-current text-red-500 animate-in zoom-in duration-200" />
-                                    } @else {
-                                        <app-icon name="remove" classes="size-4 fill-current text-brand-text animate-in zoom-in duration-200" />
-                                    }
-                                    
-                                </button>
+                            <div class="flex flex-col items-center gap-1.5">
 
-                                <div class="min-w-5 overflow-hidden flex items-center justify-center">
-                                    <span [@popAnimation]="item.cantidad" class="block font-black text-brand-text text-center select-none">
-                                        {{ item.cantidad }}
-                                    </span>
+                                <div class="flex items-center gap-1.5 bg-gray-100 p-1 rounded-xl">
+                                    <button (click)="manejarClickRestar(item)"
+                                            class="size-8 flex items-center justify-center bg-white rounded-lg shadow-sm active:scale-90 transition-transform md:hover:bg-gray-50">
+                                                                                                                                                                                                
+                                        @if (itemParaEliminar() === item.presentacionId) {
+                                            <app-icon name="trash" classes="size-5 fill-current text-red-500 animate-in zoom-in duration-200" />
+                                        } @else {
+                                            <app-icon name="remove" classes="size-4 fill-current text-brand-text animate-in zoom-in duration-200" />
+                                        }
+                                        
+                                    </button>
+
+                                    <div class="min-w-5 overflow-hidden flex items-center justify-center">
+                                        <span [@popAnimation]="item.cantidad" class="block font-black text-brand-text text-center select-none">
+                                            {{ item.cantidad }}
+                                        </span>
+                                    </div>
+
+                                    <button (click)="manejarClickSumar(item)"
+                                            [disabled]="!puedeIncrementar(item)"
+                                            class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-all text-white md:hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 disabled:md:hover:brightness-100 disabled:shadow-none">
+                                        <app-icon name="add-producto" classes="size-4 fill-current" />
+                                    </button>
                                 </div>
 
-                                <button (click)="manejarClickSumar(item)"
-                                    class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-transform text-white md:hover:brightness-110">
-                                    <app-icon name="add-producto" classes="size-4 fill-current" />
-                                </button>
+                                @if (!puedeIncrementar(item)) {
+                                    <span class="text-[10px] font-medium text-amber-600 text-center leading-none tracking-wide animate-in fade-in slide-in-from-top-1 duration-200">
+                                        Alcanzaste el máximo
+                                    </span>
+                                }
                             </div>
                         </div>
                     }

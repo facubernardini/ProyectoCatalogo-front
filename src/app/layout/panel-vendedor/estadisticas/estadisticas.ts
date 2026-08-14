@@ -1,9 +1,8 @@
 import { Component, signal } from '@angular/core';
-import { Icon } from "src/app/shared/components/icon";
 
 @Component({
   selector: 'app-estadisticas',
-  imports: [Icon],
+  imports: [],
   templateUrl: './estadisticas.html',
   styleUrl: './estadisticas.css',
 })

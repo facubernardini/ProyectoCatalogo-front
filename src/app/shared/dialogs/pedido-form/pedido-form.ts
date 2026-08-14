@@ -48,6 +48,7 @@ export class PedidoForm implements OnInit, OnDestroy {
   listaEstadosPedido = [EstadoPedido.PENDIENTE, EstadoPedido.ENTREGADO];
 
   mediosPago = MedioPago;
+  metodosEntrega = MetodoEntrega;
 
   isDropdownEntregaOpen = signal<boolean>(false);
   isDropdownPagoOpen = signal<boolean>(false);

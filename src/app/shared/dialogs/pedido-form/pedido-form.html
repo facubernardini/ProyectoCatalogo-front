@@ -344,14 +344,17 @@
             <!-- FOOTER DE TOTALES (Fijo abajo) -->
             <div class="shrink-0 bg-gray-50 border-t border-gray-100 p-4 shadow-md z-30">
                 <div class="flex flex-col gap-1.5 max-w-sm mx-auto">
-                    <!-- Subtotal -->
-                    <div class="flex justify-between items-center text-xs font-semibold text-gray-500">
-                        <span>Subtotal</span>
-                        <span>${{ calcularSubtotal() | number:'1.0-0' }}</span>
-                    </div>
+                    
+                    <!-- Subtotal Condicional: Solo aparece si hay Envío O (es Efectivo Y hay descuento en el catálogo) -->
+                    @if (pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO || (pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0)) {
+                        <div class="flex justify-between items-center text-xs font-semibold text-gray-500 animate-in fade-in">
+                            <span>Subtotal</span>
+                            <span>${{ calcularSubtotal() | number:'1.0-0' }}</span>
+                        </div>
+                    }
 
                     <!-- Descuento Efectivo -->
-                    @if (pedidoFormService.formData().metodo_pago === 'Efectivo' && descuentoEfectivoCatalogo() > 0) {
+                    @if (pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0) {
                         <div class="flex justify-between items-center text-xs font-bold text-emerald-500 animate-in fade-in">
                             <span>Descuento Efectivo (-{{descuentoEfectivoCatalogo()}}%)</span>
                             <span>-${{ calcularMontoDescuento() | number:'1.0-0' }}</span>
@@ -359,7 +362,7 @@
                     }
 
                     <!-- Costo de Envío -->
-                    @if (pedidoFormService.formData().metodo_entrega === 'Envio') {
+                    @if (pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO) {
                         <div class="flex justify-between items-center text-xs font-medium text-gray-500">
                             <span>Envío a domicilio</span>
                             <span [class.text-emerald-600]="esEnvioGratis()" [class.font-bold]="esEnvioGratis()">
@@ -372,7 +375,10 @@
                         </div>
                     }
                     
-                    <div class="h-px bg-gray-100 w-full my-0.5"></div>
+                    <!-- Muestra la línea divisoria únicamente si el subtotal, descuento o envío están visibles -->
+                    @if ((pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO && pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0) || (pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0) || pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO) {
+                        <div class="h-px bg-gray-100 w-full my-0.5"></div>
+                    }
 
                     <!-- Total Final -->
                     <div class="flex justify-between items-end">

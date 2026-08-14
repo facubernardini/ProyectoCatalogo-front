@@ -10,10 +10,11 @@ import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
 import { PresentacionForm } from 'src/app/core/models/presentacion.model';
 import { CategoriaManagerService } from 'src/app/core/services/categoria-manager.service';
 import { CategoryFormService } from '../../services/category-form.service';
+import { DisableNumberScrollDirective } from 'src/app/core/directives/disable-number-scroll.directive';
 
 @Component({
   selector: 'app-product-form',
-  imports: [Icon, CommonModule, FormsModule, SafeHtmlPipe],
+  imports: [DisableNumberScrollDirective, Icon, CommonModule, FormsModule, SafeHtmlPipe],
   templateUrl: './product-form.html',
   styleUrl: './product-form.css',
 })
