@@ -2,6 +2,7 @@ import { Component, computed, HostListener, inject, signal } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
+import { Producto } from 'src/app/core/models/producto.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
@@ -40,6 +41,32 @@ export class CarouselDestacadosDesktop {
 
   currentPage = signal(0);
 
+  // 👉 1. Filtramos las presentaciones según la regla global de la tienda
+  getPresentacionesDisponibles(producto: Producto): Presentacion[] {
+    const permiteVentaSinStock = this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
+    
+    if (permiteVentaSinStock) {
+      return producto.presentaciones;
+    }
+
+    return producto.presentaciones.filter(p => p.stock === null || p.stock > 0);
+  }
+
+  // 👉 2. Método auxiliar rápido
+  estaAgotado(producto: Producto): boolean {
+    return this.getPresentacionesDisponibles(producto).length === 0;
+  }
+
+  // 👉 3. Mantenemos el getMejorOferta que alimentaremos desde el HTML
+  getMejorOferta(presentaciones: Presentacion[]): Presentacion | null {
+    if (!presentaciones?.length) return null;
+    return presentaciones.reduce((prev, curr) => {
+      const precioPrev = prev.precio_descuento ?? prev.precio;
+      const precioCurr = curr.precio_descuento ?? curr.precio;
+      return Number(precioCurr) < Number(precioPrev) ? curr : prev;
+    });
+  }
+
   @HostListener('window:resize')
   onResize() {
     this.itemsPorPagina.set(window.innerWidth >= 1280 ? 3 : 2);
@@ -67,15 +94,6 @@ export class CarouselDestacadosDesktop {
 
   goTo(index: number) {
     this.currentPage.set(index);
-  }
-
-  getMejorOferta(presentaciones: Presentacion[]): Presentacion | null {
-    if (!presentaciones?.length) return null;
-    return presentaciones.reduce((prev, curr) => {
-      const precioPrev = prev.precio_descuento ?? prev.precio;
-      const precioCurr = curr.precio_descuento ?? curr.precio;
-      return Number(precioCurr) < Number(precioPrev) ? curr : prev;
-    });
   }
 
   onImageLoad() {

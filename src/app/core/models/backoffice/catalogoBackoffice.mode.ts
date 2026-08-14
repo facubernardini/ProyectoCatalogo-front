@@ -7,6 +7,7 @@ export interface CatalogoBackoffice {
     nombre_tienda: string;
     slug: string;
     logo_tienda: string | null;
+    activo: boolean;
     
     creado_el: Date;
     actualizado_el: Date;

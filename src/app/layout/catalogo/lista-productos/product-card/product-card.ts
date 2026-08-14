@@ -1,22 +1,40 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { SafeHtmlPipe } from "../../../../core/pipes/safe-html.pipe";
+import { CommonModule } from '@angular/common';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
 @Component({
   selector: 'app-product-card',
-  imports: [Icon, SafeHtmlPipe],
+  imports: [CommonModule, Icon, SafeHtmlPipe],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
 })
 export class ProductCard {
-  producto = input.required<Producto>();
-
+  public adminStore = inject(AdminStoreService);
   public productSelectorService = inject(ProductSelectorService);
 
+  producto = input.required<Producto>();
+
   public imageLoaded = signal(false);
+
+  presentacionesDisponibles = computed(() => {
+    const prod = this.producto();
+    const permiteVentaSinStock = this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
+    
+    if (permiteVentaSinStock) {
+      return prod.presentaciones;
+    }
+
+    return prod.presentaciones.filter(p => p.stock === null || p.stock > 0);
+  });
+
+  estaAgotado = computed(() => this.presentacionesDisponibles().length === 0);
+
+  mejorOferta = computed(() => this.getMejorOferta(this.presentacionesDisponibles()));
 
   getMejorOferta(presentaciones: Presentacion[]): Presentacion | null {
     if (!presentaciones?.length) return null;

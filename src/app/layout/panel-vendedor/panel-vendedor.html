@@ -1,8 +1,15 @@
 @if (adminStore.isLoading()) {
     <app-loading-spinner/>
 } @else {
-    <div class="animate-in fade-in duration-500">
-        <router-outlet/>
+    <div class="flex flex-col h-dvh w-full overflow-hidden bg-gray-50">
+        
+        <app-panel-header class="shrink-0 z-50 relative"></app-panel-header>
+
+        <main class="flex-1 overflow-y-auto animate-in fade-in duration-500">
+            <router-outlet/>
+        </main>
+
+        <app-panel-navbar class="shrink-0 z-40 relative"></app-panel-navbar>
     </div>
 
     <!-- Dialogs emergentes -->
@@ -14,6 +21,9 @@
     <app-confirm-dialog/>
     <app-cupon-form/>
     <app-product-import-preview/>
+    <app-menu-principal/>
+    <app-pedido-preview/>
+    <app-pedido-form/>
 
     <!-- Toast -->
     <app-toast/>

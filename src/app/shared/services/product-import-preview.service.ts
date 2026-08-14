@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { ProductoImportado } from 'src/app/core/models/carga-masiva.model';
+import { ProductoImportado } from 'src/app/core/models/carga-inicial.model';
 import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({

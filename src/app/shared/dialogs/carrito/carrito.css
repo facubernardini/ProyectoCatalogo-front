@@ -10,7 +10,19 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@keyframes custom-spin-anim {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.custom-spin {
+  transform-origin: 400px 400px;
+  animation: custom-spin-anim 1s ease-in-out infinite;
 }

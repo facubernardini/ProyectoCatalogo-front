@@ -14,9 +14,11 @@
             <img [src]="producto().imagen" 
                 (load)="onImageLoad()"
                 alt="Foto de {{ producto().nombre }}"
-                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out"
+                class="absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-out"
                 [class.opacity-0]="!imageLoaded()"
-                [class.opacity-100]="imageLoaded()">
+                [class.opacity-100]="imageLoaded() && !estaAgotado()"
+                [class.opacity-70]="imageLoaded() && estaAgotado()"
+                [class.grayscale]="estaAgotado()">
         }
     </div>
 
@@ -45,8 +47,7 @@
         }
 
         <div class="flex flex-wrap gap-2 mt-1 pt-1">
-            @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
-                
+            @for (pres of presentacionesDisponibles().slice(0, 3); track pres.id) {
                 <div class="relative">
                     <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg border uppercase transition-colors"
                           [class]="pres.precio_descuento && pres.precio_descuento > 0 
@@ -63,33 +64,40 @@
                 </div>
             }
             
-            @if (producto().presentaciones.length > 3) {
+            @if (presentacionesDisponibles().length > 3) {
                 <span class="text-[10px] font-bold text-brand-accent self-center ml-1">
-                    +{{ producto().presentaciones.length - 3 }}
+                    +{{ presentacionesDisponibles().length - 3 }}
                 </span>
             }
         </div>
 
         <div class="flex items-baseline gap-1 mt-auto pt-1.5">
-            @let cheapest = getMejorOferta(producto().presentaciones);
+            @if (mejorOferta(); as cheapest) {
+                
+                @if (presentacionesDisponibles().length > 1) {
+                    <span class="mr-0.5 text-[10px] text-gray-400 font-semibold uppercase tracking-tight">
+                        Desde
+                    </span>
+                }
 
-            @if (producto().presentaciones.length > 1) {
-                <span class="mr-0.5 text-[10px] text-gray-400 font-semibold uppercase tracking-tighter">
-                    Desde
-                </span>
-            }
-
-            @if (cheapest && cheapest.precio_descuento) {
-                <span class="text-xs text-gray-400 line-through font-medium">
-                    ${{ cheapest.precio }}
-                </span>
-                <span class="text-brand-text font-bold text-base leading-none">
-                    ${{ cheapest.precio_descuento }}
-                </span>
+                @if (cheapest.precio_descuento) {
+                    <span class="text-xs text-gray-400 line-through font-medium tracking-tighter">
+                        ${{ cheapest.precio | number:'1.0-0' }}
+                    </span>
+                    <span class="text-brand-text font-bold text-base leading-none tracking-tighter">
+                        ${{ cheapest.precio_descuento | number:'1.0-0' }}
+                    </span>
+                } @else {
+                    <span class="text-brand-text font-bold text-base leading-none tracking-tighter">
+                        ${{ cheapest.precio | number:'1.0-0' }}
+                    </span>
+                }
             } @else {
-                <span class="text-brand-text font-bold text-base leading-none">
-                    ${{ cheapest?.precio }}
-                </span>
+                <div class="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 border border-gray-200/80 rounded-lg select-none">
+                    <span class="text-[10px] font-bold text-brand-text uppercase tracking-wider mt-px">
+                        Agotado
+                    </span>
+                </div>
             }
         </div>
     </div>

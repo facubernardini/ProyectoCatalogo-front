@@ -1,6 +1,6 @@
 import { Component, computed, HostListener, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Producto } from 'src/app/core/models/producto.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductoManagerService } from 'src/app/core/services/producto-manager.service';
@@ -11,6 +11,9 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
 import { PdfExportService } from 'src/app/core/services/pdf-export.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { CategoryFormService } from 'src/app/shared/services/category-form.service';
+import { ContextMenuService } from 'src/app/shared/services/context-menu.service';
+import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-mis-productos',
@@ -20,16 +23,21 @@ import { CategoryFormService } from 'src/app/shared/services/category-form.servi
 })
 export class MisProductos {
   private adminStore = inject(AdminStoreService);
-  private location = inject(Location);
   private productFormService = inject(ProductFormService);
   private toastService = inject(ToastService);
   private pdfExportService = inject(PdfExportService);
   private categoryFormService = inject(CategoryFormService);
+  private contextMenu = inject(ContextMenuService);
+  private route = inject(ActivatedRoute);
+
+  private scrollListener = this.onScroll.bind(this);
   
   public productManager = inject(ProductoManagerService); 
   public productPreviewService = inject(ProductPreviewService);
 
   public imageLoaded = signal(false);
+
+  readonly umbralStock = APP_CONFIG.AVISO_BAJO_STOCK;
 
   productos = this.adminStore.productos; 
   categorias = this.adminStore.categorias;
@@ -54,6 +62,7 @@ export class MisProductos {
   soloPausados = signal<boolean>(false);
   soloSinFoto = signal<boolean>(false);
   soloConOfertas = signal<boolean>(false);
+  soloBajoStock = signal<boolean>(false);
 
   paginaActual = signal(1);
   itemsPorPagina = 20;
@@ -65,6 +74,7 @@ export class MisProductos {
     const pausados = this.soloPausados();
     const sinFoto = this.soloSinFoto();
     const conOfertas = this.soloConOfertas();
+    const bajoStock = this.soloBajoStock();
     
     let lista = this.adminStore.productos();
 
@@ -96,6 +106,14 @@ export class MisProductos {
       lista = lista.filter(prod => prod.presentaciones?.some(pres => pres.precio_descuento && pres.precio_descuento > 0));
     }
 
+    if (bajoStock) {
+      lista = lista.filter(prod => 
+        prod.presentaciones?.some(pres => 
+          pres.activo && pres.stock !== null && pres.stock <= this.umbralStock
+        )
+      );
+    }
+
     return lista;
   });
 
@@ -123,7 +141,60 @@ export class MisProductos {
     return conteos;
   });
 
+  cantidadDestacados = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => p.destacado).length;
+  });
+
+  cantidadPausados = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => !p.activo).length;
+  });
+
+  cantidadSinFoto = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => !p.imagen || p.imagen.trim() === '').length;
+  });
+
+  cantidadConOfertas = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => p.presentaciones?.some(pres => pres.precio_descuento && pres.precio_descuento > 0)).length;
+  });
+
+  cantidadBajoStock = computed(() => {
+    const prods = this.adminStore.productos();
+    if (!Array.isArray(prods)) return 0;
+    return prods.filter(p => p.presentaciones?.some(pres => pres.activo && pres.stock !== null && pres.stock <= this.umbralStock)).length;
+  });
+
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      const filtroUrl = params['filtro'];
+      
+      if (filtroUrl) {
+        this.limpiarFiltros();
+        
+        switch (filtroUrl) {
+          case 'destacados':
+            this.soloDestacados.set(true);
+            break;
+          case 'ofertas':
+            this.soloConOfertas.set(true);
+            break;
+          case 'bajo_stock':
+            this.soloBajoStock.set(true);
+            break;
+          case 'pausados':
+            this.soloPausados.set(true);
+            break;
+        }
+      }
+    });
+
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(400),
       distinctUntilChanged()
@@ -131,12 +202,32 @@ export class MisProductos {
       this.filtro.set(valor);
       this.isBuscando.set(false);
     });
+
+    const scrollContainer = document.querySelector('main');
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', this.scrollListener);
+    }
+
+    this.contextMenu.setOpciones([
+      {
+        label: 'Descargar Catálogo',
+        icon: 'pdf-export',
+        action: () => this.exportarPDF()
+      }
+    ]);
   }
 
   ngOnDestroy() {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
+
+    const scrollContainer = document.querySelector('main');
+    if (scrollContainer) {
+      scrollContainer.removeEventListener('scroll', this.scrollListener);
+    }
+
+    this.contextMenu.limpiar();
   }
 
   getTotalProductos(): number {
@@ -179,6 +270,7 @@ export class MisProductos {
     this.soloPausados.set(false);
     this.soloSinFoto.set(false);
     this.soloConOfertas.set(false);
+    this.soloBajoStock.set(false);
     
     this.paginaActual.set(1);
   }
@@ -190,6 +282,7 @@ export class MisProductos {
     this.soloDestacados.set(false);
     this.soloSinFoto.set(false);
     this.soloConOfertas.set(false);
+    this.soloBajoStock.set(false);
     
     this.paginaActual.set(1);
   }
@@ -201,6 +294,7 @@ export class MisProductos {
     this.soloDestacados.set(false);
     this.soloPausados.set(false);
     this.soloConOfertas.set(false);
+    this.soloBajoStock.set(false);
     
     this.paginaActual.set(1);
   }
@@ -212,6 +306,19 @@ export class MisProductos {
     this.soloDestacados.set(false);
     this.soloPausados.set(false);
     this.soloSinFoto.set(false);
+    this.soloBajoStock.set(false);
+    
+    this.paginaActual.set(1);
+  }
+
+  toggleBajoStock() {
+    const activar = !this.soloBajoStock();
+    
+    this.soloBajoStock.set(activar);
+    this.soloDestacados.set(false);
+    this.soloPausados.set(false);
+    this.soloSinFoto.set(false);
+    this.soloConOfertas.set(false);
     
     this.paginaActual.set(1);
   }
@@ -242,6 +349,8 @@ export class MisProductos {
     this.soloPausados.set(false);
     this.soloSinFoto.set(false);
     this.soloConOfertas.set(false);
+    this.soloBajoStock.set(false);
+
     this.isFiltrosOpen.set(false);
     this.paginaActual.set(1);
   }
@@ -262,10 +371,6 @@ export class MisProductos {
     this.categoriaSeleccionada.set(nombre);
     this.isCategoriaDropdownOpen.set(false);
     this.paginaActual.set(1);
-  }
-
-  volverAtras() {
-    this.location.back();
   }
   
   onAddCategoria() {
@@ -302,8 +407,7 @@ export class MisProductos {
     this.isMenuUpward.set(false); 
   }
 
-  @HostListener('window:scroll')
-  onScroll() {
+  onScroll(event: Event) {
     if (this.activeMenuId() !== null) {
       this.activeMenuId.set(null);
       this.isMenuUpward.set(false);
@@ -311,8 +415,11 @@ export class MisProductos {
     this.isCategoriaDropdownOpen.set(false);
     this.isFiltrosOpen.set(false);
 
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const scrollThreshold = document.documentElement.scrollHeight - 200;
+    const target = event.target as HTMLElement;
+    
+    const scrollPosition = target.scrollTop + target.clientHeight;
+    
+    const scrollThreshold = target.scrollHeight - 200;
 
     if (scrollPosition >= scrollThreshold) {
       this.cargarMas();
@@ -342,7 +449,7 @@ export class MisProductos {
 
     try {
       await this.pdfExportService.exportarCatalogo(categorias, todosLosProductos, catalogo);
-      proceso.success('PDF generado con éxito');
+      proceso.success('PDF generado con éxito.');
     } catch (error) {
       console.error(error);
       proceso.error('Hubo un error al generar el PDF.');

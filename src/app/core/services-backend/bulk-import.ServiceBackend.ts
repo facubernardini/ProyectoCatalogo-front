@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.dev';
-import { ProductoImportado } from '../models/carga-masiva.model';
+import { ProductoImportado } from '../models/carga-inicial.model';
 
 export interface BulkImportResponse {
     message: string;

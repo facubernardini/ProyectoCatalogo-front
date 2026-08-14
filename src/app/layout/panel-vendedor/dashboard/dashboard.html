@@ -1,184 +1,216 @@
-<div class="min-h-svh flex flex-col">
-    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
-        <div class="flex items-center justify-between px-4 h-16 max-w-4xl mx-auto w-full">
-            
-            <button (click)="onLogout()" 
-                    class="p-2 text-brand-accent active:scale-95 transition-transform md:hover:bg-white/50 rounded-xl"
-                    aria-label="Cerrar sesión">
-                <app-icon name="logout" classes="size-7 fill-current rotate-180" />
-            </button>
-
-            <div class="flex-1 text-center px-2 overflow-hidden">
-                <p class="text-brand-text text-sm font-medium leading-none mb-1">Hola,</p>
-                <h1 class="text-brand-accent font-bold text-base truncate">
-                    {{ adminStore.catalogo()?.nombre_tienda || 'Tu Tienda' }}!
-                </h1>
-            </div>
-
-            <button [routerLink]="['../perfil']"
-                class="p-2 text-brand-accent active:scale-95 transition-transform hover:bg-white/50 rounded-xl"
-                aria-label="Mi perfil">
-                <app-icon name="profile" classes="size-7 fill-current" />
-            </button>
-
-        </div>
-    </header>
-
-    <main class="flex-1 bg-gray-50 p-3 md:p-8">
+<div class="flex flex-col h-full w-full">
+    <main class="flex-1 bg-gray-50 p-3 md:p-6 overflow-y-auto">
         
-        <div class="max-w-4xl mx-auto w-full flex flex-col">
+        <div class="max-w-4xl mx-auto w-full flex flex-col gap-3">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                
-                <button [routerLink]="['../mis-productos']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="shop-bag" classes="size-6 fill-current text-brand-accent" />
-                        </div>
-                        
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Mis productos
-                            </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Agrega, elimina o edita tus productos
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
-                </button>
-
-                <button [routerLink]="['../mis-categorias']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="shop-tag" classes="size-6 fill-current text-brand-accent" />
-                        </div>
-                        
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Mis categorías
-                            </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Organiza tus productos en categorías
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
-                </button>
-
-                <button [routerLink]="['../mis-cupones']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="ticket" classes="size-6 fill-current text-brand-accent" />
-                        </div>
-                        
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Mis cupones
-                            </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Crea cupones de descuento
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
-                </button>
-
-                <button [routerLink]="['../carga-masiva']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="cloud-upload" classes="size-6 fill-current text-brand-accent" />
-                        </div>
-                        
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Carga masiva
-                            </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Sube tus productos desde un Excel
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
-                </button>
-
-                <button [routerLink]="['../mi-tienda']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="shop" classes="size-6 fill-current text-brand-accent" />
-                        </div>
-                        
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Mi tienda
-                            </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Configura tu catálogo online
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
-                </button>
-            </div>
-
-            <div class="py-4 md:py-6">
-                <div class="h-px bg-gray-200 w-full"></div>
-            </div>
-
-            <button (click)="verCatalogoPublico()"
-                class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                >
-                <div class="flex items-center gap-4">
-                    <div class="shrink-0 p-2 bg-brand-accent rounded-xl text-brand-bg">
-                        <app-icon name="web" classes="size-6 fill-current text-brand-bg" />
+            <!-- CARD 1: PREVIEW DE PEDIDOS -->
+            <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group">
+                <!-- CABECERA -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <app-icon name="receipt" classes="size-4 fill-current text-gray-400" />
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Pedidos Nuevos</h2>
                     </div>
                     
-                    <div class="flex flex-col items-start text-left">
-                        <span class="text-brand-text font-bold text-lg leading-tight">
-                            Ver mi catálogo
+                    <button 
+                        routerLink="../mis-pedidos" 
+                        class="text-[10px] font-bold text-brand-accent uppercase tracking-wide px-2 py-1 bg-brand-accent/10 rounded-lg hover:bg-brand-accent/20 transition-colors">
+                        Ver Todos
+                    </button>
+                </div>
+
+                <!-- LISTA RÁPIDA DE PEDIDOS PENDIENTES (Máximo 3 para no saturar) -->
+                @if (pedidosPendientes().length > 0) {
+                    <div class="flex flex-col gap-2">
+                        @for (pedido of pedidosPendientes() | slice:0:2; track pedido.id) {
+                            <div (click)="abrirDetallePedido(pedido)" 
+                                class="flex items-center justify-between p-2.5 bg-gray-50/80 border border-gray-100 rounded-xl cursor-pointer md:hover:bg-gray-100/80 transition-all active:scale-[0.98]">
+                                
+                                <!-- Info básica del pedido -->
+                                <div class="flex flex-col min-w-0 pr-2 flex-1">
+                                    <div class="flex items-center gap-1.5 mb-0.5">
+                                        <span class="text-[10px] font-black text-gray-500 uppercase">#{{ pedido.numero_pedido }}</span>
+                                        <span class="size-1 rounded-full bg-gray-300"></span>
+                                        <span class="text-[10px] font-bold text-gray-500">{{ pedido.creado_el | date:'dd MMM, HH:mm' }}</span>
+                                    </div>
+                                    <span class="text-xs font-bold text-brand-text truncate leading-tight">{{ pedido.comprador_nombre }}</span>
+                                </div>
+
+                                <!-- Precio y Acciones Rápidas -->
+                                <div class="flex items-center gap-2 shrink-0">
+                                    
+                                    <!-- Monto Final -->
+                                    <span class="text-[13px] font-black text-emerald-600 tracking-tight">
+                                        ${{ pedido.total_final | number:'1.0-0' }}
+                                    </span>
+
+                                    <!-- Botones -->
+                                    <div class="flex items-center gap-1.5">
+                                        <button (click)="$event.stopPropagation(); finalizarPedido(pedido)" 
+                                                title="Marcar como Entregado"
+                                                class="size-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-lg md:hover:bg-emerald-500 md:hover:text-white active:scale-90 transition-all">
+                                            <app-icon name="check" classes="size-4 fill-current" />
+                                        </button>
+                                        
+                                        <button (click)="$event.stopPropagation(); cancelarPedido(pedido)" 
+                                                title="Cancelar Pedido"
+                                                class="size-8 flex items-center justify-center bg-red-50 text-red-400 rounded-lg md:hover:bg-red-500 md:hover:text-white active:scale-90 transition-all">
+                                            <app-icon name="close" classes="size-3.5 fill-current" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (pedidosPendientes().length > 2) {
+                            <div routerLink="../mis-pedidos" [queryParams]="{ estado: estadoPedido.PENDIENTE }" 
+                                class="text-center text-[10px] font-semibold text-gray-500 uppercase pt-0.5 cursor-pointer md:hover:text-brand-accent transition-colors">
+                                +{{ pedidosPendientes().length - 2 }} {{ (pedidosPendientes().length - 2) === 1 ? 'pedido' : 'pedidos' }} más
+                            </div>
+                        }
+                    </div>
+                } @else {
+                    <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
+                        ¡Todo al día! No tenés pedidos pendientes.
+                    </div>
+                }
+            </div>
+
+            <!-- CARD 2: GESTIÓN DE INVENTARIO -->
+            <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group">
+                
+                <!-- CABECERA -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <app-icon name="box" classes="size-4 fill-current text-gray-400" />
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Bajo Stock</h2>
+                    </div>
+                    
+                    <button routerLink="../mis-productos" [queryParams]="{ filtro: 'bajo_stock' }" 
+                            class="text-[10px] font-bold text-brand-accent uppercase tracking-wide px-2 py-1 bg-brand-accent/10 rounded-lg hover:bg-brand-accent/20 transition-colors">
+                        Ver Todos
+                    </button>
+                </div>
+
+                <!-- LISTA RÁPIDA (Máximo 3) -->
+                @if (presentacionesBajoStock().length > 0) {
+                    <div class="flex flex-col gap-2">
+                        @for (item of presentacionesBajoStock() | slice:0:2; track item.productoNombre + item.unidad) {
+                            <div (click)="abrirDetalleProducto(item.producto)" 
+                                class="flex items-center justify-between p-2 bg-gray-50/80 border border-gray-100 rounded-xl cursor-pointer md:hover:bg-gray-100 transition-colors active:scale-[0.98]">
+                                
+                                <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                                    <!-- Mini imagen -->
+                                    <div class="size-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
+                                        @if (item.imagen) {
+                                            <img [src]="item.imagen" class="w-full h-full object-cover">
+                                        } @else {
+                                            <app-icon name="photo" classes="size-3.5 fill-current text-gray-300" />
+                                        }
+                                    </div>
+
+                                    <!-- Detalles -->
+                                    <div class="flex flex-col min-w-0">
+                                        <span class="text-xs font-bold text-gray-800 truncate leading-tight">{{ item.productoNombre }}</span>
+                                        <span class="text-[10px] font-medium text-gray-500">{{ item.unidad }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Badge de Stock -->
+                                <span class="px-1.5 py-0.5 bg-white border border-amber-300 rounded-md text-[10px] font-bold text-amber-600 shrink-0">
+                                    {{ item.stock === 1 ? 'Queda' : 'Quedan' }} {{ item.stock }}
+                                </span>
+                            </div>
+                        }
+                        
+                        @if (presentacionesBajoStock().length > 2) {
+                            <div routerLink="../mis-productos" [queryParams]="{ filtro: 'bajo_stock' }" 
+                                class="text-center text-[10px] font-semibold text-gray-500 uppercase pt-0.5 cursor-pointer md:hover:text-brand-accent transition-colors">
+                                +{{ presentacionesBajoStock().length - 2 }} {{ (presentacionesBajoStock().length - 2) === 1 ? 'artículo' : 'artículos' }} más
+                            </div>
+                        }
+                    </div>
+                } @else {
+                    <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
+                        Ningún producto por agotarse.
+                    </div>
+                }
+            </div>
+
+            <!-- Cupones y Categorías -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                
+                <!-- Botón Cupones -->
+                <button routerLink="../mis-cupones"
+                        class="flex items-center gap-3 bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 transition-all text-left group">
+                    
+                    <div class="shrink-0 p-2 bg-amber-100 rounded-xl text-amber-500">
+                        <app-icon name="ticket" classes="size-4.5 fill-current" />
+                    </div>
+                    
+                    <div class="flex flex-col min-w-0 flex-1">
+                        <span class="text-brand-text font-bold text-[13px] leading-tight md:group-hover:text-brand-accent transition-colors">
+                            Cupones de descuento
                         </span>
-                        <span class="text-brand-text-sec text-xs sm:text-sm">
-                            Visita la tienda que ven tus clientes
+                        <span class="text-gray-500 text-[11px] truncate">
+                            Creá cupones de descuento para tus clientes
                         </span>
                     </div>
-                </div>
-            </button>
-            
+
+                    <app-icon name="chevron-right" classes="size-4 fill-current text-brand-accent shrink-0 md:group-hover:text-brand-accent transition-colors" />
+                </button>
+
+                <!-- Botón Categorías -->
+                <button routerLink="../mis-categorias"
+                        class="flex items-center gap-3 bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 transition-all text-left group">
+                    
+                    <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
+                        <app-icon name="category" classes="size-4.5 fill-current" />
+                    </div>
+                    
+                    <div class="flex flex-col min-w-0 flex-1">
+                        <span class="text-brand-text font-bold text-[13px] leading-tight md:group-hover:text-brand-accent transition-colors">
+                            Categorías
+                        </span>
+                        <span class="text-gray-500 text-[11px] truncate">
+                            Organizar tus productos en categorías
+                        </span>
+                    </div>
+
+                    <app-icon name="chevron-right" classes="size-4 fill-current text-brand-accent shrink-0 md:group-hover:text-brand-accent transition-colors" />
+                </button>
+
+            </div>
+
+            <!-- BOTONES INFERIORES (Catálogo Público y Copiar) -->
+            <div class="flex items-stretch gap-2 w-full pb-2 mt-1 pt-3.5 border-t border-gray-200">
+    
+                <button (click)="verCatalogoPublico()"
+                        class="flex-1 flex items-center justify-between bg-white border border-gray-200 p-2 rounded-2xl shadow-sm active:scale-[0.98] md:hover:border-gray-300 transition-all group">
+                    <div class="flex items-center gap-3">
+                        <div class="shrink-0 p-2 bg-brand-accent/10 rounded-xl text-brand-accent">
+                            <app-icon name="web" classes="size-5 fill-current" />
+                        </div>
+                        
+                        <div class="flex flex-col items-start text-left">
+                            <span class="text-brand-text font-bold text-sm leading-tight">
+                                Ver mi catálogo
+                            </span>
+                            <span class="text-gray-400 text-xs">
+                                Vista la tienda que ven tus clientes
+                            </span>
+                        </div>
+                    </div>
+                </button>
+
+                <button (click)="copiarLinkCatalogo()"
+                        title="Copiar enlace para clientes"
+                        class="shrink-0 flex items-center justify-center bg-white border border-gray-200 px-4 rounded-2xl shadow-sm active:scale-[0.98] md:hover:border-gray-300 transition-all text-gray-600 md:hover:bg-gray-50">
+                    <app-icon name="copy" classes="size-5 fill-current" />
+                </button>
+
+            </div>
+
         </div>
     </main>
 </div>

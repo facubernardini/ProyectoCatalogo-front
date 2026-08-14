@@ -64,65 +64,89 @@
                     @for (pres of prod.presentaciones; track pres.id) {
                         
                         <div class="flex items-center justify-between py-2 px-3 sm:p-3 rounded-2xl border-2 border-gray-100 md:hover:border-brand-accent/30 transition-all bg-white"
-                             [class.border-brand-accent]="getCantidad(pres.id) > 0">
-                            
-                            <div class="flex flex-col items-start text-left flex-1 pr-2">
-                                <span class="text-sm font-medium" 
-                                      [class.text-brand-text]="getCantidad(pres.id) > 0"
-                                      [class.text-gray-600]="getCantidad(pres.id) === 0">
-                                    {{ pres.unidad_venta }}
-                                </span>
+                                 [class.border-brand-accent]="getCantidad(pres.id) > 0">
                                 
-                                <div class="w-10 h-0.75 rounded-full my-1.5 bg-brand-accent"></div>
-                                
-                                <div class="flex items-baseline flex-wrap gap-1.5">
-                                    @if (pres.precio_descuento) {
-                                        <span class="font-bold text-sm text-brand-text leading-none">
-                                            ${{ pres.precio_descuento }}
-                                        </span>
-                                        <span class="text-xs text-gray-400 line-through">
-                                            ${{ pres.precio }}
-                                        </span>
-                                        <span class="text-[10px] bg-green-100 text-green-600 px-1.5 py-0.5 rounded-md font-bold">
-                                            -{{ getPorcentaje(pres.precio, pres.precio_descuento) }}%
-                                        </span>
-                                    } @else {
-                                        <span class="font-bold text-sm text-brand-text leading-none">
-                                            ${{ pres.precio }}
-                                        </span>
-                                    }
-                                </div>
-                            </div>
-
-                            <div class="flex items-center shrink-0 bg-gray-50 border border-gray-200 rounded-xl p-1 shadow-inner">
-                                <button type="button" (click)="decrementar(pres.id)"
-                                        class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95 disabled:opacity-30 disabled:md:hover:bg-transparent disabled:shadow-none"
-                                        [disabled]="getCantidad(pres.id) <= 0"> 
-                                    <app-icon name="remove" classes="size-4 fill-current" />
-                                </button>
-                                
-                                <div class="w-7 overflow-hidden flex items-center justify-center">
-                                    @let cantidad = getCantidad(pres.id);
+                                <!-- PARTE IZQUIERDA: Info y Precios -->
+                                <div class="flex flex-col items-start text-left flex-1 pr-2">
                                     
-                                    <span [@popAnimation]="cantidad" class="block text-sm font-black text-brand-text select-none"
-                                          [class.text-brand-accent]="cantidad > 0">
-                                        {{ cantidad }}
-                                    </span>
+                                    <!-- Unidad y Alerta de Stock sutil en la misma línea -->
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm font-medium tracking-tight" 
+                                              [class.text-brand-text]="getCantidad(pres.id) > 0"
+                                              [class.text-gray-600]="getCantidad(pres.id) === 0">
+                                            {{ pres.unidad_venta }}
+                                        </span>
+
+                                        <!-- Alerta de Bajo Stock -->
+                                        @if (!permiteVentaSinStock() && pres.stock !== null && pres.stock > 0 && pres.stock <= umbralStock) {
+                                            <span class="text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md flex items-center gap-1"
+                                                [class.bg-orange-50]="pres.stock >= 1"
+                                                [class.text-orange-500]="pres.stock >= 1">
+                                                {{ pres.stock === 1 ? '¡Última unidad!' : 'Quedan ' + pres.stock + ' unidades' }}
+                                            </span>
+                                        }
+                                    </div>
+                                    
+                                    <div class="w-10 h-0.75 rounded-full my-1 bg-brand-accent"></div>
+                                    
+                                    <div class="flex items-baseline flex-wrap gap-1.5 mt-0.5">
+                                        @if (pres.precio_descuento) {
+                                            <span class="font-bold text-sm text-brand-text leading-none tracking-tighter">
+                                                ${{ pres.precio_descuento | number:'1.0-0' }}
+                                            </span>
+                                            <span class="text-xs text-gray-400 line-through tracking-tighter">
+                                                ${{ pres.precio | number:'1.0-0' }}
+                                            </span>
+                                            <span class="text-[10px] bg-green-100 text-green-600 px-1.5 py-0.5 rounded-md font-bold">
+                                                -{{ getPorcentaje(pres.precio, pres.precio_descuento) }}%
+                                            </span>
+                                        } @else {
+                                            <span class="font-bold text-sm text-brand-text leading-none tracking-tighter">
+                                                ${{ pres.precio | number:'1.0-0' }}
+                                            </span>
+                                        }
+                                    </div>
                                 </div>
-                                
-                                <button type="button" (click)="incrementar(pres.id)"
-                                        class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95">
-                                    <app-icon name="add-producto" classes="size-4 fill-current" />
-                                </button>
+
+                                @if (!permiteVentaSinStock() && pres.stock === 0) {
+                                    <div class="flex items-center justify-center shrink-0 bg-gray-50 border border-gray-200 rounded-xl p-1 shadow-inner opacity-60 cursor-not-allowed w-25 h-10">
+                                        <span class="text-[11px] font-bold text-red-400 uppercase tracking-tight">
+                                            Sin stock
+                                        </span>
+                                    </div>
+                                } @else {
+                                    <div class="flex items-center shrink-0 bg-gray-50 border border-gray-200 rounded-xl p-1 shadow-inner">
+                                        <button type="button" (click)="decrementar(pres.id)"
+                                                class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95 disabled:opacity-30 disabled:md:hover:bg-transparent disabled:shadow-none"
+                                                [disabled]="getCantidad(pres.id) <= 0"> 
+                                            <app-icon name="remove" classes="size-4 fill-current" />
+                                        </button>
+                                        
+                                        <div class="w-7 overflow-hidden flex items-center justify-center">
+                                            @let cantidad = getCantidad(pres.id);
+                                            
+                                            <span [@popAnimation]="cantidad" class="block text-sm font-black text-brand-text select-none"
+                                                  [class.text-brand-accent]="cantidad > 0">
+                                                {{ cantidad }}
+                                            </span>
+                                        </div>
+                                        
+                                        <button type="button" (click)="incrementar(pres)"
+                                                [disabled]="!puedeIncrementar(pres)"
+                                                class="size-8 flex items-center justify-center rounded-lg md:hover:bg-white md:hover:shadow-sm text-gray-500 transition-all active:scale-95 disabled:opacity-30 disabled:md:hover:bg-transparent disabled:shadow-none">
+                                            <app-icon name="add-producto" classes="size-4 fill-current" />
+                                        </button>
+                                    </div>
+                                    
+                                }
                             </div>
-                        </div>
                     }
                 </div>
             }
 
             <div class="flex items-center gap-3 pt-2 border-t border-gray-100 shrink-0">
                 <button (click)="productSelectorService.close()" 
-                        class="px-5 py-2 text-sm font-semibold text-gray-500 bg-gray-100 rounded-xl active:scale-95 transition-all md:hover:bg-gray-200">
+                        class="px-5 py-2 font-semibold text-gray-500 bg-gray-100 rounded-xl active:scale-95 transition-all md:hover:bg-gray-200">
                     Cerrar
                 </button>
 

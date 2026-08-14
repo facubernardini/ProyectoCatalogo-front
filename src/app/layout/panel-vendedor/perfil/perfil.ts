@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
-import { DatePipe, Location } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
@@ -21,7 +21,6 @@ export class Perfil {
   private confirmService = inject(ConfirmService);
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
-  private location = inject(Location);
 
   public SUB_CONFIG = SUB_CONFIG;
   public mostrarCambioPassword = signal(false);
@@ -51,10 +50,6 @@ export class Perfil {
     return dias;
   });
 
-  volverAtras() {
-    this.location.back();
-  }
-
   mejorarPlan() {
     const vendedor = this.adminStore.vendedor();
     const nombre = vendedor?.nombre_apellido;
@@ -74,19 +69,6 @@ export class Perfil {
 
   cambiarPlan(arg0: string) {
     throw new Error('Method not implemented.');
-  }
-
-  async onLogout() {
-    const confirm = await this.confirmService.ask({
-      title: '¿Cerrar sesión?',
-      message: ``,
-      icon: 'info',
-      type: 'info'
-    });
-
-    if (confirm) {
-      this.authService.logout();
-    }
   }
 
   async guardarNuevaPassword() {

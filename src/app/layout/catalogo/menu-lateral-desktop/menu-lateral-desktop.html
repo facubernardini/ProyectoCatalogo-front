@@ -9,17 +9,17 @@
             <div class="flex flex-col gap-1.5">
                 @if (tieneDestacados()) {
                     <button (click)="abrirDestacados()" 
-                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm font-bold text-amber-700 bg-amber-50/50 hover:bg-amber-100 hover:text-amber-900 transition-colors group">
+                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm font-bold text-amber-600 bg-amber-50/50 hover:bg-amber-100 hover:text-amber-800 transition-colors group">
                         <app-icon name="star" classes="size-4 fill-current group-hover:scale-110 transition-transform" />
-                        Productos Destacados
+                        Destacados
                     </button>
                 }
 
                 @if (tieneOfertas()) {
                     <button (click)="abrirOfertas()" 
-                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm font-bold text-red-700 bg-red-50/50 hover:bg-red-100 hover:text-red-900 transition-colors group">
+                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm font-bold text-green-700 bg-green-50/50 hover:bg-green-100 hover:text-green-900 transition-colors group">
                         <app-icon name="discount" classes="size-4 fill-current group-hover:scale-110 transition-transform" />
-                        Ofertas Especiales
+                        Ofertas
                     </button>
                 }
             </div>

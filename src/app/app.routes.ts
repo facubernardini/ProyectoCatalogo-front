@@ -20,7 +20,9 @@ import { ErrorView } from '@layout/error/error';
 import { RecoveryPassword } from '@layout/login/recovery-password/recovery-password';
 import { NotFound } from '@layout/catalogo/not-found/not-found';
 import { isDominioBase } from './core/data/domains.data';
-import { CargaMasiva } from './layout/panel-vendedor/carga-masiva/carga-masiva';
+import { CargaInicial } from './layout/panel-vendedor/carga-inicial/carga-inicial';
+import { MisPedidos } from './layout/panel-vendedor/mis-pedidos/mis-pedidos';
+import { Estadisticas } from './layout/panel-vendedor/estadisticas/estadisticas';
 
 export function subdominioMatcher(url: UrlSegment[]): UrlMatchResult | null {
     const host = window.location.hostname;
@@ -48,11 +50,13 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             { path: 'inicio', component: Dashboard },
+            { path: 'mis-pedidos', component: MisPedidos },
             { path: 'mis-productos', component: MisProductos },
             { path: 'mis-categorias', component: MisCategorias },
             { path: 'mis-cupones', component: MisCupones },
-            { path: 'carga-masiva', component: CargaMasiva },
+            { path: 'carga-inicial', component: CargaInicial },
             { path: 'mi-tienda', component: MiTienda },
+            { path: 'estadisticas', component: Estadisticas },
             { path: 'perfil', component: Perfil },
         ]
     },
