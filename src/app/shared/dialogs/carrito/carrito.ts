@@ -336,7 +336,7 @@ export class Carrito {
         this.isSubmitting.set(false);
 
         setTimeout(() => {
-          this.pedidoRealizadoService.open(deliveryMethod, url);
+          this.pedidoRealizadoService.open(url);
         }, 5000);
       },
       error: (err) => {

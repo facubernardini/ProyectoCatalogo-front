@@ -3,9 +3,8 @@ import { AdminStoreService } from './admin-store.service';
 import { ToastService } from './toast.service';
 import { ConfirmService } from './confirm.service';
 import { Cupon } from '../models/cupon.model';
-import { finalize, Subject } from 'rxjs';
+import { finalize } from 'rxjs';
 import { CuponServiceBackend } from '../services-backend/cupones.ServiceBackend';
-import { MicroLoadingService } from './micro-loading.service';
 
 @Injectable({ providedIn: 'root' })
 export class CuponManagerService {

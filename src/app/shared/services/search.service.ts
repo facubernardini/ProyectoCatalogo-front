@@ -15,32 +15,14 @@ export class SearchService {
     { initialValue: '' }
   );
 
-  constructor() {
-    window.addEventListener('popstate', () => {
-      if (this.isOpen() && history.state?.modal !== 'search-modal') {
-        this.cerrarInterno();
-      }
-    });
-  }
-
   open() {
 		if (this.isOpen()) return;
     this.isOpen.set(true);
 
 		document.body.style.overflow = 'hidden';
-
-    history.pushState({ modal: 'search-modal' }, '');
   }
 
   close() { 
-    this.cerrarInterno();
-    
-    if (history.state?.modal === 'search-modal') {
-      history.back();
-    }
-  }
-
-  private cerrarInterno() {
     if (!this.isOpen()) return;
     this.isOpen.set(false);
     this.query.set('');

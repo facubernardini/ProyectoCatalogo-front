@@ -13,7 +13,7 @@
                     
                     <span class="size-1 rounded-full bg-gray-400"></span>
                     
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
                         {{ pedido().creado_el | date:'dd MMM, HH:mm' }}
                     </span>
                 </div>
@@ -23,7 +23,7 @@
                 </span>
             </div>
 
-            <div class="flex items-center gap-1.5 shrink-0">
+            <div class="flex items-center gap-2 shrink-0">
                 
                 <!-- Botón de Google Maps -->
                 @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO && pedido().comprador_direccion) {
@@ -45,8 +45,8 @@
                 @if (pedido().estado === estadoPedido.PENDIENTE) {
                     <button (click)="editarPedido()"
                             title="Editar Pedido"
-                            class="p-2 text-gray-500 bg-gray-50 md:hover:bg-gray-100 rounded-xl active:scale-95 transition-all">
-                        <app-icon name="edit" classes="size-5 fill-current" />
+                            class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
+                        <app-icon name="edit" classes="size-4.5 fill-current" />
                     </button>
                 }
             </div>
@@ -165,16 +165,16 @@
                     </button>
 
                     @if (pedido().estado === estadoPedido.PENDIENTE) {
-                        <div class="flex items-center gap-1.5 border-l border-gray-200 pl-2 ml-0.5">
+                        <div class="flex items-center gap-2 border-l border-gray-200 pl-2 ml-0.5">
                             <button (click)="finalizarPedido()" 
                                     title="Marcar como Entregado"
-                                    class="size-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-lg md:hover:bg-emerald-500 md:hover:text-white active:scale-90 transition-all">
+                                    class="size-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-lg md:hover:bg-emerald-500 md:hover:text-white active:scale-95 transition-all">
                                 <app-icon name="check" classes="size-4.5 fill-current" />
                             </button>
                             
                             <button (click)="cancelarPedido()" 
                                     title="Cancelar Pedido"
-                                    class="size-8 flex items-center justify-center bg-red-50 text-red-400 rounded-lg md:hover:bg-red-500 md:hover:text-white active:scale-90 transition-all">
+                                    class="size-8 flex items-center justify-center bg-red-50 text-red-400 rounded-lg md:hover:bg-red-500 md:hover:text-white active:scale-95 transition-all">
                                 <app-icon name="close" classes="size-4 fill-current" />
                             </button>
                         </div>

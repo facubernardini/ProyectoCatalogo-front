@@ -3,4 +3,6 @@ export const APP_CONFIG = {
 
   BAJO_STOCK_CATALOGO_PUBLICO: 2,
 
+  MESES_ANTERIORES_ESTADISTICAS: 6,
+
 } as const;

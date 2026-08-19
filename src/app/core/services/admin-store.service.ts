@@ -20,6 +20,8 @@ import { Router } from "@angular/router";
 import { Vendedor } from "../models/vendedor.model";
 import { PedidoDTO } from "../models/pedido.model";
 import { PedidosServiceBackend } from "../services-backend/pedidos.ServiceBackend";
+import { EstadisticasServiceBackend } from "../services-backend/estadisticas.ServiceBackend";
+import { ResumenDiarioGraficoDTO, ResumenMensualDTO, TopProductoDTO } from "../models/estadisticas.model";
 
 declare var gtag: Function;
 
@@ -35,6 +37,7 @@ export class AdminStoreService {
   private mediosPagoService = inject(MediosPagoServiceBackend);
   private tagsService = inject(TagService);
   private pedidosService = inject(PedidosServiceBackend);
+  private estadisticasService = inject(EstadisticasServiceBackend);
 
   // PUBLIC & SELLER
   catalogo = signal<Catalogo | null>(null);
@@ -47,6 +50,14 @@ export class AdminStoreService {
   mediosPago = signal<MedioPago[]>([]);
   tags = signal<Tag[]>([]);
   pedidosActivos = signal<PedidoDTO[]>([]);
+
+  resumenMensual = signal<ResumenMensualDTO | null>(null);
+  evolucionDiaria = signal<ResumenDiarioGraficoDTO[]>([]);
+  topProductos = signal<TopProductoDTO[]>([]);
+
+  mesEstadisticas = signal<number>(new Date().getMonth() + 1);
+  anioEstadisticas = signal<number>(new Date().getFullYear());
+  isLoadingEstadisticas = signal(false);
 
   // BACKOFFICE
   vendedoresBackoffice = signal<VendedorBackoffice[]>([]);
@@ -130,6 +141,34 @@ export class AdminStoreService {
     });
   }
 
+  cargarEstadisticasVendedor(mes?: number, anio?: number) {
+    const targetMes = mes || this.mesEstadisticas();
+    const targetAnio = anio || this.anioEstadisticas();
+
+    this.mesEstadisticas.set(targetMes);
+    this.anioEstadisticas.set(targetAnio);
+
+    this.isLoadingEstadisticas.set(true);
+
+    forkJoin({
+      resumen: this.estadisticasService.getResumenMensual(targetMes, targetAnio),
+      evolucion: this.estadisticasService.getEvolucionDiaria(targetMes, targetAnio),
+      top: this.estadisticasService.getTopProductos(targetMes, targetAnio, 5)
+    }).subscribe({
+      next: ({ resumen, evolucion, top }) => {
+        this.resumenMensual.set(resumen);
+        this.evolucionDiaria.set(evolucion);
+        this.topProductos.set(top);
+        
+        this.isLoadingEstadisticas.set(false);
+      },
+      error: (err) => {
+        console.error('Error cargando las estadísticas', err);
+        this.isLoadingEstadisticas.set(false);
+      }
+    });
+  }
+
   cargarDatosPanelBackoffice() {
     this.isLoading.set(true);
     
@@ -152,6 +191,17 @@ export class AdminStoreService {
         this.isLoading.set(false);
       }
     });
+  }
+
+  refrescarProductos() {
+    const id = this.catalogoId();
+
+    if (id > 0) {
+      this.productoService.getProductosByCatalogo(id).subscribe({
+        next: (productosActualizados) => this.productos.set(productosActualizados),
+        error: (err) => console.error('Error al refrescar productos', err)
+      });
+    }
   }
 
   refrescarCategorias() {

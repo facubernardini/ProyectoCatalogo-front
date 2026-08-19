@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Icon } from "../../components/icon";
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { PdfExportService } from 'src/app/core/services/pdf-export.service';
 
 @Component({
   selector: 'app-menu-principal',
@@ -15,6 +16,7 @@ import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 export class MenuPrincipal {
   public menuService = inject(MenuPrincipalService);
   public adminStore = inject(AdminStoreService);
+  public exportPDFService = inject(PdfExportService);
   private router = inject(Router);
   private confirmService = inject(ConfirmService);
   private authService = inject(AuthService);

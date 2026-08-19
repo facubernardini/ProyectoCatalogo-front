@@ -1,4 +1,6 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { CartItem } from 'src/app/core/models/cartItem.model';
 import { MedioPago } from 'src/app/core/models/catalogo.model';
 import { CuponVerificado } from 'src/app/core/models/cupon.model';
@@ -11,11 +13,14 @@ import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
+  public adminStore = inject(AdminStoreService);
   private cartItems = signal<CartItem[]>(this.loadFromStorage());
   private cuponServiceBackend = inject(CuponServiceBackend);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
-  public adminStore = inject(AdminStoreService);
+
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   public loadingCupon = signal<boolean>(false);
 
@@ -136,9 +141,20 @@ export class CartService {
       }
     }, { allowSignalWrites: true });
 
-    window.addEventListener('popstate', () => {
-      if (this.isOpen() && history.state?.modal !== 'cart-modal') {
-        this.cerrarInterno();
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      const urlTree = this.router.parseUrl(this.router.url);
+      const tieneParametro = urlTree.queryParams['cart'] === 'open';
+
+      if (!tieneParametro && this.isOpen()) {
+        this.isOpen.set(false);
+        document.body.style.overflow = 'auto';
+      }
+
+      if (tieneParametro && !this.isOpen()) {
+        this.isOpen.set(true);
+        document.body.style.overflow = 'hidden';
       }
     });
   }
@@ -324,28 +340,22 @@ export class CartService {
   open() {
     if (this.isOpen()) return;
 
-    this.isOpen.set(true);
-    document.body.style.overflow = 'hidden';
-    
-    history.pushState({ modal: 'cart-modal' }, '');
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { cart: 'open' },
+      queryParamsHandling: 'merge'
+    });
   }
 
   close() {
-    this.cerrarInterno();
-    
-    if (history.state?.modal === 'cart-modal') {
-      history.back();
-    }
-  }
-
-  private cerrarInterno() {
     if (!this.isOpen()) return;
     
-    this.isOpen.set(false);
-    document.body.style.overflow = 'auto';
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { cart: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 
-  toggle() {
-    this.isOpen.update((v) => !v);
-  }
 }

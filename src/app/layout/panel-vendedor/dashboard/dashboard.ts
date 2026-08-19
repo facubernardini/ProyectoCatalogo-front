@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon } from "@shared/components/icon";
 import { EstadoPedido, PedidoDTO } from 'src/app/core/models/pedido.model';
 import { Producto } from 'src/app/core/models/producto.model';
-import { PedidosServiceBackend } from 'src/app/core/services-backend/pedidos.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { ConfirmService } from 'src/app/core/services/confirm.service';
+import { PedidosManagerService } from 'src/app/core/services/pedidos-manager.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
+import { PedidoFormService } from 'src/app/shared/services/pedido-form.service';
 import { PedidoPreviewService } from 'src/app/shared/services/pedido-preview.service';
 import { ProductPreviewService } from 'src/app/shared/services/product-preview.service';
 
@@ -19,12 +19,12 @@ import { ProductPreviewService } from 'src/app/shared/services/product-preview.s
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
-  private toastService = inject(ToastService);
   public adminStore = inject(AdminStoreService);
-  private pedidoServiceBackend = inject(PedidosServiceBackend);
-  private confirmService = inject(ConfirmService);
+  public pedidoFormService = inject(PedidoFormService);
+  private pedidosManager = inject(PedidosManagerService);
   private pedidoPreviewService = inject(PedidoPreviewService);
   private productoPreviewService = inject(ProductPreviewService);
+  private toastService = inject(ToastService);
 
   estadoPedido = EstadoPedido;
 
@@ -75,47 +75,11 @@ export class Dashboard {
   });
 
   async finalizarPedido(pedido: PedidoDTO) {
-    const confirm = await this.confirmService.ask({
-        title: '¿Marcar como Entregado?',
-        message: `El pedido #${pedido.numero_pedido} de ${pedido.comprador_nombre} pasará a estar finalizado.`,
-        confirmText: 'Entregado',
-        cancelText: 'Volver',
-        icon: 'check',
-        type: 'info'
-    });
-
-    if (confirm) {
-      const proceso = this.toastService.loading('Actualizando...');
-      this.pedidoServiceBackend.cambiarEstadoPedido(pedido.id, EstadoPedido.ENTREGADO).subscribe({
-        next: (pedidoActualizado) => {
-          this.adminStore.actualizarUnPedidoEnLista(pedidoActualizado);
-          proceso.success('Pedido entregado');
-        },
-        error: () => proceso.error('Error al actualizar el pedido')
-      });
-    }
+    await this.pedidosManager.finalizarPedido(pedido);
   }
 
   async cancelarPedido(pedido: PedidoDTO) {
-    const confirm = await this.confirmService.ask({
-        title: '¿Cancelar Pedido?',
-        message: `El pedido #${pedido.numero_pedido} será cancelado y el stock regresará a tu inventario.`,
-        confirmText: 'Cancelar Pedido',
-        cancelText: 'Volver',
-        icon: 'close',
-        type: 'danger'
-    });
-
-    if (confirm) {
-      const proceso = this.toastService.loading('Cancelando...');
-      this.pedidoServiceBackend.cambiarEstadoPedido(pedido.id, EstadoPedido.CANCELADO).subscribe({
-        next: (pedidoActualizado) => {
-          this.adminStore.actualizarUnPedidoEnLista(pedidoActualizado);
-          proceso.success('Pedido cancelado');
-        },
-        error: () => proceso.error('Error al cancelar el pedido')
-      });
-    }
+    await this.pedidosManager.cancelarPedido(pedido);
   }
 
   abrirDetallePedido(pedido: PedidoDTO) {

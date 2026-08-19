@@ -8,10 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { ProductFormService } from '@shared/services/product-form.service';
 import { ProductPreviewService } from '@shared/services/product-preview.service';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
-import { PdfExportService } from 'src/app/core/services/pdf-export.service';
-import { ToastService } from 'src/app/core/services/toast.service';
 import { CategoryFormService } from 'src/app/shared/services/category-form.service';
-import { ContextMenuService } from 'src/app/shared/services/context-menu.service';
 import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
 import { ActivatedRoute } from '@angular/router';
 
@@ -24,11 +21,9 @@ import { ActivatedRoute } from '@angular/router';
 export class MisProductos {
   private adminStore = inject(AdminStoreService);
   private productFormService = inject(ProductFormService);
-  private toastService = inject(ToastService);
-  private pdfExportService = inject(PdfExportService);
   private categoryFormService = inject(CategoryFormService);
-  private contextMenu = inject(ContextMenuService);
   private route = inject(ActivatedRoute);
+  //private contextMenu = inject(ContextMenuService);
 
   private scrollListener = this.onScroll.bind(this);
   
@@ -208,6 +203,7 @@ export class MisProductos {
       scrollContainer.addEventListener('scroll', this.scrollListener);
     }
 
+    /*
     this.contextMenu.setOpciones([
       {
         label: 'Descargar Catálogo',
@@ -215,6 +211,7 @@ export class MisProductos {
         action: () => this.exportarPDF()
       }
     ]);
+    */
   }
 
   ngOnDestroy() {
@@ -227,7 +224,7 @@ export class MisProductos {
       scrollContainer.removeEventListener('scroll', this.scrollListener);
     }
 
-    this.contextMenu.limpiar();
+    //this.contextMenu.limpiar();
   }
 
   getTotalProductos(): number {
@@ -415,13 +412,9 @@ export class MisProductos {
     this.isCategoriaDropdownOpen.set(false);
     this.isFiltrosOpen.set(false);
 
-    const target = event.target as HTMLElement;
+    const element = event.target as HTMLElement;
     
-    const scrollPosition = target.scrollTop + target.clientHeight;
-    
-    const scrollThreshold = target.scrollHeight - 200;
-
-    if (scrollPosition >= scrollThreshold) {
+    if (element.scrollHeight - element.scrollTop <= element.clientHeight + 100) {
       this.cargarMas();
     }
   }
@@ -432,27 +425,6 @@ export class MisProductos {
 
     if (totalMostrados < totalDisponibles) {
       this.paginaActual.update(p => p + 1);
-    }
-  }
-
-  async exportarPDF() {
-    const categorias = this.categoriasOrdenadas(); 
-    const todosLosProductos = this.adminStore.productos();
-    const catalogo = this.adminStore.catalogo();
-
-    if (!catalogo) {
-      this.toastService.show('Ocurrió un error inesperado', 'error');
-      return;
-    }
-
-    const proceso = this.toastService.loading('Generando PDF...');
-
-    try {
-      await this.pdfExportService.exportarCatalogo(categorias, todosLosProductos, catalogo);
-      proceso.success('PDF generado con éxito.');
-    } catch (error) {
-      console.error(error);
-      proceso.error('Hubo un error al generar el PDF.');
     }
   }
 
