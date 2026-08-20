@@ -85,12 +85,13 @@ export class Carrito {
     const tieneEntrega = this.cartService.deliveryMethod() !== null;
     const tienePago = this.cartService.selectedPaymentMethod() !== null;
     const nombreValido = this.nombreCliente().trim().length > 3;
+    const telefonoValido = this.telefonoCliente().length === 10;
     
     const direccionValida = this.cartService.deliveryMethod() === 'Envio' 
         ? this.direccionEnvio().trim().length > 5 
         : true;
     
-    return tieneItems && cumpleMinimo && tieneEntrega && tienePago && nombreValido && direccionValida;
+    return tieneItems && cumpleMinimo && tieneEntrega && tienePago && nombreValido && telefonoValido && direccionValida;
   });
 
   manejarClickRestar(item: any) {
@@ -144,11 +145,8 @@ export class Carrito {
     return Math.round(((base - oferta) / base) * 100);
   }
 
-  seleccionarMetodo(metodo: 'Envio' | 'Retiro', element: HTMLElement) {
+  seleccionarMetodo(metodo: 'Envio' | 'Retiro') {
     this.cartService.setDeliveryMethod(metodo);
-    setTimeout(() => {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
   }
 
   seleccionarPago(mp: any, element: HTMLElement) {
@@ -326,14 +324,15 @@ export class Carrito {
         const url = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
         
         window.open(url, '_blank');
-        //this.enviarAlertaTelegram(mensaje);
-
+        
         this.cartService.limpiarCarrito(true);
         this.nombreCliente.set('');
         this.direccionEnvio.set('');
         this.telefonoCliente.set('');
 
         this.isSubmitting.set(false);
+
+        this.enviarAlertaTelegram(mensaje);
 
         setTimeout(() => {
           this.pedidoRealizadoService.open(url);

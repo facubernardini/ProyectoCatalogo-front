@@ -145,7 +145,7 @@
 
                     @if (catalogo()?.ofrece_envio) {
                         <div class="grid grid-cols-2 gap-2 mb-5">
-                            <button (click)="seleccionarMetodo('Retiro', seccionPago)"
+                            <button (click)="seleccionarMetodo('Retiro')"
                                 [class.border-brand-accent]="cartService.deliveryMethod() === 'Retiro'"
                                 [class.border-gray-100]="cartService.deliveryMethod() !== 'Retiro'"
                                 [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'Retiro'"
@@ -156,7 +156,7 @@
                                     <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
                                 </div>
                             </button>
-                            <button (click)="seleccionarMetodo('Envio', seccionPago)"
+                            <button (click)="seleccionarMetodo('Envio')"
                                 [class.border-brand-accent]="cartService.deliveryMethod() === 'Envio'"
                                 [class.border-gray-100]="cartService.deliveryMethod() !== 'Envio'"
                                 [class.bg-brand-accent/5]="cartService.deliveryMethod() === 'Envio'"
@@ -180,7 +180,7 @@
                     }
                 </div>
 
-                <div class="mt-4" #seccionPago id="seccion-pago">
+                <div class="mt-4" id="seccion-pago">
                     <h3 class="text-[13px] font-bold uppercase tracking-wider text-gray-500 mb-2">Elegí como pagar</h3>
                     <div class="grid grid-cols-3 gap-2">
                         @for (pago of catalogo()?.medios_pago; track pago.id) {
@@ -228,6 +228,10 @@
                                 (input)="onTelefonoInput($event)"
                                 maxlength="10"
                                 class="w-full p-2 bg-gray-50 border border-gray-100 rounded-xl focus:border-brand-accent/80 focus:bg-white outline-none transition-all text-brand-text font-medium">
+                                
+                                <p class="text-[11px] text-gray-400 ml-1 leading-tight">
+                                    Código de área y número. <b class="text-gray-500">Sin el 0 y sin el 15.</b>
+                                </p>
                         </div>
 
                         @if (cartService.deliveryMethod() === 'Envio') {

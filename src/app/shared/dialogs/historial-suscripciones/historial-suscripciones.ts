@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HistorialSuscripcionesService } from '@shared/services/historial-suscripciones.service';
 import { Icon } from "@shared/components/icon";
-import { SuscripcionAccion } from 'src/app/core/models/backoffice/suscripcion.model';
+import { SuscripcionAccion } from '../../enums/suscripcion.enum';
 
 @Component({
   selector: 'app-historial-suscripciones',

@@ -1,11 +1,7 @@
 <aside class="w-full bg-white border border-gray-200/80 rounded-xl overflow-hidden flex flex-col max-h-[calc(100vh-8rem)]">
     
     @if (tieneDestacados() || tieneOfertas()) {
-        <div class="p-3 border-b border-gray-100 bg-white">
-            <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 px-2">
-                Explorar
-            </h3>
-            
+        <div class="p-3 border-b border-gray-100 bg-white">            
             <div class="flex flex-col gap-1.5">
                 @if (tieneDestacados()) {
                     <button (click)="abrirDestacados()" 
@@ -27,7 +23,7 @@
     }
 
     <div class="flex-1 overflow-y-auto p-3 bg-white custom-scrollbar">
-        <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 px-2">
+        <h3 class="text-xs font-black uppercase tracking-widest text-brand-text-sec mb-1 px-2">
             Categorías
         </h3>
         

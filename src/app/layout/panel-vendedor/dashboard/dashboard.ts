@@ -2,12 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon } from "@shared/components/icon";
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { EstadoPedido, PedidoDTO } from 'src/app/core/models/pedido.model';
 import { Producto } from 'src/app/core/models/producto.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { PedidosManagerService } from 'src/app/core/services/pedidos-manager.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
+import { SuscripcionEstado } from 'src/app/shared/enums/suscripcion.enum';
 import { PedidoFormService } from 'src/app/shared/services/pedido-form.service';
 import { PedidoPreviewService } from 'src/app/shared/services/pedido-preview.service';
 import { ProductPreviewService } from 'src/app/shared/services/product-preview.service';
@@ -27,8 +29,10 @@ export class Dashboard {
   private toastService = inject(ToastService);
 
   estadoPedido = EstadoPedido;
+  estadoSuscripcion = SuscripcionEstado;
 
   readonly umbralStock = APP_CONFIG.AVISO_BAJO_STOCK;
+  readonly diasParaPagar = APP_CONFIG.DIAS_PARA_PAGAR_SUSCRIPCION;
 
   // PEDIDOS
   cantidadPedidosPendientes = computed(() => 
@@ -73,6 +77,33 @@ export class Dashboard {
 
     return bajoStock.sort((a, b) => a.stock - b.stock);
   });
+
+  // SUSCRIPCION
+  diasRestantes = computed(() => {
+    const fechaFin = this.adminStore.vendedor()?.suscripcion?.fecha_fin;
+    if (!fechaFin) return null;
+
+    const hoy = new Date();
+    const fin = new Date(fechaFin);
+
+    hoy.setHours(0, 0, 0, 0);
+    fin.setHours(0, 0, 0, 0);
+
+    const diferenciaMs = fin.getTime() - hoy.getTime();
+    const dias = Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+    
+    return dias;
+  });
+
+  renovarSuscripcion() {
+    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+        
+    const mensaje = encodeURIComponent('Hola, quiero renovar la suscripción de mi tienda.');
+    
+    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
+    
+    window.open(url, '_blank');
+  }
 
   async finalizarPedido(pedido: PedidoDTO) {
     await this.pedidosManager.finalizarPedido(pedido);
