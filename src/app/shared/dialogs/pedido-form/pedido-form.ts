@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Icon } from '@shared/components/icon';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { PedidosServiceBackend } from 'src/app/core/services-backend/pedidos.ServiceBackend';
 import { PedidoFormService } from '../../services/pedido-form.service';
-import { CrearPedidoRequest, EstadoPago, EstadoPedido, PedidoDTO, ProductoPedidoForm } from 'src/app/core/models/pedido.model';
+import { CrearPedidoRequest, EstadoPago, EstadoPedido, ProductoPedidoForm } from 'src/app/core/models/pedido.model';
 import { MedioPago } from '../../enums/medio-pago.enum';
 import { MetodoEntrega } from '../../enums/metodo-entrega.enum';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { PedidosManagerService } from 'src/app/core/services/pedidos-manager.service';
 
 @Component({
   selector: 'app-pedido-form',
@@ -39,8 +39,8 @@ import { trigger, transition, style, animate } from '@angular/animations';
 })
 export class PedidoForm implements OnInit, OnDestroy {
   public pedidoFormService = inject(PedidoFormService);
+  private pedidosManager = inject(PedidosManagerService);
   private adminStore = inject(AdminStoreService);
-  private pedidoServiceBackend = inject(PedidosServiceBackend);
   private toastService = inject(ToastService);
 
   listaMediosPago = Object.values(MedioPago);
@@ -364,19 +364,8 @@ export class PedidoForm implements OnInit, OnDestroy {
       }))
     };
 
-    const proceso = this.toastService.loading('Creando pedido...');
-
-    // 3. Llamada al backend
-    this.pedidoServiceBackend.registrarPedidoManual(payload).subscribe({
-      next: (nuevoPedido: PedidoDTO) => {
-        this.adminStore.agregarNuevoPedidoALista(nuevoPedido);
-        proceso.success(`Pedido #${nuevoPedido.numero_pedido} creado correctamente`);
-        this.pedidoFormService.close();
-      },
-      error: (err) => {
-        console.error('Error creando pedido manual', err);
-        proceso.error('Error al crear el pedido. Intentá de nuevo');
-      }
+    this.pedidosManager.crearPedidoManual(payload, () => {
+      this.pedidoFormService.close();
     });
   }
 

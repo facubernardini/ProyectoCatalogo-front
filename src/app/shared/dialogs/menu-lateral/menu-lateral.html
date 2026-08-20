@@ -68,10 +68,10 @@
                                 [class.bg-gray-300]="!cat.especial">
                             </div>
                             
-                            <span class="text-start lowercase first-letter:uppercase" 
+                            <span class="text-start" 
                                 [class.font-black]="cat.especial"
                                 [class.text-brand-accent]="cat.especial">
-                                {{ cat.nombre }}
+                                {{ cat.nombre | titlecase }}
                             </span>
                         </div>
 

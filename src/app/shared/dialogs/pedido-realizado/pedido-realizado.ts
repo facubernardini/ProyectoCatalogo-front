@@ -2,6 +2,7 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { PedidoRealizadoService } from '@shared/services/pedido-realizado.service';
 import { Icon } from "@shared/components/icon";
 import { Confeti } from "@shared/components/confeti/confeti";
+import { AudioService } from 'src/app/core/services/audio.service';
 
 @Component({
   selector: 'app-pedido-realizado',
@@ -11,6 +12,7 @@ import { Confeti } from "@shared/components/confeti/confeti";
 })
 export class PedidoRealizado {
   public pedidoRealizadoService = inject(PedidoRealizadoService);
+  private audioService = inject(AudioService);
 
   public mostrarConfeti = signal(false);
 
@@ -41,6 +43,7 @@ export class PedidoRealizado {
   private dispararConfeti() {
     setTimeout(() => {
       this.mostrarConfeti.set(true);
+      this.audioService.playSuccess();
     }, 100);
 
     setTimeout(() => {

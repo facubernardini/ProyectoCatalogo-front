@@ -13,7 +13,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
-import { PedidosServiceBackend } from 'src/app/core/services-backend/pedidos.ServiceBackend';
+import { PedidosManagerService } from 'src/app/core/services/pedidos-manager.service';
 
 interface ResultadoBusqueda {
   productoId: number;
@@ -54,7 +54,7 @@ export class PedidoPreview implements OnInit, OnDestroy {
   public pedidoPreviewService = inject(PedidoPreviewService);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
-  private pedidoServiceBackend = inject(PedidosServiceBackend);
+  private pedidosManager = inject(PedidosManagerService);
 
   searchQuery = '';
   isSearchingActive = signal<boolean>(false);
@@ -373,20 +373,8 @@ export class PedidoPreview implements OnInit, OnDestroy {
     const p = this.pedidoEditable();
     if (!p) return;
 
-    const proceso = this.toastService.loading('Guardando cambios...');
-
-    this.pedidoServiceBackend.editarPedido(p.id, p).subscribe({
-      next: (pedidoActualizadoDesdeBackend) => {
-        proceso.success('Pedido actualizado correctamente');
-        
-        this.adminStore.actualizarUnPedidoEnLista(pedidoActualizadoDesdeBackend);
-        
-        this.cerrar();
-      },
-      error: (err) => {
-        console.error('Error al guardar el pedido:', err);
-        proceso.error('Error al guardar los cambios. Intenta de nuevo.');
-      }
+    this.pedidosManager.editarPedido(p.id, p, () => {
+      this.cerrar();
     });
   }
 }

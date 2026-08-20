@@ -1,128 +1,175 @@
-<div class="flex flex-col h-full w-full relative">
-    <main class="flex-1 bg-gray-50 px-3 pt-3 pb-20 flex flex-col overflow-y-auto">
-        <div class="w-full max-w-2xl mx-auto flex flex-col flex-1">
-            
-            <div class="relative w-full mx-auto mb-3 group shrink-0">
-                <div class="flex items-center gap-2 relative">
-                    
-                    <div class="relative shrink-0">
-                        <button type="button" 
-                                (click)="toggleFiltrosDropdown()"
-                                [disabled]="!hasCategorias()"
-                                class="p-3 flex items-center justify-center bg-white border border-gray-100 rounded-xl outline-none md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
-                                [class.ring]="isFiltrosOpen()" [class.ring-brand-accent/30]="isFiltrosOpen()">
-                            
-                            <app-icon name="filter" classes="size-5 text-brand-accent fill-current" />
-                            
-                            @if (soloDestacadas() || soloPausadas()) {
-                                <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
-                            }
-                        </button>
-
-                        @if (isFiltrosOpen()) {
-                            <div class="fixed inset-0 z-40" (click)="isFiltrosOpen.set(false)"></div>
-                            
-                            <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg animate-in fade-in zoom-in-95 duration-200 py-2">
-                                <div class="px-3 pb-2 mt-2 mb-1 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-50">
-                                    Mostrar Solo
-                                </div>
-                                
-                                <button type="button" 
-                                        (click)="toggleDestacados(); isFiltrosOpen.set(false)"
-                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50"
-                                        [class.text-brand-accent]="soloDestacadas()"
-                                        [class.font-bold]="soloDestacadas()"
-                                        [class.bg-brand-accent]="soloDestacadas()"
-                                        [style.backgroundColor]="soloDestacadas() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''" 
-                                        [class.text-brand-text-sec]="!soloDestacadas()"
-                                        [class.font-medium]="!soloDestacadas()">
-                                    <div class="flex items-center gap-2">
-                                        <app-icon [name]="soloDestacadas() ? 'star-filled' : 'star'" classes="size-4 fill-current" />
-                                        Destacadas
-                                    </div>
-                                    @if (soloDestacadas()) {
-                                        <app-icon name="check" classes="size-4 fill-current" />
-                                    }
-                                </button>
-
-                                <button type="button" 
-                                        (click)="togglePausados(); isFiltrosOpen.set(false)"
-                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
-                                        [class.text-brand-accent]="soloPausadas()"
-                                        [class.font-bold]="soloPausadas()"
-                                        [class.bg-brand-accent]="soloPausadas()"
-                                        [style.backgroundColor]="soloPausadas() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
-                                        [class.text-brand-text-sec]="!soloPausadas()"
-                                        [class.font-medium]="!soloPausadas()">
-                                    <div class="flex items-center gap-2">
-                                        <app-icon name="pause" classes="size-4 fill-current" />
-                                        Pausadas
-                                    </div>
-                                    @if (soloPausadas()) {
-                                        <app-icon name="check" classes="size-4 fill-current" />
-                                    }
-                                </button>
-
-                                @if (soloDestacadas() || soloPausadas()) {
-                                    <div class="px-2 mt-2 pt-2 border-t border-gray-50">
-                                        <button type="button" 
-                                                (click)="limpiarFiltros()"
-                                                class="w-full py-2 px-2 text-xs font-bold text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2">
-                                            <app-icon name="close" classes="size-3.5 fill-current" />
-                                            Limpiar filtros
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-                        }
-                    </div>
-
-                    <div class="flex-1 relative">
-                        <input type="text" 
-                            [ngModel]="busquedaRaw()" 
-                            (ngModelChange)="onSearchInput($event)" 
-                            placeholder="Buscar categoría..."
+<div class="flex flex-col h-full w-full bg-gray-50 relative">
+    
+    <!-- CABECERA FIJA (Sticky) -->
+    @if (hasCategorias()) {
+        <header class="p-3 pb-2 shrink-0 bg-gray-50 z-20 transition-all duration-300">
+            <div class="flex items-center gap-2 max-w-2xl mx-auto w-full relative">
+                
+                <!-- BOTÓN FILTROS -->
+                <div class="relative shrink-0">
+                    <button type="button" 
+                            (click)="toggleFiltrosDropdown()"
                             [disabled]="!hasCategorias()"
-                            class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:ring focus:ring-brand-accent/30 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                            class="p-3 relative flex items-center justify-center bg-white border border-gray-100 rounded-xl outline-none md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+                            [class.ring]="isFiltrosOpen()" [class.ring-brand-accent/30]="isFiltrosOpen()">
                         
-                        @if (isBuscando()) {
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <svg class="animate-spin size-5 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
+                        <!-- Contenedor relativo para superponer los íconos -->
+                        <div class="relative size-5">
+                            
+                            <div class="absolute inset-0 transition-all duration-300 opacity-100 rotate-0 scale-100"
+                                [class.opacity-0]="isFiltrosOpen()"
+                                [class.rotate-90]="isFiltrosOpen()"
+                                [class.scale-50]="isFiltrosOpen()"
+                                [class.opacity-100]="!isFiltrosOpen()"
+                                [class.rotate-0]="!isFiltrosOpen()"
+                                [class.scale-100]="!isFiltrosOpen()">
+                                <app-icon name="filter" classes="size-5 text-brand-accent fill-current" />
                             </div>
-                        } @else if (busquedaRaw().length > 0) {
-                            <button (click)="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 md:hover:text-brand-accent transition-colors duration-200 focus:outline-none">
-                                <app-icon name="close" classes="size-5 fill-current" />
-                            </button>
-                        } @else {
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" [class.opacity-50]="!hasCategorias()">
-                                <app-icon name="search" classes="size-5 text-gray-400 fill-current" />
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
 
+                            <div class="absolute inset-0 transition-all duration-300 opacity-0 -rotate-90 scale-50"
+                                [class.opacity-100]="isFiltrosOpen()"
+                                [class.rotate-0]="isFiltrosOpen()"
+                                [class.scale-100]="isFiltrosOpen()"
+                                [class.opacity-0]="!isFiltrosOpen()"
+                                [class.-rotate-90]="!isFiltrosOpen()"
+                                [class.scale-50]="!isFiltrosOpen()">
+                                <app-icon name="close" classes="size-5 text-brand-accent fill-current" />
+                            </div>
+                            
+                        </div>
+                        
+                        @if (soloDestacadas() || soloPausadas()) {
+                            <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
+                        }
+                    </button>
+
+                    @if (isFiltrosOpen()) {
+                        <div class="fixed inset-0 z-40" (click)="isFiltrosOpen.set(false)"></div>
+                        
+                        <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg animate-in fade-in zoom-in-95 duration-200 py-2">
+                            <div class="px-3 pb-2 mt-2 mb-1 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-50">
+                                Mostrar Solo
+                            </div>
+                            
+                            <button type="button" 
+                                    (click)="toggleDestacados(); isFiltrosOpen.set(false)"
+                                    class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50"
+                                    [class.text-brand-accent]="soloDestacadas()"
+                                    [class.font-bold]="soloDestacadas()"
+                                    [class.bg-brand-accent]="soloDestacadas()"
+                                    [style.backgroundColor]="soloDestacadas() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''" 
+                                    [class.text-brand-text-sec]="!soloDestacadas()"
+                                    [class.font-medium]="!soloDestacadas()">
+                                <div class="flex items-center gap-2">
+                                    <app-icon [name]="soloDestacadas() ? 'star-filled' : 'star'" classes="size-4 fill-current" />
+                                    Destacadas
+                                </div>
+                                @if (soloDestacadas()) {
+                                    <app-icon name="check" classes="size-4 fill-current" />
+                                }
+                            </button>
+
+                            <button type="button" 
+                                    (click)="togglePausados(); isFiltrosOpen.set(false)"
+                                    class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
+                                    [class.text-brand-accent]="soloPausadas()"
+                                    [class.font-bold]="soloPausadas()"
+                                    [class.bg-brand-accent]="soloPausadas()"
+                                    [style.backgroundColor]="soloPausadas() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                    [class.text-brand-text-sec]="!soloPausadas()"
+                                    [class.font-medium]="!soloPausadas()">
+                                <div class="flex items-center gap-2">
+                                    <app-icon name="pause" classes="size-4 fill-current" />
+                                    Pausadas
+                                </div>
+                                @if (soloPausadas()) {
+                                    <app-icon name="check" classes="size-4 fill-current" />
+                                }
+                            </button>
+
+                            @if (soloDestacadas() || soloPausadas()) {
+                                <div class="px-2 mt-2 pt-2 border-t border-gray-50">
+                                    <button type="button" 
+                                            (click)="limpiarFiltros()"
+                                            class="w-full py-2 px-2 text-xs font-bold text-gray-500 md:hover:text-gray-700 bg-gray-50 md:hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                        <app-icon name="close" classes="size-3.5 fill-current" />
+                                        Limpiar filtros
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- BUSCADOR CENTRAL -->
+                <div class="flex-1 relative">
+                    <input type="text" 
+                        [ngModel]="busquedaRaw()" 
+                        (ngModelChange)="onSearchInput($event)" 
+                        placeholder="Buscar categoría..."
+                        [disabled]="!hasCategorias()"
+                        class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:ring focus:ring-brand-accent/30 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                
+                    @if (isBuscando()) {
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="animate-spin size-5 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                    } @else if (busquedaRaw().length > 0) {
+                        <button (click)="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 md:hover:text-brand-accent transition-colors duration-200 focus:outline-none">
+                            <app-icon name="close" classes="size-5 fill-current" />
+                        </button>
+                    } @else {
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" [class.opacity-50]="!hasCategorias()">
+                            <app-icon name="search" classes="size-5 text-gray-400 fill-current" />
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </header>
+    }
+
+    <!-- ÁREA SCROLLEABLE: LISTA DE CATEGORÍAS -->
+    <main class="flex-1 overflow-y-auto px-3 pt-1 relative" (scroll)="activeMenuId.set(null)">
+        <div class="w-full max-w-2xl mx-auto flex flex-col h-full">
+            
             @if (!hasCategorias()) {
                 
-                <div class="flex-1 flex flex-col items-center px-4 pb-6 text-center">
-                    <div class="flex-1 flex flex-col items-center justify-center w-full pb-14">
-                        <img src="assets/panel-vendedor/empty-state.svg" alt="Sin categorías" class="w-40 h-40 mb-5">
+                <div class="flex-1 flex flex-col items-center justify-center px-4 pb-6 text-center">
+                    <div class="flex-1 flex flex-col items-center justify-center w-full pb-10">
+                        <img src="assets/panel-vendedor/empty-state.svg" alt="Sin cupones" class="w-40 h-40 mb-5">
                         <p class="text-brand-text/50 font-semibold text-sm">Aún no tenés categorías creadas</p>
                     </div>
-
-                    <button (click)="onAddCategory()" 
-                            class="bg-brand-accent text-white px-6 py-3.5 rounded-xl font-bold shadow-lg shadow-brand-accent/30 md:hover:scale-105 active:scale-95 transition-all w-full max-w-xs flex justify-center items-center gap-2">
+                    <button (click)="onAddCategory()" class="bg-brand-accent text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-brand-accent/30 md:hover:scale-105 active:scale-95 transition-all w-full max-w-xs flex justify-center items-center gap-2">
                         <app-icon name="add-categoria" classes="size-5 fill-current" />
-                        Crear mi primer categoría
+                        Crear mi primera categoría
                     </button>
                 </div>
 
             } @else {
 
-                <div class="w-full space-y-2">
+                <!-- ETIQUETA DE FILTROS ACTIVOS (Scrollea con las categorías) -->
+                @if (soloDestacadas() || soloPausadas()) {
+                    <div class="flex items-center justify-between px-1 mb-2.5 mt-1 animate-in fade-in duration-200">
+                        <span class="text-sm font-bold text-brand-text truncate flex items-center gap-1.5">
+                            @if (soloDestacadas()) { <span>Destacadas</span> }
+                            @if (soloDestacadas() && soloPausadas()) { <span class="text-gray-300 font-normal">•</span> }
+                            @if (soloPausadas()) { <span>Pausadas</span> }
+                        </span>
+                        
+                        <button (click)="limpiarFiltros()" 
+                                class="shrink-0 p-1 ml-2 text-gray-400 md:hover:text-brand-accent transition-colors active:scale-95 flex items-center"
+                                aria-label="Quitar filtros">
+                            <app-icon name="close" classes="size-5 fill-current" />
+                        </button>
+                    </div>
+                }
+
+                <!-- LISTADO DE CATEGORÍAS -->
+                <div class="w-full space-y-2 pb-22">
                     @for (cat of categoriasFiltradas(); track cat.id) {
                         <div (click)="categoryPreview.open(cat)"
                             class="flex items-center gap-4 bg-white p-2 rounded-2xl border border-gray-100 md:hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] transition-all group shadow-xs cursor-pointer"
@@ -167,13 +214,13 @@
 
                             <div class="flex items-center gap-2">
                                 <button (click)="onEditCategory(cat); $event.stopPropagation()" 
-                                        class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                                        class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
                                     <app-icon name="edit" classes="size-4.5 fill-current" />
                                 </button>
 
                                 <div class="relative">
                                     <button (click)="toggleMenu(cat.id, $event); $event.stopPropagation()" 
-                                            class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                                            class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
                                         <app-icon name="options" classes="size-4.5 fill-current" />
                                     </button>
 
@@ -222,6 +269,7 @@
         </div>
     </main>
 
+    <!-- BOTÓN FLOTANTE (+) -->
     @if (hasCategorias()) {
         <div class="absolute bottom-4 right-6 z-50 xl:right-[calc(50vw-420px)] animate-in fade-in zoom-in duration-200">
             <button (click)="onAddCategory()"

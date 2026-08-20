@@ -1,5 +1,5 @@
 <div class="flex flex-col h-full w-full">
-    <main class="flex-1 bg-gray-50 p-3 flex flex-col items-center">
+    <main class="flex-1 bg-gray-50 p-3 flex flex-col items-center overflow-y-auto min-h-0 relative">
         <div class="w-full max-w-xl flex flex-col flex-1">
             
             @if (!cargaInicialService.productosProcesados()) {
@@ -49,31 +49,35 @@
                         </button>
                     </div>
 
-                    <div class="flex flex-col gap-2.5 mb-10">
+                    <div class="flex flex-col gap-2.5">
                         @for (producto of cargaInicialService.productosProcesados(); track producto.nombre) {
                             <app-card-producto [producto]="producto"/>
                         }
                     </div>
 
-                    <div class="px-4 py-3 bg-white border-t border-gray-200 z-40">
-                        <div class="max-w-lg mx-auto flex gap-3">
-                            <button (click)="cargaInicialService.reiniciarTodo()" [disabled]="cargaInicialService.isProcessing()"
-                                    class="px-4 py-2 rounded-xl font-semibold bg-gray-100 text-gray-600 active:scale-[0.98] transition-all disabled:opacity-50">
-                                Cancelar
-                            </button>
-                            <button (click)="confirmarSubida()" [disabled]="cargaInicialService.isProcessing()"
-                                    class="flex-1 flex items-center justify-center gap-2 bg-brand-accent text-white py-2 rounded-xl font-semibold active:scale-[0.98] transition-all disabled:opacity-70">
-                                @if (cargaInicialService.isProcessing()) {
-                                    <svg class="animate-spin size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                    Creando productos...
-                                } @else {
-                                    <app-icon name="cloud-upload" classes="size-5 fill-current" />
-                                    Confirmar y crear
-                                }
-                            </button>
+                    <div class="sticky bottom-0 z-40 w-full mt-auto pt-4 pb-1">
+                        
+                        <!-- EFECTO "ISLA FLOTANTE" -->
+                        <div class="p-2.5 bg-white border border-gray-200 rounded-2xl">
+                            <div class="max-w-lg mx-auto flex gap-3">
+                                <button (click)="cargaInicialService.reiniciarTodo()" [disabled]="cargaInicialService.isProcessing()"
+                                        class="px-4 py-2 rounded-xl font-semibold bg-gray-100 text-gray-600 active:scale-[0.98] transition-all md:hover:bg-gray-200 disabled:opacity-50">
+                                    Cancelar
+                                </button>
+                                <button (click)="confirmarSubida()" [disabled]="cargaInicialService.isProcessing()"
+                                        class="flex-1 flex items-center justify-center gap-2 bg-brand-accent text-white py-2 rounded-xl font-semibold active:scale-[0.98] transition-all md:hover:bg-brand-accent/90 disabled:opacity-70">
+                                    @if (cargaInicialService.isProcessing()) {
+                                        <svg class="animate-spin size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        Creando productos...
+                                    } @else {
+                                        <app-icon name="cloud-upload" classes="size-5 fill-current" />
+                                        Confirmar y crear
+                                    }
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
 
             } @else if (!cargaInicialService.selectedFile()) {
@@ -125,7 +129,7 @@
                         </div>
 
                         <button (click)="cargaInicialService.reiniciarTodo()" [disabled]="cargaInicialService.isProcessing()"
-                                class="shrink-0 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors active:scale-90 disabled:opacity-50">
+                                class="shrink-0 p-2 text-gray-400 md:hover:text-red-500 md:hover:bg-red-50 rounded-full transition-colors active:scale-90 disabled:opacity-50">
                             <app-icon name="close" classes="size-5 fill-current" />
                         </button>
                     </div>

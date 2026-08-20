@@ -1,17 +1,51 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Producto } from '../models/producto.model';
 import { CategoriaVendedor } from '../models/categoriaVendedor.model';
 import { Catalogo } from '../models/catalogo.model';
 import { BRAND_DATA } from '../data/brand.data';
+import { AdminStoreService } from './admin-store.service';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PdfExportService {
+  private adminStore = inject(AdminStoreService);
+  private toastService = inject(ToastService);
 
-  async exportarCatalogo(categorias: CategoriaVendedor[], productos: Producto[], catalogo: Catalogo) {
+  async generarPdf() {
+    const categorias = this.adminStore.categorias(); 
+    const todosLosProductos = this.adminStore.productos();
+    const catalogo = this.adminStore.catalogo();
+
+    if (!catalogo) {
+      this.toastService.show('Ocurrió un error inesperado al cargar los datos', 'error');
+      return;
+    }
+
+    if (todosLosProductos.length == 0) {
+      this.toastService.show('Crea productos antes de exportar', 'error');
+      return;
+    }
+
+    const categoriasOrdenadas = [...categorias].sort((a, b) => 
+      a.nombre.localeCompare(b.nombre)
+    );
+
+    const proceso = this.toastService.loading('Generando PDF...');
+
+    try {
+      await this.exportarCatalogo(categoriasOrdenadas, todosLosProductos, catalogo);
+      proceso.success('PDF generado con éxito.');
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      proceso.error('Hubo un error al generar el PDF.');
+    }
+  }
+
+  private async exportarCatalogo(categorias: CategoriaVendedor[], productos: Producto[], catalogo: Catalogo) {
     const doc = new jsPDF();
     const nombreTienda = catalogo.nombre_tienda || 'Mi Tienda';
     
@@ -162,12 +196,10 @@ export class PdfExportService {
     doc.save(`Catalogo_${nombreTienda.replace(/\s+/g, '_')}_${fecha}.pdf`);
   }
 
-  async cargarImagenParaPDF(url: string): Promise<string> {
+  private async cargarImagenParaPDF(url: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      
       img.crossOrigin = 'Anonymous'; 
-      
       img.onload = () => {
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
@@ -181,13 +213,11 @@ export class PdfExportService {
 
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         ctx.drawImage(img, 0, 0);
 
         const base64Aplanado = canvas.toDataURL('image/jpeg', 0.9);
         resolve(base64Aplanado);
       };
-
       img.onerror = (error) => reject(error);
       img.src = url;
     });

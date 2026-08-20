@@ -17,8 +17,8 @@ export class PanelNavbar {
 
   rutasNav = [
     '/panel-vendedor/inicio',
-    '/panel-vendedor/mis-pedidos',
     '/panel-vendedor/mis-productos',
+    '/panel-vendedor/mis-pedidos',
     '/panel-vendedor/estadisticas',
     '/panel-vendedor/mi-tienda'
   ];
