@@ -13,7 +13,7 @@ import { TagService } from "../services-backend/tags.ServiceBackend";
 import { VendedorBackoffice } from "../models/backoffice/vendedorBackoffice.model";
 import { VendedorService } from "../services-backend/vendedores.ServiceBackend";
 import { CatalogoBackoffice } from "../models/backoffice/catalogoBackoffice.mode";
-import { HistorialSuscripcion, PlanSuscripcion, SuscripcionEstado } from "../models/backoffice/suscripcion.model";
+import { HistorialSuscripcion, PlanSuscripcion } from "../models/backoffice/suscripcion.model";
 import { SuscripcionesService } from "../services-backend/suscripciones.ServiceBackend";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
@@ -22,6 +22,7 @@ import { PedidoDTO } from "../models/pedido.model";
 import { PedidosServiceBackend } from "../services-backend/pedidos.ServiceBackend";
 import { EstadisticasServiceBackend } from "../services-backend/estadisticas.ServiceBackend";
 import { ResumenDiarioGraficoDTO, ResumenMensualDTO, TopCategoriaDTO, TopProductoDTO } from "../models/estadisticas.model";
+import { SuscripcionEstado } from "src/app/shared/enums/suscripcion.enum";
 
 declare var gtag: Function;
 

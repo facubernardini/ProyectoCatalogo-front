@@ -7,8 +7,8 @@ import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
-import { SuscripcionEstado } from 'src/app/core/models/backoffice/suscripcion.model';
-import { SUB_CONFIG } from 'src/app/core/data/suscripcion.data';
+import { SuscripcionEstado } from 'src/app/shared/enums/suscripcion.enum';
+import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
 
 @Component({
   selector: 'app-perfil',
@@ -22,7 +22,8 @@ export class Perfil {
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
 
-  public SUB_CONFIG = SUB_CONFIG;
+  readonly diasParaPagar = APP_CONFIG.DIAS_PARA_PAGAR_SUSCRIPCION;
+  
   public mostrarCambioPassword = signal(false);
   public loadingPassword = signal(false);
 
@@ -64,11 +65,13 @@ export class Perfil {
   }
 
   renovarSuscripcion() {
-    throw new Error('Method not implemented.');
-  }
-
-  cambiarPlan(arg0: string) {
-    throw new Error('Method not implemented.');
+    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+    
+    const mensaje = encodeURIComponent('Hola, quiero renovar la suscripción de mi tienda.');
+    
+    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
+    
+    window.open(url, '_blank');
   }
 
   async guardarNuevaPassword() {

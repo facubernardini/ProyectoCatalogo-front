@@ -2,6 +2,52 @@
     <main class="flex-1 bg-gray-50 p-3 md:p-6 overflow-y-auto">
         
         <div class="max-w-4xl mx-auto w-full flex flex-col gap-3">
+
+            <!-- BANNER DE SUSCRIPCIÓN -->
+            @if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO || 
+            adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA) {
+            
+                <div class="flex items-start sm:items-center justify-between gap-3 px-3 py-2.5 rounded-xl border transition-all"
+                    [class.bg-amber-50/80]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                    [class.border-amber-200/50]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                    [class.text-amber-800]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                    [class.bg-red-50/80]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA"
+                    [class.border-red-200/50]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA"
+                    [class.text-red-800]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA">
+                    
+                    <div class="flex items-start gap-2.5 min-w-0">
+                        <app-icon [name]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO ? 'time' : 'close-circle'" 
+                                classes="size-4 shrink-0 mt-0.5 fill-current" 
+                                [class.text-amber-500]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                                [class.text-red-500]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA"/>
+
+                        <div class="flex flex-col">
+                            
+                            @if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO) {
+                                <span class="text-xs font-medium leading-snug">
+                                    <b class="font-bold">Pago pendiente:</b> Tenés {{ (diasRestantes() !== null && diasRestantes()! < 0) ? (diasParaPagar + diasRestantes()!) : diasParaPagar }} días para renovar tu plan antes de que tu tienda se oculte.
+                                </span>
+                            } 
+                            
+                            @if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA) {
+                                <span class="text-xs font-medium leading-snug">
+                                    <b class="font-bold">Suscripción vencida:</b> Tu tienda está oculta. Renová para volver a activarla.
+                                </span>
+                            }
+
+                        </div>
+                    </div>
+
+                    <button (click)="renovarSuscripcion()"
+                            class="shrink-0 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg transition-colors active:scale-95"
+                            [class.bg-amber-500]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                            [class.md:hover:bg-amber-600]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                            [class.bg-red-500]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA"
+                            [class.md:hover:bg-red-600]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA">
+                        Renovar
+                    </button>
+                </div>
+            }
             
             <!-- CARD 1: PREVIEW DE PEDIDOS -->
             <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group">
@@ -22,7 +68,7 @@
                     </button>
                 </div>
 
-                <!-- LISTA RÁPIDA DE PEDIDOS PENDIENTES (Máximo 3 para no saturar) -->
+                <!-- LISTA RÁPIDA DE PEDIDOS PENDIENTES -->
                 @if (pedidosPendientes().length > 0) {
                     <div class="flex flex-col gap-2">
                         @for (pedido of pedidosPendientes() | slice:0:2; track pedido.id) {

@@ -38,19 +38,23 @@
         <div class="px-3 pt-1.5 flex flex-col shrink-0 bg-white z-10 relative">
             <div class="flex flex-col gap-1 mb-3">
                 @if (tieneDestacados()) {
-                    <button (click)="abrirDestacados()" class="w-full flex items-center justify-between py-2 px-3 rounded-xl text-sm font-bold text-gray-700 transition-all duration-300 group">
-                        <span class="font-black">Destacados</span>
+                    <button (click)="abrirDestacados()" 
+                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm text-amber-600 bg-amber-50/50">
+                        <app-icon name="star" classes="size-4 fill-current" />
+                        <span class="font-bold">Destacados</span>
                     </button>
                 }
 
                 @if (tieneOfertas()) {
-                    <button (click)="abrirOfertas()" class="w-full flex items-center justify-between py-2 px-3 rounded-xl text-sm font-bold text-gray-700 transition-all duration-300 group">
-                        <span class="font-black">Ofertas</span>
+                    <button (click)="abrirOfertas()" 
+                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm text-green-700 bg-green-50/50">
+                        <app-icon name="discount" classes="size-4 fill-current" />
+                        <span class="font-bold">Ofertas</span>
                     </button>
                 }
             </div>
 
-            <h3 class="text-[10px] font-black uppercase tracking-widest text-brand-text-sec px-3 mb-1">
+            <h3 class="text-xs font-black uppercase tracking-widest text-brand-text-sec px-3 mb-1">
                 Categorías
             </h3>
         </div>

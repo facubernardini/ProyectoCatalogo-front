@@ -22,9 +22,19 @@ export class MenuPrincipal {
   private confirmService = inject(ConfirmService);
   private authService = inject(AuthService);
 
-  navegar(ruta: string) {
+  irAMiPerfil() {
     this.menuService.close();
-    this.router.navigate([ruta]);
+    this.router.navigate(['/panel-vendedor/perfil']);
+  }
+
+  contactarSoporte() {
+    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+    
+    const mensaje = encodeURIComponent('Hola, necesito ayuda con mi tienda.');
+    
+    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
+    
+    window.open(url, '_blank');
   }
 
   async onLogout() {
@@ -39,15 +49,5 @@ export class MenuPrincipal {
       this.menuService.close();
       this.authService.logout();
     }
-  }
-
-  contactarSoporte() {
-    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
-    
-    const mensaje = encodeURIComponent('Hola, necesito ayuda con mi tienda.');
-    
-    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
-    
-    window.open(url, '_blank');
   }
 }

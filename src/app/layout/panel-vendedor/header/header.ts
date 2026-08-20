@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { Icon } from 'src/app/shared/components/icon';
 import { ContextMenuService, OpcionMenu } from 'src/app/shared/services/context-menu.service';
 import { MenuPrincipalService } from 'src/app/shared/services/menu-principal.service';
@@ -18,6 +20,8 @@ export class Header {
   public contextMenu = inject(ContextMenuService);
   public menuPrincipal = inject(MenuPrincipalService);
   private router = inject(Router);
+  private confirmService = inject(ConfirmService);
+  private authService = inject(AuthService);
 
   isInicio = signal<boolean>(true);
   tituloPagina = signal<string>('');
@@ -55,8 +59,17 @@ export class Header {
     this.menuPrincipal.open();
   }
 
-  irAPerfil() {
-    this.router.navigate(['/panel-vendedor/perfil']);
+  async onLogout() {
+    const confirm = await this.confirmService.ask({
+      title: '¿Cerrar sesión?',
+      message: ``,
+      icon: 'logout',
+      type: 'info'
+    });
+
+    if (confirm) {
+      this.authService.logout();
+    }
   }
 
   volverAInicio() {

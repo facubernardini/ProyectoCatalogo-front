@@ -5,4 +5,6 @@ export const APP_CONFIG = {
 
   MESES_ANTERIORES_ESTADISTICAS: 6,
 
+  DIAS_PARA_PAGAR_SUSCRIPCION: 10,
+
 } as const;
