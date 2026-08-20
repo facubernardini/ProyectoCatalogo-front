@@ -38,7 +38,7 @@
     font-weight: 400;
 }
 
-// SHIMMER
+/* SHIMMER */
 @keyframes shimmer {
   100% {
     transform: translateX(100%);

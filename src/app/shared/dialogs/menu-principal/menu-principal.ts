@@ -6,6 +6,7 @@ import { Icon } from "../../components/icon";
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { PdfExportService } from 'src/app/core/services/pdf-export.service';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-menu-principal',
@@ -38,5 +39,15 @@ export class MenuPrincipal {
       this.menuService.close();
       this.authService.logout();
     }
+  }
+
+  contactarSoporte() {
+    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+    
+    const mensaje = encodeURIComponent('Hola, necesito ayuda con mi tienda.');
+    
+    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
+    
+    window.open(url, '_blank');
   }
 }

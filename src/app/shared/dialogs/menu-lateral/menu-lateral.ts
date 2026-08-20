@@ -7,10 +7,11 @@ import { MapDialogService } from '@shared/services/map.service';
 import { CategoryViewService } from '@shared/services/category-view.service';
 import { ProductosDestacadosService } from '@shared/services/productos-destacados.service';
 import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-menu-lateral',
-  imports: [Icon],
+  imports: [Icon, CommonModule],
   templateUrl: './menu-lateral.html',
   styleUrl: './menu-lateral.css',
 })

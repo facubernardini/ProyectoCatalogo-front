@@ -3,12 +3,13 @@ import { Icon } from "@shared/components/icon";
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { ProductCard } from "./product-card/product-card";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { CommonModule } from '@angular/common';
 
 type OrdenCriterio = 'menor-precio' | 'mayor-precio' | 'alfa' | 'default';
 
 @Component({
   selector: 'app-lista-productos',
-  imports: [Icon, SwipeDownDirective, ProductCard],
+  imports: [Icon, SwipeDownDirective, ProductCard, CommonModule],
   templateUrl: './lista-productos.html',
   styleUrl: './lista-productos.css',
 })

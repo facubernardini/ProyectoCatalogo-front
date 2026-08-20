@@ -35,7 +35,7 @@ export class PedidosManagerService {
       },
       error: (err) => {
         console.error('Error creando pedido manual:', err);
-        proceso.error('Error al crear el pedido. Intentá de nuevo.');
+        proceso.error(err.error.message);
       }
     });
   }
@@ -61,7 +61,7 @@ export class PedidosManagerService {
       },
       error: (err) => {
         console.error('Error al guardar el pedido:', err);
-        proceso.error('Error al guardar los cambios. Intenta de nuevo.');
+        proceso.error(err.error.message);
       }
     });
   }

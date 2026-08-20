@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment.dev';
 import { Observable } from 'rxjs';
-import { ResumenMensualDTO, ResumenDiarioGraficoDTO, TopProductoDTO } from '../models/estadisticas.model';
+import { ResumenMensualDTO, ResumenDiarioGraficoDTO, TopProductoDTO, TopCategoriaDTO } from '../models/estadisticas.model';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +34,15 @@ export class EstadisticasServiceBackend {
         params = params.set('limit', limit);
 
         return this.http.get<TopProductoDTO[]>(`${this.API_URL}/seller/estadisticas/top-productos`, { params });
+    }
+
+    getTopCategorias(mes?: number, anio?: number, limit: number = 5): Observable<TopCategoriaDTO[]> {
+        let params = new HttpParams();
+        if (mes) params = params.set('mes', mes);
+        if (anio) params = params.set('anio', anio);
+        params = params.set('limit', limit);
+
+        return this.http.get<TopCategoriaDTO[]>(`${this.API_URL}/seller/estadisticas/top-categorias`, { params });
     }
 
 }

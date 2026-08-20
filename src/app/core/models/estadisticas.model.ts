@@ -1,6 +1,6 @@
 export interface ResumenMensualDTO {
   ingresosBrutos: number;
-  crecimientoIngresos: number; // Porcentaje vs mes anterior
+  crecimientoIngresos: number;
   gananciaNeta: number;
   crecimientoGanancia: number;
   pedidosEntregados: number;
@@ -8,18 +8,24 @@ export interface ResumenMensualDTO {
 }
 
 export interface ResumenDiarioGraficoDTO {
-  name: string;  // Ej: "01/08"
-  value: number; // Ej: 15400 (Ganancia total de ese día - Dibuja el alto de la barra)
+  name: string;
+  value: number;
   extra: {
-    cantidadVentas: number; // Para mostrar en el tooltip
-    ingresosBrutos: number; // (Opcional) Por si querés mostrar cuánto fue ingreso y cuánto ganancia
+    cantidadVentas: number;
+    ingresosBrutos: number;
   };
 }
 
 export interface TopProductoDTO {
   productoId: number;
   nombre: string;
-  unidad: string; // Ej: "1 Kg", "Unidad" (Viene de presentacion_unidad)
-  cantidadVendida: number; // Suma de la cantidad vendida
+  unidad: string;
+  cantidadVendida: number;
+  gananciaGenerada: number;
+}
+
+export interface TopCategoriaDTO {
+  nombre: string;
+  cantidadVendida: number;
   gananciaGenerada: number;
 }

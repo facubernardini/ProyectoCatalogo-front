@@ -21,7 +21,7 @@ import { Vendedor } from "../models/vendedor.model";
 import { PedidoDTO } from "../models/pedido.model";
 import { PedidosServiceBackend } from "../services-backend/pedidos.ServiceBackend";
 import { EstadisticasServiceBackend } from "../services-backend/estadisticas.ServiceBackend";
-import { ResumenDiarioGraficoDTO, ResumenMensualDTO, TopProductoDTO } from "../models/estadisticas.model";
+import { ResumenDiarioGraficoDTO, ResumenMensualDTO, TopCategoriaDTO, TopProductoDTO } from "../models/estadisticas.model";
 
 declare var gtag: Function;
 
@@ -54,6 +54,7 @@ export class AdminStoreService {
   resumenMensual = signal<ResumenMensualDTO | null>(null);
   evolucionDiaria = signal<ResumenDiarioGraficoDTO[]>([]);
   topProductos = signal<TopProductoDTO[]>([]);
+  topCategorias = signal<TopCategoriaDTO[]>([]);
 
   mesEstadisticas = signal<number>(new Date().getMonth() + 1);
   anioEstadisticas = signal<number>(new Date().getFullYear());
@@ -153,12 +154,14 @@ export class AdminStoreService {
     forkJoin({
       resumen: this.estadisticasService.getResumenMensual(targetMes, targetAnio),
       evolucion: this.estadisticasService.getEvolucionDiaria(targetMes, targetAnio),
-      top: this.estadisticasService.getTopProductos(targetMes, targetAnio, 5)
+      topProductos: this.estadisticasService.getTopProductos(targetMes, targetAnio, 5),
+      topCategorias: this.estadisticasService.getTopCategorias(targetMes, targetAnio, 5),
     }).subscribe({
-      next: ({ resumen, evolucion, top }) => {
+      next: ({ resumen, evolucion, topProductos, topCategorias }) => {
         this.resumenMensual.set(resumen);
         this.evolucionDiaria.set(evolucion);
-        this.topProductos.set(top);
+        this.topProductos.set(topProductos);
+        this.topCategorias.set(topCategorias);
         
         this.isLoadingEstadisticas.set(false);
       },

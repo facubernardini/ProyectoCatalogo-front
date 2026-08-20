@@ -13,9 +13,12 @@
                     </div>
                     
                     <button 
-                        class="text-[10px] font-bold text-brand-accent uppercase tracking-wide px-2.5 py-1.5 bg-brand-bg rounded-lg md:hover:bg-brand-accent/20 transition-colors"
+                        class="flex items-center gap-0.5 text-[10px] font-bold text-brand-accent uppercase tracking-wide px-2.5 py-1.5 bg-brand-bg rounded-lg md:hover:bg-brand-accent/20 transition-colors"
                         (click)="pedidoFormService.open()">
-                        Crear
+                        
+                        <app-icon name="add-producto" classes="size-3 fill-current" />
+                        <span>Crear</span>
+                        
                     </button>
                 </div>
 
@@ -165,7 +168,7 @@
                     
                     <div class="flex flex-col min-w-0 flex-1">
                         <span class="text-brand-text font-bold text-sm leading-tight md:group-hover:text-brand-accent transition-colors">
-                            Categorías
+                            Gestionar categorías
                         </span>
                         <span class="text-gray-500 text-xs truncate">
                             Organizá tus productos en categorías

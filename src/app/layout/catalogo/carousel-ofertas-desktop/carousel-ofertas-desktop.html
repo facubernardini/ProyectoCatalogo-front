@@ -33,13 +33,12 @@
                             
                             @for (producto of pagina; track producto.id) {
                                 
-                                <!-- 👉 Capturamos todo el estado reactivo sin usar @let -->
                                 @if (obtenerEstado(producto); as estado) {
                                     
                                     <div (click)="productSelectorService.open(producto)"
                                         class="bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_3px_10px_rgb(0,0,0,0.1)] hover:border-brand-accent/50 border border-gray-100 transition-all duration-300 cursor-pointer group/card flex h-full">
                                         
-                                        <div class="p-3 flex flex-col flex-1 min-w-0">
+                                        <div class="p-3 pb-2 flex flex-col flex-1 min-w-0">
                                             
                                             <div class="mb-auto">
                                                 <h3 class="font-bold text-brand-text text-xs xl:text-sm line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
@@ -92,7 +91,6 @@
                                                             ${{ estado.oferta.precio_descuento | number:'1.0-0' }}
                                                         </span>
                                                     } @else {
-                                                        <!-- 👉 Badge de agotado provisto por vos -->
                                                         <div class="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 border border-gray-200/80 rounded-lg select-none">
                                                             <span class="text-[10px] font-bold text-brand-text uppercase tracking-wider mt-px">
                                                                 Agotado
@@ -105,7 +103,7 @@
                                         </div>
 
                                         <!-- IMAGEN A LA DERECHA -->
-                                        <div class="p-3 pl-0 shrink-0 flex flex-col justify-center">
+                                        <div class="p-3 pb-2 pl-0 shrink-0 flex flex-col justify-center">
                                             <div class="relative w-32 lg:w-36 aspect-square bg-brand-bg rounded-xl overflow-hidden flex items-center justify-center shrink-0"
                                                 [class.animate-pulse]="!imageLoaded() && producto.imagen">
                                                 

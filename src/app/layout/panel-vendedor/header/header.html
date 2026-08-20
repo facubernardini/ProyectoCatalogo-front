@@ -4,13 +4,13 @@
         <!-- IZQUIERDA: CONDICIONAL (PERFIL O BOTÓN ATRÁS) -->
         @if (isInicio()) {
             <button (click)="irAPerfil()"
-                class="p-2 text-brand-accent active:scale-95 transition-transform md:hover:bg-white/20 rounded-xl animate-in fade-in zoom-in-95 duration-200"
+                class="p-2 text-brand-accent transition-colors md:hover:bg-white/20 rounded-xl animate-in fade-in duration-200"
                 aria-label="Mi perfil">
                 <app-icon name="profile" classes="size-7 fill-current text-brand-bg" />
             </button>
         } @else {
             <button (click)="volverAInicio()"
-                class="p-2 text-brand-accent active:scale-95 transition-transform md:hover:bg-white/20 rounded-xl animate-in fade-in zoom-in-95 duration-200"
+                class="p-2 text-brand-accent transition-colors md:hover:bg-white/20 rounded-xl animate-in fade-in duration-200"
                 aria-label="Volver al inicio">
                 <app-icon name="back" classes="size-7 fill-current text-brand-bg" />
             </button>
@@ -34,14 +34,14 @@
             
             @if (isInicio()) {
                 <button (click)="abrirMenuPrincipal()" 
-                    class="p-2 text-brand-accent active:scale-95 transition-transform md:hover:bg-white/20 rounded-xl animate-in fade-in zoom-in-95 duration-200"
+                    class="p-2 text-brand-accent transition-colors md:hover:bg-white/20 rounded-xl animate-in fade-in duration-200"
                     aria-label="Menú principal">
                     <app-icon name="menu" classes="size-7 fill-current text-brand-bg" />
                 </button>
             } 
             @else if (contextMenu.opciones().length > 0) {
                 <button (click)="contextMenu.toggleMenu()" 
-                    class="p-2 text-brand-accent active:scale-95 transition-transform md:hover:bg-white/20 rounded-xl animate-in fade-in zoom-in-95 duration-200"
+                    class="p-2 text-brand-accent transition-colors md:hover:bg-white/20 rounded-xl animate-in fade-in duration-200"
                     aria-label="Más opciones">
                     <app-icon name="options" classes="size-7 fill-current text-brand-bg" />
                 </button>
