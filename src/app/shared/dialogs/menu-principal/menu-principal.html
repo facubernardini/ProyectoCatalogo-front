@@ -21,9 +21,14 @@
                 }
 
                 <!-- Texto -->
-                <h2 class="text-base font-bold text-brand-text leading-none pr-2 line-clamp-2">
-                    {{ adminStore.catalogo()?.nombre_tienda || 'Mi Tienda' }}
-                </h2>
+                <div class="flex flex-col min-w-0">
+                    <h2 class="text-sm font-bold text-brand-text leading-tight line-clamp-2">
+                        {{ adminStore.catalogo()?.nombre_tienda || 'Mi Tienda' }}
+                    </h2>
+                    <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mt-0.5">
+                        Panel Vendedor
+                    </span>
+                </div>
             </div>
             
             <!-- LADO DERECHO: Botón cerrar -->
@@ -40,7 +45,6 @@
             <div class="flex flex-col gap-3">
                 
                 <!-- MI PERFIL -->
-                <!-- Nota: Cambiá el método (click) por la función que uses para navegar a tu perfil -->
                 <button (click)="irAMiPerfil()"
                     class="flex items-center gap-3 p-3 bg-white rounded-2xl border border-gray-100 shadow-sm active:scale-95 transition-all md:hover:border-gray-200 md:hover:shadow md:hover:bg-gray-50 text-left">
                     
@@ -56,13 +60,15 @@
 
                 <!-- CATALOGO PDF -->
                 <button (click)="exportPDFService.generarPdf()"
-                    class="flex items-center gap-3 p-3 bg-brand-accent/5 rounded-2xl border border-brand-accent/20 active:scale-95 transition-all md:hover:bg-brand-accent/10 text-left">
-                    <div class="p-2 bg-brand-accent text-white rounded-xl shadow-sm">
+                    class="flex items-center gap-3 p-3 bg-white rounded-2xl border border-gray-100 shadow-sm active:scale-95 transition-all md:hover:border-gray-200 md:hover:shadow md:hover:bg-gray-50 text-left">
+
+                    <div class="p-2 bg-gray-100 text-brand-accent rounded-xl">
                         <app-icon name="download-file" classes="size-5 fill-current" />
                     </div>
+
                     <div class="flex flex-col">
-                        <span class="font-bold text-sm text-brand-accent leading-tight">Catálogo PDF</span>
-                        <span class="text-[10px] font-medium text-brand-accent/70">Descargar lista de precios</span>
+                        <span class="font-bold text-sm text-brand-text leading-tight">Catálogo PDF</span>
+                        <span class="text-[10px] font-medium text-gray-400">Descargar lista de precios</span>
                     </div>
                 </button>
                 
@@ -79,6 +85,13 @@
                     <app-icon name="logout" classes="size-4.5 fill-current" />
                     Cerrar Sesión
                 </button>
+
+                <!-- Firma -->
+                <div class="my-0.5 flex items-center justify-center gap-1 opacity-70">
+                    <span class="text-[12px]">⚡</span>
+                    <span class="text-[10px] font-medium text-gray-400">by</span>
+                    <span class="text-[11px] font-black text-gray-600 tracking-tight">Listalo</span>
+                </div>
             </div>
 
         </div>
