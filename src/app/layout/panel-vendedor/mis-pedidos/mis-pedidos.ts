@@ -59,6 +59,45 @@ export class MisPedidos implements OnInit, OnDestroy {
     return pendientes.sort((a, b) => new Date(b.creado_el).getTime() - new Date(a.creado_el).getTime());
   });
 
+  pedidosAgrupados = computed(() => {
+    const pedidos = this.pedidosFiltrados();
+    
+    // 1. Preparamos las "bolsitas" vacías
+    const grupos = [
+        { etiqueta: 'Hoy', pedidos: [] as any[] }, // Reemplazá any[] por tu PedidoDTO[] si tenés el tipado
+        { etiqueta: 'Última semana', pedidos: [] as any[] },
+        { etiqueta: 'Último mes', pedidos: [] as any[] },
+        { etiqueta: 'Más antiguos', pedidos: [] as any[] }
+    ];
+
+    // 2. Congelamos el inicio del día de hoy a las 00:00 para la matemática exacta
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    // 3. Clasificamos cada pedido
+    pedidos.forEach(pedido => {
+        const fechaPedido = new Date(pedido.creado_el); // <-- Ajustar campo de fecha si es necesario
+        fechaPedido.setHours(0, 0, 0, 0);
+
+        // Diferencia en milisegundos convertida a días
+        const diferenciaMs = hoy.getTime() - fechaPedido.getTime();
+        const diasDiferencia = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));
+
+        if (diasDiferencia === 0) {
+            grupos[0].pedidos.push(pedido);
+        } else if (diasDiferencia > 0 && diasDiferencia <= 7) {
+            grupos[1].pedidos.push(pedido);
+        } else if (diasDiferencia > 7 && diasDiferencia <= 30) {
+            grupos[2].pedidos.push(pedido);
+        } else {
+            grupos[3].pedidos.push(pedido);
+        }
+    });
+
+    // 4. Limpiamos: Devolvemos SOLO los grupos que tienen al menos 1 pedido adentro
+    return grupos.filter(g => g.pedidos.length > 0);
+  });
+
   ngOnInit() {
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(400),

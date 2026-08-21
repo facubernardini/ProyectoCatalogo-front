@@ -13,6 +13,7 @@ export interface ResumenDiarioGraficoDTO {
   extra: {
     cantidadVentas: number;
     ingresosBrutos: number;
+    gananciaReal?: number;
   };
 }
 
@@ -21,11 +22,9 @@ export interface TopProductoDTO {
   nombre: string;
   unidad: string;
   cantidadVendida: number;
-  gananciaGenerada: number;
 }
 
 export interface TopCategoriaDTO {
   nombre: string;
   cantidadVendida: number;
-  gananciaGenerada: number;
 }

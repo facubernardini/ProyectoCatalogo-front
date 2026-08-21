@@ -17,6 +17,8 @@ export class Estadisticas implements OnInit {
   public mostrarBeneficios = signal(true);
   public isDropdownMesOpen = signal(false);
 
+  public metricaEvolucion = signal<'ganancias' | 'ventas'>('ganancias');
+
   public opcionesMeses: { valor: number, anio: number, label: string }[] = [];
 
   private isScrolling = false;
@@ -30,6 +32,27 @@ export class Estadisticas implements OnInit {
 
     return this.adminStore.mesEstadisticas() === mesActual && 
            this.adminStore.anioEstadisticas() === anioActual;
+  });
+
+  datosGrafico = computed(() => {
+    const metrica = this.metricaEvolucion();
+    const datos = this.adminStore.evolucionDiaria();
+
+    if (!datos) return [];
+
+    return datos.map(d => {
+      // Leemos la ganancia de extra si ya existe, sino usamos el value original
+      const ganancia = d.extra?.gananciaReal ?? d.value;
+
+      return {
+        name: d.name,
+        value: metrica === 'ganancias' ? ganancia : (d.extra?.cantidadVentas || 0),
+        extra: {
+          ...d.extra,
+          gananciaReal: ganancia // <-- ¡Guardado en el bolsillo seguro!
+        }
+      };
+    });
   });
 
   fechasEjeX = computed(() => {
@@ -57,28 +80,28 @@ export class Estadisticas implements OnInit {
   });
 
   ticksEjeY = computed(() => {
-    const datos = this.adminStore.evolucionDiaria();
-    
+    const datos = this.datosGrafico(); // Leemos de los datos dinámicos, no de la store directa
     if (!datos || datos.length === 0) return [0];
 
-    // 1. Buscamos el día que más dinero generó
     const maximo = Math.max(...datos.map(d => d.value));
 
-    // Si todavía no hay ventas en el mes, devolvemos una escala base por defecto
-    if (maximo === 0) return [0, 25000, 50000, 75000, 100000];
+    // LÓGICA PARA VENTAS (Números enteros y chicos)
+    if (this.metricaEvolucion() === 'ventas') {
+      if (maximo === 0) return [0, 1, 2, 3, 4]; // Escala por defecto
+      if (maximo < 4) return Array.from({length: maximo + 1}, (_, i) => i); // Si vendió 2, mostramos saltos de a 1
 
-    // 2. Truco matemático para redondear el "techo" del gráfico hacia arriba
+      // Redondeamos para que los saltos sean parejos (ej: 4, 8, 12)
+      const techoVentas = Math.ceil(maximo / 4) * 4;
+      return [0, techoVentas * 0.25, techoVentas * 0.50, techoVentas * 0.75, techoVentas];
+    }
+
+    // LÓGICA PARA GANANCIAS (Pesos grandes - Tu código original)
+    if (maximo === 0) return [0, 25000, 50000, 75000, 100000];
+    
     const factor = Math.pow(10, Math.floor(Math.log10(maximo))); 
     const techo = Math.ceil(maximo / factor) * factor;
 
-    // 3. Forzamos 5 saltos exactos (0%, 25%, 50%, 75%, 100%)
-    return [
-      0,
-      techo * 0.25,
-      techo * 0.50,
-      techo * 0.75,
-      techo
-    ];
+    return [ 0, techo * 0.25, techo * 0.50, techo * 0.75, techo ];
   });
 
   public colorScheme: any = {
@@ -98,8 +121,12 @@ export class Estadisticas implements OnInit {
   }
 
   formatearEjeY = (valor: number): string => {
+    if (this.metricaEvolucion() === 'ventas') {
+      return valor.toString(); // Las ventas son solo el número
+    }
+
+    // Tu formateo original para los pesos
     if (valor === 0) return '$0';
-    
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
       currency: 'ARS',

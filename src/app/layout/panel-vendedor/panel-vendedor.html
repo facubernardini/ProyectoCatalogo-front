@@ -1,17 +1,54 @@
 @if (adminStore.isLoading()) {
     <app-loading-spinner/>
 } @else {
-    <div class="flex flex-col h-dvh w-full overflow-hidden bg-gray-50">
+    @if (isDesktop()) {
+        <div class="flex h-dvh w-full overflow-hidden bg-gray-50">
+            
+            <!-- Menú Lateral Izquierdo Fijo -->
+            <aside class="w-64 shrink-0 bg-white border-r border-gray-200 z-40 shadow-sm relative animate-in fade-in duration-500">
+                <app-menu-lateral-vendedor class="contents" />
+            </aside>
+
+            <!-- Área Central de Contenido -->
+            <main class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-gray-50 relative">
+                
+                <!-- TOPBAR FIJA DESKTOP (Versión Sutil) -->
+                <header class="shrink-0 bg-white border-b border-gray-100 p-3 pl-5 z-30 flex items-center">
+                    
+                    <div class="animate-in fade-in slide-in-from-left-2">
+                                                
+                        <!-- Título actual más pequeño y elegante -->
+                        <h1 class="text-sm font-bold text-gray-700 tracking-tight leading-none pt-0.5">
+                            {{ tituloPanelActual() }}
+                        </h1>
+                    </div>
+
+                </header>
+
+                <!-- CONTENIDO SCROLLEABLE -->
+                <div class="flex-1 overflow-y-auto px-6 py-1">
+                    <div class="max-w-6xl mx-auto w-full">
+                        <router-outlet/>
+                    </div>
+                </div>
+
+            </main>
+
+        </div>
+    } @else {
+        <!-- Layout Mobile -->
+        <div class="flex flex-col h-dvh w-full overflow-hidden bg-gray-50">
         
-        <app-panel-header class="shrink-0 z-50 relative"></app-panel-header>
+            <app-panel-header class="shrink-0 z-50 relative"></app-panel-header>
 
-        <main class="flex-1 overflow-y-auto animate-in fade-in duration-500">
-            <router-outlet/>
-        </main>
+            <main class="flex-1 overflow-y-auto">
+                <router-outlet/>
+            </main>
 
-        <app-panel-navbar class="shrink-0 z-40 relative"></app-panel-navbar>
-    </div>
-
+            <app-panel-navbar class="shrink-0 z-40 relative"></app-panel-navbar>
+        </div>
+    }
+    
     <!-- Dialogs emergentes -->
     <app-product-preview/>
     <app-product-form/>
