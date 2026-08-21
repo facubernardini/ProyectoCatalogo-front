@@ -3,10 +3,11 @@ import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CuponFormService } from '@shared/services/cupon-form.service';
+import { DisableNumberScrollDirective } from 'src/app/core/directives/disable-number-scroll.directive';
 
 @Component({
   selector: 'app-cupon-form',
-  imports: [Icon, CommonModule, FormsModule],
+  imports: [DisableNumberScrollDirective, Icon, CommonModule, FormsModule],
   templateUrl: './cupon-form.html',
   styleUrl: './cupon-form.css',
 })

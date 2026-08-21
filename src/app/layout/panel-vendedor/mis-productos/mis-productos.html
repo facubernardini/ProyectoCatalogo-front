@@ -1,283 +1,330 @@
-<div class="min-h-svh flex flex-col">
-    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
-        <div class="flex items-center justify-between px-4 h-16 max-w-4xl mx-auto w-full">
-            
-            <button (click)="volverAtras()"
-                    class="p-2 mr-6 text-brand-accent active:scale-95 transition-transform"
-                    aria-label="Volver atrás">
-                <app-icon name="back" classes="size-7 fill-current" />
-            </button>
+<div class="flex flex-col h-full w-full bg-gray-50 relative">
+    
+    <!-- CABECERA FIJA (Sticky) -->
+    @if (hasProductos()) {
+        <header class="p-3 pb-2 shrink-0 bg-gray-50 z-20 transition-all duration-300">
+            <div class="flex items-center gap-2 max-w-4xl mx-auto w-full relative">
+                
+                <!-- BOTÓN FILTROS -->
+                <div class="relative shrink-0">
+                    <button type="button" 
+                            (click)="toggleFiltrosDropdown()"
+                            [disabled]="!hasProductos()"
+                            class="p-3 relative flex items-center justify-center bg-white border border-gray-100 rounded-xl outline-none md:hover:bg-gray-50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+                            [class.ring]="isFiltrosOpen()" [class.ring-brand-accent/30]="isFiltrosOpen()">
 
-            <div class="flex-1 text-center px-2 overflow-hidden flex flex-col items-center justify-center">
-                <h1 class="text-[17px] font-bold text-brand-text tracking-wide truncate w-full">
-                    Mis productos
-                </h1>
-            </div>
+                        <!-- Contenedor relativo para superponer los íconos -->
+                        <div class="relative size-5">
+                            
+                            <div class="absolute inset-0 transition-all duration-300 opacity-100 rotate-0 scale-100"
+                                [class.opacity-0]="isFiltrosOpen()"
+                                [class.rotate-90]="isFiltrosOpen()"
+                                [class.scale-50]="isFiltrosOpen()"
+                                [class.opacity-100]="!isFiltrosOpen()"
+                                [class.rotate-0]="!isFiltrosOpen()"
+                                [class.scale-100]="!isFiltrosOpen()">
+                                <app-icon name="filter" classes="size-5 text-brand-accent fill-current" />
+                            </div>
 
-            <div class="w-14 flex justify-end">
-                @if (hasProductos()) {
-                    <button (click)="exportarPDF()"
-                            class="p-1 mb-1 flex flex-col items-center justify-center gap-1 text-brand-accent active:scale-95 transition-transform"
-                            aria-label="Exportar catálogo a PDF">
-                        <app-icon name="pdf-export" classes="size-6 fill-current" />
-                        <span class="text-[8px] font-black uppercase tracking-widest leading-none opacity-90">
-                            Generar PDF
-                        </span>
+                            <div class="absolute inset-0 transition-all duration-300 opacity-0 -rotate-90 scale-50"
+                                [class.opacity-100]="isFiltrosOpen()"
+                                [class.rotate-0]="isFiltrosOpen()"
+                                [class.scale-100]="isFiltrosOpen()"
+                                [class.opacity-0]="!isFiltrosOpen()"
+                                [class.-rotate-90]="!isFiltrosOpen()"
+                                [class.scale-50]="!isFiltrosOpen()">
+                                <app-icon name="close" classes="size-5 text-brand-accent fill-current" />
+                            </div>
+                            
+                        </div>
+
+                        @if (soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas() || soloBajoStock()) {
+                            <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
+                        }
                     </button>
-                } @else {
-                    <div class="size-10 pointer-events-none"></div>
-                }
-            </div>
 
-        </div>
-    </header>
-
-    <main class="flex-1 bg-gray-50 px-3 pt-3 pb-30 flex flex-col">
-        
-        <div class="w-full max-w-2xl mx-auto flex flex-col flex-1">
-            
-            <div class="relative w-full mx-auto group shrink-0">
-                <div class="flex items-center gap-2 mb-3 relative">
-        
-                    <div class="relative shrink-0">
-                        <button type="button" 
-                                (click)="toggleFiltrosDropdown()"
-                                [disabled]="!hasProductos()"
-                                class="p-3 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl outline-none md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
-                                [class.ring]="isFiltrosOpen()" [class.ring-brand-accent/30]="isFiltrosOpen()">
+                    @if (isFiltrosOpen()) {
+                        <div class="fixed inset-0 z-40" (click)="isFiltrosOpen.set(false)"></div>
+                        
+                        <div class="absolute left-0 z-50 w-52 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg animate-in fade-in zoom-in-95 duration-200 py-2">
                             
-                            <app-icon name="filter" classes="size-5 text-brand-accent fill-current" />
+                            <div class="px-3 pb-1.5 mt-1.5 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                Mostrar Solo
+                            </div>
                             
-                            @if (soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas()) {
-                                <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
-                            }
-                        </button>
-
-                        @if (isFiltrosOpen()) {
-                            <div class="fixed inset-0 z-40" (click)="isFiltrosOpen.set(false)"></div>
-                            
-                            <div class="absolute left-0 z-50 w-48 mt-2 bg-white border border-gray-100 rounded-xl shadow-lg animate-in fade-in zoom-in-95 duration-200 py-2">
+                            <!-- DESTACADOS -->
+                            <button type="button" 
+                                    (click)="toggleDestacados(); isFiltrosOpen.set(false)"
+                                    class="w-full px-3 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50"
+                                    [class.text-brand-accent]="soloDestacados()"
+                                    [class.font-bold]="soloDestacados()"
+                                    [class.bg-brand-accent]="soloDestacados()"
+                                    [style.backgroundColor]="soloDestacados() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''" 
+                                    [class.text-brand-text-sec]="!soloDestacados()"
+                                    [class.font-medium]="!soloDestacados()">
                                 
-                                <div class="px-3 pb-1.5 mt-1.5 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                                    Mostrar Solo
+                                <div class="flex items-center gap-2">
+                                    <app-icon [name]="soloDestacados() ? 'star-filled' : 'star'" classes="size-4 fill-current" />
+                                    Destacados
                                 </div>
                                 
-                                <button type="button" 
-                                        (click)="toggleDestacados(); isFiltrosOpen.set(false)"
-                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50"
-                                        [class.text-brand-accent]="soloDestacados()"
-                                        [class.font-bold]="soloDestacados()"
-                                        [class.bg-brand-accent]="soloDestacados()"
-                                        [style.backgroundColor]="soloDestacados() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''" 
-                                        [class.text-brand-text-sec]="!soloDestacados()"
-                                        [class.font-medium]="!soloDestacados()">
-                                    
-                                    <div class="flex items-center gap-2">
-                                        <app-icon [name]="soloDestacados() ? 'star-filled' : 'star'" classes="size-4 fill-current" />
-                                        Destacados
-                                    </div>
-                                    
-                                    @if (soloDestacados()) {
-                                        <app-icon name="check" classes="size-4 fill-current" />
-                                    }
-                                </button>
-
-                                <button type="button" 
-                                        (click)="togglePausados(); isFiltrosOpen.set(false)"
-                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
-                                        [class.text-brand-accent]="soloPausados()"
-                                        [class.font-bold]="soloPausados()"
-                                        [class.bg-brand-accent]="soloPausados()"
-                                        [style.backgroundColor]="soloPausados() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
-                                        [class.text-brand-text-sec]="!soloPausados()"
-                                        [class.font-medium]="!soloPausados()">
-                                    
-                                    <div class="flex items-center gap-2">
-                                        <app-icon name="pause" classes="size-4 fill-current" />
-                                        Pausados
-                                    </div>
-                                    
-                                    @if (soloPausados()) {
-                                        <app-icon name="check" classes="size-4 fill-current" />
-                                    }
-                                </button>
-
-                                <button type="button" 
-                                        (click)="toggleConOfertas(); isFiltrosOpen.set(false)"
-                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
-                                        [class.text-brand-accent]="soloConOfertas()"
-                                        [class.font-bold]="soloConOfertas()"
-                                        [class.bg-brand-accent]="soloConOfertas()"
-                                        [style.backgroundColor]="soloConOfertas() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
-                                        [class.text-brand-text-sec]="!soloConOfertas()"
-                                        [class.font-medium]="!soloConOfertas()">
-                                    
-                                    <div class="flex items-center gap-2">
-                                        <app-icon name="discount" classes="size-4 fill-current" />
-                                        Con ofertas
-                                    </div>
-                                    
-                                    @if (soloConOfertas()) {
-                                        <app-icon name="check" classes="size-4 fill-current" />
-                                    }
-                                </button>
-
-                                <button type="button" 
-                                        (click)="toggleSinFoto(); isFiltrosOpen.set(false)"
-                                        class="w-full px-4 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
-                                        [class.text-brand-accent]="soloSinFoto()"
-                                        [class.font-bold]="soloSinFoto()"
-                                        [class.bg-brand-accent]="soloSinFoto()"
-                                        [style.backgroundColor]="soloSinFoto() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
-                                        [class.text-brand-text-sec]="!soloSinFoto()"
-                                        [class.font-medium]="!soloSinFoto()">
-                                    
-                                    <div class="flex items-center gap-2">
-                                        <app-icon name="photo" classes="size-4 fill-current" />
-                                        Sin foto
-                                    </div>
-                                    
-                                    @if (soloSinFoto()) {
-                                        <app-icon name="check" classes="size-4 fill-current" />
-                                    }
-                                </button>
-
-                                @if (soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas()) {
-                                    <div class="px-2 mt-1 pt-2 border-t border-gray-100">
-                                        <button type="button" 
-                                                (click)="limpiarFiltros()"
-                                                class="w-full py-2 px-2 text-xs font-bold text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2">
-                                            <app-icon name="close" classes="size-3.5 fill-current" />
-                                            Limpiar filtros
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-                        }
-                    </div>
-
-                    <div class="flex-1 relative">
-                        <input type="text" 
-                                [ngModel]="busquedaRaw()" 
-                                (ngModelChange)="onSearchInput($event)" 
-                                placeholder="Buscar producto..."
-                                [disabled]="!hasProductos()"
-                                class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:ring focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
-                        
-                        @if (isBuscando()) {
-                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                <svg class="animate-spin size-5 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            </div>
-                        } @else if (busquedaRaw().length > 0) {
-                            <button (click)="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 md:hover:text-brand-accent transition-colors duration-200 focus:outline-none">
-                                <app-icon name="close" classes="size-5 fill-current" />
+                                <span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                                    [class.bg-white]="soloDestacados()" 
+                                    [class.text-brand-accent]="soloDestacados()"
+                                    [class.bg-gray-100]="!soloDestacados()" 
+                                    [class.text-gray-400]="!soloDestacados()">
+                                    {{ cantidadDestacados() }}
+                                </span>
                             </button>
-                        } @else {
-                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none" [class.opacity-50]="!hasProductos()">
-                                <app-icon name="search" classes="size-5 text-gray-400 fill-current" />
-                            </div>
-                        }
-                    </div>
 
-                    <div class="relative shrink-0">
-                        <button type="button" 
-                                (click)="toggleCategoriaDropdown()"
-                                [disabled]="!hasProductos()"
-                                class="p-3 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-xl outline-none md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
-                                [class.ring]="isCategoriaDropdownOpen()" [class.ring-brand-accent/30]="isCategoriaDropdownOpen()">
-                            
-                            <app-icon name="category" classes="size-5 text-brand-accent fill-current" />
-                            
-                            @if (categoriaSeleccionada() !== 'todos') {
-                                <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
-                            }
-                        </button>
-
-                        @if (isCategoriaDropdownOpen()) {
-                            <div class="fixed inset-0 z-40" (click)="isCategoriaDropdownOpen.set(false)"></div>
-                            
-                            <ul class="absolute right-0 z-50 w-max min-w-65 max-w-[95vw] mt-2 bg-white border border-gray-100 rounded-xl shadow-lg max-h-[60vh] overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
+                            <!-- PAUSADOS -->
+                            <button type="button" 
+                                    (click)="togglePausados(); isFiltrosOpen.set(false)"
+                                    class="w-full px-3 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
+                                    [class.text-brand-accent]="soloPausados()"
+                                    [class.font-bold]="soloPausados()"
+                                    [class.bg-brand-accent]="soloPausados()"
+                                    [style.backgroundColor]="soloPausados() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                    [class.text-brand-text-sec]="!soloPausados()"
+                                    [class.font-medium]="!soloPausados()">
                                 
+                                <div class="flex items-center gap-2">
+                                    <app-icon name="pause" classes="size-4 fill-current" />
+                                    Pausados
+                                </div>
+                                
+                                <span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                                    [class.bg-white]="soloPausados()" 
+                                    [class.text-brand-accent]="soloPausados()"
+                                    [class.bg-gray-100]="!soloPausados()" 
+                                    [class.text-gray-400]="!soloPausados()">
+                                    {{ cantidadPausados() }}
+                                </span>
+                            </button>
+
+                            <!-- CON OFERTAS -->
+                            <button type="button" 
+                                    (click)="toggleConOfertas(); isFiltrosOpen.set(false)"
+                                    class="w-full px-3 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
+                                    [class.text-brand-accent]="soloConOfertas()"
+                                    [class.font-bold]="soloConOfertas()"
+                                    [class.bg-brand-accent]="soloConOfertas()"
+                                    [style.backgroundColor]="soloConOfertas() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                    [class.text-brand-text-sec]="!soloConOfertas()"
+                                    [class.font-medium]="!soloConOfertas()">
+                                
+                                <div class="flex items-center gap-2">
+                                    <app-icon name="discount" classes="size-4 fill-current" />
+                                    Con ofertas
+                                </div>
+                                
+                                <span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                                    [class.bg-white]="soloConOfertas()" 
+                                    [class.text-brand-accent]="soloConOfertas()"
+                                    [class.bg-gray-100]="!soloConOfertas()" 
+                                    [class.text-gray-400]="!soloConOfertas()">
+                                    {{ cantidadConOfertas() }}
+                                </span>
+                            </button>
+
+                            <!-- BAJO STOCK -->
+                            <button type="button" 
+                                    (click)="toggleBajoStock(); isFiltrosOpen.set(false)"
+                                    class="w-full px-3 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
+                                    [class.text-brand-accent]="soloBajoStock()"
+                                    [class.font-bold]="soloBajoStock()"
+                                    [class.bg-brand-accent]="soloBajoStock()"
+                                    [style.backgroundColor]="soloBajoStock() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                    [class.text-brand-text-sec]="!soloBajoStock()"
+                                    [class.font-medium]="!soloBajoStock()">
+                                
+                                <div class="flex items-center gap-2">
+                                    <app-icon name="box" classes="size-4 fill-current" />
+                                    Bajo Stock
+                                </div>
+                                
+                                <span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                                    [class.bg-white]="soloBajoStock()" 
+                                    [class.text-brand-accent]="soloBajoStock()"
+                                    [class.bg-gray-100]="!soloBajoStock()" 
+                                    [class.text-gray-400]="!soloBajoStock()">
+                                    {{ cantidadBajoStock() }}
+                                </span>
+                            </button>
+
+                            <!-- SIN FOTO -->
+                            <button type="button" 
+                                    (click)="toggleSinFoto(); isFiltrosOpen.set(false)"
+                                    class="w-full px-3 py-2 text-sm transition-colors flex items-center justify-between md:hover:bg-gray-50 mt-1"
+                                    [class.text-brand-accent]="soloSinFoto()"
+                                    [class.font-bold]="soloSinFoto()"
+                                    [class.bg-brand-accent]="soloSinFoto()"
+                                    [style.backgroundColor]="soloSinFoto() ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                    [class.text-brand-text-sec]="!soloSinFoto()"
+                                    [class.font-medium]="!soloSinFoto()">
+                                
+                                <div class="flex items-center gap-2">
+                                    <app-icon name="photo" classes="size-4 fill-current" />
+                                    Sin foto
+                                </div>
+                                
+                                <span class="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                                    [class.bg-white]="soloSinFoto()" 
+                                    [class.text-brand-accent]="soloSinFoto()"
+                                    [class.bg-gray-100]="!soloSinFoto()" 
+                                    [class.text-gray-400]="!soloSinFoto()">
+                                    {{ cantidadSinFoto() }}
+                                </span>
+                            </button>
+
+                            @if (soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas() || soloBajoStock()) {
+                                <div class="px-2 mt-1 pt-2 border-t border-gray-100">
+                                    <button type="button" 
+                                            (click)="limpiarFiltros()"
+                                            class="w-full py-2 px-2 text-xs font-bold text-gray-500 md:hover:text-gray-700 bg-gray-50 md:hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                        <app-icon name="close" classes="size-3.5 fill-current" />
+                                        Limpiar filtros
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- BUSCADOR CENTRAL -->
+                <div class="flex-1 relative">
+                    <input type="text" 
+                            [ngModel]="busquedaRaw()" 
+                            (ngModelChange)="onSearchInput($event)" 
+                            placeholder="Buscar producto..."
+                            [disabled]="!hasProductos()"
+                            class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:ring focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
+                    
+                    @if (isBuscando()) {
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="animate-spin size-5 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                    } @else if (busquedaRaw().length > 0) {
+                        <button (click)="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 md:hover:text-brand-accent transition-colors duration-200 focus:outline-none">
+                            <app-icon name="close" classes="size-5 fill-current" />
+                        </button>
+                    } @else {
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" [class.opacity-50]="!hasProductos()">
+                            <app-icon name="search" classes="size-5 text-gray-400 fill-current" />
+                        </div>
+                    }
+                </div>
+
+                <!-- BOTÓN CATEGORÍAS -->
+                <div class="relative shrink-0">
+                    <button type="button" 
+                            (click)="toggleCategoriaDropdown()"
+                            [disabled]="!hasProductos()"
+                            class="p-3 relative flex items-center justify-center bg-white border border-gray-100 rounded-xl outline-none md:hover:bg-gray-100/50 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+                            [class.ring]="isCategoriaDropdownOpen()" [class.ring-brand-accent/30]="isCategoriaDropdownOpen()">
+
+                        <!-- Contenedor relativo para superponer los íconos -->
+                        <div class="relative size-5">
+                            
+                            <div class="absolute inset-0 transition-all duration-300 opacity-100 rotate-0 scale-100"
+                                [class.opacity-0]="isCategoriaDropdownOpen()"
+                                [class.rotate-90]="isCategoriaDropdownOpen()"
+                                [class.scale-50]="isCategoriaDropdownOpen()"
+                                [class.opacity-100]="!isCategoriaDropdownOpen()"
+                                [class.rotate-0]="!isCategoriaDropdownOpen()"
+                                [class.scale-100]="!isCategoriaDropdownOpen()">
+                                <app-icon name="category" classes="size-5 text-brand-accent fill-current" />
+                            </div>
+
+                            <div class="absolute inset-0 transition-all duration-300 opacity-0 -rotate-90 scale-50"
+                                [class.opacity-100]="isCategoriaDropdownOpen()"
+                                [class.rotate-0]="isCategoriaDropdownOpen()"
+                                [class.scale-100]="isCategoriaDropdownOpen()"
+                                [class.opacity-0]="!isCategoriaDropdownOpen()"
+                                [class.-rotate-90]="!isCategoriaDropdownOpen()"
+                                [class.scale-50]="!isCategoriaDropdownOpen()">
+                                <app-icon name="close" classes="size-5 text-brand-accent fill-current" />
+                            </div>
+                            
+                        </div>
+
+                        @if (categoriaSeleccionada() !== 'todos') {
+                            <span class="absolute top-2 right-2 w-2 h-2 bg-brand-accent rounded-full border border-white"></span>
+                        }
+                    </button>
+
+                    @if (isCategoriaDropdownOpen()) {
+                        <div class="fixed inset-0 z-40" (click)="isCategoriaDropdownOpen.set(false)"></div>
+                        
+                        <ul class="absolute right-0 z-50 w-max min-w-65 max-w-[95vw] mt-2 bg-white border border-gray-100 rounded-xl shadow-lg max-h-[60vh] overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
+                            
+                            <li>
+                                <button type="button" (click)="seleccionarCategoriaCustom('todos')"
+                                        class="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-bold transition-colors"
+                                        [class.bg-brand-accent]="categoriaSeleccionada() === 'todos'" 
+                                        [class.text-white]="categoriaSeleccionada() === 'todos'"
+                                        [class.text-brand-text-sec]="categoriaSeleccionada() !== 'todos'" 
+                                        [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== 'todos'"
+                                        [class.md:hover:text-brand-text]="categoriaSeleccionada() !== 'todos'">
+                                
+                                    <span class="truncate text-left">Todos</span>
+                                    
+                                    <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-bold"
+                                        [class.bg-white]="categoriaSeleccionada() === 'todos'" 
+                                        [class.text-brand-accent]="categoriaSeleccionada() === 'todos'"
+                                        [class.bg-gray-100]="categoriaSeleccionada() !== 'todos'" 
+                                        [class.text-gray-400]="categoriaSeleccionada() !== 'todos'">
+                                        {{ getTotalProductos() }}
+                                    </span>
+                                </button>
+                            </li>
+                            
+                            @for (cat of categoriasOrdenadas(); track cat.id) {
                                 <li>
-                                    <button type="button" (click)="seleccionarCategoriaCustom('todos')"
+                                    <button type="button" (click)="seleccionarCategoriaCustom(cat.nombre)"
                                             class="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-bold transition-colors"
-                                            [class.bg-brand-accent]="categoriaSeleccionada() === 'todos'" 
-                                            [class.text-white]="categoriaSeleccionada() === 'todos'"
-                                            [class.text-brand-text-sec]="categoriaSeleccionada() !== 'todos'" 
-                                            [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== 'todos'"
-                                            [class.md:hover:text-brand-text]="categoriaSeleccionada() !== 'todos'">
+                                            [class.bg-brand-accent]="categoriaSeleccionada() === cat.nombre" 
+                                            [class.text-white]="categoriaSeleccionada() === cat.nombre"
+                                            [class.text-brand-text-sec]="categoriaSeleccionada() !== cat.nombre" 
+                                            [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== cat.nombre"
+                                            [class.md:hover:text-brand-text]="categoriaSeleccionada() !== cat.nombre">
                                         
-                                        <span class="truncate text-left">Todos</span>
+                                        <span class="whitespace-normal text-left">{{ cat.nombre }}</span>
                                         
                                         <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-bold"
-                                            [class.bg-white]="categoriaSeleccionada() === 'todos'" 
-                                            [class.text-brand-accent]="categoriaSeleccionada() === 'todos'"
-                                            [class.bg-gray-100]="categoriaSeleccionada() !== 'todos'" 
-                                            [class.text-gray-400]="categoriaSeleccionada() !== 'todos'">
-                                            {{ getTotalProductos() }}
+                                            [class.bg-white]="categoriaSeleccionada() === cat.nombre" 
+                                            [class.text-brand-accent]="categoriaSeleccionada() === cat.nombre"
+                                            [class.bg-gray-100]="categoriaSeleccionada() !== cat.nombre" 
+                                            [class.text-gray-400]="categoriaSeleccionada() !== cat.nombre">
+                                            {{ getCantidadPorCategoria(cat.nombre) }}
                                         </span>
                                     </button>
                                 </li>
-                                
-                                @for (cat of categoriasOrdenadas(); track cat.id) {
-                                    <li>
-                                        <button type="button" (click)="seleccionarCategoriaCustom(cat.nombre)"
-                                                class="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-bold transition-colors"
-                                                [class.bg-brand-accent]="categoriaSeleccionada() === cat.nombre" 
-                                                [class.text-white]="categoriaSeleccionada() === cat.nombre"
-                                                [class.text-brand-text-sec]="categoriaSeleccionada() !== cat.nombre" 
-                                                [class.md:hover:bg-gray-50]="categoriaSeleccionada() !== cat.nombre"
-                                                [class.md:hover:text-brand-text]="categoriaSeleccionada() !== cat.nombre">
-                                            
-                                            <span class="whitespace-normal text-left">{{ cat.nombre }}</span>
-                                            
-                                            <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-bold"
-                                                [class.bg-white]="categoriaSeleccionada() === cat.nombre" 
-                                                [class.text-brand-accent]="categoriaSeleccionada() === cat.nombre"
-                                                [class.bg-gray-100]="categoriaSeleccionada() !== cat.nombre" 
-                                                [class.text-gray-400]="categoriaSeleccionada() !== cat.nombre">
-                                                {{ getCantidadPorCategoria(cat.nombre) }}
-                                            </span>
-                                        </button>
-                                    </li>
-                                }
-                            </ul>
-                        }
-                    </div>
+                            }
+                        </ul>
+                    }
                 </div>
             </div>
+        </header>
+    }
 
-            @if (!hasCategorias()) {
-                
-                <div class="flex-1 flex flex-col items-center justify-end px-4 pb-6 text-center">
-                    <div class="flex-1 flex flex-col items-center justify-center w-full pb-14">
-                        <img src="assets/panel-vendedor/empty-state.svg" alt="Sin cupones" class="w-40 h-40 mb-5">
-                    </div>
+    <!-- ÁREA SCROLLEABLE: LISTA DE PRODUCTOS -->
+    <main class="flex-1 overflow-y-auto px-3 pt-1 relative" (scroll)="onScroll($event)">
+        <div class="w-full max-w-4xl mx-auto flex flex-col h-full">
+            
+            @if (!hasProductos()) {
 
-                    <p class="text-brand-text-sec text-sm mb-6 max-w-xs mx-auto leading-relaxed font-medium">
-                        Antes de crear un producto debes crear al menos una categoría.
-                    </p>
-                    
-                    <button (click)="onAddCategoria()" 
-                            class="bg-brand-accent text-white px-6 py-3.5 rounded-xl font-bold shadow-lg shadow-brand-accent/30 md:hover:scale-105 active:scale-95 transition-all w-full max-w-xs flex justify-center items-center gap-2">
-                        <app-icon name="add-categoria" classes="size-5 fill-current" />
-                        Crear categoría
-                    </button>
-                </div>
-
-            } @else if (!hasProductos()) {
-
-                <div class="flex-1 flex flex-col items-center px-4 pb-6 text-center">
-                    <div class="flex-1 flex flex-col items-center justify-center w-full pb-14">
+                <div class="flex-1 flex flex-col items-center justify-center px-4 pb-6 text-center">
+                    <div class="flex-1 flex flex-col items-center justify-center w-full pb-10">
                         <img src="assets/panel-vendedor/empty-state.svg" alt="Sin productos" class="w-40 h-40 mb-5">
                         <p class="text-brand-text/50 font-semibold text-sm">Aún no tenés productos creados</p>
                     </div>
 
                     <button (click)="onAdd()" 
-                            class="bg-brand-accent text-white px-6 py-3.5 rounded-xl font-bold shadow-lg shadow-brand-accent/30 md:hover:scale-105 active:scale-95 transition-all w-full max-w-xs flex justify-center items-center gap-2">
+                            class="bg-brand-accent text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-brand-accent/30 md:hover:scale-105 active:scale-95 transition-all w-full max-w-xs flex justify-center items-center gap-2">
                         <app-icon name="add-producto" classes="size-5 fill-current" />
                         Crear mi primer producto
                     </button>
@@ -285,22 +332,25 @@
 
             } @else {
 
-                @if (categoriaSeleccionada() !== 'todos' || soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas()) {
+                <!-- ETIQUETA DE FILTROS ACTIVOS (Scrollea con los productos) -->
+                @if (categoriaSeleccionada() !== 'todos' || soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas() || soloBajoStock()) {
                     <div class="flex items-center justify-between px-1 mb-2.5 mt-1 animate-in fade-in duration-200">
                         <span class="text-sm font-bold text-brand-text truncate flex items-center gap-1.5">
-                            @if (categoriaSeleccionada() !== 'todos') {
-                                <span>{{ categoriaSeleccionada() }}</span>
-                            }
-                            
-                            @if (categoriaSeleccionada() !== 'todos' && (soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas())) {
-                                <span class="text-gray-300 font-normal">•</span>
-                            }
-
                             @if (soloDestacados()) { <span>Destacados</span> }
                             @if (soloPausados()) { <span>Pausados</span> }
                             @if (soloSinFoto()) { <span>Sin foto</span> }
                             @if (soloConOfertas()) { <span>Con ofertas</span> }
+                            @if (soloBajoStock()) { <span>Bajo stock</span> }
+                            
+                            @if (categoriaSeleccionada() !== 'todos' && (soloDestacados() || soloPausados() || soloSinFoto() || soloConOfertas() || soloBajoStock())) {
+                                <span class="text-gray-300 font-normal">•</span>
+                            }
+
+                            @if (categoriaSeleccionada() !== 'todos') {
+                                <span>{{ categoriaSeleccionada() }}</span>
+                            }
                         </span>
+                        
                         <button (click)="seleccionarCategoriaCustom('todos'); limpiarFiltros()" 
                                 class="shrink-0 p-1 ml-2 text-gray-400 md:hover:text-brand-accent transition-colors active:scale-95 flex items-center"
                                 aria-label="Quitar filtros">
@@ -309,11 +359,13 @@
                     </div>
                 }
 
-                <div class="flex flex-col gap-2">
+                <!-- LISTADO DE PRODUCTOS -->
+                <div class="flex flex-col gap-2 pb-22">
                     @for (producto of productosVisibles(); track producto.id) {
                         <div (click)="productPreviewService.open(producto)"
                             class="relative flex items-start gap-2.5 bg-white p-2.5 rounded-xl border border-gray-100 md:hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] transition-all group shadow-xs cursor-pointer">
                             
+                            <!-- IMAGEN -->
                             <div class="relative shrink-0 w-12 h-12 rounded-lg overflow-hidden mt-0.5">
                                 <div class="relative w-full h-full bg-brand-bg shrink-0 overflow-hidden"
                                     [class.animate-pulse]="!imageLoaded() && producto.imagen"
@@ -334,9 +386,17 @@
                                 </div>
                             </div>
                             
+                            <!-- CONTENIDO CENTRAL -->
                             <div class="flex-1 min-w-0">
-                                @if (producto.destacado || getMejorOferta(producto.presentaciones)) {
-                                    <div class="flex items-center gap-2 mb-1">
+                                @if (!producto.activo) {
+                                    <div class="flex items-center gap-2 mb-0.5">
+                                        <span class="inline-flex items-center gap-1 text-white bg-gray-500 px-2 py-0.5 rounded-md font-bold text-[9px] uppercase tracking-widest shadow-sm">
+                                            <app-icon name="pause" classes="size-2.5 fill-current" />
+                                            Producto pausado
+                                        </span>
+                                    </div>
+                                } @else if (producto.destacado || getMejorOferta(producto.presentaciones)) {
+                                    <div class="flex items-center gap-2 mb-0.5">
                                         @if (producto.destacado) {
                                             <span class="flex items-center gap-0.5 text-[9px] font-bold text-amber-500 uppercase tracking-widest">
                                                 <app-icon name="star-filled" classes="size-2.5 fill-current" />
@@ -364,46 +424,54 @@
                                     <div class="h-1"></div>
                                 }
                                 
-                                <div class="w-full h-px bg-gray-100 my-1"></div>
-                                
-                                <div class="flex flex-col gap-0.5">
-                                    @for (pres of producto.presentaciones; track $index) {
-                                        <div class="flex items-center flex-wrap gap-x-1 text-[11px]" [class.opacity-50]="pres.activo === false">
-                                            <span class="text-gray-500 font-medium">{{ pres.unidad_venta }} -</span>
-                                            
-                                            @if (pres.precio_descuento) {
-                                                <span class="text-gray-400 line-through">${{ pres.precio }}</span>
-                                                <span class="text-brand-text font-bold">${{ pres.precio_descuento }}</span>
-                                            } @else {
-                                                <span class="text-brand-text font-bold">${{ pres.precio }}</span>
-                                            }
+                                @if (producto.activo) {                                
+                                    <div class="w-full h-px bg-gray-100 my-1"></div>
+                                    
+                                    <div class="flex flex-col gap-0.5">
+                                        @for (pres of producto.presentaciones; track $index) {
+                                            <div class="flex items-center flex-wrap gap-x-1 text-[11px]" [class.opacity-50]="pres.activo === false">
+                                                <span class="text-gray-500 font-medium">{{ pres.unidad_venta }} -</span>
+                                                
+                                                @if (pres.precio_descuento) {
+                                                    <span class="text-gray-400 line-through">${{ pres.precio | number:'1.0-0' }}</span>
+                                                    <span class="text-brand-text font-bold">${{ pres.precio_descuento | number:'1.0-0' }}</span>
+                                                } @else {
+                                                    <span class="text-brand-text font-bold">${{ pres.precio | number:'1.0-0' }}</span>
+                                                }
 
-                                            @if (pres.activo === false) {
-                                                <span class="text-[9px] text-gray-400 bg-gray-100 px-1 rounded-sm uppercase tracking-wider ml-1">Pausada</span>
-                                            }
-                                        </div>
-                                    }
-                                </div>
+                                                @if (pres.stock !== null && pres.stock !== undefined) {
+                                                    <span class="flex items-center gap-0.5 ml-1 px-1 rounded-sm text-[9px] font-bold"
+                                                        [class.bg-red-50]="pres.stock === 0"
+                                                        [class.text-red-500]="pres.stock === 0"
+                                                        [class.bg-orange-50]="pres.stock > 0 && pres.stock <= umbralStock"
+                                                        [class.text-orange-500]="pres.stock > 0 && pres.stock <= umbralStock"
+                                                        [class.bg-green-100]="pres.stock > umbralStock"
+                                                        [class.text-green-500]="pres.stock > umbralStock">
+                                                        
+                                                        <app-icon name="box" classes="size-3 fill-current" />
+                                                        {{ pres.stock }}
+                                                    </span>
+                                                }
 
-                                @if (!producto.activo) {
-                                    <div class="mt-0.5">
-                                        <span class="inline-flex items-center gap-1 text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded-full font-bold text-[10px]">
-                                            <app-icon name="pause" classes="size-2.5 fill-current" />
-                                            Producto Pausado
-                                        </span>
+                                                @if (pres.activo === false) {
+                                                    <span class="text-[9px] font-semibold text-white bg-gray-500 px-1 rounded-sm uppercase tracking-wider ml-1">Pausada</span>
+                                                }
+                                            </div>
+                                        }
                                     </div>
                                 }
                             </div>
 
+                            <!-- ACCIONES RÁPIDAS -->
                             <div class="flex items-center gap-2 mt-1 shrink-0">
                                 <button (click)="onEdit(producto, $event)" 
-                                        class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                                        class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
                                     <app-icon name="edit" classes="size-4.5 fill-current" />
                                 </button>
 
                                 <div class="relative">
                                     <button (click)="toggleMenu(producto.id, $event)" 
-                                            class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-full transition-colors active:scale-90 border border-gray-100">
+                                            class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
                                         <app-icon name="options" classes="size-4.5 fill-current" />
                                     </button>
 
@@ -460,16 +528,25 @@
                         <div class="size-6 border-2 border-brand-accent border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 }
-
-                <div class="fixed bottom-8 right-6 z-50 lg:right-[calc(50vw-420px)]">
-                    <button (click)="onAdd()"
-                        class="flex items-center gap-2 bg-brand-accent text-white p-4 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 md:hover:scale-105 transition-all duration-200 group"
-                        aria-label="Agregar producto">
-                        <app-icon name="add-producto" classes="size-6 fill-current" />
-                    </button>
-                </div>
-
             }
         </div>
     </main>
+
+    <!-- BOTÓN FLOTANTE (+) -->
+    @if (hasCategorias() && hasProductos()) {
+        <div class="fixed right-6 md:right-10 bottom-20 md:bottom-8 z-50 animate-in fade-in zoom-in duration-200">
+            
+            <button (click)="onAdd()"
+                class="flex items-center justify-center gap-2.5 bg-brand-accent text-white p-4 md:py-3.5 md:pl-4 md:pr-6 rounded-full shadow-2xl shadow-brand-accent/40 active:scale-90 hover:scale-105 transition-all duration-200 group"
+                aria-label="Agregar producto">
+                
+                <app-icon name="add-producto" classes="size-6 shrink-0 fill-current" />
+                
+                <span class="hidden md:block text-[15px] font-bold tracking-wide whitespace-nowrap">
+                    Nuevo Producto
+                </span>
+                
+            </button>
+        </div>
+    }
 </div>

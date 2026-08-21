@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
-import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 import { Producto } from 'src/app/core/models/producto.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductoManagerService } from 'src/app/core/services/producto-manager.service';
@@ -27,10 +26,6 @@ export class CategoryPreview {
       if (!prod.categorias) return false;
       return prod.categorias.some((c: any) => c.id === categoriaId);
     });
-  }
-
-  onGuardarCategoria(categoria: CategoriaVendedor) {
-    this.categoryPreviewService.onGuardar(categoria);
   }
 
   onToggleActivo(producto: Producto) {

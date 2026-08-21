@@ -1,5 +1,5 @@
 import { Component, computed, HostListener, inject, signal } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Icon } from "@shared/components/icon";
 import { Cupon } from 'src/app/core/models/cupon.model';
 import { FormsModule } from '@angular/forms';
@@ -15,9 +15,7 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
   templateUrl: './mis-cupones.html',
   styleUrl: './mis-cupones.css',
 })
-export class MisCupones {
-  private location = inject(Location);
-  
+export class MisCupones {  
   public adminStore = inject(AdminStoreService);
   public cuponFormService = inject(CuponFormService);
   public cuponManager = inject(CuponManagerService);
@@ -137,10 +135,6 @@ export class MisCupones {
       this.activeMenuId.set(null);
       this.isMenuUpward.set(false);
     }
-  }
-
-  volverAtras() {
-    this.location.back();
   }
 
   onAdd() {

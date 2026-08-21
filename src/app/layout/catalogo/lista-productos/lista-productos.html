@@ -1,7 +1,7 @@
 <div class="px-3">
     <div class="flex items-center justify-between mb-2">
         <h2 class="text-lg font-bold text-brand-text flex items-center gap-2">
-            Productos
+            Todos los productos
         </h2>
         
         <button 
@@ -21,16 +21,16 @@
                         : (cat.especial 
                             ? 'bg-white/80 backdrop-blur-md border border-brand-accent' 
                             : 'bg-white text-brand-text border border-gray-200')"
-                    class="relative overflow-hidden px-3 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-all active:scale-95 shrink-0">
+                    class="relative overflow-hidden px-3 py-1 rounded-full text-[12px] font-semibold whitespace-nowrap transition-all active:scale-95 shrink-0">
                     
                     @if (cat.especial && categoriaSeleccionada() !== cat.nombre) {
                         <div class="absolute inset-0 h-full w-full bg-linear-to-r from-transparent via-brand-accent/15 to-transparent animate-shimmer"></div>
                     }
 
-                    <div class="relative z-10 flex items-center justify-center gap-1.5">                           
-                        <span class="text-start lowercase first-letter:uppercase" 
+                    <div class="relative z-10 flex items-center justify-center">                           
+                        <span class="text-start" 
                             [class.text-brand-accent]="cat.especial && categoriaSeleccionada() !== cat.nombre">
-                            {{ cat.nombre }}
+                            {{ cat.nombre | titlecase }}
                         </span>
                     </div>
                 </button>

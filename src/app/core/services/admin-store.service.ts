@@ -13,11 +13,16 @@ import { TagService } from "../services-backend/tags.ServiceBackend";
 import { VendedorBackoffice } from "../models/backoffice/vendedorBackoffice.model";
 import { VendedorService } from "../services-backend/vendedores.ServiceBackend";
 import { CatalogoBackoffice } from "../models/backoffice/catalogoBackoffice.mode";
-import { HistorialSuscripcion, PlanSuscripcion, SuscripcionEstado } from "../models/backoffice/suscripcion.model";
+import { HistorialSuscripcion, PlanSuscripcion } from "../models/backoffice/suscripcion.model";
 import { SuscripcionesService } from "../services-backend/suscripciones.ServiceBackend";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Vendedor } from "../models/vendedor.model";
+import { PedidoDTO } from "../models/pedido.model";
+import { PedidosServiceBackend } from "../services-backend/pedidos.ServiceBackend";
+import { EstadisticasServiceBackend } from "../services-backend/estadisticas.ServiceBackend";
+import { ResumenDiarioGraficoDTO, ResumenMensualDTO, TopCategoriaDTO, TopProductoDTO } from "../models/estadisticas.model";
+import { SuscripcionEstado } from "src/app/shared/enums/suscripcion.enum";
 
 declare var gtag: Function;
 
@@ -32,6 +37,8 @@ export class AdminStoreService {
   private cuponService = inject(CuponServiceBackend);
   private mediosPagoService = inject(MediosPagoServiceBackend);
   private tagsService = inject(TagService);
+  private pedidosService = inject(PedidosServiceBackend);
+  private estadisticasService = inject(EstadisticasServiceBackend);
 
   // PUBLIC & SELLER
   catalogo = signal<Catalogo | null>(null);
@@ -43,6 +50,16 @@ export class AdminStoreService {
   cupones = signal<Cupon[]>([]);
   mediosPago = signal<MedioPago[]>([]);
   tags = signal<Tag[]>([]);
+  pedidosActivos = signal<PedidoDTO[]>([]);
+
+  resumenMensual = signal<ResumenMensualDTO | null>(null);
+  evolucionDiaria = signal<ResumenDiarioGraficoDTO[]>([]);
+  topProductos = signal<TopProductoDTO[]>([]);
+  topCategorias = signal<TopCategoriaDTO[]>([]);
+
+  mesEstadisticas = signal<number>(new Date().getMonth() + 1);
+  anioEstadisticas = signal<number>(new Date().getFullYear());
+  isLoadingEstadisticas = signal(false);
 
   // BACKOFFICE
   vendedoresBackoffice = signal<VendedorBackoffice[]>([]);
@@ -85,8 +102,8 @@ export class AdminStoreService {
       },
       error: (err: HttpErrorResponse) => {
         this.isLoading.set(false);
-        // Tienda suspendida
-        if (err.status === 403 && err.error?.code === 'TIENDA_SUSPENDIDA') {
+        // Vendedor inactivo o catalogo pausado
+        if (err.status === 403) {
           this.router.navigate(['/not-found']);
         } else if (err.status === 404) {
           // La tienda no existe
@@ -109,18 +126,50 @@ export class AdminStoreService {
       cupones: this.cuponService.getCuponesByCatalogo(catalogoId),
       mediosPago: this.mediosPagoService.getMediosDePago(),
       tags: this.tagsService.getTagsByCatalogo(catalogoId),
+      pedidosActivos: this.pedidosService.obtenerPedidosActivos(),
     }).subscribe({
-      next: ({ catalogo, productos, categorias, cupones, mediosPago, tags }) => {
+      next: ({ catalogo, productos, categorias, cupones, mediosPago, tags, pedidosActivos }) => {
         this.catalogo.set(catalogo);
         this.productos.set(productos);
         this.categorias.set(categorias);
         this.cupones.set(cupones);
         this.mediosPago.set(mediosPago);
         this.tags.set(tags);
+        this.pedidosActivos.set(pedidosActivos);
 
         this.isLoading.set(false);
       },
       error: (err) => console.error('Error cargando el panel', err)
+    });
+  }
+
+  cargarEstadisticasVendedor(mes?: number, anio?: number) {
+    const targetMes = mes || this.mesEstadisticas();
+    const targetAnio = anio || this.anioEstadisticas();
+
+    this.mesEstadisticas.set(targetMes);
+    this.anioEstadisticas.set(targetAnio);
+
+    this.isLoadingEstadisticas.set(true);
+
+    forkJoin({
+      resumen: this.estadisticasService.getResumenMensual(targetMes, targetAnio),
+      evolucion: this.estadisticasService.getEvolucionDiaria(targetMes, targetAnio),
+      topProductos: this.estadisticasService.getTopProductos(targetMes, targetAnio, 5),
+      topCategorias: this.estadisticasService.getTopCategorias(targetMes, targetAnio, 5),
+    }).subscribe({
+      next: ({ resumen, evolucion, topProductos, topCategorias }) => {
+        this.resumenMensual.set(resumen);
+        this.evolucionDiaria.set(evolucion);
+        this.topProductos.set(topProductos);
+        this.topCategorias.set(topCategorias);
+        
+        this.isLoadingEstadisticas.set(false);
+      },
+      error: (err) => {
+        console.error('Error cargando las estadísticas', err);
+        this.isLoadingEstadisticas.set(false);
+      }
     });
   }
 
@@ -146,6 +195,17 @@ export class AdminStoreService {
         this.isLoading.set(false);
       }
     });
+  }
+
+  refrescarProductos() {
+    const id = this.catalogoId();
+
+    if (id > 0) {
+      this.productoService.getProductosByCatalogo(id).subscribe({
+        next: (productosActualizados) => this.productos.set(productosActualizados),
+        error: (err) => console.error('Error al refrescar productos', err)
+      });
+    }
   }
 
   refrescarCategorias() {
@@ -280,7 +340,12 @@ export class AdminStoreService {
 
   agregarCategoriaALista(nueva: CategoriaVendedor) {
     const nuevaConConteo = { ...nueva, productos_count: 0 };
-    this.categorias.update(list => [...list, nuevaConConteo]);
+    
+    this.categorias.update(list => {
+      const listaActualizada = [...list, nuevaConConteo];
+      
+      return listaActualizada.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    });
   }
 
   updateCategoriaEnLista(editada: CategoriaVendedor) {
@@ -312,6 +377,31 @@ export class AdminStoreService {
   eliminarCuponDeLista(idCupon: number) {
     this.cupones.update(cuponesActuales => 
       cuponesActuales.filter(cupon => cupon.id !== idCupon)
+    );
+  }
+
+  // --- MÉTODOS PARA GESTIÓN DE PEDIDOS ---
+
+  actualizarUnPedidoEnLista(pedidoActualizado: Partial<PedidoDTO>) {
+    this.pedidosActivos.update(pedidos => 
+      pedidos.map(p => {
+        if (p.id === pedidoActualizado.id) {
+          return { ...p, ...pedidoActualizado } as PedidoDTO;
+        }
+        return p;
+      })
+    );
+  }
+
+  agregarNuevoPedidoALista(nuevoPedido: PedidoDTO) {
+    this.pedidosActivos.update(pedidos => {
+      return [nuevoPedido, ...pedidos];
+    });
+  }
+
+  removerPedidoDeLista(idPedido: string) {
+    this.pedidosActivos.update(pedidos => 
+      pedidos.filter(p => p.id !== idPedido)
     );
   }
 

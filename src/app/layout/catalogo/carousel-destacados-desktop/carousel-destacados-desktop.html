@@ -3,7 +3,7 @@
         
         <div class="mb-2.5 flex items-end justify-between">
             <h2 class="text-lg font-bold text-brand-text flex items-center gap-1">
-                Lo más pedido <span class="animate-pulse text-xl">🔥</span>
+                Destacados <span class="animate-pulse text-xl">🔥</span>
             </h2>
             
             <button (click)="verTodosLosDestacados()"
@@ -32,94 +32,118 @@
                         <div class="w-full shrink-0 grid grid-cols-2 xl:grid-cols-3 gap-3 px-2 items-stretch">
                             
                             @for (producto of pagina; track producto.id) {
-    
-                                <div (click)="productSelectorService.open(producto)"
-                                    class="bg-brand-accent rounded-2xl overflow-hidden hover:shadow-md hover:shadow-brand-accent/50 transition-shadow duration-300 cursor-pointer group/card flex h-full">
-                                    
-                                    <div class="p-3 flex flex-col flex-1 min-w-0">
-                                        <div class="mb-auto">
-                                            <h3 class="font-bold text-white text-xs xl:text-sm line-clamp-2 group-hover/card:text-white/90 transition-colors">
-                                                {{ producto.nombre }}
-                                            </h3>
-                                            
-                                            @if (producto.marca) {
-                                                <p class="text-[9px] xl:text-[10px] font-bold text-white/80 uppercase tracking-wider mb-2 truncate mt-1">
-                                                    {{ producto.marca }}
-                                                </p>
-                                            }
-                                            
-                                            <p class="text-white/75 text-[10px] xl:text-[11px] line-clamp-2 my-1">
-                                                {{ producto.descripcion }}
-                                            </p>
+                                
+                                @if (getPresentacionesDisponibles(producto); as disponibles) {
+                                    @let agotado = disponibles.length === 0;
 
-                                            @if (producto.tags && producto.tags.length > 0) {
-                                                <div class="flex flex-wrap gap-1.5 mt-2">
-                                                    @for (tag of producto.tags; track tag.id) {
-                                                        <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-white px-2 py-1 rounded-md shadow-sm">
-                                                            
-                                                            @if (tag.icono) {
-                                                                <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
-                                                            }
-                                                            
-                                                            {{ tag.nombre }}
-                                                        </span>
+                                    <div (click)="productSelectorService.open(producto)"
+                                        class="bg-brand-accent rounded-2xl overflow-hidden hover:shadow-md hover:shadow-brand-accent/50 transition-shadow duration-300 cursor-pointer group/card flex h-full">
+                                        
+                                        <div class="p-3 flex flex-col flex-1 min-w-0">
+                                            <div class="mb-auto">
+                                                <h3 class="font-bold text-white text-xs xl:text-sm line-clamp-2 group-hover/card:text-white/90 transition-colors">
+                                                    {{ producto.nombre }}
+                                                </h3>
+                                                
+                                                @if (producto.marca) {
+                                                    <p class="text-[9px] xl:text-[10px] font-bold text-white/80 uppercase tracking-wider mb-2 truncate mt-1">
+                                                        {{ producto.marca }}
+                                                    </p>
+                                                }
+                                                
+                                                <p class="text-white/75 text-[10px] xl:text-[11px] line-clamp-2 my-1">
+                                                    {{ producto.descripcion }}
+                                                </p>
+
+                                                @if (producto.tags && producto.tags.length > 0) {
+                                                    <div class="flex flex-wrap gap-1.5 mt-2">
+                                                        @for (tag of producto.tags; track tag.id) {
+                                                            <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-white px-2 py-1 rounded-md shadow-sm">
+                                                                
+                                                                @if (tag.icono) {
+                                                                    <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
+                                                                }
+                                                                
+                                                                {{ tag.nombre }}
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                            
+                                            <div class="flex flex-wrap gap-1.5 mb-1.5 mt-auto pt-2 min-h-7">
+                                                @for (pres of disponibles.slice(0, 3); track pres.id) {
+                                                    <span class="text-[9px] xl:text-[10px] font-semibold text-white bg-white/10 px-2 py-1 rounded-md border border-white/20 uppercase">
+                                                        {{ pres.unidad_venta }}
+                                                    </span>
+                                                }
+                                                @if (disponibles.length > 3) {
+                                                    <span class="text-[9px] xl:text-[10px] font-black text-white self-center ml-1">
+                                                        +{{ disponibles.length - 3 }}
+                                                    </span>
+                                                }
+                                            </div>
+
+                                            <div class="flex items-end justify-between pt-1.5 border-t border-white/20 min-h-8">
+                                                <div class="flex items-baseline gap-1.5">
+                                                    
+                                                    @if (getMejorOferta(disponibles); as cheapest) {
+                                                        
+                                                        @if (disponibles.length > 1) {
+                                                            <span class="text-[10px] xl:text-xs text-white/80 font-semibold uppercase tracking-tight mr-0.5">
+                                                                Desde
+                                                            </span>
+                                                        }
+
+                                                        @if (cheapest.precio_descuento) {
+                                                            <span class="text-[10px] xl:text-xs text-white/60 line-through font-semibold tracking-tighter">
+                                                                ${{ cheapest.precio | number:'1.0-0' }}
+                                                            </span>
+                                                            <span class="text-white font-semibold text-sm xl:text-base leading-none tracking-tighter">
+                                                                ${{ cheapest.precio_descuento | number:'1.0-0' }}
+                                                            </span>
+                                                        } @else {
+                                                            <span class="text-white font-semibold text-sm xl:text-base leading-none tracking-tighter">
+                                                                ${{ cheapest.precio | number:'1.0-0' }}
+                                                            </span>
+                                                        }
+                                                        
+                                                    } @else {
+                                                        <div class="flex items-center gap-1.5 px-2 py-0.5 bg-white/10 border border-white/20 rounded-lg select-none">
+                                                            <span class="text-[10px] font-bold text-white uppercase tracking-wider mt-px">
+                                                                Agotado
+                                                            </span>
+                                                        </div>
                                                     }
                                                 </div>
-                                            }
+                                            </div>
+                                        </div>
+
+                                        <div class="p-3 pl-0 shrink-0 flex flex-col justify-center">
+                                            <div class="relative w-32 lg:w-36 aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center"
+                                                [class.animate-pulse]="!imageLoaded() && producto.imagen">
+                                                
+                                                <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-bg transition-opacity duration-300"
+                                                    [class.opacity-0]="imageLoaded() && producto.imagen">
+                                                    <app-icon name="photo" classes="size-10 fill-current" />
+                                                </div>
+
+                                                @if (producto.imagen) {
+                                                    <img [src]="producto.imagen" 
+                                                        (load)="onImageLoad()"
+                                                        class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-all duration-500 ease-out bg-white"
+                                                        [class.opacity-0]="!imageLoaded()"
+                                                        
+                                                        [class.opacity-100]="imageLoaded() && !agotado"
+                                                        [class.opacity-80]="imageLoaded() && agotado"
+                                                        [class.grayscale]="agotado">
+                                                }
+                                                
+                                            </div>
                                         </div>
                                         
-                                        <div class="flex flex-wrap gap-1.5 mb-1.5 mt-auto pt-2">
-                                            @for (pres of producto.presentaciones.slice(0, 3); track pres.id) {
-                                                <span class="text-[9px] xl:text-[10px] font-semibold text-white bg-white/10 px-2 py-1 rounded-md border border-white/20 uppercase">
-                                                    {{ pres.unidad_venta }}
-                                                </span>
-                                            }
-                                            @if (producto.presentaciones.length > 3) {
-                                                <span class="text-[9px] xl:text-[10px] font-black text-white self-center ml-1">
-                                                    +{{ producto.presentaciones.length - 3 }}
-                                                </span>
-                                            }
-                                        </div>
-
-                                        <div class="flex items-end justify-between pt-1.5 border-t border-white/20">
-                                            <div class="flex items-baseline gap-1.5">
-                                                @let cheapest = getMejorOferta(producto.presentaciones);
-
-                                                @if (producto.presentaciones.length > 1) {
-                                                    <span class="text-[10px] xl:text-xs text-white/80 font-bold uppercase tracking-widest mr-0.5">Desde</span>
-                                                }
-
-                                                @if (cheapest && cheapest.precio_descuento) {
-                                                    <span class="text-[10px] xl:text-xs text-white/60 line-through font-semibold mr-1">${{ cheapest.precio }}</span>
-                                                    <span class="text-white font-semibold text-base xl:text-lg leading-none">${{ cheapest.precio_descuento }}</span>
-                                                } @else {
-                                                    <span class="text-white font-semibold text-base xl:text-lg leading-none">${{ cheapest?.precio }}</span>
-                                                }
-                                            </div>
-                                        </div>
                                     </div>
-
-                                    <div class="p-3 pl-0 shrink-0 flex flex-col justify-center">
-                                        <div class="relative w-32 lg:w-36 aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center"
-                                            [class.animate-pulse]="!imageLoaded() && producto.imagen">
-                                            
-                                            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-bg transition-opacity duration-300"
-                                                [class.opacity-0]="imageLoaded() && producto.imagen">
-                                                <app-icon name="photo" classes="size-10 fill-current" />
-                                            </div>
-
-                                            @if (producto.imagen) {
-                                                <img [src]="producto.imagen" 
-                                                    (load)="onImageLoad()"
-                                                    class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-all duration-500 ease-out bg-white"
-                                                    [class.opacity-0]="!imageLoaded()"
-                                                    [class.opacity-100]="imageLoaded()">
-                                            }
-                                            
-                                        </div>
-                                    </div>
-                                    
-                                </div>
+                                }
                             }
                         </div>
                     }

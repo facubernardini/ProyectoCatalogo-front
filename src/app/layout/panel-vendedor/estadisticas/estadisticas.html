@@ -1,0 +1,378 @@
+<div class="flex flex-col h-full w-full">
+    <main class="flex-1 bg-gray-50 p-3 overflow-y-auto">
+        <div class="w-full max-w-4xl mx-auto flex flex-col gap-3">
+
+            <!-- FILA 1: KPIs Principales (Con el selector integrado) -->
+            <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                
+                <!-- ENCABEZADO DE LA CARD  -->
+                <div class="flex items-center justify-between mb-3">
+                    
+                    <!-- Título a la izquierda -->
+                    <div class="flex items-center gap-2">
+                        <app-icon name="resumen-mes" classes="size-4 fill-current text-gray-500" />
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Resumen del Mes</h2>
+                    </div>
+
+                    <!-- Selector de Mes Personalizado (A la derecha) -->
+                    <div class="relative shrink-0 z-50">
+                        
+                        <!-- Botón Principal -->
+                        <button type="button"
+                                (click)="isDropdownMesOpen.set(!isDropdownMesOpen())"
+                                class="flex items-center justify-between gap-3 px-3 py-1.5 bg-gray-50 border border-gray-100 md:hover:bg-gray-100 rounded-xl text-xs font-bold text-brand-text outline-none transition-all shadow-sm">
+                            
+                            <span>{{ obtenerMesSeleccionadoLabel() }}</span>
+                            
+                            <span class="flex items-center justify-center shrink-0 transition-transform duration-300 ease-in-out" 
+                                [class.rotate-180]="isDropdownMesOpen()">
+                                <app-icon name="chevron-down" classes="size-3.5 text-gray-400 fill-current" />
+                            </span>
+                        </button>
+
+                        <!-- Menú Desplegable -->
+                        @if (isDropdownMesOpen()) {
+                            <div class="absolute top-full right-0 w-36 mt-1 z-50 bg-white border border-gray-100 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100">
+                                
+                                @for (opcion of opcionesMeses; track opcion.valor) {
+                                    <button type="button"
+                                            (click)="cambiarMes(opcion)"
+                                            class="w-full flex items-center justify-between px-2.5 py-2 text-xs transition-colors rounded-lg"
+                                            [class.bg-brand-accent/10]="adminStore.mesEstadisticas() === opcion.valor"
+                                            [class.text-brand-accent]="adminStore.mesEstadisticas() === opcion.valor"
+                                            [class.font-bold]="adminStore.mesEstadisticas() === opcion.valor"
+                                            [class.text-gray-600]="adminStore.mesEstadisticas() !== opcion.valor"
+                                            [class.font-medium]="adminStore.mesEstadisticas() !== opcion.valor"
+                                            [class.md:hover:bg-gray-50]="adminStore.mesEstadisticas() !== opcion.valor">
+                                        
+                                        <span>{{ opcion.label }}</span>
+                                        
+                                        @if (adminStore.mesEstadisticas() === opcion.valor) {
+                                            <app-icon name="check" classes="size-3.5 fill-current" />
+                                        }
+                                    </button>
+                                }
+                                
+                            </div>
+                        }
+                    </div>
+                    
+                </div>
+
+                <!-- MÉTRICAS -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+
+                    <!-- Métrica: Ingresos Brutos -->
+                    <div class="bg-gray-50/80 rounded-xl p-2.5 border border-gray-100/60 flex flex-col justify-center relative overflow-hidden group">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ingresos Brutos</span>
+                            
+                            <button (click)="toggleBeneficios()" 
+                                    class="text-gray-400 md:hover:text-brand-accent active:scale-95 transition-all outline-none p-1 -m-1" 
+                                    [title]="mostrarBeneficios() ? 'Ocultar saldos' : 'Mostrar saldos'">
+                                <app-icon [name]="mostrarBeneficios() ? 'eye' : 'eye-off'" classes="size-4.5 fill-current pointer-events-none" />
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            @if (adminStore.isLoadingEstadisticas()) {
+                                <div class="h-6.75 w-28 bg-gray-100 rounded-lg shimmer"></div>
+                            } @else {
+                                <span class="text-[18px] font-bold text-gray-800 min-w-16 flex items-center">
+                                    @if (mostrarBeneficios()) {
+                                        <span class="inline-block animate-in fade-in zoom-in-95 duration-200 ease-out">
+                                            ${{ adminStore.resumenMensual()!.ingresosBrutos | number:'1.0-0' }}
+                                        </span>
+                                    } @else {
+                                        <span class="inline-block animate-in fade-in zoom-in-95 duration-200 ease-out">
+                                            $ ****
+                                        </span>
+                                    }
+                                </span>
+
+                                @if (!esMesActual()) {
+                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md animate-in fade-in"
+                                        [class]="adminStore.resumenMensual()!.crecimientoIngresos >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'">
+                                        {{ adminStore.resumenMensual()!.crecimientoIngresos >= 0 ? '+' : '' }}{{ adminStore.resumenMensual()!.crecimientoIngresos }}%
+                                    </span>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Métrica: Ganancia Neta -->
+                    <div class="bg-gray-50/80 rounded-xl p-2.5 border border-gray-100/60 flex flex-col justify-center relative overflow-hidden">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Ganancia Neta</span>
+                        
+                        <div class="flex items-center gap-2">
+                            @if (adminStore.isLoadingEstadisticas()) {
+                                <div class="h-6.75 w-28 bg-gray-100 rounded-lg shimmer"></div>
+                            } @else {
+                                <span class="text-[18px] font-bold text-emerald-600 min-w-16 flex items-center">
+                                    @if (mostrarBeneficios()) {
+                                        <span class="inline-block animate-in fade-in zoom-in-95 duration-200 ease-out">
+                                            ${{ adminStore.resumenMensual()!.gananciaNeta | number:'1.0-0' }}
+                                        </span>
+                                    } @else {
+                                        <span class="inline-block animate-in fade-in zoom-in-95 duration-200 ease-out">
+                                            $ ****
+                                        </span>
+                                    }
+                                </span>
+
+                                @if (!esMesActual()) {
+                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md animate-in fade-in"
+                                        [class]="adminStore.resumenMensual()!.crecimientoGanancia >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'">
+                                        {{ adminStore.resumenMensual()!.crecimientoGanancia >= 0 ? '+' : '' }}{{ adminStore.resumenMensual()!.crecimientoGanancia }}%
+                                    </span>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Métrica: Ventas -->
+                    <div class="bg-gray-50/80 rounded-xl p-2.5 border border-gray-100/60 flex flex-col justify-center relative overflow-hidden">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Ventas</span>
+                        
+                        <div class="flex items-center gap-2">
+                            @if (adminStore.isLoadingEstadisticas()) {
+                                <div class="h-6.75 w-14 bg-gray-100 rounded-lg shimmer"></div>
+                            } @else {
+                                @if (mostrarBeneficios()) {
+                                    <span class="text-[18px] font-bold text-gray-800 animate-in fade-in">{{ adminStore.resumenMensual()!.pedidosEntregados }}</span>
+                                } @else {
+                                    <span class="inline-block animate-in fade-in zoom-in-95 duration-200 ease-out">
+                                        ****
+                                    </span>
+                                }
+                                
+                                @if (!esMesActual()) {
+                                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md animate-in fade-in"
+                                        [class]="adminStore.resumenMensual()!.crecimientoPedidos >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'">
+                                        {{ adminStore.resumenMensual()!.crecimientoPedidos >= 0 ? '+' : '' }}{{ adminStore.resumenMensual()!.crecimientoPedidos }}%
+                                    </span>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- FILA 2: Gráfico de Evolución -->
+            <div class="bg-white p-2 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                
+                <!-- CABECERA CON EL SELECTOR -->
+                <div class="flex items-center justify-between pl-2 pt-1 mb-4 pr-1">
+                    <div class="flex items-center gap-2">
+                        <app-icon name="chart" classes="size-4 fill-current text-gray-500" />
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Evolución diaria</h2>
+                    </div>
+
+                    <!-- Selector Ganancias / Ventas -->
+                    <div class="flex bg-gray-100/80 p-0.5 rounded-lg border border-gray-200/60">
+                        <button (click)="metricaEvolucion.set('ganancias')"
+                                class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-300"
+                                [class.bg-white]="metricaEvolucion() === 'ganancias'"
+                                [class.shadow-sm]="metricaEvolucion() === 'ganancias'"
+                                [class.text-brand-text]="metricaEvolucion() === 'ganancias'"
+                                [class.text-gray-400]="metricaEvolucion() !== 'ganancias'">
+                            Ganancias
+                        </button>
+                        <button (click)="metricaEvolucion.set('ventas')"
+                                class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-300"
+                                [class.bg-white]="metricaEvolucion() === 'ventas'"
+                                [class.shadow-sm]="metricaEvolucion() === 'ventas'"
+                                [class.text-brand-text]="metricaEvolucion() === 'ventas'"
+                                [class.text-gray-400]="metricaEvolucion() !== 'ventas'">
+                            Ventas
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="w-full h-56 -ml-2 transition-all duration-500"
+                    [class.opacity-50]="adminStore.isLoadingEstadisticas()" 
+                    [class.grayscale]="adminStore.isLoadingEstadisticas()"
+                    [class.pointer-events-none]="adminStore.isLoadingEstadisticas()">
+
+                    <ngx-charts-bar-vertical
+                        [results]="datosGrafico()" 
+                        [xAxis]="true"
+                        [yAxis]="true"
+                        [showGridLines]="true"
+                        [yAxisTickFormatting]="formatearEjeY"
+                        [xAxisTicks]="fechasEjeX()"
+                        [yAxisTicks]="ticksEjeY()"
+                        [scheme]="colorScheme"
+                        [roundEdges]="true"
+                        [barPadding]="4">
+                        
+                        <!-- TOOLTIP PERSONALIZADO -->
+                        <ng-template #tooltipTemplate let-model="model">
+                            <div class="bg-gray-900 text-white p-3 rounded-xl shadow-xl flex flex-col gap-1 min-w-32.5">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest border-b border-gray-700 pb-1.5 mb-0.5">
+                                    Día {{ model.name }}
+                                </span>
+                                <span class="text-sm font-semibold flex justify-between items-center gap-4">
+                                    Ingresos: <b class="text-white font-medium">${{ model.extra?.ingresosBrutos | number:'1.0-0' }}</b>
+                                </span>
+                                <span class="text-sm font-semibold flex justify-between items-center gap-4">
+                                    Ganancia: 
+                                    <b class="text-emerald-400">
+                                        @if (model.extra?.gananciaReal) {
+                                            ${{ model.extra?.gananciaReal | number:'1.0-0' }}
+                                        } @else {
+                                            -
+                                        }
+                                    </b>
+                                </span>
+                                <span class="text-xs font-medium text-gray-300 flex justify-between items-center gap-4">
+                                    Ventas: <b class="text-white">{{ model.extra?.cantidadVentas }}</b>
+                                </span>
+                            </div>
+                        </ng-template>
+
+                    </ngx-charts-bar-vertical>
+                </div>
+            </div>
+
+            <!-- FILA 3: Ranking de Productos -->
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                <div class="flex items-center gap-2 mb-3">
+                    <app-icon name="leaderboard" classes="size-4 fill-current text-gray-500" />
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Productos más vendidos</h2>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    @if (adminStore.isLoadingEstadisticas()) {
+                        <!-- SKELETON LOADING -->
+                        @for (item of [1, 2, 3, 4, 5]; track item) {
+                            <div class="flex items-center justify-between p-2 bg-gray-50/50 rounded-xl border border-gray-100">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="shrink-0 size-8 rounded-lg bg-gray-200/80 shimmer"></div>
+                                    
+                                    <div class="flex flex-col min-w-0 gap-1.5">
+                                        <div class="h-3 w-32 bg-gray-200/80 rounded shimmer"></div>
+                                        <div class="h-2.5 w-16 bg-gray-200/60 rounded shimmer"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="shrink-0 text-right ml-2 flex items-center justify-end">
+                                    <div class="h-5 w-16 bg-gray-200/60 rounded-md shimmer"></div>
+                                </div>
+                            </div>
+                        }
+                    } @else {
+                        @for (prod of adminStore.topProductos(); track prod.productoId; let i = $index) {
+                            <div class="flex items-center justify-between p-2 bg-gray-50/50 rounded-xl border border-gray-100 md:hover:bg-gray-50 transition-colors animate-in fade-in duration-200">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    
+                                    <!-- PUESTO -->
+                                    <div class="shrink-0 size-8 rounded-lg shadow-xs flex items-center justify-center font-black text-xs transition-colors"
+                                        [class.bg-brand-accent]="i === 0"
+                                        [class.text-white]="i === 0"
+                                        [class.border-transparent]="i === 0"
+                                        [class.bg-white]="i !== 0"
+                                        [class.border]="i !== 0"
+                                        [class.border-gray-200]="i !== 0"
+                                        [class.text-gray-400]="i !== 0">
+                                        #{{ i + 1 }}
+                                    </div>
+                                    
+                                    <!-- INFO DEL PRODUCTO -->
+                                    <div class="flex flex-col min-w-0">
+                                        <span class="text-[13px] font-bold text-brand-text leading-none line-clamp-2 tracking-tight">
+                                            {{ prod.nombre }}
+                                        </span>
+                                        <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mt-0.5">
+                                            {{ prod.unidad }}
+                                        </span>
+                                    </div>
+
+                                </div>
+                                
+                                <!-- CANTIDAD VENDIDA (A la derecha) -->
+                                <div class="shrink-0 text-right ml-2 flex items-center justify-end">
+                                    <span class="inline-flex items-center justify-center px-2 py-1 bg-gray-200/80 text-gray-600 text-[10px] font-bold rounded-md uppercase tracking-wider">
+                                        {{ prod.cantidadVendida }} {{ prod.cantidadVendida === 1 ? 'vendido' : 'vendidos' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                        } @empty {
+                            <div class="text-center py-5 border border-dashed border-gray-200 rounded-xl">
+                                <span class="text-[13px] font-medium text-gray-400">No hay ventas registradas en este mes</span>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- FILA 4: Ranking de Categorías -->
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                <div class="flex items-center gap-2 mb-3">
+                    <app-icon name="leaderboard" classes="size-4 fill-current text-gray-500" />
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Categorías con más ventas</h2>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    @if (adminStore.isLoadingEstadisticas()) {
+                        @for (item of [1, 2, 3, 4, 5]; track item) {
+                            <div class="flex items-center justify-between p-2 bg-gray-50/50 rounded-xl border border-gray-100">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="shrink-0 size-8 rounded-lg bg-gray-200/80 shimmer"></div>
+                                    
+                                    <div class="flex flex-col min-w-0 gap-1.5">
+                                        <div class="h-3 w-32 bg-gray-200/80 rounded shimmer"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="shrink-0 text-right ml-2 flex items-center justify-end">
+                                    <div class="h-5 w-16 bg-gray-200/60 rounded-md shimmer"></div>
+                                </div>
+                            </div>
+                        }
+                    } @else {
+                        @for (cat of adminStore.topCategorias(); track cat.nombre; let i = $index) {
+                            <div class="flex items-center justify-between p-2 bg-gray-50/50 rounded-xl border border-gray-100 md:hover:bg-gray-50 transition-colors animate-in fade-in duration-200">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    
+                                    <div class="shrink-0 size-8 rounded-lg shadow-xs flex items-center justify-center font-black text-xs transition-colors"
+                                        [class.bg-brand-accent]="i === 0"
+                                        [class.text-white]="i === 0"
+                                        [class.border-transparent]="i === 0"
+                                        [class.bg-white]="i !== 0"
+                                        [class.border]="i !== 0"
+                                        [class.border-gray-200]="i !== 0"
+                                        [class.text-gray-400]="i !== 0">
+                                        #{{ i + 1 }}
+                                    </div>
+                                    
+                                    <!-- INFO DE LA CATEGORÍA -->
+                                    <div class="flex flex-col min-w-0">
+                                        <span class="text-[13px] font-bold text-brand-text leading-none line-clamp-2 tracking-tight">
+                                            {{ cat.nombre | titlecase }}
+                                        </span>
+                                    </div>
+
+                                </div>
+                                
+                                <!-- CANTIDAD VENDIDA (A la derecha) -->
+                                <div class="shrink-0 text-right ml-2 flex items-center justify-end">
+                                    <span class="inline-flex items-center justify-center px-2 py-1 bg-gray-200/80 text-gray-600 text-[10px] font-bold rounded-md uppercase tracking-wider">
+                                        {{ cat.cantidadVendida }} {{ cat.cantidadVendida === 1 ? 'venta' : 'ventas' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                        } @empty {
+                            <div class="text-center py-5 border border-dashed border-gray-200 rounded-xl">
+                                <span class="text-[13px] font-medium text-gray-400">No hay ventas registradas en este mes</span>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

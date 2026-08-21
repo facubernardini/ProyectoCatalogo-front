@@ -1,0 +1,70 @@
+/* Eliminamos el fondo, padding y sombra del envoltorio por defecto de ngx-charts */
+::ng-deep .ngx-charts-tooltip-content.type-tooltip {
+    padding: 0 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+/* 2. Coloreamos la flechita con el color exacto de Tailwind bg-gray-900 (#111827) */
+/* Si el tooltip aparece arriba de la barra (lo más común) */
+::ng-deep .tooltip-caret.position-top {
+    border-top-color: #111827 !important;
+}
+
+/* Si el tooltip no tiene espacio y aparece abajo */
+::ng-deep .tooltip-caret.position-bottom {
+    border-bottom-color: #111827 !important;
+}
+
+/* Si aparece a los lados */
+::ng-deep .tooltip-caret.position-left {
+    border-left-color: #111827 !important;
+}
+
+::ng-deep .tooltip-caret.position-right {
+    border-right-color: #111827 !important;
+}
+
+/* Hacer las líneas horizontales súper sutiles (equivalente a un gray-100/200 de Tailwind) */
+::ng-deep .ngx-charts .grid-line-path {
+    stroke: #f3f4f6 !important;
+}
+
+/* Opcional: Hacer que los textos de los ejes X e Y queden en un gris intermedio elegante */
+::ng-deep .ngx-charts .tick text {
+    fill: #8F96A1 !important;
+    font-size: 11px !important;
+    font-weight: 400;
+}
+
+/* SHIMMER */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: #e5e7eb;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.3) 20%,
+    rgba(255, 255, 255, 0.8) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 1.5s infinite;
+}

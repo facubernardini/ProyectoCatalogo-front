@@ -8,7 +8,7 @@
             </h2>
             
             <div class="flex items-center gap-2">
-                <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+                <label class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
                     Ordenar por:
                 </label>
                 
@@ -107,17 +107,17 @@
                                 ? 'bg-brand-accent text-white' 
                                 : (cat.especial 
                                     ? 'bg-amber-50/50 text-amber-700 border border-amber-200 hover:bg-amber-100' 
-                                    : 'bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:bg-gray-50')"
-                            class="relative overflow-hidden px-2.5 py-1.5 rounded-xl text-sm font-bold transition-all duration-300 shrink-0 group">
+                                    : 'bg-white text-brand-text border border-gray-200 hover:border-gray-300 hover:bg-gray-50')"
+                            class="relative overflow-hidden px-2.5 py-1 rounded-full text-sm font-semibold transition-all duration-300 shrink-0 group">
                     
                         @if (cat.especial && categoriaSeleccionada() !== cat.nombre) {
                             <div class="absolute inset-0 h-full w-full bg-linear-to-r from-transparent via-amber-400/20 to-transparent animate-shimmer"></div>
                         }
 
-                        <div class="relative z-10 flex items-center justify-center gap-1.5">                           
-                            <span class="text-start lowercase first-letter:uppercase"
+                        <div class="relative z-10 flex items-center justify-center">                           
+                            <span class="text-start"
                                 [class.text-amber-600]="cat.especial && categoriaSeleccionada() !== cat.nombre">
-                                {{ cat.nombre }}
+                                {{ cat.nombre | titlecase }}
                             </span>
                         </div>
                     </button>

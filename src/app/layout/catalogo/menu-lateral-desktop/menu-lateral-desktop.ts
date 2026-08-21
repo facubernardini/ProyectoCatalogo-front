@@ -1,4 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject } from '@angular/core';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "src/app/shared/components/icon";
 import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
@@ -7,7 +8,7 @@ import { MapDialogService } from 'src/app/shared/services/map.service';
 
 @Component({
   selector: 'app-menu-lateral-desktop',
-  imports: [Icon],
+  imports: [Icon, CommonModule],
   templateUrl: './menu-lateral-desktop.html',
   styleUrl: './menu-lateral-desktop.css',
 })

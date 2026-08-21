@@ -3,6 +3,7 @@ import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CategoryFormService } from '@shared/services/category-form.service';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
 @Component({
   selector: 'app-category-form',
@@ -12,6 +13,7 @@ import { CategoryFormService } from '@shared/services/category-form.service';
 })
 export class CategoryForm {
   public categoryFormService = inject(CategoryFormService);
+  private adminStore = inject(AdminStoreService);
 
   public categoria = {
     nombre: '',
@@ -39,14 +41,40 @@ export class CategoryForm {
     });
   }
 
+  isNameDuplicate(): boolean {
+    const currentName = this.categoryFormService.nombre().trim().toLowerCase();
+    
+    if (!currentName) return false;
+    
+    const editingCategory = this.categoryFormService.editingCategory();
+    
+    if (editingCategory && currentName === editingCategory.nombre.trim().toLowerCase()) {
+        return false;
+    }
+    
+    return this.adminStore.categorias().some(cat => 
+        cat.nombre.trim().toLowerCase() === currentName
+    );
+  }
+
   private resetLocalForm() {
-    this.categoria = { nombre: '', activo: true, especial: false };
-    this.categoryFormService.nombre.set('');
+    // 1. Leemos si el servicio ya traía un nombre pre-cargado
+    const nombrePrecargado = this.categoryFormService.nombre();
+    
+    // 2. Reseteamos el estado local, pero conservando ese nombre inicial
+    this.categoria = { 
+        nombre: nombrePrecargado, 
+        activo: true, 
+        especial: false 
+    };
+    
+    // (Ya no hacemos this.categoryFormService.nombre.set('') porque destruiría el dato)
   }
 
   guardar() {
-    this.categoria.nombre = this.categoryFormService.nombre();
+    if (this.isNameDuplicate()) return;
     
+    this.categoria.nombre = this.categoryFormService.nombre();
     this.categoryFormService.save(this.categoria);
   }
 }

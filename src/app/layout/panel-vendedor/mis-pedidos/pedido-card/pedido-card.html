@@ -1,0 +1,201 @@
+<div [@cardState]="estadoAnimacion()" [class.opacity-75]="pedido().estado === 'CANCELADO'">
+    <div class="bg-white p-3 pb-4 relative flex flex-col gap-1.5 borde-sierra" 
+        [class.bg-gray-50]="pedido().estado === 'CANCELADO'">
+        
+        <!-- SUPERIOR: Cabecera (ID, Fecha, Nombre y Acciones) -->
+        <div class="flex items-start justify-between">
+            
+            <div class="flex flex-col">
+                <div class="flex items-center gap-2 mb-0.5">
+                    <span class="text-xs font-black text-gray-500 uppercase tracking-widest">
+                        #{{ pedido().numero_pedido }}
+                    </span>
+                    
+                    <span class="size-1 rounded-full bg-gray-400"></span>
+                    
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                        {{ pedido().creado_el | date:'dd MMM, HH:mm' }}
+                    </span>
+                </div>
+
+                <span class="text-sm font-semibold text-brand-text leading-tight truncate max-w-45">
+                    {{ pedido().comprador_nombre }}
+                </span>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                
+                <!-- Botón de Google Maps -->
+                @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO && pedido().comprador_direccion) {
+                    <button (click)="abrirGoogleMaps()"
+                        class="p-2 text-blue-500 bg-blue-50 md:hover:bg-blue-100 rounded-xl active:scale-95 transition-all"
+                        title="Ver en Google Maps">
+                        <app-icon name="location" classes="size-5 fill-current" />
+                    </button>
+                }
+
+                @if (pedido().comprador_telefono){
+                    <button (click)="contactarWhatsApp()"
+                        class="p-2 text-green-500 bg-green-50 md:hover:bg-green-100 rounded-xl active:scale-95 transition-all"
+                        title="Contactar por WhatsApp">
+                        <app-icon name="whatsapp" classes="size-5 fill-current" />
+                    </button>
+                }
+
+                @if (pedido().estado === estadoPedido.PENDIENTE) {
+                    <button (click)="editarPedido()"
+                            title="Editar Pedido"
+                            class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
+                        <app-icon name="edit" classes="size-4.5 fill-current" />
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- MEDIO: Entrega, Dirección, Costo de Envío y Medio de Pago -->
+        <div class="flex items-center justify-between bg-gray-50 p-2 rounded-xl border border-gray-100" [class.opacity-60]="pedido().estado === 'CANCELADO'">
+    
+            <!-- SECCIÓN IZQUIERDA: Método de Entrega + Dirección -->
+            <div class="flex items-center gap-2">
+                <div class="p-1 bg-white rounded-lg shadow-sm text-gray-400 shrink-0">
+                    <app-icon [name]="getIconoEntrega(pedido().metodo_entrega)" classes="size-5 fill-current" /> 
+                </div>
+                
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-semibold text-gray-600 leading-tight">
+                            {{ pedido().metodo_entrega }}
+                        </span>
+                    </div>
+                    
+                    @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO && pedido().comprador_direccion) {
+                        <span class="text-[10px] font-semibold text-gray-400 leading-tight mt-0.5 truncate max-w-30">
+                            {{ pedido().comprador_direccion }}
+                        </span>
+                    }
+                </div>
+            </div>
+
+            <!-- SECCIÓN DERECHA: Método de Pago -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-gray-600">{{ pedido().metodo_pago }}</span>
+                <div class="p-1 bg-white rounded-lg shadow-sm text-gray-400 shrink-0">
+                    <app-icon [name]="getIconoPago(pedido().metodo_pago)" classes="size-5 fill-current" />
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- INFERIOR: Totales y Acciones -->
+        <div class="flex flex-col gap-2 mt-1">
+            
+            <!-- Desglose Financiero -->
+            @if (pedido().subtotal !== pedido().total_final || (pedido().metodo_entrega === metodoEntregaEnum.ENVIO && pedido().costo_envio > 0)) {
+                <div class="flex flex-col gap-1 text-xs text-gray-500 bg-gray-50 p-2 rounded-xl border border-gray-100" [class.opacity-60]="pedido().estado === 'CANCELADO'">
+                    
+                    <div class="flex items-center gap-1">
+                        <span class="pr-1 font-bold text-xs">Subtotal ({{ cantidadArticulos() }} {{ cantidadArticulos() === 1 ? 'producto' : 'productos' }})</span>
+                        <div class="flex-1 flex items-center">
+                            <div class="w-full border-t border-dashed border-gray-300"></div>
+                        </div>
+                        <span class="font-medium text-gray-700 pl-1 text-xs">${{ pedido().subtotal | number:'1.0-0' }}</span>
+                    </div>
+
+                    @if (pedido().descuento_cupon > 0) {
+                        <div class="flex items-center gap-1 text-emerald-600 font-medium">
+                            <div class="flex items-center gap-1 pr-1 text-xs">
+                                <span>Dto. por cupón (<span class="uppercase font-bold">{{ pedido().cupon_codigo || 'CUPÓN' }}</span>)</span>
+                                @if (pedido().cupon_es_porcentaje && pedido().cupon_descuento) {
+                                    <span class="text-[10px] text-emerald-500 font-bold">(-{{ pedido().cupon_descuento }}%)</span>
+                                }
+                            </div>
+                            <div class="flex-1 flex items-center">
+                                <div class="w-full border-t border-dashed border-gray-300"></div>
+                            </div>
+                            <span class="pl-1 text-xs">-${{ pedido().descuento_cupon | number:'1.0-0' }}</span>
+                        </div>
+                    }
+
+                    @if (pedido().descuento_pago_efectivo > 0) {
+                        <div class="flex items-center gap-1 text-emerald-600 font-medium">
+                            <span class="text-xs pr-1">Dto. pago en efectivo</span>
+                            <div class="flex-1 flex items-center">
+                                <div class="w-full border-t border-dashed border-gray-300"></div>
+                            </div>
+                            <span class="pl-1 text-xs">-${{ pedido().descuento_pago_efectivo | number:'1.0-0' }}</span>
+                        </div>
+                    }
+
+                    @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO) {
+                        <div class="flex items-center gap-1">
+                            <span class="text-xs pr-1">Envío a domicilio</span>
+                            <div class="flex-1 flex items-center">
+                                <div class="w-full border-t border-dashed border-gray-300"></div>
+                            </div>
+                            <span class="font-medium pl-1 text-[11px]" [class.text-emerald-600]="pedido().costo_envio === 0">
+                                @if (pedido().costo_envio > 0) {
+                                    +${{ pedido().costo_envio | number:'1.0-0' }}
+                                } @else {
+                                    Gratis
+                                }
+                            </span>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <span class="text-xs font-semibold text-gray-500 leading-none" [class.opacity-60]="pedido().estado === 'CANCELADO'">
+                    {{ cantidadArticulos() }} {{ cantidadArticulos() === 1 ? 'producto' : 'productos' }}
+                </span>
+            }
+
+            <!-- Total Final y Acciones Rápidas -->
+            <div class="flex items-center justify-between mt-0.5">
+                
+                <span class="text-lg font-black text-brand-text tracking-tight leading-none" 
+                    [class.opacity-60]="pedido().estado === 'CANCELADO'"
+                    [class.line-through]="pedido().estado === 'CANCELADO'">
+                    ${{ pedido().total_final | number:'1.0-0' }}
+                </span>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    
+                    <button (click)="verDetalle()"
+                            class="px-2.5 py-1.5 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg active:scale-95 transition-transform md:hover:bg-gray-200">
+                        Detalle
+                    </button>
+
+                    @if (pedido().estado === estadoPedido.PENDIENTE) {
+                        <div class="flex items-center gap-2 border-l border-gray-200 pl-2 ml-0.5">
+                            <button (click)="finalizarPedido()" 
+                                    title="Marcar como Entregado"
+                                    class="size-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-lg md:hover:bg-emerald-500 md:hover:text-white active:scale-95 transition-all">
+                                <app-icon name="check" classes="size-4.5 fill-current" />
+                            </button>
+                            
+                            <button (click)="cancelarPedido()" 
+                                    title="Cancelar Pedido"
+                                    class="size-8 flex items-center justify-center bg-red-50 text-red-400 rounded-lg md:hover:bg-red-500 md:hover:text-white active:scale-95 transition-all">
+                                <app-icon name="close" classes="size-4 fill-current" />
+                            </button>
+                        </div>
+                    } @else {
+                        <!-- Badge de estado para pedidos finalizados -->
+                        <div class="flex items-center justify-center px-2.5 py-1.5 rounded-lg border ml-0.5 cursor-default select-none"
+                            [class.bg-emerald-50]="pedido().estado === 'ENTREGADO'"
+                            [class.text-emerald-600]="pedido().estado === 'ENTREGADO'"
+                            [class.border-emerald-200]="pedido().estado === 'ENTREGADO'"
+                            [class.bg-red-50]="pedido().estado === 'CANCELADO'"
+                            [class.text-red-500]="pedido().estado === 'CANCELADO'"
+                            [class.border-red-200]="pedido().estado === 'CANCELADO'">
+                            
+                            <span class="text-[10px] font-bold uppercase tracking-widest">
+                                {{ pedido().estado === 'ENTREGADO' ? 'Entregado' : 'Cancelado' }}
+                            </span>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

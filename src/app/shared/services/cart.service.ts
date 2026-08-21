@@ -1,25 +1,32 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { CartItem } from 'src/app/core/models/cartItem.model';
 import { MedioPago } from 'src/app/core/models/catalogo.model';
 import { CuponVerificado } from 'src/app/core/models/cupon.model';
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { Producto } from 'src/app/core/models/producto.model';
 import { CuponServiceBackend } from 'src/app/core/services-backend/cupones.ServiceBackend';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
+  public adminStore = inject(AdminStoreService);
   private cartItems = signal<CartItem[]>(this.loadFromStorage());
   private cuponServiceBackend = inject(CuponServiceBackend);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
 
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   public loadingCupon = signal<boolean>(false);
 
   appliedCupon = signal<CuponVerificado | null>(null);
   selectedPaymentMethod = signal<MedioPago | null>(null);
-  deliveryMethod = signal<'envio' | 'retiro' | null>(null);
+  deliveryMethod = signal<'Envio' | 'Retiro' | null>(null);
   isOpen = signal(false);
   umbralMontoFaltanteEnvioGratis = 70;
 
@@ -85,7 +92,7 @@ export class CartService {
   });
 
   hasExtraCharges = computed(() => 
-    this.deliveryMethod() === 'envio' || 
+    this.deliveryMethod() === 'Envio' || 
     !!this.appliedCupon() || 
     this.cashDiscountAmount() > 0 || 
     this.discountAmount() > 0
@@ -114,7 +121,7 @@ export class CartService {
     const base = this.priceAfterAllDiscounts();
     const config = this.catalogConfig();
 
-    if (this.deliveryMethod() === 'envio' && !this.esEnvioGratis() && config) {
+    if (this.deliveryMethod() === 'Envio' && !this.esEnvioGratis() && config) {
       return base + config.costoEnvio;
     }
     return base;
@@ -125,15 +132,86 @@ export class CartService {
       localStorage.setItem('cart_storage', JSON.stringify(this.cartItems()));
     });
 
-    window.addEventListener('popstate', () => {
-      if (this.isOpen() && history.state?.modal !== 'cart-modal') {
-        this.cerrarInterno();
+    effect(() => {
+      const productos = this.adminStore.productos();
+      const catalogo = this.adminStore.catalogo();
+      
+      if (productos.length > 0 && catalogo && this.cartItems().length > 0) {
+        this.sincronizarCarrito(productos, catalogo);
+      }
+    }, { allowSignalWrites: true });
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      const urlTree = this.router.parseUrl(this.router.url);
+      const tieneParametro = urlTree.queryParams['cart'] === 'open';
+
+      if (!tieneParametro && this.isOpen()) {
+        this.isOpen.set(false);
+        document.body.style.overflow = 'auto';
+      }
+
+      if (tieneParametro && !this.isOpen()) {
+        this.isOpen.set(true);
+        document.body.style.overflow = 'hidden';
       }
     });
   }
 
+  private sincronizarCarrito(productos: Producto[], catalogo: any) {
+    const permiteSinStock = catalogo.permitir_ventas_sin_stock;
+    let huboCambiosPrecio = false;
+    let huboCambiosStock = false;
+    let huboEliminados = false;
+
+    this.cartItems.update(itemsActuales => {
+      const itemsValidados = itemsActuales.map(item => {
+        // 1. Buscamos la info REAL y ACTUALIZADA del backend
+        const prodDb = productos.find(p => p.id === item.productoId);
+        if (!prodDb) return null; // Si borraste el producto del sistema, lo sacamos del carrito
+
+        const presDb = prodDb.presentaciones.find(p => p.id === item.presentacionId);
+        if (!presDb) return null; // Si borraste esta presentación, la sacamos
+
+        // 2. Sincronizamos PRECIOS (si la oferta se venció o el precio subió)
+        const precioReal = presDb.precio_descuento ?? presDb.precio;
+        if (item.precio !== precioReal || item.precio_base !== Number(presDb.precio)) {
+          item.precio = precioReal;
+          item.precio_base = Number(presDb.precio);
+          huboCambiosPrecio = true;
+        }
+
+        // 3. Sincronizamos STOCK
+        if (!permiteSinStock && presDb.stock !== null) {
+          if (presDb.stock === 0) {
+            return null; 
+          }
+          if (item.cantidad > presDb.stock) {
+            item.cantidad = presDb.stock; 
+            huboCambiosStock = true;
+          }
+        }
+
+        return item;
+      }).filter(item => item !== null) as CartItem[];
+
+      if (itemsValidados.length < itemsActuales.length) {
+        huboEliminados = true;
+      }
+
+      return (huboCambiosPrecio || huboCambiosStock || huboEliminados) ? itemsValidados : itemsActuales;
+    });
+
+  }
+
   setCatalogConfig(costoEnvio: number, envioGratisDesde: number, descuentoEfectivo: number = 0) {
     this.catalogConfig.set({ costoEnvio, envioGratisDesde, descuentoEfectivo });
+  }
+
+  getCantidadEnCarrito(presentacionId: number): number {
+    const item = this.cartItems().find((i) => i.presentacionId === presentacionId);
+    return item ? item.cantidad : 0;
   }
 
   agregarProducto(producto: Producto, pres: Presentacion, cantidadAgregada: number = 1) {
@@ -244,7 +322,6 @@ export class CartService {
 
   removerCupon() {
     this.appliedCupon.set(null);
-    this.toastService.show('Cupón removido');
   }
 
   private loadFromStorage(): CartItem[] {
@@ -256,35 +333,29 @@ export class CartService {
     this.selectedPaymentMethod.set(method);
   }
 
-  setDeliveryMethod(method: 'envio' | 'retiro') {
+  setDeliveryMethod(method: 'Envio' | 'Retiro') {
     this.deliveryMethod.set(method);
   }
 
   open() {
     if (this.isOpen()) return;
 
-    this.isOpen.set(true);
-    document.body.style.overflow = 'hidden';
-    
-    history.pushState({ modal: 'cart-modal' }, '');
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { cart: 'open' },
+      queryParamsHandling: 'merge'
+    });
   }
 
   close() {
-    this.cerrarInterno();
-    
-    if (history.state?.modal === 'cart-modal') {
-      history.back();
-    }
-  }
-
-  private cerrarInterno() {
     if (!this.isOpen()) return;
     
-    this.isOpen.set(false);
-    document.body.style.overflow = 'auto';
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { cart: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 
-  toggle() {
-    this.isOpen.update((v) => !v);
-  }
 }

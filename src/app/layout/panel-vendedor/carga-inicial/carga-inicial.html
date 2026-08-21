@@ -1,20 +1,8 @@
-<div class="min-h-svh flex flex-col">
-    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
-        <div class="flex items-center justify-between px-4 h-16 max-w-4xl mx-auto w-full">
-            <button (click)="volverAtras()" class="p-2 text-brand-accent active:scale-95 transition-transform" aria-label="Volver atrás">
-                <app-icon name="back" classes="size-7 fill-current" />
-            </button>
-            <div class="flex-1 text-center px-2 overflow-hidden flex flex-col items-center justify-center">
-                <h1 class="text-[17px] font-bold text-brand-text tracking-wide truncate w-full">Carga Masiva</h1>
-            </div>
-            <div class="w-11"></div>
-        </div>
-    </header>
-
-    <main class="flex-1 bg-gray-50 px-3 pt-3 pb-12 flex flex-col items-center">
+<div class="flex flex-col h-full w-full">
+    <main class="flex-1 bg-gray-50 p-3 flex flex-col items-center overflow-y-auto min-h-0 relative">
         <div class="w-full max-w-xl flex flex-col flex-1">
             
-            @if (!cargaMasivaService.productosProcesados()) {
+            @if (!cargaInicialService.productosProcesados()) {
                 <div class="mb-6 w-full shrink-0">
                     <div class="bg-white p-3 rounded-2xl border border-brand-bg shadow-sm shadow-blue-100/50 flex flex-col gap-3">
                         <p class="text-brand-text-sec text-base font-semibold mb-1">¿Cómo funciona?</p>
@@ -46,49 +34,53 @@
                 </div>
             }
 
-            @if (cargaMasivaService.productosProcesados()) {
+            @if (cargaInicialService.productosProcesados()) {
                 
                 <div class="w-full flex flex-col flex-1 animate-in fade-in zoom-in-95 duration-300">
                     
                     <div class="flex items-center justify-between mb-3 px-1">
                         <div>
                             <h2 class="text-base font-semibold text-brand-text">Vista previa</h2>
-                            <p class="text-xs text-green-600 font-medium">{{ cargaMasivaService.productosProcesados()?.length }} productos listos</p>
+                            <p class="text-xs text-green-600 font-medium">{{ cargaInicialService.productosProcesados()?.length }} productos listos</p>
                         </div>
-                        <button (click)="cargaMasivaService.reiniciarTodo()" [disabled]="cargaMasivaService.isProcessing()"
+                        <button (click)="cargaInicialService.reiniciarTodo()" [disabled]="cargaInicialService.isProcessing()"
                                 class="text-xs font-bold text-gray-500 hover:text-brand-accent transition-colors underline disabled:opacity-50">
                             Subir otro archivo
                         </button>
                     </div>
 
-                    <div class="flex flex-col gap-2.5 mb-10">
-                        @for (producto of cargaMasivaService.productosProcesados(); track producto.nombre) {
+                    <div class="flex flex-col gap-2.5">
+                        @for (producto of cargaInicialService.productosProcesados(); track producto.nombre) {
                             <app-card-producto [producto]="producto"/>
                         }
                     </div>
 
-                    <div class="fixed bottom-0 left-0 right-0 px-4 py-3 bg-white border-t border-gray-200 z-40">
-                        <div class="max-w-lg mx-auto flex gap-3">
-                            <button (click)="cargaMasivaService.reiniciarTodo()" [disabled]="cargaMasivaService.isProcessing()"
-                                    class="px-4 py-2 rounded-xl font-semibold bg-gray-100 text-gray-600 active:scale-[0.98] transition-all disabled:opacity-50">
-                                Cancelar
-                            </button>
-                            <button (click)="confirmarSubida()" [disabled]="cargaMasivaService.isProcessing()"
-                                    class="flex-1 flex items-center justify-center gap-2 bg-brand-accent text-white py-2 rounded-xl font-semibold active:scale-[0.98] transition-all disabled:opacity-70">
-                                @if (cargaMasivaService.isProcessing()) {
-                                    <svg class="animate-spin size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                    Creando productos...
-                                } @else {
-                                    <app-icon name="cloud-upload" classes="size-5 fill-current" />
-                                    Confirmar y crear
-                                }
-                            </button>
+                    <div class="sticky bottom-0 z-40 w-full mt-auto pt-4 pb-1">
+                        
+                        <!-- EFECTO "ISLA FLOTANTE" -->
+                        <div class="p-2.5 bg-white border border-gray-200 rounded-2xl">
+                            <div class="max-w-lg mx-auto flex gap-3">
+                                <button (click)="cargaInicialService.reiniciarTodo()" [disabled]="cargaInicialService.isProcessing()"
+                                        class="px-4 py-2 rounded-xl font-semibold bg-gray-100 text-gray-600 active:scale-[0.98] transition-all md:hover:bg-gray-200 disabled:opacity-50">
+                                    Cancelar
+                                </button>
+                                <button (click)="confirmarSubida()" [disabled]="cargaInicialService.isProcessing()"
+                                        class="flex-1 flex items-center justify-center gap-2 bg-brand-accent text-white py-2 rounded-xl font-semibold active:scale-[0.98] transition-all md:hover:bg-brand-accent/90 disabled:opacity-70">
+                                    @if (cargaInicialService.isProcessing()) {
+                                        <svg class="animate-spin size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        Creando productos...
+                                    } @else {
+                                        <app-icon name="cloud-upload" classes="size-5 fill-current" />
+                                        Confirmar y crear
+                                    }
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
 
-            } @else if (!cargaMasivaService.selectedFile()) {
+            } @else if (!cargaInicialService.selectedFile()) {
                 
                 <div class="relative w-full p-5 rounded-2xl border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center text-center flex-1 group"
                     [class.border-brand-accent]="isDragging()"
@@ -103,7 +95,7 @@
                         (change)="onFileSelected($event)" 
                         accept=".xlsx, .xls" 
                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
-                        [disabled]="cargaMasivaService.isProcessing()">
+                        [disabled]="cargaInicialService.isProcessing()">
 
                     <div class="w-20 h-20 bg-brand-bg/60 rounded-full flex items-center justify-center text-brand-accent mb-4 transition-transform duration-300"
                         [class.scale-110]="isDragging()">
@@ -131,20 +123,20 @@
                                 </svg>
                             </div>
                             <div class="flex flex-col truncate">
-                                <span class="text-sm font-bold text-brand-text truncate">{{ cargaMasivaService.selectedFile()?.name }}</span>
+                                <span class="text-sm font-bold text-brand-text truncate">{{ cargaInicialService.selectedFile()?.name }}</span>
                                 <span class="text-xs font-medium text-green-600 mt-0.5">Listo para procesar</span>
                             </div>
                         </div>
 
-                        <button (click)="cargaMasivaService.reiniciarTodo()" [disabled]="cargaMasivaService.isProcessing()"
-                                class="shrink-0 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors active:scale-90 disabled:opacity-50">
+                        <button (click)="cargaInicialService.reiniciarTodo()" [disabled]="cargaInicialService.isProcessing()"
+                                class="shrink-0 p-2 text-gray-400 md:hover:text-red-500 md:hover:bg-red-50 rounded-full transition-colors active:scale-90 disabled:opacity-50">
                             <app-icon name="close" classes="size-5 fill-current" />
                         </button>
                     </div>
 
-                    <button (click)="cargaMasivaService.iniciarProceso()" [disabled]="cargaMasivaService.isProcessing()"
+                    <button (click)="cargaInicialService.iniciarProceso()" [disabled]="cargaInicialService.isProcessing()"
                             class="w-full flex items-center justify-center gap-2 bg-brand-accent text-white py-3 rounded-xl font-bold active:scale-[0.98] transition-all md:hover:bg-brand-accent/90 disabled:opacity-70 disabled:cursor-not-allowed">
-                        @if (cargaMasivaService.isProcessing()) {
+                        @if (cargaInicialService.isProcessing()) {
                             <svg class="animate-spin size-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                             Procesando archivo...
                         } @else {

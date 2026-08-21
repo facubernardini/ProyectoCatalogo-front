@@ -9,7 +9,7 @@
          class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col animate-side-panel">
         
         <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 border-b border-gray-100 rounded-tl-4xl">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
                 <button (click)="productFormService.close()" 
                         class="group p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-all duration-300 active:scale-90 border border-gray-200/50">
                     <app-icon name="back" classes="size-5 text-gray-500 fill-current" />
@@ -20,9 +20,8 @@
                 </h2>
             </div>
 
-            <button (click)="guardar()" 
-                    [disabled]="esFormularioInvalido"
-                    class="relative px-7 py-2.5 bg-brand-accent text-white text-sm font-black rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
+            <button (click)="guardar()"
+                    class="relative px-4 py-2 bg-brand-accent text-white text-sm font-bold rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
                 
                 <div class="flex items-center gap-2">                 
                     <span>
@@ -59,7 +58,7 @@
                 </div>
             </section>
 
-            <section class="space-y-4">
+            <section class="space-y-3">
                 <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">General</p>
                 
                 <div class="flex flex-col gap-1.5">
@@ -104,8 +103,16 @@
 
                 <div class="pt-2">
                     <section class="space-y-2">
+                        <!-- CABECERA CON BOTÓN RÁPIDO -->
                         <div class="flex items-center justify-between">
-                            <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Categorías</p>
+                            <div class="flex items-center gap-2">
+                                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Categorías</p>
+                                <button type="button" (click)="abrirFormularioNuevaCategoria()" 
+                                        title="Crear nueva categoría"
+                                        class="flex items-center justify-center bg-brand-accent/10 text-brand-accent size-5 rounded-md md:hover:bg-brand-accent/20 active:scale-90 transition-all">
+                                    <app-icon name="add-producto" classes="size-3.5 fill-current" />
+                                </button>
+                            </div>
                             <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
                                 {{ producto.categorias_ids.length }} seleccionada(s)
                             </span>
@@ -159,8 +166,23 @@
                                             </button>
                                         </li>
                                     } @empty {
-                                        <li class="px-4 py-4 text-sm font-bold text-gray-400 text-center">
-                                            No se encontraron categorías.
+                                        <li class="px-4 py-5 flex flex-col items-center justify-center gap-3 text-center">
+                                            @if (adminStore.categorias().length > 0) {
+                                                <span class="text-sm font-bold text-gray-400">
+                                                    No encontramos "{{ searchQuery() }}"
+                                                </span>
+                                            }
+                                            
+                                            <button type="button" (click)="crearNuevaCategoriaRapida()" 
+                                                    class="flex items-center gap-1.5 text-xs font-bold text-brand-accent bg-brand-accent/10 px-4 py-2 rounded-xl active:scale-95 transition-all md:hover:bg-brand-accent/20">
+                                                <app-icon name="add-producto" classes="size-3.5 fill-current" />
+                                                
+                                                @if (searchQuery().trim()) {
+                                                    Crear categoría "{{ searchQuery().trim() }}"
+                                                } @else {
+                                                    Crear categoría
+                                                }
+                                            </button>
                                         </li>
                                     }
                                 </ul>
@@ -179,10 +201,6 @@
                                 }
                             </div>
                         }
-
-                        @if (adminStore.categorias().length === 0) {
-                            <p class="text-xs text-gray-400 italic mt-1">No hay categorías creadas todavía.</p>
-                        }
                     </section>
                 </div>
 
@@ -195,7 +213,6 @@
                     </div>
 
                     <div class="relative">
-                        
                         <button type="button" 
                                 (click)="toggleTagsDropdown($event)"
                                 [disabled]="adminStore.tags().length === 0"
@@ -239,10 +256,10 @@
                                                     [class.bg-brand-accent]="isTagSelected(tag.id)"
                                                     [class.border-gray-300]="!isTagSelected(tag.id)"
                                                     [class.bg-white]="!isTagSelected(tag.id)">
-                                                    
-                                                    @if (isTagSelected(tag.id)) {
-                                                        <app-icon name="check" classes="size-3.5 text-white fill-current" />
-                                                    }
+                                                
+                                                @if (isTagSelected(tag.id)) {
+                                                    <app-icon name="check" classes="size-3.5 text-white fill-current" />
+                                                }
                                             </div>
                                             
                                             @if (tag.icono) {
@@ -262,6 +279,21 @@
                             </div>
                         }
                     </div>
+
+                    @if (producto.tags_ids.length > 0) {
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            @for (tag of adminStore.tags(); track tag.id) {
+                                @if (isTagSelected(tag.id)) {
+                                    <span class="flex items-center gap-1.5 px-2 py-1 bg-gray-100 text-gray-500 text-[10px] font-semibold rounded-lg select-none animate-in zoom-in-95 duration-200">
+                                        @if (tag.icono) {
+                                            <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0 opacity-60"></div>
+                                        }
+                                        <span class="truncate max-w-37.5">{{ tag.nombre }}</span>
+                                    </span>
+                                }
+                            }
+                        </div>
+                    }
                 </section>
             </section>
 
@@ -270,7 +302,7 @@
                     <label class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad especial</label>
                     <button (click)="producto.destacado = !producto.destacado" 
                             [class]="producto.destacado ? 'bg-brand-accent text-white border-brand-accent shadow-md' : 'bg-gray-50 text-gray-400 border-gray-100'"
-                            class="flex items-center justify-center gap-2 h-11.5 rounded-xl border font-bold text-sm transition-all active:scale-95 w-full">
+                            class="flex items-center justify-center gap-2 h-10 rounded-xl border font-bold text-sm transition-all active:scale-95 w-full">
                         <app-icon name="star" [classes]="'size-4 ' + (producto.destacado ? 'fill-white' : 'fill-gray-400')" />
                         {{ producto.destacado ? 'Producto Destacado' : 'Destacar Producto' }}
                     </button>
@@ -280,12 +312,12 @@
             <section class="space-y-4 pb-12">
                 <div class="flex items-center justify-between pb-1">
                     <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Precios y Unidades</p>
-                    <button (click)="agregarPresentacion()" class="text-brand-accent text-xs font-bold active:scale-95">+ Agregar</button>
+                    <button (click)="agregarPresentacion()" class="text-xs font-medium text-brand-accent md:hover:opacity-80 transition-opacity">+ Agregar variante</button>
                 </div>
 
                 @for (pres of producto.presentaciones; track $index) {
                     <div [class]="!pres.activo ? 'opacity-60 grayscale-[0.5] bg-gray-100' : 'bg-gray-50'" 
-                        class="p-4 rounded-2xl border border-gray-100 relative group/item animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all">
+                        class="p-2 rounded-2xl border border-gray-100 relative group/item animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all">
                         
                         <button (click)="pres.activo = !pres.activo"
                                 [class]="pres.activo ? 'bg-green-500 text-white border-green-600' : 'bg-gray-400 text-white border-gray-500'"
@@ -300,27 +332,31 @@
                             </button>
                         }
 
-                        <div class="grid grid-cols-12 gap-3 mt-2">
+                        <div class="grid grid-cols-12 gap-1 mt-2">
+                            <!-- UNIDAD -->
                             <div class="col-span-12">
-                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Unidad</label>
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Unidad <span class="text-red-400">*</span></label>
                                 <input type="text" [(ngModel)]="pres.unidad_venta" 
                                     [class.border-red-300]="!pres.unidad_venta || pres.unidad_venta.trim() === ''"
                                     class="w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
                                     placeholder="Ej: 500 gr, Pack x6, Docena, Unidad">
                             </div>
+                            
+                            <!-- PRECIO -->
                             <div class="col-span-6">
-                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio</label>
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio Venta <span class="text-red-400">*</span></label>
                                 <div class="relative group/input">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 transition-colors group-focus-within/input:text-brand-accent">
                                         $
                                     </span>
                                     <input type="number" [(ngModel)]="pres.precio" 
                                         [class.border-red-300]="pres.precio === null || pres.precio <= 0"
-                                        class="w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        class="no-spinners w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
                                         placeholder="0.00">
                                 </div>
                             </div>
 
+                            <!-- PRECIO OFERTA -->
                             <div class="col-span-6">
                                 <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Precio oferta</label>
                                 <div class="relative group/input">
@@ -329,13 +365,40 @@
                                     </span>
                                     <input type="number" [(ngModel)]="pres.precio_descuento" 
                                         [class.border-red-400]="pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio"
-                                        class="w-full p-2.5 pl-7 bg-white border border-brand-accent/20 rounded-lg outline-none focus:border-brand-accent/50 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        class="no-spinners w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
                                         placeholder="Opcional">
                                 </div>
                                 
                                 @if (pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio) {
                                     <p class="text-[8px] text-red-500 font-black mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
-                                        EL PRECIO OFERTA DEBE SER MENOR
+                                        DEBE SER MENOR AL PRECIO
+                                    </p>
+                                }
+                            </div>
+
+                            <div class="col-span-6">
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1" title="Cuanto te costó a ti el producto. No visible para clientes.">Precio Costo</label>
+                                <div class="relative group/input">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 transition-colors group-focus-within/input:text-brand-accent">
+                                        $
+                                    </span>
+                                    <input type="number" [(ngModel)]="pres.precio_costo" 
+                                        class="no-spinners w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        placeholder="Opcional">
+                                </div>
+                            </div>
+
+                            <div class="col-span-6">
+                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Stock disponible</label>
+                                <div class="relative group/input">
+                                    <input type="number" min="0" [(ngModel)]="pres.stock" 
+                                        [class.border-red-400]="pres.stock === 0 || (pres.stock !== null && pres.stock < 0)"
+                                        class="no-spinners w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                        placeholder="Ilimitado">
+                                </div>
+                                @if (pres.stock === 0) {
+                                    <p class="text-[8px] text-red-500 font-black mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
+                                        EL STOCK DEBE SER MAYOR A 0
                                     </p>
                                 }
                             </div>

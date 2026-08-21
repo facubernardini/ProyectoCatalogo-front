@@ -8,6 +8,8 @@ import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { PedidosServiceBackend } from 'src/app/core/services-backend/pedidos.ServiceBackend';
+import { CrearPedidoRequest } from 'src/app/core/models/pedido.model';
 
 @Component({
   selector: 'app-carrito',
@@ -26,6 +28,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
         style({ transform: 'translateY(-10px)', opacity: 0 }),
         animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
       ])
+    ]),
+    trigger('popAnimationSimple', [
+      transition(':increment, :decrement', [
+        style({ opacity: 0 }),
+        animate('250ms ease-in-out', style({ opacity: 1 }))
+      ])
     ])
   ]
 })
@@ -34,11 +42,15 @@ export class Carrito {
   public cartService = inject(CartService);
   private pedidoRealizadoService = inject(PedidoRealizadoService);
   private toastService = inject(ToastService);
+  private pedidosServiceBackend = inject(PedidosServiceBackend);
 
   catalogo = this.adminStore.catalogo;
 
   nombreCliente = signal<string>('');
   direccionEnvio = signal<string>('');
+  telefonoCliente = signal<string>('');
+
+  isSubmitting = signal<boolean>(false);
 
   itemParaEliminar = signal<number | null>(null);
   private timeoutEliminar: any;
@@ -54,7 +66,7 @@ export class Carrito {
         );
 
         if (!cat.ofrece_envio) {
-          this.cartService.setDeliveryMethod('retiro');
+          this.cartService.setDeliveryMethod('Retiro');
         }
       }
     });
@@ -73,12 +85,13 @@ export class Carrito {
     const tieneEntrega = this.cartService.deliveryMethod() !== null;
     const tienePago = this.cartService.selectedPaymentMethod() !== null;
     const nombreValido = this.nombreCliente().trim().length > 3;
+    const telefonoValido = this.telefonoCliente().length === 10;
     
-    const direccionValida = this.cartService.deliveryMethod() === 'envio' 
+    const direccionValida = this.cartService.deliveryMethod() === 'Envio' 
         ? this.direccionEnvio().trim().length > 5 
         : true;
     
-    return tieneItems && cumpleMinimo && tieneEntrega && tienePago && nombreValido && direccionValida;
+    return tieneItems && cumpleMinimo && tieneEntrega && tienePago && nombreValido && telefonoValido && direccionValida;
   });
 
   manejarClickRestar(item: any) {
@@ -101,6 +114,11 @@ export class Carrito {
   }
 
   manejarClickSumar(item: any) {
+    if (!this.puedeIncrementar(item)) {
+      this.toastService.show('Se alcanzó el límite de stock disponible', 'error');
+      return;
+    }
+
     if (this.itemParaEliminar() === item.presentacionId) {
       this.itemParaEliminar.set(null);
       clearTimeout(this.timeoutEliminar);
@@ -108,16 +126,27 @@ export class Carrito {
     this.cartService.sumarUno(item.presentacionId);
   }
 
+  puedeIncrementar(item: any): boolean {
+    const permiteVentaSinStock = this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
+    if (permiteVentaSinStock) return true;
+
+    // Buscamos el producto y la presentación actual en el store
+    const producto = this.adminStore.productos().find(p => p.id === item.productoId);
+    const presentacion = producto?.presentaciones.find(p => p.id === item.presentacionId);
+
+    // Si por alguna razón no lo encuentra o tiene stock infinito (null), lo dejamos pasar
+    if (!presentacion || presentacion.stock === null) return true;
+
+    return item.cantidad < presentacion.stock;
+  }
+
   getPorcentaje(base: number, oferta: number): number {
     if (!base || base <= 0) return 0;
     return Math.round(((base - oferta) / base) * 100);
   }
 
-  seleccionarMetodo(metodo: 'envio' | 'retiro', element: HTMLElement) {
+  seleccionarMetodo(metodo: 'Envio' | 'Retiro') {
     this.cartService.setDeliveryMethod(metodo);
-    setTimeout(() => {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
   }
 
   seleccionarPago(mp: any, element: HTMLElement) {
@@ -125,6 +154,39 @@ export class Carrito {
     setTimeout(() => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+  }
+
+  onTelefonoInput(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    
+    let valorLimpio = inputElement.value.replace(/[^0-9]/g, '');
+    
+    if (valorLimpio.length > 10) {
+      valorLimpio = valorLimpio.substring(0, 10);
+    }
+
+    inputElement.value = valorLimpio;
+    
+    this.telefonoCliente.set(valorLimpio);
+  }
+
+  limpiarFormulario() {
+    this.cartService.setDeliveryMethod(null as any);
+    this.cartService.selectPaymentMethod(null as any);
+    this.nombreCliente.set('');
+    this.direccionEnvio.set('');
+    this.telefonoCliente.set('');
+    
+    if (this.cartService.appliedCupon()) {
+      this.cartService.removerCupon();
+    }
+
+    const cat = this.catalogo();
+    if (cat && !cat.ofrece_envio) {
+      this.cartService.setDeliveryMethod('Retiro');
+    }
+
+    this.toastService.show('Se han limpiado tus datos', 'info');
   }
 
   finalizarPedido() {
@@ -156,90 +218,132 @@ export class Carrito {
       return;
     }
 
-    if (this.cartService.deliveryMethod() === 'envio' && this.direccionEnvio().trim().length <= 5) {
+    if (this.cartService.deliveryMethod() === 'Envio' && this.direccionEnvio().trim().length <= 5) {
       this.toastService.show('Ingresá la dirección de envío', 'error');
       document.getElementById('seccion-datos')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
     const items = this.cartService.items();
-    const envio = this.cartService.deliveryMethod() === 'envio';
-    const pago = this.cartService.selectedPaymentMethod()?.nombre;
+    const envio = this.cartService.deliveryMethod() === 'Envio';
     const cupon = this.cartService.appliedCupon();
+    const catalogoId = this.catalogo()?.id;
+    const metodoPago = this.cartService.selectedPaymentMethod()?.nombre;
+    const deliveryMethod = this.cartService.deliveryMethod() || 'Retiro';
+
+    if (!catalogoId) {
+      this.toastService.show('Error al identificar el catálogo', 'error');
+      return;
+    }
+
+    let costoEnvioFinal = 0;
     
-    const descuentoEfectivo = this.cartService.cashDiscountAmount();
-    const porcentajeEfectivo = this.cartService.catalogConfig()?.descuentoEfectivo;
-    
-    // --- INICIO DEL MENSAJE ---
-    let mensaje = `🛎️ NUEVO PEDIDO de *${this.nombreCliente().trim()}*\n\n`;
-
-    if (envio) {
-      mensaje += `🛵 Envío a domicilio: *${this.direccionEnvio().trim()}*\n`;
-    } else {
-      mensaje += `🏪 Retiro en el local\n`;
-    }
-
-    mensaje += `💵 Medio de pago: *${pago}*\n\n`;
-
-    // Productos
-    mensaje += `🛒 *Detalle del pedido*\n`;
-    mensaje += ` ────────────────\n`;
-    items.forEach(item => {
-      const subtotalItem = item.precio * item.cantidad;
-      
-      let lineaItem = `• ${item.cantidad} x ${item.nombre} (${item.unidad}): *$${subtotalItem.toLocaleString('es-AR')}*`;
-      
-      if (item.cantidad >= 2) {
-        lineaItem += ` _($${item.precio.toLocaleString('es-AR')} c/u)_`; 
-      }
-      
-      mensaje += lineaItem + `\n`;
-    });
-    mensaje += ` ────────────────\n\n`;
-
-    // Resumen
-    mensaje += `🧾 *Resumen de cuenta*\n`;
-    mensaje += `🛍️ Productos: *$${this.cartService.subtotalPrice().toLocaleString('es-AR')}*\n`;
-
-    if (cupon) {
-      mensaje += `🎟️ Cupón (${cupon.codigo}): *-$${this.cartService.discountAmount().toLocaleString('es-AR')}*\n`;
-    }
-
-    if (descuentoEfectivo > 0 && porcentajeEfectivo) {
-      mensaje += `💸 Dto. pago en efectivo (${porcentajeEfectivo}%): *-$${descuentoEfectivo.toLocaleString('es-AR')}*\n`;
-    }
-
-    if (envio) {
+    if (envio && this.catalogo()) {
       if (this.cartService.esEnvioGratis()) {
-        mensaje += `🛵 Costo de envío: *Bonificado*\n`;
+        costoEnvioFinal = 0;
       } else {
-        const costoEnvioSeguro = Number(this.catalogo()?.costo_envio || 0);
-        mensaje += `🛵 Costo de envío: *$${costoEnvioSeguro.toLocaleString('es-AR')}*\n`;
+        costoEnvioFinal = Number(this.catalogo()?.costo_envio) || 0;
       }
     }
 
-    // Total final
-    mensaje += `\n`;
-    mensaje += `💰 *TOTAL:   $${this.cartService.totalFinal().toLocaleString('es-AR')}*`;
+    // 3. Armamos el Payload (CrearPedidoRequest) para el backend
+    const payload: CrearPedidoRequest = {
+      catalogo_id: Number(catalogoId),
+      comprador_nombre: this.nombreCliente().trim(),
+      comprador_direccion: envio ? this.direccionEnvio().trim() : null,
+      comprador_telefono: this.telefonoCliente() ? this.telefonoCliente() : null,
+      metodo_entrega: deliveryMethod,
+      costo_envio: costoEnvioFinal,
+      metodo_pago: String(metodoPago),
+      cupon_codigo: cupon ? cupon.codigo : null,
+      productos: items.map(item => ({
+        producto_id: item.productoId,
+        presentacion_id: item.presentacionId,
+        cantidad: item.cantidad
+      }))
+    };
 
-    // --- FIN DEL MENSAJE ---
+    this.isSubmitting.set(true);
 
-    const phone = this.catalogo()?.wpp_numero;
-    const url = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
-    
-    const metodo = this.cartService.deliveryMethod() || 'retiro';
+    // 4. Llamamos al backend para registrar la compra
+    this.pedidosServiceBackend.registrarPedido(payload).subscribe({
+      next: (response) => {
+        const numeroPedidoFormateado = `#${response.numero_pedido}`;
 
-    window.open(url, '_blank');
+        // 5. Armamos el mensaje de WhatsApp incluyendo el Número de Pedido
+        let mensaje = `🛎️ NUEVO PEDIDO ${numeroPedidoFormateado} de *${this.nombreCliente().trim()}*\n\n`;
 
-    this.enviarAlertaTelegram(mensaje);
+        if (envio) {
+          mensaje += `🛵 Envío a domicilio: *${this.direccionEnvio().trim()}*\n`;
+        } else {
+          mensaje += `🏪 Retiro en el local\n`;
+        }
 
-    this.cartService.limpiarCarrito(true);
-    this.nombreCliente.set('');
-    this.direccionEnvio.set('');
+        mensaje += `💵 Medio de pago: *${this.cartService.selectedPaymentMethod()?.nombre}*\n\n`;
 
-    setTimeout(() => {
-      this.pedidoRealizadoService.open(metodo, url);
-    }, 5000);
+        // Productos
+        mensaje += `🛒 *Detalle del pedido*\n`;
+        mensaje += ` ────────────────\n`;
+        items.forEach(item => {
+          const subtotalItem = item.precio * item.cantidad;
+          let lineaItem = `• ${item.cantidad} x ${item.nombre} (${item.unidad}): *$${subtotalItem.toLocaleString('es-AR')}*`;
+          if (item.cantidad >= 2) {
+            lineaItem += ` _($${item.precio.toLocaleString('es-AR')} c/u)_`; 
+          }
+          mensaje += lineaItem + `\n`;
+        });
+        mensaje += ` ────────────────\n\n`;
+
+        // Resumen
+        mensaje += `🧾 *Resumen de cuenta*\n`;
+        mensaje += `🛍️ Productos: *$${this.cartService.subtotalPrice().toLocaleString('es-AR')}*\n`;
+
+        if (cupon) {
+          mensaje += `🎟️ Cupón (${cupon.codigo}): *-$${this.cartService.discountAmount().toLocaleString('es-AR')}*\n`;
+        }
+
+        const descuentoEfectivo = this.cartService.cashDiscountAmount();
+        const porcentajeEfectivo = this.cartService.catalogConfig()?.descuentoEfectivo;
+        if (descuentoEfectivo > 0 && porcentajeEfectivo) {
+          mensaje += `💸 Dto. pago en efectivo (${porcentajeEfectivo}%): *-$${descuentoEfectivo.toLocaleString('es-AR')}*\n`;
+        }
+
+        if (envio) {
+          if (this.cartService.esEnvioGratis()) {
+            mensaje += `🛵 Costo de envío: *Bonificado*\n`;
+          } else {
+            const costoEnvioSeguro = Number(this.catalogo()?.costo_envio || 0);
+            mensaje += `🛵 Costo de envío: *$${costoEnvioSeguro.toLocaleString('es-AR')}*\n`;
+          }
+        }
+
+        mensaje += `\n💰 *TOTAL:   $${this.cartService.totalFinal().toLocaleString('es-AR')}*`;
+
+        // 6. Ejecutamos las acciones finales
+        const phone = this.catalogo()?.wpp_numero;
+        const url = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
+        
+        window.open(url, '_blank');
+        
+        this.cartService.limpiarCarrito(true);
+        this.nombreCliente.set('');
+        this.direccionEnvio.set('');
+        this.telefonoCliente.set('');
+
+        this.isSubmitting.set(false);
+
+        this.enviarAlertaTelegram(mensaje);
+
+        setTimeout(() => {
+          this.pedidoRealizadoService.open(url);
+        }, 5000);
+      },
+      error: (err) => {
+        console.error('Error al registrar pedido', err);
+        this.toastService.show('Ups! Algo salió mal, vuelve a intentarlo', 'error');
+        this.isSubmitting.set(false);
+      }
+    });
   }
 
   // Prueba temporal

@@ -15,21 +15,11 @@ export class ProductSelectorService {
 
   private overflowAnterior = ''; 
 
-  constructor() {
-    window.addEventListener('popstate', () => {
-      if (this.isOpen()) {
-        this.cerrarModalInterno();
-      }
-    });
-  }
-
   open(producto: Producto, fromModal: boolean = false) {
     if (this.closeTimeoutId) {
       clearTimeout(this.closeTimeoutId);
       this.closeTimeoutId = null;
     }
-
-    const yaEstabaAbierto = this.isOpen();
     
     this.selectedProduct.set(producto);
     this.preventScrollRestore.set(fromModal);
@@ -37,21 +27,9 @@ export class ProductSelectorService {
 
     this.overflowAnterior = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-
-    if (!yaEstabaAbierto) {
-      history.pushState({ modal: 'product-selector' }, '');
-    }
   }
 
   close() {
-    this.cerrarModalInterno();
-
-    if (history.state?.modal === 'product-selector') {
-      history.back();
-    }
-  }
-
-  private cerrarModalInterno() {
     if (!this.isOpen()) return;
 
     this.isOpen.set(false);

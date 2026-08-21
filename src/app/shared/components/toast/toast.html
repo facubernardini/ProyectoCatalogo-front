@@ -6,7 +6,8 @@
             
             <div class="relative size-6 rounded-full flex items-center justify-center shrink-0 overflow-hidden transition-colors duration-300"
                 [class.bg-green-600]="toast.type === 'success'"
-                [class.bg-red-500]="toast.type === 'error'">
+                [class.bg-red-500]="toast.type === 'error'"
+                [class.bg-blue-500]="toast.type === 'info'">
                 
                 <div class="absolute inset-0 flex items-center justify-center transition-all duration-300"
                     [class.opacity-100]="toast.type === 'loading'"
@@ -27,7 +28,7 @@
                     [class.scale-50]="toast.type === 'loading'"
                     [class.opacity-100]="toast.type !== 'loading'"
                     [class.scale-100]="toast.type !== 'loading'">
-                    <app-icon [name]="toast.type === 'success' ? 'check' : 'alert'" classes="size-4 fill-white" />
+                    <app-icon [name]="toast.type === 'success' ? 'check' : (toast.type === 'info' ? 'info-toast' : 'alert')" classes="size-4 fill-white" />
                 </div>
             </div>
 

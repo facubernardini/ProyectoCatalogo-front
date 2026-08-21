@@ -1,7 +1,7 @@
 <div (click)="productSelectorService.open(producto())"
     class="bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_3px_10px_rgb(0,0,0,0.1)] hover:border-brand-accent/50 border border-gray-100 transition-all duration-300 cursor-pointer group/card flex h-full">
     
-    <div class="p-3 flex flex-col flex-1 min-w-0">
+    <div class="p-3 pb-2 flex flex-col flex-1 min-w-0">
         
         <div class="mb-auto">
             <h3 class="font-bold text-brand-text text-xs xl:text-sm line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
@@ -37,7 +37,7 @@
         </div>
 
         <div class="flex flex-wrap gap-1.5 mt-auto mb-1.5 pt-2">
-            @for (pres of producto().presentaciones.slice(0, 3); track pres.id) {
+            @for (pres of presentacionesDisponibles().slice(0, 3); track pres.id) {
                 
                 <div class="relative">
                     <span class="block text-[10px] font-semibold px-2 py-1 rounded-md border uppercase transition-colors"
@@ -55,41 +55,50 @@
                 </div>
 
             }
-            @if (producto().presentaciones.length > 3) {
+            
+            @if (presentacionesDisponibles().length > 3) {
                 <span class="text-[10px] font-black text-brand-accent self-center ml-1">
-                    +{{ producto().presentaciones.length - 3 }}
+                    +{{ presentacionesDisponibles().length - 3 }}
                 </span>
             }
         </div>
 
-        <div class="flex items-center justify-between pt-1.5 border-t border-gray-100">
+        <div class="flex items-center justify-between pt-1.5 border-t border-gray-100 min-h-8">
             <div class="flex items-baseline gap-1.5">
-                @let cheapest = getMejorOferta(producto().presentaciones);
+                @if (mejorOferta(); as cheapest) {
+                    
+                    @if (presentacionesDisponibles().length > 1) {
+                        <span class="mr-0.5 text-[9px] xl:text-[10px] text-gray-500 font-semibold uppercase tracking-tight">
+                            Desde
+                        </span>
+                    }
 
-                @if (producto().presentaciones.length > 1) {
-                    <span class="mr-0.5 text-[9px] xl:text-[10px] text-gray-500 font-semibold uppercase tracking-widest">
-                        Desde
-                    </span>
-                }
-
-                @if (cheapest && cheapest.precio_descuento) {
-                    <span class="text-[11px] xl:text-xs text-gray-400 line-through font-semibold mr-1">
-                        ${{ cheapest.precio }}
-                    </span>
-                    <span class="text-brand-text font-bold text-sm xl:text-base leading-none">
-                        ${{ cheapest.precio_descuento }}
-                    </span>
+                    @if (cheapest.precio_descuento) {
+                        <span class="text-[11px] xl:text-xs text-gray-400 line-through font-semibold mr-1 tracking-tighter">
+                            ${{ cheapest.precio | number:'1.0-0' }}
+                        </span>
+                        <span class="text-brand-text font-bold text-sm xl:text-base leading-none tracking-tighter">
+                            ${{ cheapest.precio_descuento | number:'1.0-0' }}
+                        </span>
+                    } @else {
+                        <span class="text-brand-text font-bold text-sm xl:text-base leading-none tracking-tighter">
+                            ${{ cheapest.precio | number:'1.0-0' }}
+                        </span>
+                    }
+                    
                 } @else {
-                    <span class="text-brand-text font-bold text-sm xl:text-base leading-none">
-                        ${{ cheapest?.precio }}
-                    </span>
+                    <div class="flex items-center gap-1.5 px-2 py-0.5 bg-gray-50 border border-gray-200/80 rounded-lg select-none">
+                        <span class="text-[10px] font-bold text-brand-text uppercase tracking-wider mt-px">
+                            Agotado
+                        </span>
+                    </div>
                 }
             </div>
         </div>
 
     </div>
 
-    <div class="p-3 pl-0 shrink-0 flex flex-col justify-center">
+    <div class="p-3 pb-2 pl-0 shrink-0 flex flex-col justify-center">
         <div class="relative w-32 xl:w-36 aspect-square rounded-xl overflow-hidden shrink-0"
             [class.animate-pulse]="!imageLoaded() && producto().imagen">
             
@@ -104,7 +113,10 @@
                     alt="Imagen de {{ producto().nombre }}"
                     class="absolute inset-0 w-full h-full object-cover group-hover/card:scale-105 transition-all duration-500 ease-out"
                     [class.opacity-0]="!imageLoaded()"
-                    [class.opacity-100]="imageLoaded()">
+                    
+                    [class.opacity-100]="imageLoaded() && !estaAgotado()"
+                    [class.opacity-70]="imageLoaded() && estaAgotado()"
+                    [class.grayscale]="estaAgotado()">
             }
         </div>
     </div>

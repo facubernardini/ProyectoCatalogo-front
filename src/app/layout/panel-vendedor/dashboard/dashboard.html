@@ -1,184 +1,282 @@
-<div class="min-h-svh flex flex-col">
-    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
-        <div class="flex items-center justify-between px-4 h-16 max-w-4xl mx-auto w-full">
-            
-            <button (click)="onLogout()" 
-                    class="p-2 text-brand-accent active:scale-95 transition-transform md:hover:bg-white/50 rounded-xl"
-                    aria-label="Cerrar sesión">
-                <app-icon name="logout" classes="size-7 fill-current rotate-180" />
-            </button>
+<div class="flex flex-col h-full w-full animate-in fade-in duration-500">
+    <main class="flex-1 bg-gray-50 p-3 overflow-y-auto">
+        
+        <div class="max-w-4xl mx-auto w-full flex flex-col gap-3">
 
-            <div class="flex-1 text-center px-2 overflow-hidden">
-                <p class="text-brand-text text-sm font-medium leading-none mb-1">Hola,</p>
-                <h1 class="text-brand-accent font-bold text-base truncate">
-                    {{ adminStore.catalogo()?.nombre_tienda || 'Tu Tienda' }}!
-                </h1>
+            <!-- BANNER DE SUSCRIPCIÓN -->
+            @if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO || 
+            adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA) {
+            
+                <div class="flex items-start sm:items-center justify-between gap-3 px-3 py-2.5 rounded-xl border transition-all"
+                    [class.bg-amber-50/80]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                    [class.border-amber-200/50]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                    [class.text-amber-800]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                    [class.bg-red-50/80]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA"
+                    [class.border-red-200/50]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA"
+                    [class.text-red-800]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA">
+                    
+                    <div class="flex items-start gap-2.5 min-w-0">
+                        <app-icon [name]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO ? 'time' : 'close-circle'" 
+                                classes="size-4 shrink-0 mt-0.5 fill-current" 
+                                [class.text-amber-500]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                                [class.text-red-500]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA"/>
+
+                        <div class="flex flex-col">
+                            
+                            @if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO) {
+                                <span class="text-xs font-medium leading-snug">
+                                    <b class="font-bold">Pago pendiente:</b> Tenés {{ (diasRestantes() !== null && diasRestantes()! < 0) ? (diasParaPagar + diasRestantes()!) : diasParaPagar }} días para renovar tu plan antes de que tu tienda se oculte.
+                                </span>
+                            } 
+                            
+                            @if (adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA) {
+                                <span class="text-xs font-medium leading-snug">
+                                    <b class="font-bold">Suscripción vencida:</b> Tu tienda está oculta. Renová para volver a activarla.
+                                </span>
+                            }
+
+                        </div>
+                    </div>
+
+                    <button (click)="renovarSuscripcion()"
+                            class="shrink-0 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-lg transition-colors active:scale-95"
+                            [class.bg-amber-500]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                            [class.md:hover:bg-amber-600]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
+                            [class.bg-red-500]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA"
+                            [class.md:hover:bg-red-600]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.CANCELADA">
+                        Renovar
+                    </button>
+                </div>
+            }
+            
+            <!-- CARD 1: PREVIEW DE PEDIDOS -->
+            <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group">
+                <!-- CABECERA -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <app-icon name="receipt" classes="size-4 fill-current text-gray-400" />
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Pedidos Nuevos</h2>
+                    </div>
+                    
+                    <button 
+                        class="flex items-center gap-0.5 text-[10px] font-bold text-brand-accent uppercase tracking-wide px-2.5 py-1.5 bg-brand-bg rounded-lg md:hover:bg-brand-accent/20 transition-colors"
+                        (click)="pedidoFormService.open()">
+                        
+                        <app-icon name="add-producto" classes="size-3 fill-current" />
+                        <span>Crear</span>
+                        
+                    </button>
+                </div>
+
+                <!-- LISTA RÁPIDA DE PEDIDOS PENDIENTES -->
+                @if (pedidosPendientes().length > 0) {
+                    <div class="flex flex-col gap-2">
+                        @for (pedido of pedidosPendientes() | slice:0:2; track pedido.id) {
+                            <div (click)="abrirDetallePedido(pedido)" 
+                                class="flex items-center justify-between p-2.5 bg-gray-50/80 border border-gray-100 rounded-xl cursor-pointer md:hover:bg-gray-100/80 transition-all [&:not(:has(button:active))]:active:scale-[0.98]">
+                                
+                                <!-- Info básica del pedido -->
+                                <div class="flex flex-col min-w-0 pr-2 flex-1">
+                                    <div class="flex items-center gap-1.5 mb-0.5">
+                                        <span class="text-[10px] font-black text-gray-500 uppercase tracking-wider">#{{ pedido.numero_pedido }}</span>
+                                        <span class="size-1 rounded-full bg-gray-400"></span>
+                                        <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">{{ pedido.creado_el | date:'dd MMM, HH:mm' }}</span>
+                                    </div>
+                                    <span class="text-xs font-bold text-brand-text truncate leading-tight">{{ pedido.comprador_nombre }}</span>
+                                </div>
+
+                                <!-- Precio y Acciones Rápidas -->
+                                <div class="flex items-center gap-2 shrink-0">
+                                    
+                                    <!-- Monto Final -->
+                                    <span class="text-sm font-black text-emerald-600 tracking-tight">
+                                        ${{ pedido.total_final | number:'1.0-0' }}
+                                    </span>
+
+                                    <!-- Botones -->
+                                    <div class="flex items-center gap-1.5">
+                                        <button (click)="$event.stopPropagation(); finalizarPedido(pedido)" 
+                                                title="Marcar como Entregado"
+                                                class="size-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-lg md:hover:bg-emerald-500 md:hover:text-white active:scale-90 transition-all">
+                                            <app-icon name="check" classes="size-4 fill-current" />
+                                        </button>
+                                        
+                                        <button (click)="$event.stopPropagation(); cancelarPedido(pedido)" 
+                                                title="Cancelar Pedido"
+                                                class="size-8 flex items-center justify-center bg-red-50 text-red-400 rounded-lg md:hover:bg-red-500 md:hover:text-white active:scale-90 transition-all">
+                                            <app-icon name="close" classes="size-3.5 fill-current" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (pedidosPendientes().length > 2) {
+                            <div routerLink="../mis-pedidos" 
+                                [queryParams]="{ estado: estadoPedido.PENDIENTE }" 
+                                class="text-center text-[10px] font-semibold text-gray-500 uppercase pt-0.5 cursor-pointer md:hover:text-brand-accent transition-colors">
+                                +{{ pedidosPendientes().length - 2 }} {{ (pedidosPendientes().length - 2) === 1 ? 'pedido' : 'pedidos' }} más
+                            </div>
+                        }
+                    </div>
+                } @else {
+                    <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
+                        ¡Todo al día! No tenés pedidos pendientes.
+                    </div>
+                }
             </div>
 
-            <button [routerLink]="['../perfil']"
-                class="p-2 text-brand-accent active:scale-95 transition-transform hover:bg-white/50 rounded-xl"
-                aria-label="Mi perfil">
-                <app-icon name="profile" classes="size-7 fill-current" />
-            </button>
-
-        </div>
-    </header>
-
-    <main class="flex-1 bg-gray-50 p-3 md:p-8">
-        
-        <div class="max-w-4xl mx-auto w-full flex flex-col">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <!-- CARD 2: GESTIÓN DE INVENTARIO -->
+            <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group">
                 
-                <button [routerLink]="['../mis-productos']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="shop-bag" classes="size-6 fill-current text-brand-accent" />
-                        </div>
+                <!-- CABECERA -->
+                <div class="flex items-center gap-2 mb-3">
+                    <app-icon name="box" classes="size-4 fill-current text-gray-400" />
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Bajo Stock</h2>
+                </div>
+
+                <!-- LISTA RÁPIDA (Máximo 3) -->
+                @if (presentacionesBajoStock().length > 0) {
+                    <div class="flex flex-col gap-2">
+                        @for (item of presentacionesBajoStock() | slice:0:2; track item.productoNombre + item.unidad) {
+                            <div (click)="abrirDetalleProducto(item.producto)" 
+                                class="flex items-center justify-between p-2 bg-gray-50/80 border border-gray-100 rounded-xl cursor-pointer md:hover:bg-gray-100 transition-all active:scale-[0.98]">
+                                
+                                <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                                    <!-- Mini imagen -->
+                                    <div class="size-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
+                                        @if (item.imagen) {
+                                            <img [src]="item.imagen" class="w-full h-full object-cover">
+                                        } @else {
+                                            <app-icon name="photo" classes="size-3.5 fill-current text-gray-300" />
+                                        }
+                                    </div>
+
+                                    <!-- Detalles -->
+                                    <div class="flex flex-col min-w-0">
+                                        <span class="text-xs font-bold text-gray-800 truncate leading-tight">{{ item.productoNombre }}</span>
+                                        <span class="text-[10px] font-medium text-gray-500">{{ item.unidad }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Badge de Stock -->
+                                <span class="px-1.5 py-0.5 bg-white border border-amber-300 rounded-md text-[10px] font-bold text-amber-600 shrink-0">
+                                    {{ item.stock === 1 ? 'Queda' : 'Quedan' }} {{ item.stock }}
+                                </span>
+                            </div>
+                        }
                         
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Mis productos
-                            </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Agrega, elimina o edita tus productos
-                            </span>
-                        </div>
+                        @if (presentacionesBajoStock().length > 2) {
+                            <div routerLink="../mis-productos" 
+                                [queryParams]="{ filtro: 'bajo_stock' }" 
+                                class="text-center text-[10px] font-semibold text-gray-500 uppercase pt-0.5 cursor-pointer md:hover:text-brand-accent transition-colors">
+                                +{{ presentacionesBajoStock().length - 2 }} {{ (presentacionesBajoStock().length - 2) === 1 ? 'artículo' : 'artículos' }} más
+                            </div>
+                        }
+                    </div>
+                } @else {
+                    <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
+                        Ningún producto por agotarse.
+                    </div>
+                }
+            </div>
+
+            <!-- Otras opciones -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                
+                <!-- Botón Cupones -->
+                <button routerLink="../mis-cupones"
+                        class="flex items-center gap-3 bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all text-left group">
+                    
+                    <div class="shrink-0 p-2 bg-amber-100 rounded-xl text-amber-500">
+                        <app-icon name="ticket" classes="size-4.5 fill-current" />
+                    </div>
+                    
+                    <div class="flex flex-col min-w-0 flex-1">
+                        <span class="text-brand-text font-bold text-sm leading-tight md:group-hover:text-brand-accent transition-colors">
+                            Cupones de descuento
+                        </span>
+                        <span class="text-gray-500 text-xs truncate">
+                            Creá cupones de descuento para tus clientes
+                        </span>
                     </div>
 
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
+                    <app-icon name="chevron-right" classes="size-4 fill-current text-brand-accent shrink-0 md:group-hover:text-brand-accent transition-colors" />
                 </button>
 
-                <button [routerLink]="['../mis-categorias']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="shop-tag" classes="size-6 fill-current text-brand-accent" />
-                        </div>
-                        
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Mis categorías
-                            </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Organiza tus productos en categorías
-                            </span>
-                        </div>
+                <!-- Botón Categorías -->
+                <button routerLink="../mis-categorias"
+                        class="flex items-center gap-3 bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all text-left group">
+                    
+                    <div class="shrink-0 p-2 bg-brand-accent/10 rounded-xl text-brand-accent">
+                        <app-icon name="category" classes="size-4.5 fill-current" />
+                    </div>
+                    
+                    <div class="flex flex-col min-w-0 flex-1">
+                        <span class="text-brand-text font-bold text-sm leading-tight md:group-hover:text-brand-accent transition-colors">
+                            Gestionar categorías
+                        </span>
+                        <span class="text-gray-500 text-xs truncate">
+                            Organizá tus productos en categorías
+                        </span>
                     </div>
 
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
+                    <app-icon name="chevron-right" classes="size-4 fill-current text-brand-accent shrink-0 md:group-hover:text-brand-accent transition-colors" />
                 </button>
 
-                <button [routerLink]="['../mis-cupones']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="ticket" classes="size-6 fill-current text-brand-accent" />
+                <!-- Botón Carga Inicial -->
+                @if (adminStore.productos().length === 0){
+                    <button routerLink="../carga-inicial"
+                            class="flex items-center gap-3 bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all text-left group">
+                        
+                        <div class="shrink-0 p-2 bg-brand-accent/10 rounded-xl text-brand-accent">
+                            <app-icon name="cloud-upload" classes="size-4.5 fill-current" />
                         </div>
                         
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Mis cupones
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="text-brand-text font-bold text-sm leading-tight md:group-hover:text-brand-accent transition-colors">
+                                Carga Inicial
                             </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Crea cupones de descuento
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
-                </button>
-
-                <button [routerLink]="['../carga-masiva']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="cloud-upload" classes="size-6 fill-current text-brand-accent" />
-                        </div>
-                        
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Carga masiva
-                            </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
+                            <span class="text-gray-500 text-xs truncate">
                                 Sube tus productos desde un Excel
                             </span>
                         </div>
-                    </div>
+    
+                        <app-icon name="chevron-right" classes="size-4 fill-current text-brand-accent shrink-0 md:group-hover:text-brand-accent transition-colors" />
+                    </button>
+                }
 
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
-                </button>
+            </div>
 
-                <button [routerLink]="['../mi-tienda']"
-                    class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                    >
-                    <div class="flex items-center gap-4">
-                        <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
-                            <app-icon name="shop" classes="size-6 fill-current text-brand-accent" />
+            <!-- BOTONES INFERIORES (Catálogo Público y Copiar) -->
+            <div class="flex items-stretch gap-2 w-full pb-2 mt-1 pt-3.5 border-t border-gray-200">
+    
+                <button (click)="verCatalogoPublico()"
+                        class="flex-1 flex items-center justify-between bg-white border border-gray-200 p-2 rounded-2xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all group">
+                    <div class="flex items-center gap-3">
+                        <div class="shrink-0 p-2 bg-brand-accent/10 rounded-xl text-brand-accent">
+                            <app-icon name="web" classes="size-5 fill-current" />
                         </div>
                         
-                        <div class="flex flex-col items-start text-left">
-                            <span class="text-brand-text font-bold text-lg leading-tight">
-                                Mi tienda
+                        <div class="flex flex-col items-start text-left ">
+                            <span class="text-brand-text font-bold text-sm leading-tight">
+                                Ver mi catálogo
                             </span>
-                            <span class="text-brand-text-sec text-xs sm:text-sm">
-                                Configura tu catálogo online
+                            <span class="text-gray-500 text-xs">
+                                Vista la tienda que ven tus clientes
                             </span>
                         </div>
                     </div>
-
-                    <div class="text-brand-accent group-hover:translate-x-1 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </div>
                 </button>
+
+                <button (click)="copiarLinkCatalogo()"
+                        title="Copiar enlace para clientes"
+                        class="shrink-0 flex items-center justify-center bg-white border border-gray-200 px-4 rounded-2xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 transition-all text-gray-600 md:hover:bg-gray-100">
+                    <app-icon name="copy" classes="size-5 fill-current" />
+                </button>
+
             </div>
 
-            <div class="py-4 md:py-6">
-                <div class="h-px bg-gray-200 w-full"></div>
-            </div>
-
-            <button (click)="verCatalogoPublico()"
-                class="w-full flex items-center justify-between bg-white border border-brand-bg p-4 rounded-2xl shadow-sm shadow-blue-100/50 active:scale-[0.98] md:hover:shadow-md md:hover:border-blue-200 transition-all duration-200 group"
-                >
-                <div class="flex items-center gap-4">
-                    <div class="shrink-0 p-2 bg-brand-accent rounded-xl text-brand-bg">
-                        <app-icon name="web" classes="size-6 fill-current text-brand-bg" />
-                    </div>
-                    
-                    <div class="flex flex-col items-start text-left">
-                        <span class="text-brand-text font-bold text-lg leading-tight">
-                            Ver mi catálogo
-                        </span>
-                        <span class="text-brand-text-sec text-xs sm:text-sm">
-                            Visita la tienda que ven tus clientes
-                        </span>
-                    </div>
-                </div>
-            </button>
-            
         </div>
     </main>
 </div>

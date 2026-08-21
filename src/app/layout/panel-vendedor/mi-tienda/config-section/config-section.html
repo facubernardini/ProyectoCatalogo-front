@@ -4,9 +4,9 @@
         
     <button type="button" 
             (click)="toggleEdit()" 
-            class="w-full flex items-center justify-between p-4 group outline-none">
+            class="w-full flex items-center justify-between p-3 group outline-none">
         
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3.5">
             <div class="shrink-0 p-2 bg-brand-bg rounded-xl text-brand-accent">
                 <app-icon [name]="icon()" classes="size-6 fill-current" />
             </div>
@@ -23,7 +23,7 @@
             </div>
         </div>
 
-        <div class="text-brand-accent transition-transform duration-300" [class.rotate-180]="editando()">
+        <div class="text-brand-accent transition-transform duration-300 mr-1" [class.rotate-180]="editando()">
             <app-icon name="chevron-down" classes="size-6 fill-current" />
         </div>
     </button>
