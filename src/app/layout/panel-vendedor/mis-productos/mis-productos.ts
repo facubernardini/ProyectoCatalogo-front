@@ -24,8 +24,6 @@ export class MisProductos {
   private categoryFormService = inject(CategoryFormService);
   private route = inject(ActivatedRoute);
   //private contextMenu = inject(ContextMenuService);
-
-  private scrollListener = this.onScroll.bind(this);
   
   public productManager = inject(ProductoManagerService); 
   public productPreviewService = inject(ProductPreviewService);
@@ -198,10 +196,7 @@ export class MisProductos {
       this.isBuscando.set(false);
     });
 
-    const scrollContainer = document.querySelector('main');
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', this.scrollListener);
-    }
+    window.addEventListener('scroll', this.handleInfiniteScroll, true);
 
     /*
     this.contextMenu.setOpciones([
@@ -219,10 +214,7 @@ export class MisProductos {
       this.searchSubscription.unsubscribe();
     }
 
-    const scrollContainer = document.querySelector('main');
-    if (scrollContainer) {
-      scrollContainer.removeEventListener('scroll', this.scrollListener);
-    }
+    window.removeEventListener('scroll', this.handleInfiniteScroll, true);
 
     //this.contextMenu.limpiar();
   }
@@ -404,18 +396,21 @@ export class MisProductos {
     this.isMenuUpward.set(false); 
   }
 
-  onScroll(event: Event) {
+  handleInfiniteScroll = (event: Event) => {
+    if (this.isCategoriaDropdownOpen() || this.isFiltrosOpen()) return;
+
+    const target = event.target as HTMLElement | Document;
+    const element = target instanceof Document ? target.documentElement : target as HTMLElement;
+    
     if (this.activeMenuId() !== null) {
       this.activeMenuId.set(null);
       this.isMenuUpward.set(false);
     }
-    this.isCategoriaDropdownOpen.set(false);
-    this.isFiltrosOpen.set(false);
 
-    const element = event.target as HTMLElement;
-    
-    if (element.scrollHeight - element.scrollTop <= element.clientHeight + 100) {
-      this.cargarMas();
+    if (element && element.scrollHeight) {
+      if (element.scrollHeight - element.scrollTop <= element.clientHeight + 100) {
+        this.cargarMas();
+      }
     }
   }
 

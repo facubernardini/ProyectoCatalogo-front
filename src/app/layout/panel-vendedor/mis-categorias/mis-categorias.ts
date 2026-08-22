@@ -72,12 +72,16 @@ export class MisCategorias {
       this.filtro.set(valor);
       this.isBuscando.set(false);
     });
+
+    window.addEventListener('scroll', this.cerrarMenuFlotante, true);
   }
 
   ngOnDestroy() {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
+
+    window.removeEventListener('scroll', this.cerrarMenuFlotante, true);
   }
 
   onSearchInput(valor: string) {
@@ -145,13 +149,11 @@ export class MisCategorias {
     this.isMenuUpward.set(false);
   }
 
-  @HostListener('window:scroll')
-  onScroll() {
+  cerrarMenuFlotante = () => {
     if (this.activeMenuId() !== null) {
       this.activeMenuId.set(null);
       this.isMenuUpward.set(false);
     }
-    this.isFiltrosOpen.set(false);
   }
 
   onToggleEspecial(categoria: CategoriaVendedor) {
