@@ -113,10 +113,14 @@ export class MisPedidos implements OnInit, OnDestroy {
         }
       }
     });
+
+    window.addEventListener('scroll', this.handleInfiniteScroll, true);
   }
 
   ngOnDestroy() {
     if (this.searchSubscription) this.searchSubscription.unsubscribe();
+
+    window.removeEventListener('scroll', this.handleInfiniteScroll, true);
   }
 
   onSearchInput(valor: string) {
@@ -206,12 +210,16 @@ export class MisPedidos implements OnInit, OnDestroy {
     });
   }
 
-  onScroll(event: Event) {
+  handleInfiniteScroll = (event: Event) => {
     if (!this.viendoHistorial()) return;
 
-    const element = event.target as HTMLElement;
-    if (element.scrollHeight - element.scrollTop <= element.clientHeight + 100) {
-      this.cargarHistorial();
+    const target = event.target as HTMLElement | Document;
+    const element = target instanceof Document ? target.documentElement : target as HTMLElement;
+
+    if (element && element.scrollHeight) {
+      if (element.scrollHeight - element.scrollTop <= element.clientHeight + 100) {
+        this.cargarHistorial();
+      }
     }
   }
 
