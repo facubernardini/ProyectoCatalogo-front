@@ -23,6 +23,7 @@ import { PedidosServiceBackend } from "../services-backend/pedidos.ServiceBacken
 import { EstadisticasServiceBackend } from "../services-backend/estadisticas.ServiceBackend";
 import { ResumenDiarioGraficoDTO, ResumenMensualDTO, TopCategoriaDTO, TopProductoDTO } from "../models/estadisticas.model";
 import { SuscripcionEstado } from "src/app/shared/enums/suscripcion.enum";
+import { TEST_EMAILS_BLACKLIST } from "../data/blacklist.data";
 
 declare var gtag: Function;
 
@@ -183,9 +184,19 @@ export class AdminStoreService {
       planes: this.suscripcionService.getPlanes(),
     }).subscribe({
       next: ({ vendedores, catalogos, historialSuscripciones, planes }) => {
-        this.vendedoresBackoffice.set(vendedores);
-        this.catalogosBackoffice.set(catalogos);
-        this.suscripcionesHistorialBackoffice.set(historialSuscripciones);
+
+        const vendedoresReales = vendedores.filter(v => 
+          !TEST_EMAILS_BLACKLIST.includes(v.correo.toLowerCase().trim())
+        );
+        
+        const idsVendedoresReales = vendedoresReales.map(v => v.id);
+
+        const catalogosReales = catalogos.filter(c => idsVendedoresReales.includes(c.vendedor_id));
+        const historialSuscripcionesReal = historialSuscripciones.filter(s => idsVendedoresReales.includes(s.vendedor_id));
+
+        this.vendedoresBackoffice.set(vendedoresReales);
+        this.catalogosBackoffice.set(catalogosReales);
+        this.suscripcionesHistorialBackoffice.set(historialSuscripcionesReal);
         this.planesSuscripcionBackoffice.set(planes);
         
         this.isLoading.set(false);
@@ -195,7 +206,7 @@ export class AdminStoreService {
         this.isLoading.set(false);
       }
     });
-  }
+}
 
   refrescarProductos() {
     const id = this.catalogoId();
