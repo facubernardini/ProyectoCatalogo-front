@@ -1,28 +1,39 @@
 <!-- NAV CONTENEDOR -->
-<nav class="fixed top-0 left-0 w-full z-50 px-0 transition-all duration-500"
+<!-- TRUCO 1: md:top-0 y md:px-0 anulan el gap de la píldora en pantallas grandes -->
+<nav class="fixed left-0 w-full z-50 transition-all duration-500 md:top-0 md:px-0"
+    [class.transition-none]="!isMounted"
     [class.top-0]="!isScrolled"
-    [class.top-4]="isScrolled"
+    [class.top-3]="isScrolled"
     [class.px-0]="!isScrolled"
-    [class.px-4]="isScrolled">
+    [class.px-3]="isScrolled">
 
     <!-- CONTENEDOR INTERNO -->
-    <div class="relative max-w-7xl mx-auto border border-transparent bg-transparent transition-all duration-500"
+    <!-- TRUCO 2: md:max-w-full y md:rounded-none hacen que el fondo ocupe todo el ancho sin bordes.
+         También agregamos md:border-x-transparent y md:border-t-transparent para que al hacer scroll en PC solo se vea una línea sutil abajo -->
+    <div class="relative max-w-7xl mx-auto border transition-all duration-500 md:max-w-full md:rounded-none md:border-x-transparent md:border-t-transparent"
+        [class.transition-none]="!isMounted"
         [class.border-transparent]="!isScrolled"
-        [class.bg-transparent]="!isScrolled"
-        [class.px-4]="!isScrolled"
-        [class.sm:px-6]="!isScrolled"
-        [class.md:px-8]="!isScrolled"
+        [class.bg-brand-accent]="!isScrolled"
+        [class.px-6]="!isScrolled"
+        [class.rounded-t-none]="!isScrolled"
+        [class.rounded-b-4xl]="!isScrolled"
         [class.border-white/50]="isScrolled"
         [class.bg-white/85]="isScrolled"
         [class.backdrop-blur-md]="isScrolled"
         [class.shadow-lg]="isScrolled"
         [class.shadow-brand-text/5]="isScrolled"
-        [class.rounded-full]="isScrolled"
+        [class.rounded-4xl]="isScrolled"
         [class.px-5]="isScrolled">
 
-        <div class="flex items-center justify-between h-14">
+        <!-- TRUCO 3: Le pasamos el max-w-7xl mx-auto w-full al contenedor del logo y botones para que no se separen infinitamente en monitores grandes -->
+        <div class="flex items-center justify-between h-14 max-w-7xl mx-auto w-full">
         
-            <a routerLink="/" class="text-xl md:text-2xl font-semibold tracking-tight text-brand-text transition-opacity hover:opacity-80">
+            <!-- LOGO -->
+            <a routerLink="/" class="text-xl md:text-2xl font-semibold tracking-tight hover:opacity-80 text-white"
+                [class.transition-all]="isMounted"
+                [class.duration-300]="isMounted"
+                [class.text-white]="!isScrolled"
+                [class.text-brand-text]="isScrolled">
                 {{ brand.name }}
             </a>
 
@@ -30,9 +41,13 @@
             <div class="hidden md:flex items-center gap-5">
                 @for (opcion of opciones; track opcion.nombre) {
                     <a (click)="scrollToSection(opcion.id)" 
-                        class="text-sm font-medium text-brand-text-sec hover:text-brand-text transition-colors cursor-pointer">
-                        {{ opcion.nombre }}
-                    </a>
+                    class="text-sm font-medium transition-colors cursor-pointer text-white/80"
+                    [class.text-white/80]="!isScrolled"
+                    [class.hover:text-white]="!isScrolled"
+                    [class.text-brand-text-sec]="isScrolled"
+                    [class.hover:text-brand-text]="isScrolled">
+                    {{ opcion.nombre }}
+                </a>
                 }
             </div>
 
@@ -41,14 +56,38 @@
                 
                 <!-- BOTONES PC -->
                 <div class="hidden md:flex items-center gap-2">
+                    
+                    <!-- Botón "Ingresar" -->
                     <button (click)="irALogin()"
-                        class="flex items-center justify-center gap-2 px-4 py-1.5 text-sm font-medium text-brand-text bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-full shadow-sm hover:bg-brand-bg hover:text-brand-text transition-all focus:outline-none active:scale-95">
+                        class="flex items-center justify-center gap-2 px-4 py-1.5 text-sm font-medium focus:outline-none active:scale-95 rounded-full text-white bg-white/20 hover:bg-white/30 border border-transparent"
+                        [class.transition-all]="isMounted"
+                        [class.duration-300]="isMounted"
+                        [class.text-white]="!isScrolled"
+                        [class.bg-white/20]="!isScrolled"
+                        [class.border-transparent]="!isScrolled"
+                        [class.hover:bg-white/30]="!isScrolled"
+                        [class.text-brand-text]="isScrolled"
+                        [class.bg-white/80]="isScrolled"
+                        [class.backdrop-blur-sm]="isScrolled"
+                        [class.border-gray-200/80]="isScrolled"
+                        [class.shadow-sm]="isScrolled"
+                        [class.hover:bg-brand-bg]="isScrolled">
                         Ingresar
                         <app-icon name="login" classes="size-4 fill-current" />
                     </button>
 
+                    <!-- Botón "Probar gratis" -->
                     <button (click)="irARegistro()"
-                        class="px-5 py-1.5 text-sm font-semibold text-white bg-brand-accent hover:bg-brand-accent/90 rounded-full shadow-sm shadow-brand-accent/20 transition-all focus:outline-none active:scale-95">
+                        class="px-5 py-1.5 text-sm font-semibold rounded-full shadow-sm focus:outline-none active:scale-95 bg-white text-brand-accent hover:bg-gray-100"
+                        [class.transition-all]="isMounted"
+                        [class.duration-300]="isMounted"
+                        [class.bg-white]="!isScrolled"
+                        [class.text-brand-accent]="!isScrolled"
+                        [class.hover:bg-gray-100]="!isScrolled"
+                        [class.bg-brand-accent]="isScrolled"
+                        [class.text-white]="isScrolled"
+                        [class.hover:bg-brand-accent/90]="isScrolled"
+                        [class.shadow-brand-accent/20]="isScrolled">
                         Probar gratis
                     </button>
                 </div>
@@ -56,8 +95,11 @@
                 <!-- BURGUER MENU (MOBILE) -->
                 <div class="md:hidden flex items-center">
                     <button (click)="toggleMenu()" 
-                            class="p-2 -mr-2 text-brand-text hover:text-brand-text-sec transition-colors focus:outline-none" 
-                            aria-label="Alternar menú">
+                        class="p-2 -mr-2 transition-colors focus:outline-none text-white" 
+                        [class.text-white]="!isScrolled"
+                        [class.text-brand-text]="isScrolled"
+                        [class.hover:text-brand-text-sec]="isScrolled"
+                        aria-label="Alternar menú">
                         <svg class="size-6 transition-transform duration-300" 
                             [class.rotate-90]="isMenuOpen"
                             fill="none" viewBox="0 0 24 24" stroke="currentColor">

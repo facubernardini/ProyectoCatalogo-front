@@ -1,11 +1,11 @@
-<section id="faq" class="py-24 bg-white relative">
+<section id="faq" class="py-20 bg-brand-bg relative">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
         
-        <div class="text-center mb-16">
+        <div class="text-center max-w-2xl mx-auto mb-16">
             <h2 class="text-3xl md:text-4xl font-black tracking-tight text-brand-text mb-4">
                 Preguntas <span class="text-brand-accent">Frecuentes</span>
             </h2>
-            <p class="text-brand-text-sec text-lg max-w-2xl mx-auto">
+            <p class="mt-4 text-base text-zinc-600">
                 Todo lo que necesitás saber para empezar a vender hoy mismo. Si tenés otra duda, siempre podés escribirnos.
             </p>
         </div>
@@ -62,10 +62,13 @@
 
         </div>
         
-        <div class="mt-12 text-center p-6 bg-brand-bg/50 rounded-2xl border border-brand-accent/10">
+        <div class="mt-12 text-center p-6 bg-white rounded-2xl border border-brand-accent/10">
             <p class="text-sm font-semibold text-brand-text">
                 ¿Seguís con dudas? 
-                <a routerLink="/contacto" class="text-brand-accent hover:underline ml-1 cursor-pointer">Escribinos por WhatsApp</a>.
+                <a (click)="contactarSoporte()" 
+                    class="text-brand-accent hover:underline ml-1 cursor-pointer">
+                    Escribinos por WhatsApp
+                </a>.
             </p>
         </div>
 

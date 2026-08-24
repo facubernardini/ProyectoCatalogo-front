@@ -1,15 +1,15 @@
-import { Component, ElementRef, HostListener, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { Icon } from "src/app/shared/components/icon";
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-navbar-landing',
   imports: [RouterLink, Icon],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
+export class Navbar implements OnInit {
   private router = inject(Router);
   private eRef = inject(ElementRef);
 
@@ -17,6 +17,7 @@ export class Navbar {
   
   isMenuOpen = false;
   isScrolled = false;
+  isMounted = false;
 
   opciones = [
     { nombre: 'Funcionalidades', id: 'funcionalidades' },
@@ -24,6 +25,14 @@ export class Navbar {
     { nombre: 'Tiendas de ejemplo', id: 'tiendas-ejemplo' },
     { nombre: 'Ayuda', id: 'faq' }
   ];
+
+  ngOnInit() {
+    this.isScrolled = window.scrollY > 20;
+
+    setTimeout(() => {
+      this.isMounted = true;
+    }, 100);
+  }
 
   @HostListener('window:scroll')
   onWindowScroll() {

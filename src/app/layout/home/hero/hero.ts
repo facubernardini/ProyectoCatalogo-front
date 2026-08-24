@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,9 +10,9 @@ import { Router } from '@angular/router';
 export class Hero {
   private router = inject(Router);
   
-  tituloPrincipal = 'Creá tu tienda online en minutos';
-  
-  subtitulo = '¡Tener una tienda online nunca fue tan fácil! Adaptada a celulares donde están el 95% de tus clientes.';
+  subtitulo1 = 'Tus clientes hacen el pedido por la tienda y llega directo a tu <strong>Whatsapp</strong>.';
+
+  subtitulo2 = '¿Tenés tus productos en un Excel? ¡Te los cargamos nosotros <strong>sin costo</strong>!';
 
   irARegistro() {
     this.router.navigate(['/register']);

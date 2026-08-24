@@ -3,27 +3,27 @@ export const PRICES = [
     id: 'basico',
     plan: 'Básico',
     descripcion: 'Perfecto para tiendas que solo buscan exponer productos a sus clientes y recibir pedidos.',
-    precioMensual: '11900',
-    precioAnual: '119000',
+    precioMensual: '14900',
+    precioAnual: '149000',
     destacado: false,
     caracteristicas: [
-      'Catálogo online básico',
-      'Hasta 50 productos',
+      'Productos ilimitados',
+      'Cupones de descuento para tus clientes',
       'Recibir pedidos por WhatsApp',
-      'Soporte por email'
+      'Soporte por Whatsapp'
     ]
   },
   {
     id: 'premium',
     plan: 'Premium',
-    descripcion: 'Para negocios que buscan escalar sus ventas sin límites.',
+    descripcion: 'Ideal si queres mantener un control de stock y ganancias mensuales de tu negocio.',
     precioMensual: '19900',
     precioAnual: '199000',
     destacado: true,
     caracteristicas: [
-      'Productos y ventas ilimitadas',
-      'Seguimiento de pedidos.',
-      'Gestión avanzada de stock',
+      'Dominio propio (tutienda.com.ar)',
+      'Estadísticas de tu negocio',
+      'Gestión de stock',
       'Soporte prioritario 24/7'
     ]
   }

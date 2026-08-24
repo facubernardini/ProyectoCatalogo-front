@@ -5,7 +5,7 @@ export const FAQ_DATA = [
   },
   {
     pregunta: '¿Cómo ven mis clientes mi catálogo?',
-    respuesta: 'Vas a tener un enlace único para tu negocio (por ejemplo: mitienda.listalo.app) que podés poner en tu biografía de Instagram, Facebook o enviar directamente por mensaje. Tus clientes no necesitan descargar ninguna aplicación ni registrarse para comprar.'
+    respuesta: 'Vas a tener un enlace único para tu negocio (por ejemplo: mitienda.listalo.com.ar) que podés poner en tu biografía de Instagram, Facebook o enviar directamente por mensaje. Tus clientes no necesitan descargar ninguna aplicación ni registrarse para comprar.'
   },
   {
     pregunta: '¿Cómo me llegan los pedidos?',
@@ -17,6 +17,6 @@ export const FAQ_DATA = [
   },
   {
     pregunta: '¿Necesito saber de programación para crear mi tienda?',
-    respuesta: 'Para nada. Listalo está pensado para ser tan fácil de usar como una red social. Desde tu celular o la compu podés subir fotos, cambiar precios, agregar categorías y ver tu tienda lista en menos de 5 minutos.'
+    respuesta: 'Para nada. Listalo está pensado para ser tan fácil de usar como una red social. Desde tu celular o la compu podés subir fotos, cambiar precios, agregar categorías y mucho más.'
   }
 ];
