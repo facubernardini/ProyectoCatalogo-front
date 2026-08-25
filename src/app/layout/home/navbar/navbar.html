@@ -40,14 +40,32 @@
             <!-- BLOQUE 2: Enlaces (Centro - Solo PC) -->
             <div class="hidden md:flex items-center gap-5">
                 @for (opcion of opciones; track opcion.nombre) {
+                    
+                    <!-- Agregamos relative y py-1 para darle espacio a la línea de abajo -->
                     <a (click)="scrollToSection(opcion.id)" 
-                    class="text-sm font-medium transition-colors cursor-pointer text-white/80"
-                    [class.text-white/80]="!isScrolled"
-                    [class.hover:text-white]="!isScrolled"
-                    [class.text-brand-text-sec]="isScrolled"
-                    [class.hover:text-brand-text]="isScrolled">
-                    {{ opcion.nombre }}
-                </a>
+                        class="relative py-1 text-sm font-medium transition-colors cursor-pointer group"
+                        
+                        [class.text-white]="!isScrolled && activeSection === opcion.id"
+                        [class.text-white/80]="!isScrolled && activeSection !== opcion.id"
+                        [class.hover:text-white]="!isScrolled"
+                        
+                        [class.text-brand-accent]="isScrolled && activeSection === opcion.id"
+                        [class.text-brand-text-sec]="isScrolled && activeSection !== opcion.id"
+                        [class.hover:text-brand-text]="isScrolled">
+                        
+                        {{ opcion.nombre }}
+                        
+                        <!-- LÍNEA ANIMADA (Indicador activo) -->
+                        <span class="absolute left-0 bottom-0 h-0.5 w-full rounded-full origin-left transition-transform duration-300 ease-out"
+                            [class.bg-white]="!isScrolled"
+                            [class.bg-brand-accent]="isScrolled"
+                            [class.scale-x-100]="activeSection === opcion.id"
+                            [class.scale-x-0]="activeSection !== opcion.id"
+                            [class.group-hover:scale-x-100]="activeSection !== opcion.id"
+                            [class.group-hover:opacity-50]="activeSection !== opcion.id">
+                        </span>
+                        
+                    </a>
                 }
             </div>
 

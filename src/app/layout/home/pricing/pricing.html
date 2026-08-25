@@ -6,12 +6,16 @@
         
         <!-- CABECERA DE LA SECCIÓN -->
         <div class="text-center max-w-2xl mx-auto mb-8">
-            <h2 class="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">Planes y precios</h2>
-            <p class="mt-4 text-base text-zinc-600">Elegí la opción que mejor se adapte al crecimiento de tu negocio.</p>
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
+                Planes y precios
+            </h2>
+            <p class="mt-4 text-sm md:text-base text-zinc-600">
+                Elegí la opción que mejor se adapte a tu negocio.
+            </p>
         </div>
 
         <!-- TOGGLE MENSUAL / ANUAL -->
-        <div class="max-w-xs mx-auto mb-8">
+        <div class="max-w-xs mx-auto mb-3 md:mb-6">
             <!-- Contenedor del fondo gris -->
             <div class="p-1 bg-zinc-100 rounded-2xl">
                 <!-- Contenedor relativo que habilita el movimiento de la pastilla -->
@@ -51,7 +55,7 @@
         <!-- CONTENEDOR DE CARDS -->
         <div>
             <div #scrollContainer (scroll)="onScroll($event)" 
-                 class="flex md:grid md:grid-cols-2 overflow-x-auto md:overflow-visible snap-x snap-mandatory gap-6 md:gap-8 py-6 hide-scrollbar">
+                class="flex md:grid md:grid-cols-2 overflow-x-auto md:overflow-visible snap-x snap-mandatory gap-6 md:gap-8 py-5 hide-scrollbar">
                 
                 @for (plan of planes; track plan.id) {
                     <!-- w-full garantiza que en mobile ocupe exactamente el ancho sin desbordar. En PC pasa a w-auto gracias al Grid -->
@@ -62,10 +66,9 @@
                         <div class="h-full flex flex-col rounded-3xl p-6 md:p-8 border transition-all duration-300 relative"
                             [class]="plan.destacado ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-900 border-zinc-200'">
                              
-                            <!-- Etiqueta de "Más popular" -->
                             @if (plan.destacado) {
                                 <div class="absolute top-0 right-0 bg-white/10 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl rounded-tr-3xl backdrop-blur-md">
-                                    Recomendado
+                                    Más elegido
                                 </div>
                             }
 
@@ -78,7 +81,7 @@
                             
                             <!-- Precio Dinámico -->
                             <div class="mt-6 flex items-baseline gap-2">
-                                <span class="text-4xl md:text-5xl font-bold tracking-tight">
+                                <span class="text-3xl md:text-4xl font-bold tracking-tight">
                                     ${{ isAnual ? plan.precioAnual : plan.precioMensual }}
                                 </span>
                                 <span class="text-sm font-medium" 
@@ -104,7 +107,7 @@
                             <!-- Botón de acción (mt-auto lo empuja siempre al fondo) -->
                             <button class="mt-auto w-full py-3.5 px-4 rounded-xl font-semibold transition-all duration-300 active:scale-95"
                                     [class]="plan.destacado ? 'bg-white text-zinc-900 hover:bg-zinc-100' : 'bg-zinc-900 text-white hover:bg-zinc-800'">
-                                Empezar con {{ plan.plan }}
+                                Más información
                             </button>
                         </div>
                     </div>
@@ -112,7 +115,7 @@
             </div>
 
             <!-- INDICADORES MOBILE -->
-            <div class="flex justify-center gap-2 mt-2 md:hidden">
+            <div class="flex justify-center gap-2 mt-1 md:hidden">
                 @for (plan of planes; track plan.id; let i = $index) {
                     <button (click)="scrollTo(i, scrollContainer)"
                         class="h-2.5 rounded-full transition-all duration-300"

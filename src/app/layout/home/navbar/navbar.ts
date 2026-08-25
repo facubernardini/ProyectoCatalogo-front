@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { Icon } from "src/app/shared/components/icon";
@@ -9,7 +9,7 @@ import { Icon } from "src/app/shared/components/icon";
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar implements OnInit {
+export class Navbar implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private eRef = inject(ElementRef);
 
@@ -19,10 +19,15 @@ export class Navbar implements OnInit {
   isScrolled = false;
   isMounted = false;
 
+  activeSection: string = 'inicio';
+
+  private observer: IntersectionObserver | null = null;
+
   opciones = [
+    { nombre: 'Inicio', id: 'inicio' },
     { nombre: 'Funcionalidades', id: 'funcionalidades' },
-    { nombre: 'Precios', id: 'precios' },
     { nombre: 'Tiendas de ejemplo', id: 'tiendas-ejemplo' },
+    { nombre: 'Precios', id: 'precios' },
     { nombre: 'Ayuda', id: 'faq' }
   ];
 
@@ -32,6 +37,33 @@ export class Navbar implements OnInit {
     setTimeout(() => {
       this.isMounted = true;
     }, 100);
+  }
+
+  ngAfterViewInit() {
+    const options = {
+      root: null,
+      rootMargin: '-40% 0px -60% 0px', 
+      threshold: 0
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          this.activeSection = entry.target.id;
+        }
+      });
+    }, options);
+
+    this.opciones.forEach(opcion => {
+      const element = document.getElementById(opcion.id);
+      if (element) {
+        this.observer?.observe(element);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.observer?.disconnect();
   }
 
   @HostListener('window:scroll')
@@ -69,6 +101,7 @@ export class Navbar implements OnInit {
   }
 
   scrollToSection(id: string) {
+    this.activeSection = id;
     this.cerrarMenu();
 
     const element = document.getElementById(id);
