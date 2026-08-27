@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, ElementRef, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { Icon } from "src/app/shared/components/icon";
 
 @Component({
   selector: 'app-navbar-landing',
-  imports: [RouterLink, Icon],
+  imports: [Icon],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })

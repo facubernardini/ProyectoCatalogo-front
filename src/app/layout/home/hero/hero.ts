@@ -14,7 +14,7 @@ export class Hero {
   mouseX = 0;
   mouseY = 0;
   
-  subtitulo1 = 'Tus clientes hacen el pedido por la tienda y llega directo a tu <strong>Whatsapp</strong>.';
+  subtitulo1 = 'Tus clientes hacen el pedido por la tienda y llega directo a tu <strong>WhatsApp</strong>.';
 
   subtitulo2 = '¿Tenés tus productos en un Excel? ¡Te los cargamos nosotros <strong>sin costo</strong>!';
 

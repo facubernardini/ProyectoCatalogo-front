@@ -19,7 +19,7 @@
             <!-- BLOQUE 1: TÍTULO -->
             <div class="order-1 md:col-start-1 md:row-start-1 flex flex-col items-center md:items-start text-center md:text-left mt-2 md:mt-0 md:self-end">
                 <h1 class="text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight text-brand-text leading-tight animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
-                    Creá tu tienda online <br class="hidden md:block">
+                    Creá tu tienda online <br>
                     <span class="text-brand-accent">en minutos</span>.
                 </h1>
             </div>
@@ -31,26 +31,33 @@
                     
                     <!-- WIDGET 1: WhatsApp (Arriba a la derecha) -->
                     <div class="hidden md:block absolute -top-2 right-20 md:right-30 z-30 animate-levitate" style="animation-duration: 4s; animation-delay: 1s;">
-                        <div class="size-14 bg-white rounded-2xl shadow-lg border border-zinc-100 flex items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                        <div class="bg-white px-3.5 py-2 rounded-2xl shadow-lg border border-zinc-100 flex flex-col items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
                                 [style.transform]="'translate(' + mouseX + 'px, ' + mouseY + 'px) rotate(6deg)'">
-                            <app-icon name="whatsapp" classes="size-8 fill-current text-[#25D366]" />
+                            <app-icon name="whatsapp" classes="size-6 fill-current text-[#25D366]" />
+                            <span class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-1.5 text-center leading-tight">
+                                Pedidos a tu <br> WhatsApp
+                            </span>
                         </div>
                     </div>
 
                     <!-- WIDGET 2: Shop (Abajo a la izquierda) -->
                     <div class="hidden md:block absolute bottom-12 -left-2 md:-left-4 z-30 animate-levitate" style="animation-duration: 6s; animation-delay: -2s;">
-                        <div class="size-14 bg-white rounded-2xl shadow-lg border border-zinc-100 flex items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                        <!-- Agregamos flex-col justo después de flex -->
+                        <div class="bg-white px-3.5 py-2 rounded-2xl shadow-lg border border-zinc-100 flex flex-col items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
                                 [style.transform]="'translate(' + (mouseX * 0.7) + 'px, ' + (mouseY * 0.7) + 'px) rotate(-12deg)'">
-                            <app-icon name="shop" classes="size-8 fill-current text-brand-accent" />
+                            <app-icon name="ticket" classes="size-7 fill-current text-orange-500" />
+                            <span class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-0.5 text-center leading-tight">
+                                Cupones de <br> descuento
+                            </span>
                         </div>
                     </div>
 
                     <!-- WIDGET 3: 0% Comisiones (Abajo a la derecha) -->
                     <div class="hidden md:block absolute bottom-1/4 -right-4 md:-right-8 z-30 animate-levitate" style="animation-duration: 5s; animation-delay: -4s;">
-                        <div class="bg-white/90 backdrop-blur-sm px-3.5 py-2 rounded-2xl shadow-lg border border-zinc-100 flex flex-col items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                        <div class="bg-white px-3.5 py-2 rounded-2xl shadow-lg border border-zinc-100 flex flex-col items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
                                 [style.transform]="'translate(' + (mouseX * 1.3) + 'px, ' + (mouseY * 1.3) + 'px) rotate(4deg)'">
                             <span class="text-xl font-black text-brand-accent leading-none">0%</span>
-                            <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Comisiones</span>
+                            <span class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-0.5">Comisiones</span>
                         </div>
                     </div>
 

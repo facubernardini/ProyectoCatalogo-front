@@ -17,7 +17,7 @@
         <!-- TOGGLE MENSUAL / ANUAL -->
         <div class="max-w-xs mx-auto mb-3 md:mb-6">
             <!-- Contenedor del fondo gris -->
-            <div class="p-1 bg-zinc-100 rounded-2xl">
+            <div class="p-1 bg-zinc-200 rounded-2xl">
                 <!-- Contenedor relativo que habilita el movimiento de la pastilla -->
                 <div class="relative grid grid-cols-2">
                     
@@ -55,43 +55,40 @@
         <!-- CONTENEDOR DE CARDS -->
         <div>
             <div #scrollContainer (scroll)="onScroll($event)" 
-                class="flex md:grid md:grid-cols-2 overflow-x-auto md:overflow-visible snap-x snap-mandatory gap-6 md:gap-8 py-5 hide-scrollbar">
+                class="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory gap-3 md:gap-6 py-5 hide-scrollbar">
                 
                 @for (plan of planes; track plan.id) {
-                    <!-- w-full garantiza que en mobile ocupe exactamente el ancho sin desbordar. En PC pasa a w-auto gracias al Grid -->
-                    <div class="w-full shrink-0 snap-center md:w-auto">
+                    <div class="w-full shrink-0 snap-center lg:w-auto">
                         
-                        <!-- DISEÑO DE LA CARD -->
-                        <!-- Le sumamos flex y flex-col para que el botón siempre quede abajo (igualando alturas en PC) -->
-                        <div class="h-full flex flex-col rounded-3xl p-6 md:p-8 border transition-all duration-300 relative"
-                            [class]="plan.destacado ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-900 border-zinc-200'">
-                             
+                        <!-- CARD CON EFECTO IMÁN 3D -->
+                        <div (mousemove)="onMouseMove($event, plan.id)"
+                            (mouseleave)="onMouseLeave(plan.id)"
+                            [style.transform]="cardTransforms[plan.id] || 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)'"
+                            class="h-full flex flex-col rounded-3xl p-6 md:p-8 border transition-all duration-200 ease-out relative"
+                            [class]="plan.destacado ? 'bg-zinc-900 text-white border-zinc-900 shadow-xl' : 'bg-white text-zinc-900 border-zinc-200 hover:shadow-2xl hover:shadow-zinc-900/10'">
+                            
                             @if (plan.destacado) {
-                                <div class="absolute top-0 right-0 bg-white/10 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl rounded-tr-3xl backdrop-blur-md">
+                                <div class="absolute top-0 right-0 bg-white/10 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl rounded-tr-3xl backdrop-blur-md pointer-events-none">
                                     Más elegido
                                 </div>
                             }
 
-                            <!-- Cabecera -->
                             <h3 class="text-xl md:text-2xl font-bold">{{ plan.plan }}</h3>
-                            <p class="mt-2 text-sm min-h-10" 
-                                [class]="plan.destacado ? 'text-zinc-300' : 'text-zinc-500'">
+                            
+                            <p class="mt-2 text-sm min-h-10" [class]="plan.destacado ? 'text-zinc-300' : 'text-zinc-500'">
                                 {{ plan.descripcion }}
                             </p>
                             
-                            <!-- Precio Dinámico -->
                             <div class="mt-6 flex items-baseline gap-2">
                                 <span class="text-3xl md:text-4xl font-bold tracking-tight">
                                     ${{ isAnual ? plan.precioAnual : plan.precioMensual }}
                                 </span>
-                                <span class="text-sm font-medium" 
-                                        [class]="plan.destacado ? 'text-zinc-400' : 'text-zinc-500'">
+                                <span class="text-sm font-medium" [class]="plan.destacado ? 'text-zinc-400' : 'text-zinc-500'">
                                     /{{ isAnual ? 'año' : 'mes' }}
                                 </span>
                             </div>
 
-                            <!-- Lista de Características -->
-                            <ul class="mt-8 space-y-4 mb-8">
+                            <ul class="mt-8 space-y-4 mb-8 grow">
                                 @for (feat of plan.caracteristicas; track feat) {
                                     <li class="flex items-start gap-3 text-sm">
                                         <div class="rounded-full p-1 mt-0.5 shrink-0" [class]="plan.destacado ? 'bg-white/10' : 'bg-zinc-100'">
@@ -104,7 +101,6 @@
                                 }
                             </ul>
 
-                            <!-- Botón de acción (mt-auto lo empuja siempre al fondo) -->
                             <button class="mt-auto w-full py-3.5 px-4 rounded-xl font-semibold transition-all duration-300 active:scale-95"
                                     [class]="plan.destacado ? 'bg-white text-zinc-900 hover:bg-zinc-100' : 'bg-zinc-900 text-white hover:bg-zinc-800'">
                                 Más información

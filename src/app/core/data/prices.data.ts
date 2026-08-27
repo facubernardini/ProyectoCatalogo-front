@@ -16,15 +16,29 @@ export const PRICES = [
   {
     id: 'premium',
     plan: 'Premium',
-    descripcion: 'Ideal si queres mantener un control de stock y ganancias mensuales de tu negocio.',
+    descripcion: 'Ideal si querés mantener un control de stock, pedidos y ganancias mensuales de tu negocio.',
     precioMensual: '19900',
     precioAnual: '199000',
     destacado: true,
     caracteristicas: [
-      'Dominio propio (tutienda.com.ar)',
-      'Estadísticas de tu negocio',
+      'Historial de pedidos',
       'Gestión de stock',
+      'Estadísticas de tu negocio',
+      'Soporte por Whatsapp'
+    ]
+  },
+  {
+    id: 'ultra',
+    plan: 'Ultra',
+    descripcion: 'Pensado para quienes quieren una verdadera identidad para tu negocio.',
+    precioMensual: '29900',
+    precioAnual: '299000',
+    destacado: false,
+    caracteristicas: [
+      'Todo lo anterior de los planes Básico y Premium',
+      'Dominio propio (tutienda.com.ar)',
+      'Sin referencias a Listalo',
       'Soporte prioritario 24/7'
     ]
-  }
+  },
 ];
