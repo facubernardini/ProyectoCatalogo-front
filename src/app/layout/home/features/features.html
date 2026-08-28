@@ -1,136 +1,212 @@
 <section 
     id="funcionalidades" 
-    class="py-24 sm:py-32 bg-white relative overflow-hidden">
-    
-    <!-- Decoración de fondo sutil (opcional, le da un toque moderno sin cargar) -->
-    <div class="absolute top-0 inset-x-0 h-40 bg-linear-to-b from-zinc-50 to-white -z-10"></div>
+    class="pt-20 pb-10 bg-brand-bg relative overflow-hidden">
 
     <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
         
         <!-- CABECERA DE LA SECCIÓN -->
         <div class="max-w-2xl mx-auto text-center mb-16 md:mb-20">
-            <h2 class="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl md:text-5xl leading-tight">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-900 leading-tight">
                 Todo lo que necesitás para vender, <br class="hidden sm:block" />
-                <span class="text-zinc-400">sin complicaciones técnicas.</span>
+                <span class="text-brand-accent">sin complicaciones técnicas.</span>
             </h2>
+            <p class="mt-4 text-sm md:text-base text-zinc-600">
+                Una plataforma diseñada para que gestiones tu negocio desde tu celular, de manera simple e intuitiva.
+            </p>
         </div>
 
-        <!-- BENTO GRID (La grilla de features) -->
+        <!-- GRID -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            <!-- FEATURE 1: CATÁLOGO ONLINE (Ocupa 2 columnas en PC) -->
-            <div class="md:col-span-2 relative overflow-hidden rounded-3xl bg-zinc-50 border border-zinc-200/60 p-8 sm:p-10 group transition-all">
-                <div class="md:w-1/2 relative z-10">
+            <!-- FEATURE 1: CATÁLOGO ONLINE -->
+            <div class="md:col-span-2 relative overflow-hidden rounded-3xl bg-zinc-50 border border-zinc-200/60 
+                p-8 md:p-10 flex flex-col md:flex-row md:items-center md:gap-8 group transition-all">
+                
+                <div class="md:w-1/2 relative z-10 flex flex-col justify-center mb-6 md:mb-0">
                     <h3 class="text-xl font-bold text-zinc-900">Tu catálogo listo en minutos</h3>
                     <p class="mt-4 text-sm text-zinc-600 leading-relaxed">
                         Olvidate de programar o diseñar. Cargá tus productos, agregá fotos, establecé tus precios y empezá a compartir tu link personalizado al instante.
                     </p>
                 </div>
 
-                <!-- Mockup Visual: Interfaz de tienda (Solo CSS) -->
-                <div class="mt-10 md:mt-0 md:absolute md:right-0 md:top-8 w-full md:w-3/5 md:-mr-8">
-                    <div class="bg-white rounded-t-2xl border border-zinc-200/80 shadow-sm p-4 transform transition-transform duration-500 group-hover:-translate-y-2">
-                        <!-- Header del mockup -->
-                        <div class="flex items-center gap-3 mb-4 pb-4 border-b border-zinc-100">
-                            <div class="size-8 rounded-full bg-zinc-200"></div>
-                            <div class="space-y-1.5">
-                                <div class="h-2.5 w-24 bg-zinc-200 rounded-full"></div>
-                                <div class="h-2 w-16 bg-zinc-100 rounded-full"></div>
+                <div class="w-full md:w-1/2 flex items-center justify-center relative">
+                    <div class="relative w-full max-w-70 lg:max-w-[320px] mx-auto bg-zinc-50 rounded-t-2xl md:rounded-2xl border border-zinc-200/80 shadow-xl shadow-zinc-200/50 transform transition-all duration-700 md:group-hover:-translate-y-2 md:group-hover:shadow-2xl">
+                        <div class="overflow-hidden rounded-t-2xl md:rounded-2xl w-full">
+                            
+                            <div #catalogoScrollContainer (scroll)="onCatalogoScroll($event)" 
+                                 class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                                 
+                                @for (img of catalogoImages; track img.src) {
+                                    <div class="min-w-full w-full shrink-0 snap-center snap-always flex justify-center">
+                                        <img [src]="img.src" 
+                                             [alt]="img.alt" 
+                                             class="w-full h-auto object-cover object-top pointer-events-none select-none block" />
+                                    </div>
+                                }
                             </div>
+                            
                         </div>
-                        <!-- Grilla de productos del mockup -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="space-y-2">
-                                <div class="aspect-square bg-zinc-100 rounded-xl"></div>
-                                <div class="h-2 w-3/4 bg-zinc-200 rounded-full"></div>
-                                <div class="h-2 w-1/2 bg-zinc-900 rounded-full"></div>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="aspect-square bg-zinc-100 rounded-xl"></div>
-                                <div class="h-2 w-3/4 bg-zinc-200 rounded-full"></div>
-                                <div class="h-2 w-1/2 bg-zinc-900 rounded-full"></div>
-                            </div>
+
+                        <!-- FLECHAS DESKTOP -->
+                        <div class="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                            
+                            <button (click)="scrollCatalogo(catalogoScrollContainer, -1)" [disabled]="currentCatalogoIndex === 0" 
+                                    class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
+                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                            </button>
+                            
+                            <button (click)="scrollCatalogo(catalogoScrollContainer, 1)" [disabled]="currentCatalogoIndex === catalogoImages.length - 1" 
+                                    class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
+                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                            
                         </div>
                     </div>
                 </div>
+
+                <!-- PUNTOS INDICADORES MOBILE -->
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 md:hidden">
+                    @for (img of catalogoImages; track img.src; let i = $index) {
+                        <button (click)="scrollToCatalogo(i, catalogoScrollContainer)"
+                            class="h-1.5 rounded-full transition-all duration-300 z-20"
+                            [class]="currentCatalogoIndex === i ? 'bg-brand-accent w-5' : 'bg-zinc-300 w-1.5'">
+                        </button>
+                    }
+                </div>
+
             </div>
 
-            <!-- FEATURE 2: WHATSAPP (Ocupa 1 columna) -->
+            <!-- FEATURE 2: WHATSAPP -->
             <div class="relative overflow-hidden rounded-3xl bg-zinc-50 border border-zinc-200/60 p-8 sm:p-10 flex flex-col group">
                 
-                <!-- Mockup Visual: Notificación de mensaje -->
-                <div class="mb-10 flex-1 flex items-center justify-center">
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-zinc-200/80 flex items-center gap-4 transform transition-transform duration-500 group-hover:scale-105">
-                        <div class="size-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                            <!-- Ícono de WhatsApp simplificado -->
-                            <svg class="size-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-zinc-900">Nuevo pedido</p>
-                            <p class="text-[10px] text-zinc-500">Recibido hace 1 min</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
+                <div class="relative z-10 mb-6">
                     <h3 class="text-xl font-bold text-zinc-900">Directo al WhatsApp</h3>
                     <p class="mt-3 text-sm text-zinc-600 leading-relaxed">
-                        Tus clientes arman su pedido y te llega el detalle completo directamente a tu chat. Sin intermediarios.
+                        Tus clientes arman su pedido y te llega el detalle completo directamente a tu chat.
                     </p>
+                </div>
+
+                <div class="flex-1 flex items-start justify-center overflow-hidden">
+                    
+                    <div class="relative w-full max-w-65 sm:max-w-70 mx-auto overflow-hidden md:group-hover:scale-105 transition-transform duration-500">
+                        <img src="assets/home/ejemplo_pedido.webp" 
+                            alt="Ejemplo de pedido" 
+                            class="w-full h-auto object-cover object-top p-2" />
+                    </div>
+
                 </div>
             </div>
 
-            <!-- FEATURE 3: SIN COMISIONES (Ocupa 1 columna) -->
+            <!-- FEATURE 3: CUPONES DE DESCUENTO -->
             <div class="relative overflow-hidden rounded-3xl bg-zinc-50 border border-zinc-200/60 p-8 sm:p-10 flex flex-col group">
                 
-                <!-- Mockup Visual: Cero comisiones -->
-                <div class="mb-10 flex-1 flex items-center justify-center">
-                    <div class="relative">
-                        <div class="text-5xl font-black text-zinc-200/80 tracking-tighter">0%</div>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-sm font-bold bg-white text-zinc-900 px-3 py-1 rounded-full shadow-sm border border-zinc-100 transform transition-transform duration-500 group-hover:scale-110">Comisiones</span>
-                        </div>
-                    </div>
+                <div class="mb-8 relative z-20">
+                    <h3 class="text-xl font-bold text-zinc-900">Cupones de descuento</h3>
+                    <p class="mt-3 text-sm text-zinc-600 leading-relaxed">
+                        A todos nos gustan los cupones de descuento, ¡acá también vas a poder crear los tuyos para incentivar tus ventas!
+                    </p>
                 </div>
 
-                <div>
-                    <h3 class="text-xl font-bold text-zinc-900">Tu plata es 100% tuya</h3>
-                    <p class="mt-3 text-sm text-zinc-600 leading-relaxed">
-                        Pagás únicamente tu plan mensual o anual. Nunca te vamos a cobrar un porcentaje por las ventas que generes.
-                    </p>
+                <div #cuponesContainer class="flex-1 flex items-center justify-center pb-2 relative z-10 mt-4 md:mt-0 min-h-30">
+                    
+                    <!-- CUPÓN FRENTE -->
+                    <div class="relative z-10 w-full max-w-65 h-22.5 transform transition-all duration-700 drop-shadow-xl 
+                        md:group-hover:scale-105 md:group-hover:-rotate-3 md:group-hover:-translate-x-4 md:group-hover:translate-y-2"
+                        [class.scale-105]="cuponesAnimados" 
+                        [class.-rotate-3]="cuponesAnimados" 
+                        [class.-translate-x-4]="cuponesAnimados" 
+                        [class.translate-y-2]="cuponesAnimados">
+                        
+                        <div class="w-full h-full bg-orange-500 rounded-2xl flex border-2 border-dashed border-orange-300/60"
+                            style="-webkit-mask: radial-gradient(circle at 33.33% 0, #0000 12px, #000 13px) top / 100% 51% no-repeat, radial-gradient(circle at 33.33% 100%, #0000 12px, #000 13px) bottom / 100% 51% no-repeat; mask: radial-gradient(circle at 33.33% 0, #0000 12px, #000 13px) top / 100% 51% no-repeat, radial-gradient(circle at 33.33% 100%, #0000 12px, #000 13px) bottom / 100% 51% no-repeat;">
+                            
+                            <div class="w-1/3 flex items-center justify-center border-r-2 border-dashed border-orange-300/50">
+                                <span class="text-3xl font-black text-white tracking-tighter">20%</span>
+                            </div>
+                            <div class="w-2/3 flex flex-col items-center justify-center">
+                                <span class="text-sm font-bold text-orange-100 uppercase tracking-widest mb-1.5">Descuento</span>
+                                <div class="flex items-center gap-1.5 bg-white text-orange-600 px-3 py-1 rounded-full shadow-sm">
+                                    <app-icon name="discount" classes="size-4 fill-current text-orange-500" />
+                                    <span class="text-[11px] font-bold uppercase tracking-wider">VERANO20</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CUPÓN ATRAS -->
+                    <div class="flex absolute z-0 w-full max-w-65 h-22.5 transform transition-all duration-700 drop-shadow-md opacity-0 
+                        md:group-hover:opacity-100 md:group-hover:scale-105 md:group-hover:rotate-6 md:group-hover:translate-x-6 md:group-hover:-translate-y-3"
+                        [class.opacity-100]="cuponesAnimados" 
+                        [class.scale-105]="cuponesAnimados" 
+                        [class.rotate-6]="cuponesAnimados" 
+                        [class.translate-x-6]="cuponesAnimados" 
+                        [class.-translate-y-3]="cuponesAnimados">
+                        
+                        <div class="w-full h-full bg-orange-600 rounded-2xl flex border-2 border-dashed border-orange-400/60"
+                            style="-webkit-mask: radial-gradient(circle at 33.33% 0, #0000 12px, #000 13px) top / 100% 51% no-repeat, radial-gradient(circle at 33.33% 100%, #0000 12px, #000 13px) bottom / 100% 51% no-repeat; mask: radial-gradient(circle at 33.33% 0, #0000 12px, #000 13px) top / 100% 51% no-repeat, radial-gradient(circle at 33.33% 100%, #0000 12px, #000 13px) bottom / 100% 51% no-repeat;">
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- FEATURE 4: PANEL DE ADMINISTRACIÓN (Ocupa 2 columnas) -->
-            <div class="md:col-span-2 relative overflow-hidden rounded-3xl bg-zinc-900 text-white p-8 sm:p-10 group transition-all">
-                <div class="md:w-1/2 relative z-10">
-                    <h3 class="text-xl font-bold">Panel de control intuitivo</h3>
-                    <p class="mt-4 text-sm text-zinc-400 leading-relaxed">
-                        Gestioná tu stock, pausá productos agotados y actualizá precios en segundos desde tu celular o computadora. Diseñado para que cualquier persona lo sepa usar.
+            <!-- FEATURE 4: PANEL DE ADMINISTRACIÓN -->
+            <div class="md:col-span-2 relative overflow-hidden rounded-3xl bg-zinc-50 border border-zinc-200/60 
+                p-8 md:p-10 flex flex-col md:flex-row md:items-center md:gap-8 group transition-all">
+                
+                <!-- Textos -->
+                <div class="md:w-1/2 relative z-10 flex flex-col justify-center mb-8 md:mb-0">
+                    <h3 class="text-xl md:text-2xl font-bold text-zinc-900">Gestioná tu inventario al instante</h3>
+                    <p class="mt-4 text-sm text-zinc-600 leading-relaxed">
+                        Actualizá precios, cargá stock y ocultá productos agotados con un solo toque. Un panel intuitivo diseñado para que administres tu negocio fácilmente desde tu celular.
                     </p>
                 </div>
 
-                <!-- Mockup Visual: Dashboard Minimalista -->
-                <div class="mt-10 md:mt-0 md:absolute md:right-8 md:top-1/2 md:-translate-y-1/2 w-full md:w-5/12">
-                    <div class="bg-zinc-800/50 rounded-2xl border border-zinc-700/50 p-5 backdrop-blur-sm transform transition-transform duration-500 group-hover:-translate-x-2">
-                        <!-- Cabecera stats -->
-                        <div class="flex items-end justify-between mb-6">
-                            <div>
-                                <div class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-1">Visitas hoy</div>
-                                <div class="text-2xl font-bold">1,248</div>
+                <div class="w-full md:w-1/2 flex items-center justify-center relative">
+                    <div class="relative w-full max-w-70 sm:max-w-65 md:max-w-70 lg:max-w-75 bg-zinc-50 rounded-t-2xl md:rounded-2xl border border-zinc-200/80 shadow-lg shadow-zinc-200/50 transform transition-all duration-700 md:group-hover:-translate-y-2 md:group-hover:shadow-xl">
+                        <div class="overflow-hidden rounded-t-2xl md:rounded-2xl w-full">
+                            
+                            <div #panelScrollContainer (scroll)="onPanelScroll($event)" 
+                                 class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                                 
+                                @for (img of panelImages; track img.src) {
+                                    <div class="min-w-full w-full shrink-0 snap-center snap-always flex justify-center">
+                                        <img [src]="img.src" 
+                                            [alt]="img.alt" 
+                                            class="w-full h-auto object-contain pointer-events-none select-none block" />
+                                    </div>
+                                }
                             </div>
-                            <div class="text-xs text-emerald-400 font-bold bg-emerald-400/10 px-2 py-1 rounded">+12%</div>
+                            
                         </div>
-                        <!-- Barras de gráfica -->
-                        <div class="flex items-end gap-2 h-16">
-                            <div class="w-full bg-zinc-700 rounded-t-sm h-1/3 transition-all duration-500 group-hover:h-2/5"></div>
-                            <div class="w-full bg-zinc-700 rounded-t-sm h-1/2 transition-all duration-500 group-hover:h-3/5"></div>
-                            <div class="w-full bg-zinc-700 rounded-t-sm h-3/4 transition-all duration-500 group-hover:h-4/5"></div>
-                            <div class="w-full bg-white rounded-t-sm h-full shadow-[0_0_15px_rgba(255,255,255,0.3)]"></div>
-                            <div class="w-full bg-zinc-700 rounded-t-sm h-2/3 transition-all duration-500 group-hover:h-1/2"></div>
+
+                        <!-- FLECHAS DESKTOP -->
+                        <div class="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                            
+                            <button (click)="scrollPanel(panelScrollContainer, -1)" [disabled]="currentPanelIndex === 0" 
+                                    class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
+                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                            </button>
+                            
+                            <button (click)="scrollPanel(panelScrollContainer, 1)" [disabled]="currentPanelIndex === panelImages.length - 1" 
+                                    class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
+                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                            
                         </div>
                     </div>
                 </div>
+
+                <!-- PUNTOS INDICADORES MOBILE -->
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 md:hidden">
+                    @for (img of panelImages; track img.src; let i = $index) {
+                        <button (click)="scrollToPanel(i, panelScrollContainer)"
+                            class="h-1.5 rounded-full transition-all duration-300 z-20"
+                            [class]="currentPanelIndex === i ? 'bg-brand-accent w-5' : 'bg-zinc-300 w-1.5'">
+                        </button>
+                    }
+                </div>
+
             </div>
 
         </div>

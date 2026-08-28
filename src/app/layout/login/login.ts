@@ -7,6 +7,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { Toast } from "src/app/shared/components/toast/toast";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "@shared/components/icon";
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,8 @@ export class Login {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+
+  public BRAND_DATA = BRAND_DATA;
   
   loginForm: FormGroup;
 
@@ -30,12 +33,26 @@ export class Login {
   constructor() {
     this.loginForm = this.fb.group({
       correo: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
 
   onSubmit() {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) {
+      const correo = this.loginForm.get('correo');
+      const password = this.loginForm.get('password');
+
+      if (correo?.hasError('required')) {
+        this.toastService.show('Por favor, ingresá tu correo electrónico.', 'error');
+      } else if (correo?.hasError('email')) {
+        this.toastService.show('Ingresá un correo electrónico válido.', 'error');
+      } else if (password?.hasError('required')) {
+        this.toastService.show('Por favor, ingresá tu contraseña.', 'error');
+      } else if (password?.hasError('minlength')) {
+        this.toastService.show('La contraseña debe tener al menos 8 caracteres.', 'error');
+      }
+      return;
+    }
 
     this.isLoading.set(true);
 
@@ -72,7 +89,4 @@ export class Login {
     this.router.navigate(['/register']);
   }
 
-  volverAlInicio() {
-    this.router.navigate(['/']);
-  }
 }

@@ -351,8 +351,12 @@ export class Carrito {
     const token = "8649133296:AAHzrBQtAJbYCPQHOdIT5N-UU7ryEgJVHCk";
     const chatId = "5097936005";
 
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const dispositivo = isMobile ? '📱 Mobile' : '💻 Desktop';
+
     const nombreTienda = this.catalogo()?.nombre_tienda;
-    const mensajeTelegram = `🏢 *Tienda: ${nombreTienda}*\n────────────────\n${mensaje}`;
+    
+    const mensajeTelegram = `🏢 *Tienda: ${nombreTienda}*\n⚙️ *Dispositivo:* ${dispositivo}\n────────────────\n${mensaje}`;
     
     const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&parse_mode=Markdown&text=${encodeURIComponent(mensajeTelegram)}`;
     

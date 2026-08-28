@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { FAQ_DATA } from 'src/app/core/data/faq.data';
 
 @Component({
@@ -14,5 +15,13 @@ export class Faq {
 
   toggle(index: number) {
     this.openIndex.update(current => current === index ? null : index);
+  }
+
+  contactarSoporte() {
+    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+    
+    const url = `https://wa.me/${numeroLimpio}`;
+    
+    window.open(url, '_blank');
   }
 }

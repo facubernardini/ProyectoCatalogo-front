@@ -19,10 +19,11 @@ import { PedidoForm } from "src/app/shared/dialogs/pedido-form/pedido-form";
 import { MenuLateralVendedor } from "./menu-lateral-vendedor/menu-lateral-vendedor";
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
+import { Icon } from "src/app/shared/components/icon";
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner, ProductImportPreview, PanelNavbar, Header, MenuPrincipal, PedidoPreview, PedidoForm, MenuLateralVendedor],
+  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner, ProductImportPreview, PanelNavbar, Header, MenuPrincipal, PedidoPreview, PedidoForm, MenuLateralVendedor, Icon],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })
