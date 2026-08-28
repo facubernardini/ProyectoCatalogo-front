@@ -33,12 +33,26 @@ export class Login {
   constructor() {
     this.loginForm = this.fb.group({
       correo: ['vendedor@test.com', [Validators.required, Validators.email]],
-      password: ['password123', [Validators.required, Validators.minLength(6)]]
+      password: ['password123', [Validators.required, Validators.minLength(8)]]
     });
   }
 
   onSubmit() {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) {
+      const correo = this.loginForm.get('correo');
+      const password = this.loginForm.get('password');
+
+      if (correo?.hasError('required')) {
+        this.toastService.show('Por favor, ingresá tu correo electrónico.', 'error');
+      } else if (correo?.hasError('email')) {
+        this.toastService.show('Ingresá un correo electrónico válido.', 'error');
+      } else if (password?.hasError('required')) {
+        this.toastService.show('Por favor, ingresá tu contraseña.', 'error');
+      } else if (password?.hasError('minlength')) {
+        this.toastService.show('La contraseña debe tener al menos 8 caracteres.', 'error');
+      }
+      return;
+    }
 
     this.isLoading.set(true);
 

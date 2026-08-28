@@ -1,6 +1,6 @@
 import { Component, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Icon } from "@shared/components/icon";
 import { Catalogo, Rubro } from 'src/app/core/models/catalogo.model';
 import { RegistroVendedorRequest } from 'src/app/core/models/vendedor.model';
@@ -14,7 +14,7 @@ import { catchError, debounceTime, distinctUntilChanged, of, Subject, switchMap 
 
 @Component({
   selector: 'app-register',
-  imports: [Icon, FormsModule, Toast],
+  imports: [RouterLink, Icon, FormsModule, Toast],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -50,6 +50,8 @@ export class Register implements OnInit, OnDestroy {
   public confirmPassword = '';
   
   public codigoOTP = '';
+
+  aceptaTerminos = false;
 
   public vendedorReq: RegistroVendedorRequest = {
     nombre_apellido: '',

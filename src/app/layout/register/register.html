@@ -142,7 +142,7 @@
 
             <!-- PASO 2: DATOS DE LA TIENDA -->
             @if (pasoActual() === 2) {
-                <section class="animate-in fade-in slide-in-from-right-4 duration-500 space-y-6">
+                <section class="animate-in fade-in slide-in-from-right-4 duration-500 space-y-5">
                     
                     <div>
                         <label class="block text-sm font-semibold text-brand-text mb-2">Nombre de tu Negocio</label>
@@ -291,10 +291,34 @@
                             pattern="[0-9]*"
                             #otpInput
                             class="absolute bottom-0 left-0 w-full h-14 opacity-0 cursor-text text-transparent caret-transparent bg-transparent outline-none">
+
+                            <div class="flex justify-end mt-2 min-h-5">
+                                @if (codigoOTP.length === 6) {
+                                    <button type="button" 
+                                            (click)="codigoOTP = ''; otpInput.focus()" 
+                                            class="relative text-[11px] font-semibold text-gray-400 hover:text-brand-accent uppercase tracking-wider transition-colors animate-in fade-in slide-in-from-top-1 duration-200 focus:outline-none">
+                                        Limpiar
+                                    </button>
+                                }
+                            </div>
                     </div>
 
-                    <div class="pt-2">
-                        <button type="button" (click)="verificarYRegistrar()" [disabled]="loading() || codigoOTP.length !== 6"
+                    <div class="pt-2 space-y-4">
+                        
+                        <div class="flex items-start gap-2">
+                            <div class="flex items-center h-5">
+                                <input id="terminos" 
+                                       name="terminos" 
+                                       type="checkbox" 
+                                       [(ngModel)]="aceptaTerminos"
+                                       class="w-4 h-4 text-brand-accent bg-white border-gray-300 rounded cursor-pointer">
+                            </div>
+                            <label for="terminos" class="text-sm text-brand-text-sec cursor-pointer select-none">
+                                Acepto los <a routerLink="/terminos-y-condiciones" target="_blank" rel="noopener noreferrer" class="font-bold text-brand-accent hover:underline">términos y condiciones</a>.
+                            </label>
+                        </div>
+
+                        <button type="button" (click)="verificarYRegistrar()" [disabled]="loading() || codigoOTP.length !== 6 || !aceptaTerminos"
                                 class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none">
                             @if (loading()) {
                                 <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
