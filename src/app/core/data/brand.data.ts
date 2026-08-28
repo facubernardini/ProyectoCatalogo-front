@@ -6,5 +6,6 @@ export const BRAND_DATA = {
         whatsappLink: 'https://wa.me/5492923531536',
         instagram: '@listalo.app',
         instagramLink: 'https://instagram.com/listalo.app',
+        email: 'contacto@listalo.com.ar'
     },
 };

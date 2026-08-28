@@ -8,8 +8,8 @@ export const PRICES = [
     destacado: false,
     caracteristicas: [
       'Productos ilimitados',
-      'Cupones de descuento para tus clientes',
       'Recibir pedidos por WhatsApp',
+      'Cupones de descuento para tus clientes',
       'Soporte por Whatsapp'
     ]
   },
@@ -21,8 +21,8 @@ export const PRICES = [
     precioAnual: '199000',
     destacado: true,
     caracteristicas: [
-      'Historial de pedidos',
-      'Gestión de stock',
+      'Control de stock',
+      'Historial y gestión de pedidos',
       'Estadísticas de tu negocio',
       'Soporte por Whatsapp'
     ]
@@ -30,7 +30,7 @@ export const PRICES = [
   {
     id: 'ultra',
     plan: 'Ultra',
-    descripcion: 'Pensado para quienes quieren una verdadera identidad para tu negocio.',
+    descripcion: 'Pensado para quienes quieren una verdadera identidad para su negocio.',
     precioMensual: '29900',
     precioAnual: '299000',
     destacado: false,

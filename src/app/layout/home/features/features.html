@@ -15,14 +15,14 @@
             </p>
         </div>
 
-        <!-- BENTO GRID (La grilla de features) -->
+        <!-- GRID -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            <!-- FEATURE 1: CATÁLOGO ONLINE (Ocupa 2 columnas en PC) -->
+            <!-- FEATURE 1: CATÁLOGO ONLINE -->
             <div class="md:col-span-2 relative overflow-hidden rounded-3xl bg-zinc-50 border border-zinc-200/60 
                 pt-8 px-8 pb-0 sm:pt-10 sm:px-10 sm:pb-0 md:p-10 flex flex-col md:flex-row md:items-center md:gap-8 group transition-all">
                 
-                <div class="md:w-1/2 relative z-10 flex flex-col justify-center mb-8 md:mb-0">
+                <div class="md:w-1/2 relative z-10 flex flex-col justify-center mb-6 md:mb-0">
                     <h3 class="text-xl font-bold text-zinc-900">Tu catálogo listo en minutos</h3>
                     <p class="mt-4 text-sm text-zinc-600 leading-relaxed">
                         Olvidate de programar o diseñar. Cargá tus productos, agregá fotos, establecé tus precios y empezá a compartir tu link personalizado al instante.
@@ -31,7 +31,7 @@
 
                 <div class="mt-auto md:mt-0 w-full md:w-1/2">
                     
-                    <div class="relative bg-white rounded-t-2xl md:rounded-2xl border border-zinc-200/80 shadow-xl shadow-zinc-200/50 
+                    <div class="relative w-full max-w-70 lg:max-w-[320px] mx-auto bg-white rounded-t-2xl md:rounded-2xl border border-zinc-200/80 shadow-xl shadow-zinc-200/50 
                         overflow-hidden transform transition-all duration-700 md:group-hover:-translate-y-2 md:group-hover:shadow-2xl">
                         
                         <img src="assets/home/tienda_ejemplo.webp" 
@@ -42,7 +42,7 @@
                 </div>
             </div>
 
-            <!-- FEATURE 2: WHATSAPP (Ocupa 1 columna) -->
+            <!-- FEATURE 2: WHATSAPP -->
             <div class="relative overflow-hidden rounded-3xl bg-zinc-50 border border-zinc-200/60 p-8 sm:p-10 flex flex-col group">
                 
                 <div class="relative z-10 mb-6">
@@ -54,12 +54,10 @@
 
                 <div class="flex-1 flex items-start justify-center overflow-hidden">
                     
-                    <div class="relative w-full max-w-70 overflow-hidden md:group-hover:scale-105 transition-transform duration-500">
-                        
+                    <div class="relative w-full max-w-65 sm:max-w-70 mx-auto overflow-hidden md:group-hover:scale-105 transition-transform duration-500">
                         <img src="assets/home/ejemplo_pedido2.webp" 
                             alt="Ejemplo de pedido" 
                             class="w-full h-auto object-cover object-top p-2" />
-                            
                     </div>
 
                 </div>
@@ -118,8 +116,8 @@
                 </div>
             </div>
 
-            <!-- FEATURE 4: PANEL DE ADMINISTRACIÓN (Ocupa 2 columnas en PC) -->
-            <div class="md:col-span-2 relative overflow-hidden rounded-3xl bg-zinc-50 border border-zinc-200/60 pt-8 px-8 pb-0 sm:pt-10 sm:px-10 sm:pb-0 md:p-10 flex flex-col md:flex-row md:items-center md:gap-8 group transition-all">
+            <!-- FEATURE 4: PANEL DE ADMINISTRACIÓN -->
+            <div class="md:col-span-2 relative overflow-hidden rounded-3xl bg-zinc-50 border border-zinc-200/60 p-8 sm:pt-10 sm:px-10 sm:pb-4 md:p-10 flex flex-col md:flex-row md:items-center md:gap-8 group transition-all">
                 
                 <!-- Textos -->
                 <div class="md:w-1/2 relative z-10 flex flex-col justify-center mb-8 md:mb-0">
@@ -129,19 +127,57 @@
                     </p>
                 </div>
 
-                <!-- Captura Visual: Panel Vendedor -->
-                <div class="mt-auto md:mt-0 w-full md:w-1/2">
+                <!-- Captura Visual: Carrusel Panel Vendedor -->
+                <div class="w-full md:w-1/2 flex items-center justify-center relative">
                     
-                    <!-- Contenedor de la imagen con diseño "ventana flotante" -->
-                    <div class="relative bg-white rounded-t-2xl md:rounded-2xl border border-zinc-200/80 shadow-lg shadow-zinc-200/50 overflow-hidden transform transition-all duration-700 md:group-hover:-translate-y-2 md:group-hover:shadow-xl">
+                    <!-- Contenedor del dispositivo/ventana -->
+                    <!-- 1. IMPORTANTE: Le quitamos el overflow-hidden a este div padre para que las flechas puedan sobresalir libremente -->
+                    <div class="relative w-full max-w-70 sm:max-w-65 md:max-w-70 lg:max-w-75 bg-white rounded-t-2xl md:rounded-2xl border border-zinc-200/80 shadow-lg shadow-zinc-200/50 transform transition-all duration-700 md:group-hover:-translate-y-2 md:group-hover:shadow-xl">
                         
-                        <img src="assets/home/panel_vendedor.webp" 
-                            alt="Panel de administración del vendedor" 
-                            class="w-full h-auto object-cover object-top" />
+                        <!-- 2. Envolvemos el carrusel en un nuevo div que SÍ recorta las imágenes (overflow-hidden) para mantener los bordes redondeados de las fotos -->
+                        <div class="overflow-hidden rounded-t-2xl md:rounded-2xl w-full">
                             
+                            <div #panelScrollContainer (scroll)="onPanelScroll($event)" 
+                                 class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                                 
+                                @for (img of panelImages; track img.src) {
+                                    <div class="min-w-full w-full shrink-0 snap-center snap-always flex justify-center">
+                                        <img [src]="img.src" 
+                                             [alt]="img.alt" 
+                                             class="w-full h-auto object-contain pointer-events-none select-none block" />
+                                    </div>
+                                }
+                            </div>
+                            
+                        </div>
+
+                        <!-- FLECHAS DESKTOP -->
+                        <div class="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                            
+                            <button (click)="scrollPanel(panelScrollContainer, -1)" [disabled]="currentPanelIndex === 0" 
+                                    class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 z-10 p-1.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
+                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                            </button>
+                            
+                            <button (click)="scrollPanel(panelScrollContainer, 1)" [disabled]="currentPanelIndex === panelImages.length - 1" 
+                                    class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 z-10 p-1.5 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
+                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                            
+                        </div>
                     </div>
                 </div>
-                
+
+                <!-- PUNTOS INDICADORES MOBILE -->
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 md:hidden">
+                    @for (img of panelImages; track img.src; let i = $index) {
+                        <button (click)="scrollToPanel(i, panelScrollContainer)"
+                            class="h-1.5 rounded-full transition-all duration-300 z-20"
+                            [class]="currentPanelIndex === i ? 'bg-brand-accent w-5' : 'bg-zinc-300 w-1.5'">
+                        </button>
+                    }
+                </div>
+
             </div>
 
         </div>

@@ -15,6 +15,15 @@ export class Features implements AfterViewInit, OnDestroy {
 
   constructor(private cdr: ChangeDetectorRef) {}
 
+  panelImages = [
+    { src: 'assets/home/pv_inicio.webp', alt: 'Panel de inicio' },
+    { src: 'assets/home/pv_productos.webp', alt: 'Gestión de productos' },
+    { src: 'assets/home/pv_pedidos.webp', alt: 'Gestión de pedidos' },
+    { src: 'assets/home/pv_estadisticas.webp', alt: 'Estadísticas' }
+  ];
+
+  currentPanelIndex = 0;
+
   ngAfterViewInit() {
     this.cuponObserver = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && window.innerWidth < 768) {
@@ -33,5 +42,20 @@ export class Features implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.cuponObserver?.disconnect();
+  }
+
+  onPanelScroll(event: Event) {
+    const target = event.target as HTMLElement;
+    this.currentPanelIndex = Math.round(target.scrollLeft / (target.clientWidth + 24));
+  }
+
+  scrollPanel(container: HTMLElement, direction: number) {
+    const scrollAmount = container.clientWidth + 24;
+    container.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
+  }
+
+  scrollToPanel(index: number, container: HTMLElement) {
+    const scrollAmount = container.clientWidth + 24;
+    container.scrollTo({ left: scrollAmount * index, behavior: 'smooth' });
   }
 }

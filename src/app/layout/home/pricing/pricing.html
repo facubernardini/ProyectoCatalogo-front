@@ -5,7 +5,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         
         <!-- CABECERA DE LA SECCIÓN -->
-        <div class="text-center max-w-2xl mx-auto mb-8">
+        <div class="text-center max-w-2xl mx-auto mb-4">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
                 Planes y precios
             </h2>
@@ -14,15 +14,19 @@
             </p>
         </div>
 
+        <!-- AVISO DE PRUEBA GRATIS -->
+        <div class="flex justify-center mb-8">
+            <div class="gap-2 px-3 py-1.5 rounded-full bg-zinc-100 border border-zinc-200 text-xs md:text-sm font-medium text-zinc-600 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+                La prueba gratis es del plan <strong class="text-zinc-900">Premium</strong>
+            </div>
+        </div>
+
         <!-- TOGGLE MENSUAL / ANUAL -->
         <div class="max-w-xs mx-auto mb-3 md:mb-6">
-            <!-- Contenedor del fondo gris -->
             <div class="p-1 bg-zinc-200 rounded-2xl">
-                <!-- Contenedor relativo que habilita el movimiento de la pastilla -->
                 <div class="relative grid grid-cols-2">
                     
                     <!-- EL FONDO DESLIZABLE (La pastilla) -->
-                    <!-- Ocupa exactamente la mitad del ancho (w-1/2) y se desliza con translate-x -->
                     <div class="absolute top-0 bottom-0 left-0 w-1/2 rounded-xl transition-all duration-300 ease-out"
                         [class.translate-x-0]="!isAnual"
                         [class.bg-white]="!isAnual"
@@ -34,16 +38,15 @@
                     </div>
 
                     <!-- BOTÓN MENSUAL -->
-                    <!-- Le agregamos relative y z-10 para que flote por encima del fondo animado -->
                     <button (click)="isAnual = false"
-                        [class]="!isAnual ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'"
+                        [class]="!isAnual ? 'text-zinc-900' : 'text-zinc-500 md:hover:text-zinc-700'"
                         class="relative z-10 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors duration-300">
                         Mensual
                     </button>
                     
                     <!-- BOTÓN ANUAL -->
                     <button (click)="isAnual = true"
-                        [class]="isAnual ? 'text-white' : 'text-zinc-500 hover:text-zinc-700'"
+                        [class]="isAnual ? 'text-white' : 'text-zinc-500 md:hover:text-zinc-700'"
                         class="relative z-10 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors duration-300">
                         Anual
                     </button>
@@ -58,14 +61,13 @@
                 class="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory gap-3 md:gap-6 py-5 hide-scrollbar">
                 
                 @for (plan of planes; track plan.id) {
-                    <div class="w-full shrink-0 snap-center lg:w-auto">
+                    <div class="w-full shrink-0 snap-center snap-always lg:w-auto">
                         
-                        <!-- CARD CON EFECTO IMÁN 3D -->
                         <div (mousemove)="onMouseMove($event, plan.id)"
                             (mouseleave)="onMouseLeave(plan.id)"
                             [style.transform]="cardTransforms[plan.id] || 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)'"
                             class="h-full flex flex-col rounded-3xl p-6 md:p-8 border transition-all duration-200 ease-out relative"
-                            [class]="plan.destacado ? 'bg-zinc-900 text-white border-zinc-900 shadow-xl' : 'bg-white text-zinc-900 border-zinc-200 hover:shadow-2xl hover:shadow-zinc-900/10'">
+                            [class]="plan.destacado ? 'bg-zinc-900 text-white border-zinc-900 shadow-xl' : 'bg-white text-zinc-900 border-zinc-200 md:hover:shadow-2xl md:hover:shadow-zinc-900/10'">
                             
                             @if (plan.destacado) {
                                 <div class="absolute top-0 right-0 bg-white/10 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl rounded-tr-3xl backdrop-blur-md pointer-events-none">
@@ -101,10 +103,19 @@
                                 }
                             </ul>
 
-                            <button class="mt-auto w-full py-3.5 px-4 rounded-xl font-semibold transition-all duration-300 active:scale-95"
-                                    [class]="plan.destacado ? 'bg-white text-zinc-900 hover:bg-zinc-100' : 'bg-zinc-900 text-white hover:bg-zinc-800'">
-                                Más información
-                            </button>
+                            @if (plan.id === 'ultra') {
+                                <button (click)="contactar()"
+                                    class="mt-auto w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-900 text-white md:hover:bg-zinc-800 rounded-xl font-semibold transition-all duration-300 active:scale-95">
+                                    <app-icon name="whatsapp" classes="size-5 fill-current" />
+                                    Consultar por WhatsApp
+                                </button>
+                            } @else {
+                                <button (click)="irARegistro()"
+                                        class="mt-auto w-full py-3 px-4 rounded-xl font-semibold transition-all duration-300 active:scale-95"
+                                        [class]="plan.destacado ? 'bg-white text-zinc-900 md:hover:bg-zinc-200' : 'bg-zinc-900 text-white hover:bg-zinc-800'">
+                                    Registrarme ahora
+                                </button>
+                            }
                         </div>
                     </div>
                 }

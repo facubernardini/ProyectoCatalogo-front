@@ -37,7 +37,7 @@
 
             <!-- COLUMNA 2: Producto -->
             <div class="md:col-span-3 lg:col-span-2">
-                <h3 class="text-xs font-black uppercase tracking-widest text-brand-text mb-5">Producto</h3>
+                <h3 class="text-xs font-black uppercase tracking-widest text-brand-text mb-5">Explorar</h3>
                 <ul class="flex flex-col gap-3">
                     <li>
                         <a (click)="scrollToSection('funcionalidades')" 
@@ -63,13 +63,10 @@
             <!-- COLUMNA 3: Soporte -->
             <div class="md:col-span-3 lg:col-span-2">
                 <h3 class="text-xs font-black uppercase tracking-widest text-brand-text mb-5">Soporte</h3>
-                <ul class="flex flex-col gap-3">
-                    <li>
-                        <a [href]="BRAND_DATA.contact.whatsappLink" target="_blank" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors">
-                            Contactanos
-                        </a>
-                    </li>
-                </ul>
+
+                <a [href]="'mailto:' + BRAND_DATA.contact.email" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors flex items-center gap-2">
+                    {{ BRAND_DATA.contact.email }}
+                </a>
             </div>
 
             <!-- COLUMNA 4: Acción Rápida (CTA) -->

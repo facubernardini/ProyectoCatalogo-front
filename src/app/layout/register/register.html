@@ -2,18 +2,18 @@
     <div class="w-full max-w-md bg-white rounded-4xl shadow-xl border border-brand-bg p-6 relative">
 
         <a (click)="volverPaso()"
-			class="absolute top-6 left-6 p-2 -ml-2 text-gray-400 md:hover:text-brand-text md:hover:bg-gray-100 rounded-full transition-all focus:outline-none flex items-center gap-1.5 cursor-pointer"
-			aria-label="Volver al inicio">
-			<app-icon name="back" classes="size-6 text-brand-accent fill-current" />
-		</a>
+            class="absolute top-6 left-6 p-2 -ml-2 text-gray-400 md:hover:text-brand-text md:hover:bg-gray-100 rounded-full transition-all focus:outline-none flex items-center gap-1.5 cursor-pointer"
+            aria-label="Volver al inicio">
+            <app-icon name="back" classes="size-6 text-brand-accent fill-current" />
+        </a>
 
-		<!-- CABECERA -->
-		<div class="text-center my-5">
+        <!-- CABECERA -->
+        <div class="text-center my-5">
             <div class="flex items-center justify-center gap-3 mb-3">
                 <img src="assets/home/logo_color.webp" alt="Logo" class="h-8 w-auto object-contain" />
                 <h2 class="text-3xl font-extrabold text-brand-accent tracking-tight">
-					{{ BRAND_DATA.name }}
-				</h2>
+                    {{ BRAND_DATA.name }}
+                </h2>
             </div>
             <p class="text-brand-text-sec text-base md:text-lg pt-3">
                 @if (pasoActual() === 1) { Completá tus datos personales }
@@ -23,7 +23,7 @@
         </div>
 
         <!-- INDICADOR DE PASOS -->
-        <div class="flex items-center justify-center gap-2 mb-8">
+        <div class="flex items-center justify-center gap-2 mb-6">
             <div class="h-1.5 flex-1 rounded-full transition-all duration-300" 
                 [class]="pasoActual() >= 1 ? 'bg-brand-accent' : 'bg-gray-200'"></div>
             <div class="h-1.5 flex-1 rounded-full transition-all duration-300"
@@ -37,6 +37,15 @@
             <!-- PASO 1: DATOS PERSONALES -->
             @if (pasoActual() === 1) {
                 <section class="animate-in fade-in slide-in-from-left-4 duration-500 space-y-6">
+                    
+                    <!-- NUEVO: AVISO DE PRUEBA PREMIUM -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-2 px-3 py-1.5 bg-brand-bg/50 border border-brand-accent/20 rounded-xl mb-6">
+                            <span class="text-sm text-brand-text">La prueba gratis es del plan <strong>Premium</strong></span>
+                        <a (click)="verPlanes()"
+                           class="text-[11px] font-bold uppercase tracking-wide text-brand-accent hover:text-brand-accent/80 transition-colors shrink-0 whitespace-nowrap cursor-pointer">
+                            Ver planes
+                        </a>
+                    </div>
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -52,6 +61,7 @@
                         </div>
                     </div>
 
+                    <!-- RESTO DEL PASO 1 (Sin cambios) -->
                     <div>
                         <div class="flex justify-between items-end mb-2">
                             <label class="block text-sm font-semibold text-brand-text">Correo Electrónico</label>

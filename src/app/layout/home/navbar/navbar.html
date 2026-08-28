@@ -1,5 +1,4 @@
 <!-- NAV CONTENEDOR -->
-<!-- TRUCO 1: md:top-0 y md:px-0 anulan el gap de la píldora en pantallas grandes -->
 <nav class="fixed left-0 w-full z-50 transition-all duration-500 md:top-0 md:px-0"
     [class.transition-none]="!isMounted"
     [class.top-0]="!isScrolled"
@@ -46,7 +45,7 @@
             </a>
 
             <!-- BLOQUE 2: Enlaces (Centro - Solo PC) -->
-            <div class="hidden md:flex items-center gap-5">
+            <div class="hidden md:flex px-3 items-center md:gap-3 lg:gap-5">
                 @for (opcion of opciones; track opcion.nombre) {
                     
                     <a (click)="scrollToSection(opcion.id)" 
@@ -103,7 +102,7 @@
 
                     <!-- Botón "Probar gratis" -->
                     <button (click)="irARegistro()"
-                        class="px-5 py-1.5 text-sm font-semibold rounded-full shadow-sm focus:outline-none active:scale-95 bg-white text-brand-accent hover:bg-gray-100"
+                        class="px-4 py-1.5 text-sm font-semibold rounded-full shadow-sm focus:outline-none active:scale-95 bg-white text-brand-accent hover:bg-gray-100"
                         [class.transition-all]="isMounted"
                         [class.duration-300]="isMounted"
                         [class.bg-white]="!isScrolled"
