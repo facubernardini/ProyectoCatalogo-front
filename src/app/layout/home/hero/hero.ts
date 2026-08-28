@@ -14,7 +14,7 @@ export class Hero {
   mouseX = 0;
   mouseY = 0;
   
-  subtitulo1 = 'Tus clientes hacen el pedido por la tienda y llega directo a tu <strong>WhatsApp</strong>.';
+  subtitulo1 = 'Listalo te permite crear tu tienda online y recibir los pedidos por <strong>WhatsApp</strong>, sin comisiones ni apps para descargar.';
 
   subtitulo2 = '¿Tenés tus productos en un Excel? ¡Te los cargamos nosotros <strong>sin costo</strong>!';
 

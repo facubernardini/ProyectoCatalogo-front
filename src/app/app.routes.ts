@@ -23,6 +23,7 @@ import { isDominioBase } from './core/data/domains.data';
 import { CargaInicial } from './layout/panel-vendedor/carga-inicial/carga-inicial';
 import { MisPedidos } from './layout/panel-vendedor/mis-pedidos/mis-pedidos';
 import { Estadisticas } from './layout/panel-vendedor/estadisticas/estadisticas';
+import { TerminosYCondiciones } from './layout/home/terminos-y-condiciones/terminos-y-condiciones';
 
 export function subdominioMatcher(url: UrlSegment[]): UrlMatchResult | null {
     const host = window.location.hostname;
@@ -41,6 +42,7 @@ export const routes: Routes = [
     { matcher: subdominioMatcher, component: CatalogoPublico },
 
     { path: '', component: Home },
+    { path: 'terminos-y-condiciones', component: TerminosYCondiciones },
     { path: 'register', component: Register },
     { path: 'login', component: Login },
     { path: 'recovery', component: RecoveryPassword },
