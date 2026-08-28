@@ -1,11 +1,12 @@
 @if (infoService.isOpen()) {
-    <div class="fixed inset-0 z-70 bg-black/60 animate-backdrop flex flex-col justify-end md:justify-center md:items-center md:p-4"
+    <div class="fixed inset-0 z-70 bg-black/60 animate-backdrop flex flex-col justify-end md:justify-center md:items-center md:p-4 transform-gpu will-change-opacity"
         (click)="infoService.close()">
 
         <div appSwipeDown 
             (onSwipe)="infoService.close()"
             (click)="$event.stopPropagation()"
-            class="w-full md:max-w-112.5 max-h-[90vh] rounded-t-[40px] md:rounded-3xl bg-white p-5 shadow-2xl flex flex-col items-center animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:fade-in md:zoom-in-[0.98] duration-300">
+            class="w-full md:max-w-112.5 max-h-[90vh] rounded-t-[40px] md:rounded-3xl bg-white p-5 shadow-2xl flex flex-col items-center 
+                animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:fade-in md:zoom-in-[0.98] duration-300 transform-gpu will-change-transform backface-hidden">
         
             <div class="mb-4 h-1.5 w-12 shrink-0 rounded-full bg-zinc-200 md:hidden"></div>
 

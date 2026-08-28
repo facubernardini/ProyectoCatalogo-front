@@ -61,10 +61,11 @@
 </div>
 
 @if (mostrarModalFiltros()) {
-    <div class="fixed inset-0 z-60 bg-black/60 fade-in" (click)="cerrarFiltros()">
+    <div class="fixed inset-0 z-60 bg-black/60 fade-in transform-gpu will-change-opacity" 
+        (click)="cerrarFiltros()">
         <div appSwipeDown
             (onSwipe)="cerrarFiltros()"
-            class="absolute bottom-0 left-0 w-full bg-white rounded-t-4xl p-4 shadow-2xl animate-in" 
+            class="absolute bottom-0 left-0 w-full bg-white rounded-t-4xl p-4 shadow-2xl animate-in transform-gpu will-change-transform backface-hidden" 
             (click)="$event.stopPropagation()">
             
             <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
