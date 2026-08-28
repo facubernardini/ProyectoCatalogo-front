@@ -1,8 +1,11 @@
 @if (cartService.isOpen()) {
-<div class="fixed inset-0 z-80 bg-black/60 animate-backdrop" (click)="cartService.close()">
+<div class="fixed inset-0 z-80 bg-black/60 animate-backdrop transform-gpu will-change-opacity" 
+    (click)="cartService.close()">
 
     <div appSwipeDown (onSwipe)="cartService.close()"
-        class="absolute bottom-0 md:bottom-auto md:top-0 md:right-0 w-full md:w-112.5 max-h-[90vh] md:max-h-none md:h-screen bg-white rounded-t-[40px] md:rounded-none md:rounded-l-[40px] flex flex-col shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:slide-in-from-right duration-300"
+        class="absolute bottom-0 md:bottom-auto md:top-0 md:right-0 w-full md:w-112.5 max-h-[90vh] md:max-h-none md:h-screen bg-white 
+        rounded-t-[40px] md:rounded-none md:rounded-l-[40px] flex flex-col shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:slide-in-from-right duration-300
+        transform-gpu will-change-transform backface-hidden"
         (click)="$event.stopPropagation()">
 
         <div class="p-4 pb-2 border-b border-gray-100 touch-none cursor-grab active:cursor-grabbing md:cursor-auto shrink-0">
@@ -413,7 +416,7 @@
                 <button (click)="finalizarPedido()"
                     type="button"
                     [disabled]="isSubmitting()"
-                    class="relative overflow-hidden w-full py-2 bg-brand-accent text-white font-black text-lg rounded-2xl shadow-lg transition-all group disabled:opacity-75 disabled:cursor-not-allowed md:hover:brightness-110"
+                    class="relative overflow-hidden w-full py-2 bg-brand-accent text-white font-bold text-base rounded-2xl shadow-lg transition-all group disabled:opacity-75 disabled:cursor-not-allowed md:hover:brightness-110"
                     [class.active:scale-[0.98]]="!isSubmitting()">
                     
                     @if (puedeFinalizar() && !isSubmitting()) {
@@ -423,7 +426,7 @@
                     <!-- ESTADO NORMAL: Este contenedor nunca es absoluto. Siempre mantiene firme la altura y forma del botón, solo se vuelve transparente -->
                     <div class="flex items-center justify-center gap-3 transition-opacity duration-300"
                         [class.opacity-0]="isSubmitting()">
-                        <app-icon name="whatsapp" classes="size-6 fill-current" />
+                        <app-icon name="whatsapp" classes="size-5 fill-current" />
                         <span>Confirmar por WhatsApp</span>
                     </div>
 

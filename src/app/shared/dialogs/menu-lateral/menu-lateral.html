@@ -1,13 +1,13 @@
-<div class="fixed inset-0 z-50 transition-all duration-300 invisible"
+<div class="fixed inset-0 z-50 transition-all duration-300 invisible transform-gpu will-change-opacity"
     [class.invisible]="!menuService.isOpen()">
 
-    <div class="absolute inset-0 bg-black/60 transition-opacity duration-300 opacity-0"
+    <div class="absolute inset-0 bg-black/60 transition-opacity duration-300 opacity-0 transform-gpu will-change-opacity"
         [class.opacity-0]="!menuService.isOpen()"
         [class.opacity-100]="menuService.isOpen()"
         (click)="menuService.close()">
     </div>
 
-    <aside class="absolute top-0 left-0 h-full w-[82%] bg-white shadow-2xl transition-transform duration-300 ease-in-out flex flex-col -translate-x-full"
+    <aside class="absolute top-0 left-0 h-full w-[82%] bg-white shadow-2xl transition-transform duration-300 ease-in-out flex flex-col -translate-x-full transform-gpu will-change-transform backface-hidden"
            [class.-translate-x-full]="!menuService.isOpen()"
            [class.translate-x-0]="menuService.isOpen()">
         
