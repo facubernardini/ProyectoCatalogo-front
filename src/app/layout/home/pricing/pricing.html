@@ -66,8 +66,8 @@
                         <div (mousemove)="onMouseMove($event, plan.id)"
                             (mouseleave)="onMouseLeave(plan.id)"
                             [style.transform]="cardTransforms[plan.id] || 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)'"
-                            class="h-full flex flex-col rounded-3xl p-6 md:p-8 border transition-all duration-200 ease-out relative"
-                            [class]="plan.destacado ? 'bg-zinc-900 text-white border-zinc-900 shadow-xl' : 'bg-white text-zinc-900 border-zinc-200 md:hover:shadow-2xl md:hover:shadow-zinc-900/10'">
+                            class="h-full flex flex-col rounded-3xl p-6 md:p-8 border transition-all duration-200 ease-out relative md:hover:shadow-2xl md:hover:shadow-zinc-900/10"
+                            [class]="plan.destacado ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-900 border-zinc-200'">
                             
                             @if (plan.destacado) {
                                 <div class="absolute top-0 right-0 bg-white/10 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl rounded-tr-3xl backdrop-blur-md pointer-events-none">

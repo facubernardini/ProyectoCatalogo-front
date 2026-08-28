@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Footer } from "../footer/footer";
 import { Navbar } from "../navbar/navbar";
@@ -10,6 +10,8 @@ import { Navbar } from "../navbar/navbar";
   styleUrl: './terminos-y-condiciones.css',
 })
 export class TerminosYCondiciones implements OnInit {
+  showScrollButton = signal(false);
+  
   ngOnInit() {
     setTimeout(() => {
       window.scrollTo({
@@ -17,5 +19,17 @@ export class TerminosYCondiciones implements OnInit {
         behavior: 'smooth'
       });
     }, 50);
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll() {
+    this.showScrollButton.set(window.scrollY > 400);
+  }
+
+  scrollToTop() {
+    window.scrollTo({ 
+      top: 0, 
+      behavior: 'smooth'
+    });
   }
 }
