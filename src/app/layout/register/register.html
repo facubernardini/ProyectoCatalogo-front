@@ -1,28 +1,29 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans relative">
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-brand-bg p-6 relative">
-        
-        <!-- BOTÓN VOLVER -->
+    <div class="w-full max-w-md bg-white rounded-4xl shadow-xl border border-brand-bg p-6 relative">
+
         <a (click)="volverPaso()"
             class="absolute top-6 left-6 p-2 -ml-2 text-gray-400 md:hover:text-brand-text md:hover:bg-gray-100 rounded-full transition-all focus:outline-none flex items-center gap-1.5 cursor-pointer"
-            aria-label="Volver">
+            aria-label="Volver al inicio">
             <app-icon name="back" classes="size-6 text-brand-accent fill-current" />
         </a>
 
         <!-- CABECERA -->
-        <div class="text-center mb-8 mt-2">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-bg rounded-full mb-4">
-            <app-icon name="shop" classes="size-8 text-brand-accent fill-current" />
-        </div>
-        <h2 class="text-2xl font-bold text-brand-text">Crear tienda</h2>
-        <p class="text-brand-text-sec text-sm mt-1">
-            @if (pasoActual() === 1) { Completá tus datos personales }
-            @else if (pasoActual() === 2) { Configurá tu negocio }
-            @else { Verificá tu correo electrónico }
-        </p>
+        <div class="text-center my-5">
+            <div class="flex items-center justify-center gap-3 mb-3">
+                <img src="assets/home/logo_color.webp" alt="Logo" class="h-8 w-auto object-contain" />
+                <h2 class="text-3xl font-extrabold text-brand-accent tracking-tight">
+                    {{ BRAND_DATA.name }}
+                </h2>
+            </div>
+            <p class="text-brand-text-sec text-base md:text-lg pt-3">
+                @if (pasoActual() === 1) { Completá tus datos personales }
+                @else if (pasoActual() === 2) { Datos de tu tienda }
+                @else { Verificá tu correo electrónico }
+            </p>
         </div>
 
         <!-- INDICADOR DE PASOS -->
-        <div class="flex items-center justify-center gap-2 mb-8">
+        <div class="flex items-center justify-center gap-2 mb-6">
             <div class="h-1.5 flex-1 rounded-full transition-all duration-300" 
                 [class]="pasoActual() >= 1 ? 'bg-brand-accent' : 'bg-gray-200'"></div>
             <div class="h-1.5 flex-1 rounded-full transition-all duration-300"
@@ -36,6 +37,15 @@
             <!-- PASO 1: DATOS PERSONALES -->
             @if (pasoActual() === 1) {
                 <section class="animate-in fade-in slide-in-from-left-4 duration-500 space-y-6">
+                    
+                    <!-- NUEVO: AVISO DE PRUEBA PREMIUM -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-2 px-3 py-1.5 bg-brand-bg/50 border border-brand-accent/20 rounded-xl mb-6">
+                            <span class="text-sm text-brand-text">La prueba gratis es del plan <strong>Premium</strong></span>
+                        <a (click)="verPlanes()"
+                           class="text-[11px] font-bold uppercase tracking-wide text-brand-accent hover:text-brand-accent/80 transition-colors shrink-0 whitespace-nowrap cursor-pointer">
+                            Ver planes
+                        </a>
+                    </div>
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -51,6 +61,7 @@
                         </div>
                     </div>
 
+                    <!-- RESTO DEL PASO 1 (Sin cambios) -->
                     <div>
                         <div class="flex justify-between items-end mb-2">
                             <label class="block text-sm font-semibold text-brand-text">Correo Electrónico</label>
@@ -136,7 +147,6 @@
                     <div>
                         <label class="block text-sm font-semibold text-brand-text mb-2">Nombre de tu Negocio</label>
                         <input type="text" name="nombre_tienda" [(ngModel)]="catalogo.nombre_tienda" (ngModelChange)="generarSlug()"
-                            placeholder="Ej: Mi Tienda Online"
                             class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white text-brand-text">
                     </div>
 
@@ -185,7 +195,7 @@
                         <label class="block text-sm font-semibold text-brand-text mb-2">Rubro Comercial</label>
                         <div class="relative">
                             <button type="button" (click)="toggleRubroDropdown()"
-                                    class="w-full px-4 py-3 flex justify-between items-center bg-gray-50 border rounded-xl outline-none transition-all duration-200"
+                                    class="w-full px-4 py-3 flex justify-between items-center text-sm bg-gray-50 border rounded-xl outline-none transition-all duration-200"
                                     [class.border-gray-200]="!isRubroDropdownOpen()"
                                     [class.bg-white]="isRubroDropdownOpen()"
                                     [class.border-brand-accent/40]="isRubroDropdownOpen()"

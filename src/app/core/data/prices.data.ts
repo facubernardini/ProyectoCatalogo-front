@@ -3,28 +3,42 @@ export const PRICES = [
     id: 'basico',
     plan: 'Básico',
     descripcion: 'Perfecto para tiendas que solo buscan exponer productos a sus clientes y recibir pedidos.',
-    precioMensual: '11900',
-    precioAnual: '119000',
+    precioMensual: '14900',
+    precioAnual: '149000',
     destacado: false,
     caracteristicas: [
-      'Catálogo online básico',
-      'Hasta 50 productos',
+      'Productos ilimitados',
       'Recibir pedidos por WhatsApp',
-      'Soporte por email'
+      'Cupones de descuento para tus clientes',
+      'Soporte por Whatsapp'
     ]
   },
   {
     id: 'premium',
     plan: 'Premium',
-    descripcion: 'Para negocios que buscan escalar sus ventas sin límites.',
+    descripcion: 'Ideal si querés mantener un control de stock, pedidos y ganancias mensuales de tu negocio.',
     precioMensual: '19900',
     precioAnual: '199000',
     destacado: true,
     caracteristicas: [
-      'Productos y ventas ilimitadas',
-      'Seguimiento de pedidos.',
-      'Gestión avanzada de stock',
+      'Control de stock',
+      'Historial y gestión de pedidos',
+      'Estadísticas de tu negocio',
+      'Soporte por Whatsapp'
+    ]
+  },
+  {
+    id: 'ultra',
+    plan: 'Ultra',
+    descripcion: 'Pensado para quienes quieren una verdadera identidad para su negocio.',
+    precioMensual: '29900',
+    precioAnual: '299000',
+    destacado: false,
+    caracteristicas: [
+      'Todo lo anterior de los planes Básico y Premium',
+      'Dominio propio (tutienda.com.ar)',
+      'Sin referencias a Listalo',
       'Soporte prioritario 24/7'
     ]
-  }
+  },
 ];

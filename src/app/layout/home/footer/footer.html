@@ -1,8 +1,15 @@
-<footer class="bg-brand-bg border-t border-brand-text/5 pt-8 pb-5">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+<!-- Agregamos relative, overflow-hidden y un degradado sutil al fondo -->
+<footer class="relative overflow-hidden bg-linear-to-b from-brand-bg via-brand-bg to-brand-accent/10 pt-8 pb-5 z-0">
+    
+    <!-- EFECTO AURA: Destellos sutiles en las esquinas (No interfieren con los clics por el pointer-events-none) -->
+    <div class="absolute bottom-0 right-0 w-125 h-50 bg-brand-accent/15 blur-[120px] rounded-full pointer-events-none -z-10 translate-y-1/4 translate-x-1/4"></div>
+    <div class="absolute bottom-0 left-0 w-75 h-40 bg-brand-accent/10 blur-[100px] rounded-full pointer-events-none -z-10 translate-y-1/4 -translate-x-1/4"></div>
+
+    <!-- Le sumamos relative z-10 al contenedor principal para que los textos siempre queden por encima del brillo -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
         
         <!-- GRID PRINCIPAL -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-8">
             
             <!-- COLUMNA 1: Marca y Descripción -->
             <div class="md:col-span-4 lg:col-span-5 flex flex-col items-start">
@@ -16,12 +23,12 @@
                 <!-- Redes Sociales -->
                 <div class="mt-8 flex gap-4">
                     <a [href]="BRAND_DATA.contact.instagramLink" target="_blank" rel="noopener noreferrer" 
-                       class="size-10 flex items-center justify-center rounded-full bg-white border border-brand-text/5 text-brand-text hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm">
+                        class="size-10 flex items-center justify-center rounded-full bg-white border border-brand-text/5 text-brand-text hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm">
                         <app-icon name="instagram" classes="size-4 fill-current" />
                         <span class="sr-only">Instagram</span>
                     </a>
                     <a [href]="BRAND_DATA.contact.whatsappLink" target="_blank" rel="noopener noreferrer" 
-                       class="size-10 flex items-center justify-center rounded-full bg-white border border-brand-text/5 text-brand-text hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm">
+                        class="size-10 flex items-center justify-center rounded-full bg-white border border-brand-text/5 text-brand-text hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm">
                         <app-icon name="whatsapp" classes="size-4 fill-current" />
                         <span class="sr-only">WhatsApp</span>
                     </a>
@@ -30,22 +37,24 @@
 
             <!-- COLUMNA 2: Producto -->
             <div class="md:col-span-3 lg:col-span-2">
-                <h3 class="text-xs font-black uppercase tracking-widest text-brand-text mb-5">Producto</h3>
+                <h3 class="text-xs font-black uppercase tracking-widest text-brand-text mb-5">Explorar</h3>
                 <ul class="flex flex-col gap-3">
                     <li>
-                        <a routerLink="/caracteristicas" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors cursor-pointer">
-                            Precios
-                        </a>
-                    </li>
-                    <li>
-                        <a routerLink="/precios" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors cursor-pointer">
+                        <a (click)="scrollToSection('funcionalidades')" 
+                            class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors cursor-pointer">
                             Funcionalidades
                         </a>
                     </li>
                     <li>
-                        <a routerLink="/ejemplos" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors flex items-center gap-2 cursor-pointer">
+                        <a (click)="scrollToSection('tiendas-ejemplo')"
+                            class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors cursor-pointer">
                             Tiendas de ejemplo
-                            <span class="px-2 py-0.5 rounded-full bg-brand-accent/10 text-brand-accent text-[10px] font-bold">Nuevo</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a (click)="scrollToSection('precios')"
+                            class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors cursor-pointer">
+                            Precios
                         </a>
                     </li>
                 </ul>
@@ -54,36 +63,28 @@
             <!-- COLUMNA 3: Soporte -->
             <div class="md:col-span-3 lg:col-span-2">
                 <h3 class="text-xs font-black uppercase tracking-widest text-brand-text mb-5">Soporte</h3>
-                <ul class="flex flex-col gap-3">
-                    <li>
-                        <a routerLink="/centro-ayuda" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors cursor-pointer">
-                            Centro de ayuda
-                        </a>
-                    </li>
-                    <li>
-                        <a [href]="BRAND_DATA.contact.whatsappLink" target="_blank" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors">
-                            Contactanos
-                        </a>
-                    </li>
-                </ul>
+
+                <a [href]="'mailto:' + BRAND_DATA.contact.email" class="text-sm font-medium text-brand-text-sec hover:text-brand-accent transition-colors flex items-center gap-2">
+                    {{ BRAND_DATA.contact.email }}
+                </a>
             </div>
 
             <!-- COLUMNA 4: Acción Rápida (CTA) -->
             <div class="md:col-span-2 lg:col-span-3">
                 <div class="bg-white rounded-2xl p-5 border border-brand-text/5 shadow-sm shadow-brand-text/5">
                     <h3 class="text-sm font-bold text-brand-text mb-2">¿Listo para empezar?</h3>
-                    <p class="text-xs text-brand-text-sec mb-4">Unite y empezá a vender hoy mismo.</p>
-                    <a routerLink="/registro" 
-                       class="w-full flex justify-center items-center px-4 py-2.5 text-xs font-bold text-white bg-brand-text hover:bg-brand-accent rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer">
+                    <p class="text-xs text-brand-text-sec mb-4">Registrate y empezá a vender hoy mismo.</p>
+                    <button (click)="irARegistro()" 
+                        class="w-full flex justify-center items-center px-4 py-2.5 text-xs font-bold text-white bg-brand-text hover:bg-brand-accent rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer">
                         Crear mi tienda gratis
-                    </a>
+                    </button>
                 </div>
             </div>
 
         </div>
 
         <!-- LINEA SEPARADORA -->
-        <div class="h-px w-full bg-brand-text/5 mb-5"></div>
+        <div class="h-px w-full bg-brand-text/10 mb-5"></div>
 
         <!-- COPYRIGHT Y LEGALES -->
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">

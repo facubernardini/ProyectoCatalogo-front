@@ -7,6 +7,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { Toast } from "src/app/shared/components/toast/toast";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "@shared/components/icon";
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,8 @@ export class Login {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+
+  public BRAND_DATA = BRAND_DATA;
   
   loginForm: FormGroup;
 

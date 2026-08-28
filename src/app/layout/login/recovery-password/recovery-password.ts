@@ -5,6 +5,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { Toast } from "src/app/shared/components/toast/toast";
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { Icon } from "src/app/shared/components/icon";
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-recovery',
@@ -17,6 +18,8 @@ export class RecoveryPassword {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private router = inject(Router);
+
+  public BRAND_DATA = BRAND_DATA;
 
   // Estados
   public pasoActual = signal<1 | 2>(1);

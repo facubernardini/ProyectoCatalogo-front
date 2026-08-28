@@ -1,47 +1,93 @@
-<section class="relative bg-brand-bg pt-22 pb-16 min-h-screen md:flex md:items-center md:pt-20 md:pb-12 overflow-hidden transition-colors duration-500 z-0">
+<section 
+    id="inicio"
+    class="relative bg-brand-bg pt-16 pb-10 min-h-svh flex flex-col justify-center md:flex-row md:items-center md:pt-20 md:pb-12 overflow-hidden transition-colors duration-500 z-0">
     
     <!-- FONDO INFERIOR CON MEDIALUNA (Solo Mobile) -->
-    <div class="absolute bottom-0 left-0 w-full h-[55%] bg-brand-accent md:hidden -z-10">
-        <!-- Curva de la medialuna asomando por encima del bloque -->
+    <div class="absolute bottom-0 left-0 w-full h-[40%] bg-brand-accent md:hidden -z-10">
         <div class="absolute bottom-full left-1/2 -translate-x-1/2 w-[150%] h-10 bg-brand-accent"
             style="border-top-left-radius: 50% 100%; border-top-right-radius: 50% 100%;">
         </div>
     </div>
 
-    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center">
-            
-            <!-- TEXTOS (Quedan ubicados sobre la parte sólida del fondo brand-accent en mobile) -->
-            <div class="order-2 md:order-1 flex flex-col items-center md:items-start text-center md:text-left mt-8 md:mt-0">
-                
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white md:text-brand-text leading-tight transition-colors">
-                    {{ tituloPrincipal }} 
-                </h1>
+    <!-- NUEVO: AURA / GLOW (Solo Desktop) -->
+    <div class="hidden md:block absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-200 h-100 bg-brand-accent/15 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
 
-                <p class="mt-6 text-lg text-white/90 md:text-brand-text-sec max-w-lg transition-colors">
-                    {{ subtitulo }}
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10 flex-1 flex flex-col justify-center">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 md:gap-y-0 md:gap-x-8 items-center w-full">
+            
+            <!-- BLOQUE 1: TÍTULO -->
+            <div class="order-1 md:col-start-1 md:row-start-1 flex flex-col items-center md:items-start text-center md:text-left mt-2 md:mt-0 md:self-end">
+                <h1 class="text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight text-brand-text leading-tight animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
+                    Creá tu tienda online <br>
+                    <span class="text-brand-accent">en minutos</span>.
+                </h1>
+            </div>
+
+            <!-- BLOQUE 2: IMAGEN Y EFECTOS PARALLAX -->
+            <div class="order-2 md:col-start-2 md:row-start-1 md:row-span-2 flex justify-center md:justify-end relative h-[35vh] min-h-55 md:h-auto md:min-h-0 w-full mt-4 md:mt-0">
+                
+                <div class="w-full max-w-70 sm:max-w-md h-full flex items-end justify-center relative">
+                    
+                    <!-- WIDGET 1: WhatsApp (Arriba a la derecha) -->
+                    <div class="hidden md:block absolute -top-2 right-20 md:right-30 z-30 animate-levitate" style="animation-duration: 4s; animation-delay: 1s;">
+                        <div class="bg-white px-3.5 py-2 rounded-2xl shadow-lg border border-zinc-100 flex flex-col items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                                [style.transform]="'translate(' + mouseX + 'px, ' + mouseY + 'px) rotate(6deg)'">
+                            <app-icon name="whatsapp" classes="size-6 fill-current text-[#25D366]" />
+                            <span class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-1.5 text-center leading-tight">
+                                Pedidos a tu <br> WhatsApp
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- WIDGET 2: Shop (Abajo a la izquierda) -->
+                    <div class="hidden md:block absolute bottom-12 -left-2 md:-left-4 z-30 animate-levitate" style="animation-duration: 6s; animation-delay: -2s;">
+                        <!-- Agregamos flex-col justo después de flex -->
+                        <div class="bg-white px-3.5 py-2 rounded-2xl shadow-lg border border-zinc-100 flex flex-col items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                                [style.transform]="'translate(' + (mouseX * 0.7) + 'px, ' + (mouseY * 0.7) + 'px) rotate(-12deg)'">
+                            <app-icon name="ticket" classes="size-7 fill-current text-orange-500" />
+                            <span class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-0.5 text-center leading-tight">
+                                Cupones de <br> descuento
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- WIDGET 3: 0% Comisiones (Abajo a la derecha) -->
+                    <div class="hidden md:block absolute bottom-1/4 -right-4 md:-right-8 z-30 animate-levitate" style="animation-duration: 5s; animation-delay: -4s;">
+                        <div class="bg-white px-3.5 py-2 rounded-2xl shadow-lg border border-zinc-100 flex flex-col items-center justify-center transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                                [style.transform]="'translate(' + (mouseX * 1.3) + 'px, ' + (mouseY * 1.3) + 'px) rotate(4deg)'">
+                            <span class="text-xl font-black text-brand-accent leading-none">0%</span>
+                            <span class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-0.5">Comisiones</span>
+                        </div>
+                    </div>
+
+                    <!-- Imagen principal de la chica -->
+                    <img src="assets/home/mujer_carrito.webp" alt="Mujer con carrito de compras" 
+                        class="w-full h-full md:h-auto object-contain object-bottom relative z-10 animate-levitate" />
+                </div>
+            </div>
+
+            <!-- BLOQUE 3: SUBTÍTULO Y BOTONES -->
+            <div class="order-3 md:col-start-1 md:row-start-2 flex flex-col items-center md:items-start text-center md:text-left pb-2 md:self-start md:pt-1">
+                
+                <p class="mt-3 md:mt-5 text-sm sm:text-base md:text-lg text-white/90 md:text-brand-text-sec max-w-lg transition-colors" 
+                    [innerHTML]="subtitulo1">
+                </p>
+
+                <p class="mt-2 text-sm sm:text-base md:text-lg text-white/90 md:text-brand-text-sec max-w-lg transition-colors" 
+                    [innerHTML]="subtitulo2">
                 </p>
                 
-                <div class="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <div class="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                     <button (click)="irARegistro()" 
-                        class="inline-flex justify-center items-center px-8 py-3 text-base font-semibold text-brand-accent bg-white md:text-white md:bg-brand-accent hover:opacity-90 rounded-full shadow-lg transition-all focus:outline-none active:scale-95 w-full sm:w-auto">
+                        class="inline-flex justify-center items-center px-8 py-3.5 text-sm md:text-base font-bold text-brand-accent bg-white md:text-white md:bg-brand-accent hover:opacity-90 rounded-full shadow-lg transition-all focus:outline-none active:scale-95 w-full sm:w-auto">
                         Probar gratis 30 días
                     </button>
                 </div>
                 
-                <p class="mt-4 text-xs font-medium text-white/80 md:text-brand-text-sec opacity-80 transition-colors">
-                    Gratis. Sin introducir tu tarjeta.
+                <p class="mt-3 md:mt-4 text-[11px] md:text-xs font-medium text-white/80 md:text-brand-text-sec opacity-80 transition-colors">
+                    Sin introducir tu tarjeta. Sin comisiones.
                 </p>
-
-            </div>
-
-            <!-- IMAGEN (Descansa sobre la curva de la medialuna) -->
-            <div class="order-1 md:order-2 flex justify-center md:justify-end relative">
-                <!-- translate-y-6 ayuda a empujar un poco la imagen hacia abajo para que se hunda sutilmente en la curva -->
-                <div class="w-full max-w-md flex items-end justify-center relative">
-                    <img src="assets/home/mujer_carrito.webp" alt="Mujer con carrito de compras" class="w-full h-auto object-contain relative z-10" />
-                </div>
             </div>
 
         </div>

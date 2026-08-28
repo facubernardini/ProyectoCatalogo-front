@@ -2,26 +2,25 @@ export const TIENDAS_EJEMPLO = [
   {
     id: 1,
     rubro: 'Dietética',
-    nombre: 'Vida Sana Natural',
-    descripcion: 'Catálogo con variantes de peso, frutos secos, suplementos y productos sin TACC.',
+    nombre: 'El Almacén Integral',
+    descripcion: 'Productos con diferentes unidades de venta, marcas y descripciones. Opciones Sin TACC y otras etiquetas.',
     url: 'https://ejemplo1.listalo.com.ar',
-    icono: 'leaf'
+    imagen: 'assets/home/dietetica.webp'
   },
   {
     id: 2,
     rubro: 'Comida Rápida',
     nombre: 'Burger House',
-    descripcion: 'Menú digital optimizado para recibir pedidos por WhatsApp con extras y aderezos.',
+    descripcion: 'Menú digital optimizado para recibir pedidos por WhatsApp y enviar a domicilio o retirar en el local.',
     url: 'https://ejemplo2.listalo.com.ar',
-    icono: 'store'
+    imagen: 'assets/home/burguer.webp'
   },
   {
     id: 3,
     rubro: 'PetShop',
     nombre: 'Huellitas Market',
-    descripcion: 'Ideal para mostrar alimentos por marca, accesorios por tamaño y juguetes.',
-    url: 'https://petshop.listalo.com.ar',
-    icono: 'shopping_cart' 
+    descripcion: 'Variedad de alimentos diferenciados por peso y marca, productos de higiene, juguetes y lo mejor para tu amigo de cuatro patas.',
+    url: 'https://ejemplo3.listalo.com.ar',
+    imagen: 'assets/home/pet_shop.webp' 
   },
-  
 ];

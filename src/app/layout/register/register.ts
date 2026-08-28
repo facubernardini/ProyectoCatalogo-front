@@ -80,6 +80,17 @@ export class Register implements OnInit, OnDestroy {
     this.correoSubject.complete();
   }
 
+  verPlanes() {
+    this.router.navigate(['/']).then(() => {
+      setTimeout(() => {
+        const seccionPrecios = document.getElementById('precios');
+        if (seccionPrecios) {
+          seccionPrecios.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    });
+  }
+
   cargarRubros() {
     this.rubroService.obtenerRubros().subscribe({
       next: (data) => this.rubros.set(data),
