@@ -96,13 +96,6 @@ export class ListaProductos {
     }
   }
 
-  @HostListener('window:popstate')
-  onPopState() {
-    if (this.mostrarModalFiltros() && history.state?.modal !== 'filtros-modal') {
-      this.cerrarFiltrosInterno();
-    }
-  }
-
   seleccionarCategoria(nombre: string) {
     this.categoriaManual.set(nombre);
     this.paginaActual.set(1);
@@ -119,18 +112,9 @@ export class ListaProductos {
 
     this.mostrarModalFiltros.set(true);
     document.body.style.overflow = 'hidden';
-    history.pushState({ modal: 'filtros-modal' }, '');
   }
 
   cerrarFiltros() {
-    this.cerrarFiltrosInterno();
-
-    if (history.state?.modal === 'filtros-modal') {
-      history.back();
-    }
-  }
-
-  private cerrarFiltrosInterno() {
     if (!this.mostrarModalFiltros()) return;
 
     this.mostrarModalFiltros.set(false);
