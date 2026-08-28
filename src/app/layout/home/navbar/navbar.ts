@@ -82,6 +82,11 @@ export class Navbar implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  get isHome(): boolean {
+    const urlActual = this.router.url.split('?')[0].split('#')[0];
+    return urlActual === '/' || urlActual === '';
+  }
+
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
@@ -104,6 +109,20 @@ export class Navbar implements OnInit, AfterViewInit, OnDestroy {
     this.activeSection = id;
     this.cerrarMenu();
 
+    const urlActual = this.router.url.split('?')[0].split('#')[0];
+    
+    if (urlActual === '/' || urlActual === '') {
+      this.ejecutarScrollSmooth(id);
+    } else {
+      this.router.navigate(['/']).then(() => {
+        setTimeout(() => {
+          this.ejecutarScrollSmooth(id);
+        }, 100);
+      });
+    }
+  }
+
+  private ejecutarScrollSmooth(id: string) {
     const element = document.getElementById(id);
     
     if (element) {

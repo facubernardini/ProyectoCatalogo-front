@@ -1,16 +1,9 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans relative">
 	<div class="w-full max-w-md bg-white rounded-4xl shadow-xl border border-brand-bg p-6 relative">
-		
-		<!-- BOTÓN VOLVER -->
-		<a (click)="volverAlInicio()"
-			class="absolute top-6 left-6 p-2 -ml-2 text-gray-400 md:hover:text-brand-text md:hover:bg-gray-100 rounded-full transition-all focus:outline-none flex items-center gap-1.5 cursor-pointer"
-			aria-label="Volver al inicio">
-			<app-icon name="back" classes="size-6 text-brand-accent fill-current" />
-		</a>
 
 		<!-- CABECERA -->
 		<div class="text-center my-5">
-            <div class="flex items-center justify-center gap-3 mb-3">
+            <div class="flex items-center justify-center gap-3 mb-2">
                 <img src="assets/home/logo_color.webp" alt="Logo" class="h-8 w-auto object-contain" />
                 <h2 class="text-3xl font-extrabold text-brand-accent tracking-tight">
 					{{ BRAND_DATA.name }}

@@ -75,7 +75,4 @@ export class Login {
     this.router.navigate(['/register']);
   }
 
-  volverAlInicio() {
-    this.router.navigate(['/']);
-  }
 }
