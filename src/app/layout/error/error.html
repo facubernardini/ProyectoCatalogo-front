@@ -7,20 +7,21 @@
         
         <div class="relative">
            
-            <h1 class="text-6xl font-black text-brand-text tracking-tighter mb-4">
+            <h1 class="text-6xl font-black text-brand-text tracking-tighter mb-2">
                 404
             </h1>
             
-            <p class="text-base font-bold text-brand-text-sec leading-relaxed px-2">
+            <p class="text-base font-bold text-brand-text-sec leading-relaxed px-2 mb-6">
                 Error interno del servidor
             </p>
             
+            <button (click)="volverAlInicio()" 
+               class="inline-flex items-center justify-center w-full px-5 py-3 bg-brand-accent text-white font-bold rounded-xl shadow-lg shadow-brand-accent/20 active:scale-95 md:hover:bg-brand-accent/90 transition-all duration-200 focus:outline-none">
+                Volver a un lugar seguro
+            </button>
+            
         </div>
         
-    </div>
-
-    <div class="mt-8 text-[10px] font-black uppercase tracking-widest text-gray-400">
-        Plataforma de Catálogos
     </div>
 
 </main>

@@ -6,4 +6,8 @@ import { Component } from '@angular/core';
   templateUrl: './error.html',
   styleUrl: './error.css',
 })
-export class ErrorView {}
+export class ErrorView {
+  volverAlInicio() {
+    window.location.href = 'https://listalo.com.ar';
+  }
+}
