@@ -1,4 +1,5 @@
-<div class="fixed inset-0 z-100 flex items-center justify-center p-4 transition-all duration-150 ease-in-out"
+<div class="fixed inset-0 z-100 flex items-center justify-center p-4 transition-all duration-150 ease-in-out
+    transform-gpu will-change-opacity"
     [class.opacity-0]="!mapDialogService.isOpen()"
     [class.invisible]="!mapDialogService.isOpen()"
     [class.opacity-100]="mapDialogService.isOpen()"
@@ -6,7 +7,8 @@
     
     <div class="absolute inset-0 bg-black/60" (click)="mapDialogService.close()"></div>
 
-    <div class="relative w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/20 transition-all duration-300 ease-out transform"
+    <div class="relative w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl shadow-black/20 transition-all duration-300 ease-out transform
+        transform-gpu will-change-transform backface-hidden"
         [class.translate-y-4]="!mapDialogService.isOpen()"
         [class.scale-95]="!mapDialogService.isOpen()"
         [class.translate-y-0]="mapDialogService.isOpen()"

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { Producto } from 'src/app/core/models/producto.model';
@@ -23,6 +23,8 @@ export class ProductPreview {
   private confirmService = inject(ConfirmService);
   private toastService = inject(ToastService);
 
+  @ViewChild('presentacionesContainer') presentacionesContainer!: ElementRef;
+
   agregarPresentacion(producto: Producto) {
     if (!producto.presentaciones) {
       producto.presentaciones = [];
@@ -37,6 +39,16 @@ export class ProductPreview {
       stock: null,
       activo: true
     });
+
+    setTimeout(() => {
+      if (this.presentacionesContainer) {
+        const contenedor = this.presentacionesContainer.nativeElement;
+        contenedor.scrollTo({
+          top: contenedor.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    }, 50);
   }
 
   // --- PAUSAR / REANUDAR CON AUTO-GUARDADO ---

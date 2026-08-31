@@ -122,7 +122,7 @@ export class ProductForm {
     }, 120);
   }
 
-  cerrarDropdown(inputElement?: HTMLInputElement) {
+  cerrarDropdown() {
     this.isCategoriaDropdownOpen.set(false);
     this.searchQuery.set('');
   }
@@ -140,6 +140,7 @@ export class ProductForm {
     }
 
     this.searchQuery.set('');
+    this.cerrarDropdown();
   }
 
   isCategoriaSelected(id: number): boolean {
@@ -202,6 +203,13 @@ export class ProductForm {
   onFileChange(event: any) {
     const file = event.target.files[0];
     if (!file) return;
+
+    const formatosPermitidos = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!formatosPermitidos.includes(file.type)) {
+      this.toastService.show('Formato no soportado. Subí una imagen JPG, PNG o WEBP.', 'error');
+      event.target.value = '';
+      return;
+    }
 
     const MAX_SIZE_BYTES = this.MAX_SIZE_MB * 1024 * 1024;
 

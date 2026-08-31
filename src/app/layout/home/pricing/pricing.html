@@ -81,16 +81,26 @@
                                 {{ plan.descripcion }}
                             </p>
                             
-                            <div class="mt-6 flex items-baseline gap-2">
-                                <span class="text-3xl md:text-4xl font-bold tracking-tight">
-                                    ${{ isAnual ? plan.precioAnual : plan.precioMensual }}
-                                </span>
-                                <span class="text-sm font-medium" [class]="plan.destacado ? 'text-zinc-400' : 'text-zinc-500'">
-                                    /{{ isAnual ? 'año' : 'mes' }}
-                                </span>
+                            <div class="mt-6 flex flex-col">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-3xl md:text-4xl font-bold tracking-tight">
+                                        ${{ isAnual ? plan.precioMesAnual : plan.precioMensual }}
+                                    </span>
+                                    <span class="text-sm font-medium" [class]="plan.destacado ? 'text-zinc-400' : 'text-zinc-500'">
+                                        /mes
+                                    </span>
+                                </div>
+                                
+                                <div class="h-4 mt-0.5">
+                                    @if (isAnual) {
+                                        <span class="text-xs font-medium" [class]="plan.destacado ? 'text-zinc-400/80' : 'text-zinc-500/80'">
+                                            Final ${{ plan.precioAnual }} /año
+                                        </span>
+                                    }
+                                </div>
                             </div>
 
-                            <ul class="mt-8 space-y-4 mb-8 grow">
+                            <ul class="my-6 space-y-4 grow">
                                 @for (feat of plan.caracteristicas; track feat) {
                                     <li class="flex items-start gap-3 text-sm">
                                         <div class="rounded-full p-1 mt-0.5 shrink-0" [class]="plan.destacado ? 'bg-white/10' : 'bg-zinc-100'">

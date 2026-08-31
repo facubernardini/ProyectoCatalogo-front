@@ -18,15 +18,15 @@
                     <span class="text-lg">Mi Pedido</span>
                 </h2>
 
-                <div class="space-x-4">
+                <div class="space-x-2">
                     @if (cartService.items().length > 0){
                         <button (click)="cartService.limpiarCarrito()"
-                                class="text-[13px] font-semibold text-white bg-red-500 md:hover:bg-red-600 px-3 py-1.5 rounded-xl tracking-wider transition-all duration-300 active:scale-95">
+                                class="text-[13px] font-semibold text-white bg-red-500 md:hover:bg-red-600 px-3 py-1 rounded-xl tracking-wider transition-all duration-300 active:scale-95">
                             Vaciar
                         </button>
                     }
                     <button (click)="cartService.close()"
-                        class="text-[13px] font-semibold text-gray-500 md:hover:text-red-500 tracking-wider transition-colors">
+                        class="text-[13px] font-semibold text-zinc-700 bg-gray-100 md:hover:bg-gray-200 px-3 py-1.5 rounded-xl tracking-wider transition-all duration-300 active:scale-95">
                         Cerrar
                     </button>
                 </div>

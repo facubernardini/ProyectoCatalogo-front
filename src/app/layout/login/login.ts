@@ -72,7 +72,11 @@ export class Login {
         if (err.status === 401) {
           const mensajeError = err.error.message
           this.toastService.show(mensajeError, 'error');
-        } 
+        }
+        else if (err.status === 429) {
+          const mensajeError = err.error.message || 'Demasiados intentos. Intentá de nuevo en 1 minuto.';
+          this.toastService.show(mensajeError, 'error');
+        }
         // Error de Servidor
         else {
           this.toastService.show('Ocurrió un problema al intentar iniciar sesión.', 'error');
