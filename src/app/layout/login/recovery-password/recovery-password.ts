@@ -39,8 +39,18 @@ export class RecoveryPassword {
   });
 
   pedirCodigo() {
+    if (this.loading()) return;
+
     if (this.emailForm.invalid) {
-      this.toastService.show('Ingresá un correo válido.', 'error');
+      const correo = this.emailForm.get('correo');
+      
+      if (correo?.hasError('required') || !correo?.value?.trim()) {
+        this.toastService.show('Por favor, ingresá tu correo electrónico.', 'error');
+      } else if (correo?.hasError('email')) {
+        this.toastService.show('Asegurate de ingresar un correo electrónico válido.', 'error');
+      } else {
+        this.toastService.show('Ingresá un correo válido.', 'error');
+      }
       return;
     }
 
@@ -56,7 +66,13 @@ export class RecoveryPassword {
       },
       error: (err) => {
         this.loading.set(false);
-        this.toastService.show(err.error?.error || 'Hubo un error al enviar el código.', 'error');
+        
+        if (err.status === 429) {
+          const mensajeError = err.error.message || 'Demasiadas solicitudes. Intentá de nuevo en 15 minutos.';
+          this.toastService.show(mensajeError, 'error');
+        } else {
+          this.toastService.show(err.error?.error || 'Hubo un error al enviar el código.', 'error');
+        }
       }
     });
   }

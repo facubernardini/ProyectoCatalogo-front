@@ -21,6 +21,6 @@ export const FAQ_DATA = [
   },
   {
     pregunta: '¿Necesito saber de programación para crear mi tienda?',
-    respuesta: 'Para nada. Listalo está pensado para ser tan fácil de usar como una red social. Desde tu celular o la compu podés subir fotos, cambiar precios, agregar categorías y mucho más.'
+    respuesta: 'No, Listalo está pensado para ser tan fácil de usar como una red social. Desde tu celular o la compu podés subir fotos, cambiar precios, pausar productos y mucho más.'
   }
 ];

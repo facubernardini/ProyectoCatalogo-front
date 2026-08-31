@@ -340,8 +340,15 @@ export class Register implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.loading.set(false);
-        const mensajeError = err.error?.error || 'Error al enviar el código de verificación.';
-        this.toastService.show(mensajeError, 'error');
+        
+        if (err.status === 429) {
+          const mensajeError = err.error.message || 'Demasiadas solicitudes. Intentá de nuevo en 15 minutos.';
+          this.toastService.show(mensajeError, 'error');
+        } 
+        else {
+          const mensajeError = err.error?.error || 'Error al enviar el código de verificación.';
+          this.toastService.show(mensajeError, 'error');
+        }
       }
     });
   }

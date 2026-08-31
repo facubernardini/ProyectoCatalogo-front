@@ -66,6 +66,7 @@ export class PanelVendedor {
     if (url.includes('mi-tienda')) return 'Configuración de Tienda';
     if (url.includes('mis-cupones')) return 'Cupones de Descuento';
     if (url.includes('mis-categorias')) return 'Organización de Categorías';
+    if (url.includes('carga-inicial')) return 'Importar productos desde Excel';
     
     return 'Panel Vendedor';
   }

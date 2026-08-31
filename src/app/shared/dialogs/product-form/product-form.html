@@ -49,7 +49,11 @@
                         } @else {
                             <app-icon name="image-add" classes="size-8 text-gray-300 fill-current" />
                         }
-                        <input type="file" (change)="onFileChange($event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <input 
+                            type="file"
+                            accept="image/png, image/jpeg, image/webp"
+                            (change)="onFileChange($event)" 
+                            class="absolute inset-0 opacity-0 cursor-pointer">
                     </div>
                     <div class="flex-1">
                         <p class="text-sm font-bold text-brand-text">Foto del producto</p>
@@ -103,46 +107,26 @@
 
                 <div class="pt-2">
                     <section class="space-y-2">
-                        <!-- CABECERA CON BOTÓN RÁPIDO -->
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Categorías</p>
-                                <button type="button" (click)="abrirFormularioNuevaCategoria()" 
-                                        title="Crear nueva categoría"
-                                        class="flex items-center justify-center bg-brand-accent/10 text-brand-accent size-5 rounded-md md:hover:bg-brand-accent/20 active:scale-90 transition-all">
-                                    <app-icon name="add-producto" classes="size-3.5 fill-current" />
-                                </button>
-                            </div>
+                            <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Categorías</p>
                             <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
-                                {{ producto.categorias_ids.length }} seleccionada(s)
+                                {{ producto.categorias_ids.length }} {{ producto.categorias_ids.length === 1 ? 'seleccionada' : 'seleccionadas' }}
                             </span>
                         </div>
 
                         <div class="relative" #containerElement>
-                            <div class="relative flex items-center">
-                                <input 
-                                    #searchInput
-                                    type="text" 
-                                    [(ngModel)]="searchQuery"
-                                    (focus)="abrirDropdownYScroll(containerElement)"
-                                    (click)="abrirDropdownYScroll(containerElement)"
-                                    placeholder="Buscar categorías..."
-                                    class="w-full p-3 pr-16 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text placeholder:text-gray-300 transition-all"
-                                >
-                                
-                                @if (producto.categorias_ids.length > 0 && isCategoriaDropdownOpen()) {
-                                    <button 
-                                        type="button" 
-                                        (click)="cerrarDropdown(searchInput)"
-                                        class="absolute right-3 px-3 py-1.5 bg-brand-accent text-white text-xs font-black rounded-lg transition-all active:scale-95 animate-in fade-in zoom-in-95 duration-150"
-                                    >
-                                        OK
-                                    </button>
-                                }
-                            </div>
+                            <input 
+                                #searchInput
+                                type="text" 
+                                [(ngModel)]="searchQuery"
+                                (focus)="abrirDropdownYScroll(containerElement)"
+                                (click)="abrirDropdownYScroll(containerElement)"
+                                placeholder="Buscar categorías..."
+                                class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text placeholder:text-gray-300 transition-all"
+                            >
 
                             @if (isCategoriaDropdownOpen()) {
-                                <div class="fixed inset-0 z-40" (click)="cerrarDropdown(searchInput)"></div>
+                                <div class="fixed inset-0 z-40" (click)="cerrarDropdown()"></div>
                                 
                                 <ul class="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-lg 
                                     max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200">
@@ -189,26 +173,41 @@
                             }
                         </div>
 
-                        @if (producto.categorias_ids.length > 0) {
-                            <div class="flex flex-wrap gap-1">
-                                @for (cat of adminStore.categorias(); track cat.id) {
-                                    @if (isCategoriaSelected(cat.id)) {
-                                        <span class="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-500 text-[10px] font-semibold rounded-lg select-none animate-in zoom-in-95 duration-200">
-                                            <app-icon name="category" classes="size-3 fill-current opacity-50" />
-                                            <span class="truncate max-w-37.5">{{ cat.nombre }}</span>
-                                        </span>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 flex flex-wrap gap-1">
+                                @if (producto.categorias_ids.length > 0) {
+                                    @for (cat of adminStore.categorias(); track cat.id) {
+                                        @if (isCategoriaSelected(cat.id)) {
+                                            <span class="flex items-center gap-1 px-2 py-1.5 bg-gray-100 text-gray-500 text-[11px] font-semibold rounded-lg select-none animate-in zoom-in-95 duration-200">
+                                                <app-icon name="category" classes="size-3 fill-current opacity-50" />
+                                                <span class="truncate max-w-37.5">{{ cat.nombre }}</span>
+                                            </span>
+                                        }
                                     }
+                                } @else {
+                                    <span class="text-xs text-gray-300 font-medium pl-1">No hay categorías seleccionadas</span>
                                 }
                             </div>
-                        }
+
+                            <!-- Botón Crear (derecha) -->
+                            <button type="button" (click)="abrirFormularioNuevaCategoria()" 
+                                    title="Crear nueva categoría"
+                                    class="flex items-center justify-center gap-1 shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1.5 rounded-lg md:hover:bg-brand-accent/20 active:scale-90 transition-all">
+                                
+                                <app-icon name="add-categoria" classes="size-3.5 fill-current" />
+                                <span class="text-xs font-semibold">Crear</span>
+                                
+                            </button>
+                        </div>
+
                     </section>
                 </div>
 
-                <section class="space-y-3 mt-6">
+                <section class="space-y-2 mt-6">
                     <div class="flex items-center justify-between">
                         <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Restricciones</p>
                         <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
-                            {{ producto.tags_ids.length || 0 }} seleccionada(s)
+                            {{ producto.tags_ids.length }} {{ producto.tags_ids.length === 1 ? 'seleccionada' : 'seleccionadas' }}
                         </span>
                     </div>
 
