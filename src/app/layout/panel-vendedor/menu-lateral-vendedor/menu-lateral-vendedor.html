@@ -121,21 +121,21 @@
             <button (click)="irAMiPerfil()"
                 [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/perfil')"
                 [class.text-brand-accent]="esRutaActiva('/panel-vendedor/perfil')"
-                [class.text-gray-600]="!esRutaActiva('/panel-vendedor/perfil')"
+                [class.text-gray-500]="!esRutaActiva('/panel-vendedor/perfil')"
                 [class.hover:bg-gray-100]="!esRutaActiva('/panel-vendedor/perfil')"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
                 
                 <app-icon [name]="esRutaActiva('/panel-vendedor/perfil') ? 'profile-fill' : 'profile'" 
                         classes="size-5 fill-current transition-colors group-active:scale-95"
-                        [class.text-gray-400]="!esRutaActiva('/panel-vendedor/perfil')"
+                        [class.text-gray-500]="!esRutaActiva('/panel-vendedor/perfil')"
                         [class.group-hover:text-gray-600]="!esRutaActiva('/panel-vendedor/perfil')" />
                 Mi Perfil
             </button>
 
             <!-- CATÁLOGO PDF -->
             <button (click)="exportPDFService.generarPdf()"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-gray-600 hover:bg-gray-100 transition-all w-full text-left group">
-                <app-icon name="download-file" classes="size-5 fill-current text-gray-400 group-hover:text-gray-600 transition-colors" />
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-gray-500 hover:bg-gray-100 transition-all w-full text-left group">
+                <app-icon name="download-file" classes="size-5 fill-current text-gray-500 group-hover:text-gray-600 transition-colors" />
                 Catálogo PDF
             </button>
 
@@ -143,13 +143,13 @@
                 <button (click)="navegar('/panel-vendedor/carga-inicial')"
                 [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/carga-inicial')"
                 [class.text-brand-accent]="esRutaActiva('/panel-vendedor/carga-inicial')"
-                [class.text-gray-600]="!esRutaActiva('/panel-vendedor/carga-inicial')"
+                [class.text-gray-500]="!esRutaActiva('/panel-vendedor/carga-inicial')"
                 [class.hover:bg-gray-100]="!esRutaActiva('/panel-vendedor/carga-inicial')"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
                 
                 <app-icon [name]="esRutaActiva('/panel-vendedor/carga-inicial') ? 'cloud-upload-fill' : 'cloud-upload'" 
                         classes="size-5 fill-current transition-colors group-active:scale-95"
-                        [class.text-gray-400]="!esRutaActiva('/panel-vendedor/carga-inicial')"
+                        [class.text-gray-500]="!esRutaActiva('/panel-vendedor/carga-inicial')"
                         [class.group-hover:text-gray-600]="!esRutaActiva('/panel-vendedor/carga-inicial')" />
                 Carga Inicial
             </button>

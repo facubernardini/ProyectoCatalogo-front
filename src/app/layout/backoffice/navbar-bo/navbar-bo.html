@@ -1,0 +1,50 @@
+<nav class="w-full bg-white border-t rounded-t-2xl border-gray-200 z-40 pb-[env(safe-area-inset-bottom)]">
+    <div class="max-w-lg mx-auto relative">
+        
+        <!-- LA BARRA DESLIZANTE -->
+        <div class="absolute top-0 left-0 w-1/3 h-0.5 transition-all duration-300 ease-out z-50 flex justify-center"
+            [class.opacity-0]="indiceActivo() === -1"
+            [style.transform]="'translateX(' + (indiceActivo() === -1 ? 0 : indiceActivo() * 100) + '%)'">
+            
+            <div class="w-7 h-full bg-brand-accent/90 rounded-b-full"></div>
+        </div>
+
+        <!-- CONTENEDOR DE BOTONES -->
+        <div class="flex items-center w-full pt-1.5 pb-1">
+            
+            <!-- INICIO -->
+            <button (click)="navegar('/backoffice/inicio')"
+               [class.text-brand-accent]="esRutaActiva('/backoffice/inicio')"
+               [class.text-gray-400]="!esRutaActiva('/backoffice/inicio')"
+               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                <app-icon [name]="esRutaActiva('/backoffice/inicio') ? 'home-fill' : 'home'" classes="size-6 fill-current"/>
+                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/backoffice/inicio')">
+                    Inicio
+                </span>
+            </button>
+
+            <!-- PRODUCTOS -->
+            <button (click)="navegar('/backoffice/vendedores')"
+               [class.text-brand-accent]="esRutaActiva('/backoffice/vendedores')"
+               [class.text-gray-400]="!esRutaActiva('/backoffice/vendedores')"
+               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                <app-icon [name]="esRutaActiva('/backoffice/vendedores') ? 'profile-fill' : 'profile'" classes="size-6 fill-current"/>
+                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/backoffice/vendedores')">
+                    Vendedores
+                </span>
+            </button>
+
+            <!-- PEDIDOS -->
+            <button (click)="navegar('/backoffice/catalogos')"
+               [class.text-brand-accent]="esRutaActiva('/backoffice/catalogos')"
+               [class.text-gray-400]="!esRutaActiva('/backoffice/catalogos')"
+               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                <app-icon [name]="esRutaActiva('/backoffice/catalogos') ? 'shop-fill' : 'shop'" classes="size-6 fill-current"/>
+                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/backoffice/catalogos')">
+                    Catálogos
+                </span>
+            </button>
+
+        </div>
+    </div>
+</nav>

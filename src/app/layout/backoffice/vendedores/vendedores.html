@@ -1,17 +1,8 @@
-<div class="min-h-svh flex flex-col">
-    <header class="sticky top-0 z-50 pt-5 bg-brand-bg border-b border-blue-200 shadow-sm shrink-0">
-        <div class="flex items-center justify-between px-4 h-16 max-w-5xl mx-auto">
-            <div class="flex-1 text-center px-2 overflow-hidden flex flex-col items-center justify-center">
-                <h1 class="text-[17px] font-bold text-brand-text tracking-wide truncate w-full">
-                    Vendedores
-                </h1>
-            </div>
-        </div>
-    </header>
-
-    <main class="flex-1 bg-gray-50 p-4" 
+<div class="flex flex-col h-full w-full animate-in fade-in duration-500">
+    <main class="flex-1 bg-gray-50 p-3 overflow-y-auto"
         (click)="cerrarMenuGlobal()">
-        <div class="flex flex-col gap-2 max-w-5xl mx-auto w-full">
+        
+        <div class="max-w-4xl mx-auto w-full flex flex-col h-full min-h-[75vh]">
             <div class="flex flex-col gap-3">
                 @for (vendedor of vendedores(); track vendedor.id) {
                     
@@ -148,8 +139,7 @@
                         </div>
 
                     </div>
-                } @empty {
-                    }
+                }
             </div>
         </div>
     </main>

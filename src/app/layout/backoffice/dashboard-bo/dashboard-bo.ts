@@ -4,6 +4,7 @@ import { Icon } from "@shared/components/icon";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { DatePipe } from '@angular/common';
+import { SuscripcionEstado } from 'src/app/shared/enums/suscripcion.enum';
 
 @Component({
   selector: 'app-dashboard-bo',
@@ -16,10 +17,9 @@ export class DashboardBO {
   private confirmService = inject(ConfirmService);
   private adminStore = inject(AdminStoreService);
 
-  // --- VENDEDORES ---
   vendedores = this.adminStore.vendedoresBackoffice;
   diasInactividad: number = 7;
-  cantUltimosLogueos: number = 3;
+  cantUltimosLogueos: number = 4;
 
   totalVendedores = computed(() => this.vendedores().length);
 
@@ -40,38 +40,19 @@ export class DashboardBO {
     }).length;
   });
 
-  vendedoresPorVencer = computed(() => {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    
-    const tresDiasEnMs = 3 * 24 * 60 * 60 * 1000;
-    const limiteFecha = new Date(hoy.getTime() + tresDiasEnMs);
-
-    return this.vendedores().filter(v => {
-      if (!v.suscripcion || !v.suscripcion.fecha_fin) return false;
-      
-      if (v.suscripcion.estado === 'CANCELADA') {
-          return false;
-      }
-
-      const fechaFinStr = v.suscripcion.fecha_fin.toString();
-      const fechaSoloDia = fechaFinStr.split('T')[0];
-      
-      const fechaFinNormalizada = new Date(fechaSoloDia); 
-
-      return fechaFinNormalizada <= limiteFecha && fechaFinNormalizada >= hoy; 
-    });
+  vendedoresPendientesPago = computed(() => {
+    return this.vendedores().filter(v => v.suscripcion?.estado === SuscripcionEstado.PENDIENTE_PAGO);
   });
 
   ultimosLogueos = computed(() => {
-      return this.vendedores()
-          .filter(v => v.ultimo_ingreso)
-          .sort((a, b) => {
-              const fechaA = new Date(a.ultimo_ingreso!).getTime();
-              const fechaB = new Date(b.ultimo_ingreso!).getTime();
-              return fechaB - fechaA;
-          })
-          .slice(0, this.cantUltimosLogueos);
+    return this.vendedores()
+      .filter(v => v.ultimo_ingreso)
+      .sort((a, b) => {
+        const fechaA = new Date(a.ultimo_ingreso!).getTime();
+        const fechaB = new Date(b.ultimo_ingreso!).getTime();
+        return fechaB - fechaA;
+      })
+      .slice(0, this.cantUltimosLogueos);
   });
 
   // --- PLANES SUSCRIPCION ---
