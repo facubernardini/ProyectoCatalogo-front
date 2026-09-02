@@ -381,8 +381,17 @@ export class MiTienda implements OnInit, OnDestroy {
         section.forceClose();
         this.loading.set(false);
       },
-      error: () => {
-        this.toastService.show('Error al guardar los cambios', 'error');
+      error: (err) => {
+        console.error('Error al guardar:', err);
+
+        if (err.status === 429) {
+          const mensajeError = err.error.message;
+          this.toastService.show(mensajeError, 'error');
+        }
+        else{
+          this.toastService.show('Hubo un error al guardar o actualizar el producto', 'error');
+        }
+
         this.loading.set(false);
       }
     });
