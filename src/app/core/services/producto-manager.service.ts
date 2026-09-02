@@ -223,9 +223,16 @@ export class ProductoManagerService {
         }
         this.adminStore.refrescarCategorias();
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error('Error al guardar:', err);
-        proceso.error('Hubo un error al guardar o actualizar el producto');
+
+        if (err.status === 429) {
+          const mensajeError = err.error.message;
+          proceso.error(mensajeError);
+        }
+        else{
+          proceso.error('Hubo un error al guardar o actualizar el producto');
+        }
       }
     });
   }
