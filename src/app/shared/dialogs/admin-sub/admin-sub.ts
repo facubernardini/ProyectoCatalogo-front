@@ -2,7 +2,6 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { AdminSubscriptionService } from '@shared/services/admin-sub.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { Icon } from "@shared/components/icon";
 import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
 import { SuscripcionesService } from 'src/app/core/services-backend/suscripciones.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -11,7 +10,7 @@ import { SuscripcionAccion, SuscripcionEstado } from '../../enums/suscripcion.en
 
 @Component({
   selector: 'app-admin-sub',
-  imports: [Icon, SwipeDownDirective, FormsModule],
+  imports: [SwipeDownDirective, FormsModule],
   templateUrl: './admin-sub.html',
   styleUrl: './admin-sub.css',
 })
