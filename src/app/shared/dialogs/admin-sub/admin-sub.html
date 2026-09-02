@@ -4,27 +4,29 @@
         
         <div appSwipeDown
             (onSwipe)="subscriptionService.close()"
-            class="fixed bottom-0 w-full bg-white rounded-t-[40px] p-6 shadow-2xl animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[90vh]" 
+            class="fixed bottom-0 md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-full bg-white rounded-t-[40px] md:rounded-4xl px-5 py-6 shadow-2xl animate-in slide-in-from-bottom md:zoom-in-95 duration-300 max-w-lg left-1/2 -translate-x-1/2 max-h-[90vh] flex flex-col" 
             (click)="$event.stopPropagation()">
         
-            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 shrink-0"></div>
+            <!-- AJUSTE 2: Ocultamos la barrita de swipe en Desktop (md:hidden) -->
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 shrink-0 md:hidden"></div>
 
             @if (datos(); as vendor) {
                 
-                <div class="overflow-y-auto no-scrollbar pb-4">
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-black text-brand-text leading-tight truncate">
+                <!-- AJUSTE 3: flex-1 y min-h-0 para que el scroll se active sin empujar el footer -->
+                <div class="overflow-y-auto no-scrollbar flex-1 min-h-0">
+                    <div class="mb-4">
+                        <h2 class="text-xl font-bold text-brand-text leading-tight truncate">
                             {{ vendor.nombre_apellido }}
                         </h2>
                         
                         <div class="flex flex-wrap items-center gap-2 mt-2">
-                            <span class="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border"
+                            <span class="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border"
                                   [class]="estadoUI().clases">
                                 {{ estadoUI().texto }}
                             </span>
 
                             @if (diasRestantes() > 0) {
-                                <span class="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-600 border border-gray-200 px-2 py-1 rounded-lg">
+                                <span class="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest bg-gray-100 text-gray-600 border border-gray-200 px-2 py-0.5 rounded-lg">
                                     VENCE EN {{ diasRestantes() }} DÍAS
                                 </span>
                             }
@@ -105,23 +107,25 @@
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-gray-100 mt-2 shrink-0 bg-white">
-                    <button type="button" (click)="aplicarAccion()" 
-                            class="w-full py-4 bg-brand-accent text-white text-base font-black rounded-xl shadow-lg shadow-brand-accent/30 hover:bg-brand-accent/90 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <!-- Footer (Botones) siempre visible -->
+                <div class="pt-4 border-t border-gray-100 mt-2 shrink-0 bg-white flex gap-3">
+                    
+                    <button (click)="subscriptionService.close()" 
+                            class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
+                        Cancelar
+                    </button>
+
+                    <button type="button" 
+                        (click)="aplicarAccion()" 
+                        class="flex-2 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all">
                         
                         @if (esMismoPlan()) {
-                            <app-icon name="refresh" classes="size-5 fill-current" />
-                            Aplicar Renovación
+                            <span class="truncate">Aplicar Renovación</span>
                         } @else {
-                            <app-icon name="trending-up" classes="size-5 fill-current" />
-                            Confirmar Cambio de Plan
+                            <span class="truncate">Confirmar Cambio</span>
                         }
                     </button>
 
-                    <button (click)="subscriptionService.close()" 
-                            class="w-full mt-3 py-3 text-gray-400 font-bold hover:text-brand-text transition-colors">
-                        Cancelar
-                    </button>
                 </div>
             }
         </div>

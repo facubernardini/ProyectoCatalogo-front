@@ -1,25 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
-import { Icon } from "src/app/shared/components/icon";
+import { Icon } from 'src/app/shared/components/icon';
 
 @Component({
-  selector: 'app-panel-navbar',
+  selector: 'app-navbar-bo',
   imports: [CommonModule, RouterModule, Icon],
-  templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  templateUrl: './navbar-bo.html',
+  styleUrl: './navbar-bo.css',
 })
-export class PanelNavbar {
+export class NavbarBo {
   private router = inject(Router);
 
   rutasNav = [
-    '/panel-vendedor/inicio',
-    '/panel-vendedor/mis-productos',
-    '/panel-vendedor/mis-pedidos',
-    '/panel-vendedor/estadisticas',
-    '/panel-vendedor/mi-tienda'
+    '/backoffice/inicio',
+    '/backoffice/vendedores',
+    '/backoffice/catalogos',
   ];
 
   private rutaActualEvent = toSignal(
@@ -38,7 +36,7 @@ export class PanelNavbar {
   }
 
   esRutaActiva(ruta: string): boolean {
-    if (ruta === '/panel-vendedor/inicio') {
+    if (ruta === '/backoffice/inicio') {
       return this.router.url === ruta;
     }
     

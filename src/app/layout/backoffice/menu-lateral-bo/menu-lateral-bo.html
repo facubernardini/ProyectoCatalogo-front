@@ -1,0 +1,77 @@
+<div class="flex flex-col h-full w-full bg-white text-gray-700">
+    
+    <!-- 1. CABECERA -->
+    <div class="flex items-center gap-3 p-4 border-b border-gray-100 shrink-0">
+    
+        <img src="assets/logo.jpg" 
+            alt="Logo Listalo" 
+            class="size-11 rounded-full object-cover bg-gray-50 border border-gray-100 shrink-0 shadow-sm">
+
+        <div class="flex flex-col min-w-0">
+            <h2 class="text-sm font-bold text-brand-text leading-tight truncate">
+                Listalo
+            </h2>
+            <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mt-0.5">
+                Panel Administrador
+            </span>
+        </div>
+    </div>
+
+    <!-- 2. CONTENIDO CENTRAL -->
+    <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-5">
+
+        <!-- Navegación Principal -->
+        <div class="flex flex-col gap-1">
+            <span class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Navegación</span>
+
+            <button (click)="navegar('/backoffice/inicio')"
+                [class.bg-brand-accent/10]="esRutaActiva('/backoffice/inicio')"
+                [class.text-brand-accent]="esRutaActiva('/backoffice/inicio')"
+                [class.text-gray-500]="!esRutaActiva('/backoffice/inicio')"
+                [class.hover:bg-gray-100]="!esRutaActiva('/backoffice/inicio')"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
+                <app-icon [name]="esRutaActiva('/backoffice/inicio') ? 'home-fill' : 'home'" 
+                          classes="size-5 fill-current transition-transform group-active:scale-95" />
+                Inicio
+            </button>
+
+            <button (click)="navegar('/backoffice/vendedores')"
+                [class.bg-brand-accent/10]="esRutaActiva('/backoffice/vendedores')"
+                [class.text-brand-accent]="esRutaActiva('/backoffice/vendedores')"
+                [class.text-gray-500]="!esRutaActiva('/backoffice/vendedores')"
+                [class.hover:bg-gray-100]="!esRutaActiva('/backoffice/vendedores')"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
+                <app-icon [name]="esRutaActiva('/backoffice/vendedores') ? 'profile-fill' : 'profile'" 
+                          classes="size-5 fill-current transition-transform group-active:scale-95" />
+                Vendedores
+            </button>
+
+            <button (click)="navegar('/backoffice/catalogos')"
+                [class.bg-brand-accent/10]="esRutaActiva('/backoffice/catalogos')"
+                [class.text-brand-accent]="esRutaActiva('/backoffice/catalogos')"
+                [class.text-gray-500]="!esRutaActiva('/backoffice/catalogos')"
+                [class.hover:bg-gray-100]="!esRutaActiva('/backoffice/catalogos')"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
+                <app-icon [name]="esRutaActiva('/backoffice/catalogos') ? 'shop-fill' : 'shop'" 
+                          classes="size-5 fill-current transition-transform group-active:scale-95" />
+                Catálogos
+            </button>
+        </div>
+
+    </div>
+
+    <div class="px-4 py-2 border-t border-gray-100 flex flex-col gap-2 shrink-0 bg-gray-50/50">
+        <button (click)="onLogout()" 
+            class="w-full p-2 mt-1 rounded-xl border border-red-100 text-red-500 font-bold bg-white hover:bg-red-50 hover:border-red-200 transition-all flex items-center justify-center gap-2 shadow-sm group">
+            <app-icon name="logout" classes="size-4 fill-current group-hover:-translate-x-0.5 transition-transform" />
+            Cerrar Sesión
+        </button>
+
+        <div class="my-0.5 flex items-center justify-center gap-1 opacity-70 hover:opacity-100 transition-opacity cursor-default">
+            <span class="text-[12px]">⚡</span>
+            <span class="text-[10px] font-medium text-gray-400">by</span>
+            <span class="text-[11px] font-black text-gray-600 tracking-tight">Listalo</span>
+        </div>
+    </div>
+    
+</div>
