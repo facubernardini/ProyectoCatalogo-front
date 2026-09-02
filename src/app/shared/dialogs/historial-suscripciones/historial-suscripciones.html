@@ -1,104 +1,104 @@
 @if (modalService.isOpen()) {
-        <div class="fixed inset-0 bg-black/60 animate-backdrop z-100 flex items-center justify-center p-4 animate-in fade-in duration-200"
-             (click)="modalService.close()">
+    <div class="fixed inset-0 bg-black/60 animate-backdrop z-100 flex items-center justify-center p-4 animate-in fade-in duration-200"
+            (click)="modalService.close()">
+        
+        <div class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
+                (click)="$event.stopPropagation()">
             
-            <div class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
-                 (click)="$event.stopPropagation()">
-                
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white">
-                    <div class="flex flex-col">
-                        <h2 class="text-brand-text font-black text-lg">Historial de Suscripción</h2>
-                        <p class="text-xs font-medium text-gray-500">Auditoría de eventos y pagos</p>
-                    </div>
-                    <button (click)="modalService.close()" class="p-2 bg-gray-50 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0 bg-white">
+                <div class="flex flex-col">
+                    <h2 class="text-brand-text font-black text-lg">Historial de Suscripción</h2>
+                    <p class="text-xs font-medium text-gray-500">Auditoría de eventos y pagos</p>
                 </div>
+                <button (click)="modalService.close()" class="p-2 bg-gray-50 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
-                <div class="p-6 overflow-y-auto bg-gray-50/50 flex-1">
-                    
-                    @if (modalService.historialDelVendedor().length === 0) {
-                        <div class="text-center py-8 text-gray-400">
-                            <p class="font-medium text-sm">No hay registros para este vendedor.</p>
-                        </div>
-                    } @else {
-                        <div class="relative pl-3 border-l-2 border-gray-200 ml-3 space-y-6">
-                            
-                            @for (registro of modalService.historialDelVendedor(); track registro.id) {
-                                <div class="relative">
-                                    <div class="absolute -left-3.25 -translate-x-1/2 bg-white p-1 rounded-full border-2 flex items-center justify-center"
-                                        [class.border-green-500]="registro.accion === AccionEnum.ALTA"
-                                        [class.border-blue-500]="registro.accion === AccionEnum.UPGRADE"
-                                        [class.border-purple-500]="registro.accion === AccionEnum.RENOVACION"
-                                        [class.border-red-500]="registro.accion === AccionEnum.CANCELACION">
-                                        
-                                        @if (registro.accion === AccionEnum.ALTA) { 
-                                            <app-icon name="alta" classes="size-4 fill-current text-green-500" /> 
-                                        } 
-                                        @else if (registro.accion === AccionEnum.UPGRADE) { 
-                                            <app-icon name="upgrade" classes="size-4 fill-current text-blue-500" /> 
-                                        } 
-                                        @else if (registro.accion === AccionEnum.RENOVACION) { 
-                                            <app-icon name="renovacion" classes="size-4 fill-current text-purple-500" /> 
-                                        } 
-                                        @else if (registro.accion === AccionEnum.CANCELACION){ 
-                                            <app-icon name="cancel" classes="size-4 fill-current text-red-500" /> 
-                                        }
-                                    </div>
+            <div class="p-6 overflow-y-auto bg-gray-50/50 flex-1">
+                
+                @if (modalService.historialDelVendedor().length === 0) {
+                    <div class="text-center py-8 text-gray-400">
+                        <p class="font-medium text-sm">No hay registros para este vendedor.</p>
+                    </div>
+                } @else {
+                    <div class="relative pl-3 border-l-2 border-gray-200 ml-3 space-y-6">
+                        
+                        @for (registro of modalService.historialDelVendedor(); track registro.id) {
+                            <div class="relative">
+                                <div class="absolute -left-3.25 -translate-x-1/2 bg-white p-1 rounded-full border-2 flex items-center justify-center"
+                                    [class.border-green-500]="registro.accion === AccionEnum.ALTA"
+                                    [class.border-blue-500]="registro.accion === AccionEnum.UPGRADE"
+                                    [class.border-purple-500]="registro.accion === AccionEnum.RENOVACION"
+                                    [class.border-red-500]="registro.accion === AccionEnum.CANCELACION">
+                                    
+                                    @if (registro.accion === AccionEnum.ALTA) { 
+                                        <app-icon name="alta" classes="size-4 fill-current text-green-500" /> 
+                                    } 
+                                    @else if (registro.accion === AccionEnum.UPGRADE) { 
+                                        <app-icon name="upgrade" classes="size-4 fill-current text-blue-500" /> 
+                                    } 
+                                    @else if (registro.accion === AccionEnum.RENOVACION) { 
+                                        <app-icon name="renovacion" classes="size-4 fill-current text-purple-500" /> 
+                                    } 
+                                    @else if (registro.accion === AccionEnum.CANCELACION){ 
+                                        <app-icon name="cancel" classes="size-4 fill-current text-red-500" /> 
+                                    }
+                                </div>
 
-                                    <div class="bg-white border border-gray-100 shadow-sm rounded-xl p-4 ml-3">
-                                        <div class="flex items-start justify-between mb-2">
-                                            <div class="flex flex-col">
-                                                <span class="font-black text-sm uppercase tracking-wider"
-                                                      [class.text-green-600]="registro.accion === AccionEnum.ALTA"
-                                                      [class.text-blue-600]="registro.accion === AccionEnum.UPGRADE"
-                                                      [class.text-purple-600]="registro.accion === AccionEnum.RENOVACION"
-                                                      [class.text-red-600]="registro.accion === 'CANCELACION'">
-                                                    {{ registro.accion }}
-                                                </span>
-                                                <span class="text-[11px] font-medium text-gray-400 mt-0.5">
-                                                    {{ registro.registrado_el | date:'dd/MM/yyyy HH:mm':'-0300' }} hs
-                                                </span>
-                                            </div>
-                                            
-                                            @if (registro.precio_pagado > 0) {
-                                                <span class="text-sm font-bold text-gray-700 bg-gray-50 px-2 py-1 rounded-lg">
-                                                    ${{ registro.precio_pagado }}
-                                                </span>
-                                            } @else {
-                                                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">
-                                                    Sin cargo
-                                                </span>
-                                            }
+                                <div class="bg-white border border-gray-100 shadow-sm rounded-xl p-4 ml-3">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div class="flex flex-col">
+                                            <span class="font-black text-sm uppercase tracking-wider"
+                                                    [class.text-green-600]="registro.accion === AccionEnum.ALTA"
+                                                    [class.text-blue-600]="registro.accion === AccionEnum.UPGRADE"
+                                                    [class.text-purple-600]="registro.accion === AccionEnum.RENOVACION"
+                                                    [class.text-red-600]="registro.accion === 'CANCELACION'">
+                                                {{ registro.accion }}
+                                            </span>
+                                            <span class="text-[11px] font-medium text-gray-400 mt-0.5">
+                                                {{ registro.registrado_el | date:'dd/MM/yyyy HH:mm':'-0300' }} hs
+                                            </span>
                                         </div>
                                         
-                                        <div class="bg-gray-50 rounded-lg p-3 mt-3 flex items-center justify-between">
-                                            <div class="flex flex-col">
-                                                <span class="text-[10px] text-gray-500 font-medium uppercase">Plan asignado</span>
-                                                <span class="font-bold text-brand-text text-sm">{{ registro.plan }}</span>
-                                            </div>
-                                            
-                                            <div class="flex flex-col text-right">
-                                                <span class="text-[10px] text-gray-500 font-medium uppercase">Período</span>
-                                                <span class="font-bold text-gray-700 text-xs mt-0.5">
-                                                    {{ registro.fecha_inicio | date:'dd/MM/yy':'-0300' }} - 
-                                                    @if (registro.fecha_fin) {
-                                                        {{ registro.fecha_fin | date:'dd/MM/yy':'-0300' }}
-                                                    } @else {
-                                                        Indefinido
-                                                    }
-                                                </span>
-                                            </div>
+                                        @if (registro.precio_pagado > 0) {
+                                            <span class="text-sm font-bold text-gray-700 bg-gray-50 px-2 py-1 rounded-lg">
+                                                ${{ registro.precio_pagado }}
+                                            </span>
+                                        } @else {
+                                            <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-lg">
+                                                Sin cargo
+                                            </span>
+                                        }
+                                    </div>
+                                    
+                                    <div class="bg-gray-50 rounded-lg p-3 mt-3 flex items-center justify-between">
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] text-gray-500 font-medium uppercase">Plan asignado</span>
+                                            <span class="font-bold text-brand-text text-sm">{{ registro.plan }}</span>
+                                        </div>
+                                        
+                                        <div class="flex flex-col text-right">
+                                            <span class="text-[10px] text-gray-500 font-medium uppercase">Período</span>
+                                            <span class="font-bold text-gray-700 text-xs mt-0.5">
+                                                {{ registro.fecha_inicio | date:'dd/MM/yy':'-0300' }} - 
+                                                @if (registro.fecha_fin) {
+                                                    {{ registro.fecha_fin | date:'dd/MM/yy':'-0300' }}
+                                                } @else {
+                                                    Indefinido
+                                                }
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
-                            }
-                        </div>
-                    }
-                </div>
-                
+                            </div>
+                        }
+                    </div>
+                }
             </div>
+            
         </div>
-    }
+    </div>
+}
