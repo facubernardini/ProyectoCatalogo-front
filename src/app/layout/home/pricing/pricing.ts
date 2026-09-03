@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { PRICES } from 'src/app/core/data/prices.data';
 import { Icon } from "src/app/shared/components/icon";
 
 @Component({
   selector: 'app-pricing',
-  imports: [CommonModule, Icon],
+  imports: [RouterLink, CommonModule, Icon],
   templateUrl: './pricing.html',
   styleUrl: './pricing.css',
 })

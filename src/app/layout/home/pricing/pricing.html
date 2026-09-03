@@ -5,7 +5,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         
         <!-- CABECERA DE LA SECCIÓN -->
-        <div class="text-center max-w-2xl mx-auto mb-4">
+        <div class="text-center max-w-2xl mx-auto mb-3">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
                 Planes y precios
             </h2>
@@ -15,14 +15,14 @@
         </div>
 
         <!-- AVISO DE PRUEBA GRATIS -->
-        <div class="flex justify-center mb-8">
-            <div class="gap-2 px-3 py-1.5 rounded-full bg-white text-xs md:text-sm font-medium text-zinc-600 shadow animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <div class="flex justify-center mb-6">
+            <div class="gap-2 px-3 py-1 rounded-full bg-white text-xs md:text-sm font-medium text-zinc-600 shadow animate-in fade-in slide-in-from-bottom-2 duration-500">
                 La prueba gratis es del plan <strong class="text-zinc-900">Premium</strong>
             </div>
         </div>
 
         <!-- TOGGLE MENSUAL / ANUAL -->
-        <div class="max-w-xs mx-auto mb-3 md:mb-6">
+        <div class="max-w-xs mx-auto mb-3">
             <div class="p-1 bg-zinc-200 rounded-2xl">
                 <div class="relative grid grid-cols-2">
                     
@@ -40,14 +40,14 @@
                     <!-- BOTÓN MENSUAL -->
                     <button (click)="isAnual = false"
                         [class]="!isAnual ? 'text-zinc-900' : 'text-zinc-500 md:hover:text-zinc-700'"
-                        class="relative z-10 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors duration-300">
+                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors duration-300">
                         Mensual
                     </button>
                     
                     <!-- BOTÓN ANUAL -->
                     <button (click)="isAnual = true"
                         [class]="isAnual ? 'text-white' : 'text-zinc-500 md:hover:text-zinc-700'"
-                        class="relative z-10 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors duration-300">
+                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors duration-300">
                         Anual
                     </button>
 
@@ -100,7 +100,7 @@
                                 </div>
                             </div>
 
-                            <ul class="my-6 space-y-4 grow">
+                            <ul class="my-5 space-y-4 grow">
                                 @for (feat of plan.caracteristicas; track feat) {
                                     <li class="flex items-start gap-3 text-sm">
                                         <div class="rounded-full p-1 mt-0.5 shrink-0" [class]="plan.destacado ? 'bg-white/10' : 'bg-zinc-100'">
@@ -132,13 +132,21 @@
             </div>
 
             <!-- INDICADORES MOBILE -->
-            <div class="flex justify-center gap-2 mt-1 md:hidden">
+            <div class="flex justify-center gap-2 mt-0.5 md:hidden">
                 @for (plan of planes; track plan.id; let i = $index) {
                     <button (click)="scrollTo(i, scrollContainer)"
                         class="h-2.5 rounded-full transition-all duration-300"
                         [class]="activeIndex === i ? 'bg-zinc-900 w-8' : 'bg-zinc-300 w-2.5'">
                     </button>
                 }
+            </div>
+
+            <div class="mt-6 md:mt-4 flex justify-center">
+                <a routerLink="/planes"
+                class="inline-flex items-center gap-2 px-6 py-2 rounded-xl bg-white border border-zinc-200 text-zinc-700 text-sm font-semibold hover:bg-zinc-50 hover:text-zinc-900 hover:border-zinc-300 transition duration-300 outline-none shadow-sm active:scale-95">
+                    Ver comparativa
+                    <app-icon name="right-arrow" classes="size-4 pt-0.5 fill-current" />
+                </a>
             </div>
         </div>
 

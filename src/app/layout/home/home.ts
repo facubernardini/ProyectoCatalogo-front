@@ -7,6 +7,7 @@ import { TiendasEjemplo } from "./tiendas-ejemplo/tiendas-ejemplo";
 import { Faq } from "./faq/faq";
 import { Footer } from "./footer/footer";
 import { BannerAccion } from "./banner-accion/banner-accion";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -14,4 +15,25 @@ import { BannerAccion } from "./banner-accion/banner-accion";
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {}
+export class Home {
+  constructor(private route: ActivatedRoute) {}
+
+  ngAfterViewInit() {
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment === 'precios') {
+        
+        setTimeout(() => {
+          const seccionPrecios = document.getElementById('precios');
+          
+          if (seccionPrecios) {
+            seccionPrecios.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }
+        }, 100);
+        
+      }
+    });
+  }
+}
