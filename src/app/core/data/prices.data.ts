@@ -11,7 +11,7 @@ export const PRICES = [
       'Cargar productos con foto',
       'Recibir pedidos por WhatsApp',
       'Cupones de descuento para tus clientes',
-      'Soporte por Whatsapp'
+      'Soporte por WhatsApp'
     ]
   },
   {
@@ -26,7 +26,7 @@ export const PRICES = [
       'Control de stock',
       'Historial y gestión de pedidos',
       'Estadísticas de tu negocio',
-      'Soporte por Whatsapp'
+      'Soporte por WhatsApp'
     ]
   },
   {
@@ -38,10 +38,9 @@ export const PRICES = [
     precioAnual: '358.800',
     destacado: false,
     caracteristicas: [
-      'Todo lo anterior de los planes Básico y Premium',
       'Dominio propio (tutienda.com.ar)',
-      'Sin referencias a Listalo',
-      'Soporte prioritario 24/7'
+      'Solicitud de funciones a medida (sujeto a viabilidad técnica)',
+      'Soporte prioritario por WhatsApp'
     ]
   },
 ];
