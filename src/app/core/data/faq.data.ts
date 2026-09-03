@@ -9,7 +9,7 @@ export const FAQ_DATA = [
   },
   {
     pregunta: '¿Cómo acceden mis clientes a mi tienda?',
-    respuesta: 'Vas a tener un enlace único para tu negocio (por ejemplo: mitienda.listalo.com.ar) que podés poner en tu biografía de Instagram, Facebook o enviar directamente por mensaje. Tus clientes no necesitan descargar ninguna aplicación.'
+    respuesta: 'Vas a tener un enlace único para tu negocio (por ejemplo: tutienda.listalo.com.ar) que podés poner en tu biografía de Instagram, Facebook o enviar directamente por mensaje. Tus clientes no necesitan descargar ninguna aplicación.'
   },
   {
     pregunta: '¿Hay que registrarse para hacer un pedido?',
