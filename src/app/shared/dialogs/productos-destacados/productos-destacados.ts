@@ -31,18 +31,81 @@ export class ProductosDestacados implements OnDestroy {
   });
 
   resultados = computed(() => {
-    const q = this.filtro().toLowerCase().trim();
-    const lista = this.productosDestacados();
+    const termOriginal = this.filtro().trim();
+    const listaBase = this.productosDestacados();
 
-    if (q.length < 2) {
-      return lista; 
+    if (termOriginal.length < 2) {
+      return listaBase; 
     }
 
-    return lista.filter(p => 
-      p.nombre.toLowerCase().includes(q) || 
-      p.descripcion && p.descripcion.toLowerCase().includes(q) ||
-      p.marca?.toLowerCase().includes(q)
-    );
+    const queryLimpia = termOriginal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const terminosBusqueda = queryLimpia.split(' ').filter(t => t.length > 0);
+    const queryCompacta = queryLimpia.replace(/\s+/g, "");
+
+    if (terminosBusqueda.length > 0) {
+      const primerTermino = terminosBusqueda[0];
+
+      // A. Filtrado base dual (incluyendo descripción)
+      const filtrados = listaBase.filter(p => {
+        const camposUnidos = [p.nombre, p.descripcion, p.marca].filter(Boolean).join(' ');
+        const textoProducto = camposUnidos.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const textoProductoCompacto = textoProducto.replace(/\s+/g, "");
+
+        const matchClasico = terminosBusqueda.every(termino => textoProducto.includes(termino));
+        const matchCompacto = textoProductoCompacto.includes(queryCompacta);
+
+        return matchClasico || matchCompacto;
+      });
+
+      // B. Sistema de Puntaje (Scoring) y ordenamiento
+      return filtrados.map(p => {
+        const nombre = (p.nombre || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const marca = (p.marca || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const desc = (p.descripcion || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        
+        const nombreCompacto = nombre.replace(/\s+/g, "");
+        const marcaCompacta = marca.replace(/\s+/g, "");
+
+        let score = 0;
+
+        if (nombre === queryLimpia) {
+          score = 100;
+        } 
+        else if (nombre.startsWith(queryLimpia)) {
+          score = 90;
+        }
+        else if (nombre.includes(queryLimpia)) {
+          score = 80;
+        }
+        else if (nombre.startsWith(primerTermino) && terminosBusqueda.every(t => nombre.includes(t))) {
+          score = 70;
+        }
+        else if (terminosBusqueda.every(t => nombre.includes(t))) {
+          score = 60;
+        } 
+        else if (nombreCompacto.includes(queryCompacta)) {
+          score = 55;
+        }
+        else if (marcaCompacta.includes(queryCompacta)) {
+          score = 50; 
+        }
+        else if (terminosBusqueda.some(t => marca.includes(t))) {
+          score = 40;
+        }
+        else if (terminosBusqueda.some(t => desc.includes(t))) {
+          score = 20;
+        }
+        else {
+          score = 10;
+        }
+
+        return { producto: p, score };
+      })
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.producto);
+    }
+
+    return listaBase;
   });
 
   constructor() {
