@@ -35,11 +35,13 @@
                                 {{ catalogo()?.direccion }}{{ catalogo()?.direccion && catalogo()?.ciudad ? ',' : '' }} {{ catalogo()?.ciudad }}
                             </p>
                             
-                            <button (click)="infoService.close(); mapDialogService.open()" 
-                                    class="mt-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-accent bg-brand-accent/10 md:hover:bg-brand-accent/20 px-3 py-1.5 rounded-xl transition-all active:scale-95">
-                                <app-icon name="location" classes="size-3.5 fill-current" />
-                                Ver mapa
-                            </button>
+                            @if (catalogo()?.ciudad && catalogo()?.direccion) {
+                                <button (click)="infoService.close(); mapDialogService.open()" 
+                                        class="mt-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-accent bg-brand-accent/10 md:hover:bg-brand-accent/20 px-3 py-1.5 rounded-xl transition-all active:scale-95">
+                                    <app-icon name="location" classes="size-3.5 fill-current" />
+                                    Ver mapa
+                                </button>
+                            }
                         </div>
                     }
                 </div>
