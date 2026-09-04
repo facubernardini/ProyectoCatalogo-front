@@ -62,7 +62,7 @@ export class MisProductos {
 
   productosFiltrados = computed(() => {
     const seleccion = this.categoriaSeleccionada();
-    const term = this.filtro().toLowerCase();
+    const termOriginal = this.filtro().trim();
     const destacados = this.soloDestacados();
     const pausados = this.soloPausados();
     const sinFoto = this.soloSinFoto();
@@ -71,40 +71,94 @@ export class MisProductos {
     
     let lista = this.adminStore.productos();
 
+    // 1. Filtros estrictos
     if (seleccion !== 'todos') {
       lista = lista.filter(prod => prod.categorias?.some(c => c.nombre === seleccion));
     }
-
-    if (term) {
-      lista = lista.filter(prod => 
-        prod.nombre.toLowerCase().includes(term) || 
-        prod.marca?.toLowerCase().includes(term) || 
-        prod.descripcion?.toLowerCase().includes(term)
-      );
-    }
-
     if (destacados) {
       lista = lista.filter(prod => prod.destacado);
     }
-
     if (pausados) {
       lista = lista.filter(prod => !prod.activo);
     }
-
     if (sinFoto) {
       lista = lista.filter(prod => !prod.imagen || prod.imagen.trim() === '');
     }
-
     if (conOfertas) {
       lista = lista.filter(prod => prod.presentaciones?.some(pres => pres.precio_descuento && pres.precio_descuento > 0));
     }
-
     if (bajoStock) {
       lista = lista.filter(prod => 
         prod.presentaciones?.some(pres => 
           pres.activo && pres.stock !== null && pres.stock <= this.umbralStock
         )
       );
+    }
+
+    // 2. Buscador Avanzado y Scoring (Solo por Nombre y Marca)
+    if (termOriginal) {
+      const queryLimpia = termOriginal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const terminosBusqueda = queryLimpia.split(' ').filter(t => t.length > 0);
+      const queryCompacta = queryLimpia.replace(/\s+/g, "");
+
+      if (terminosBusqueda.length > 0) {
+        const primerTermino = terminosBusqueda[0];
+
+        // A. Filtrado base dual
+        lista = lista.filter(p => {
+          const camposUnidos = [p.nombre, p.marca].filter(Boolean).join(' ');
+          const textoProducto = camposUnidos.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const textoProductoCompacto = textoProducto.replace(/\s+/g, "");
+
+          const matchClasico = terminosBusqueda.every(termino => textoProducto.includes(termino));
+          const matchCompacto = textoProductoCompacto.includes(queryCompacta);
+
+          return matchClasico || matchCompacto;
+        });
+
+        // B. Sistema de Puntaje (Scoring) y ordenamiento
+        lista = lista.map(p => {
+          const nombre = (p.nombre || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const marca = (p.marca || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          
+          const nombreCompacto = nombre.replace(/\s+/g, "");
+          const marcaCompacta = marca.replace(/\s+/g, "");
+
+          let score = 0;
+
+          if (nombre === queryLimpia) {
+            score = 100;
+          } 
+          else if (nombre.startsWith(queryLimpia)) {
+            score = 90;
+          }
+          else if (nombre.includes(queryLimpia)) {
+            score = 80;
+          }
+          else if (nombre.startsWith(primerTermino) && terminosBusqueda.every(t => nombre.includes(t))) {
+            score = 70;
+          }
+          else if (terminosBusqueda.every(t => nombre.includes(t))) {
+            score = 60;
+          } 
+          else if (nombreCompacto.includes(queryCompacta)) {
+            score = 55;
+          }
+          else if (marcaCompacta.includes(queryCompacta)) {
+            score = 50; 
+          }
+          else if (terminosBusqueda.some(t => marca.includes(t))) {
+            score = 40;
+          } 
+          else {
+            score = 10;
+          }
+
+          return { producto: p, score };
+        })
+        .sort((a, b) => b.score - a.score)
+        .map(item => item.producto);
+      }
     }
 
     return lista;
