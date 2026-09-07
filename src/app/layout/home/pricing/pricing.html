@@ -1,11 +1,13 @@
 <section
     id="precios"
+    aria-label="Planes y precios de la plataforma"
     class="py-20 relative">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+    <div class="max-w-7xl mx-auto px-4 xl:px-0">
         
         <!-- CABECERA DE LA SECCIÓN -->
         <div class="text-center max-w-2xl mx-auto mb-3">
+            <!-- SEO: H2 semántico -->
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
                 Planes y precios
             </h2>
@@ -22,12 +24,12 @@
         </div>
 
         <!-- TOGGLE MENSUAL / ANUAL -->
-        <div class="max-w-xs mx-auto mb-3">
+        <div class="max-w-xs mx-auto mb-3" aria-label="Selector de facturación">
             <div class="p-1 bg-zinc-200 rounded-2xl">
                 <div class="relative grid grid-cols-2">
                     
                     <!-- EL FONDO DESLIZABLE (La pastilla) -->
-                    <div class="absolute top-0 bottom-0 left-0 w-1/2 rounded-xl transition-all duration-300 ease-out"
+                    <div class="absolute top-0 bottom-0 left-0 w-1/2 rounded-xl transition-all duration-300 ease-out pointer-events-none" aria-hidden="true"
                         [class.translate-x-0]="!isAnual"
                         [class.bg-white]="!isAnual"
                         [class.shadow-sm]="!isAnual"
@@ -39,15 +41,17 @@
 
                     <!-- BOTÓN MENSUAL -->
                     <button (click)="isAnual = false"
+                        [attr.aria-pressed]="!isAnual"
                         [class]="!isAnual ? 'text-zinc-900' : 'text-zinc-500 md:hover:text-zinc-700'"
-                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors duration-300">
+                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors duration-300 focus:outline-none">
                         Mensual
                     </button>
                     
                     <!-- BOTÓN ANUAL -->
                     <button (click)="isAnual = true"
+                        [attr.aria-pressed]="isAnual"
                         [class]="isAnual ? 'text-white' : 'text-zinc-500 md:hover:text-zinc-700'"
-                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors duration-300">
+                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors duration-300 focus:outline-none">
                         Anual
                     </button>
 
@@ -57,17 +61,26 @@
 
         <!-- CONTENEDOR DE CARDS -->
         <div>
-            <div #scrollContainer (scroll)="onScroll($event)" 
+            <div #scrollContainer (scroll)="onScroll($event)" role="list"
                 class="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory gap-3 md:gap-6 py-5 hide-scrollbar">
                 
                 @for (plan of planes; track plan.id) {
-                    <div class="w-full shrink-0 snap-center snap-always lg:w-auto">
+                    <div class="w-full shrink-0 snap-center snap-always lg:w-auto" role="listitem" itemscope itemtype="https://schema.org/Product">
                         
+                        <meta itemprop="name" [content]="'Listalo - Plan ' + plan.plan" />
+                        <meta itemprop="description" [content]="plan.descripcion" />
+                        
+                        <div itemprop="offers" itemscope itemtype="https://schema.org/Offer" class="hidden">
+                            <meta itemprop="priceCurrency" content="ARS" />
+                            <meta itemprop="price" [content]="isAnual ? plan.precioMesAnual : plan.precioMensual" />
+                            <link itemprop="availability" href="https://schema.org/InStock" />
+                        </div>
+
                         <div (mousemove)="onMouseMove($event, plan.id)"
                             (mouseleave)="onMouseLeave(plan.id)"
                             [style.transform]="cardTransforms[plan.id] || 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)'"
-                            class="h-full flex flex-col rounded-3xl p-6 md:p-8 border transition-all duration-200 ease-out relative md:hover:shadow-2xl md:hover:shadow-zinc-900/10"
-                            [class]="plan.destacado ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-900 border-zinc-200'">
+                            class="h-full flex flex-col rounded-3xl p-6 md:p-8 transition-all duration-200 ease-out relative md:hover:shadow-2xl md:hover:shadow-zinc-900/10"
+                            [class]="plan.destacado ? 'bg-brand-accent text-white' : 'bg-white text-zinc-900 border border-zinc-200'">
                             
                             @if (plan.destacado) {
                                 <div class="absolute top-0 right-0 bg-white/10 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl rounded-tr-3xl backdrop-blur-md pointer-events-none">
@@ -86,24 +99,24 @@
                                     <span class="text-3xl md:text-4xl font-bold tracking-tight">
                                         ${{ isAnual ? plan.precioMesAnual : plan.precioMensual }}
                                     </span>
-                                    <span class="text-sm font-medium" [class]="plan.destacado ? 'text-zinc-400' : 'text-zinc-500'">
+                                    <span class="text-sm font-medium" [class]="plan.destacado ? 'text-zinc-200' : 'text-zinc-500'">
                                         /mes
                                     </span>
                                 </div>
                                 
                                 <div class="h-4 mt-0.5">
                                     @if (isAnual) {
-                                        <span class="text-xs font-medium" [class]="plan.destacado ? 'text-zinc-400/80' : 'text-zinc-500/80'">
+                                        <span class="text-xs font-medium" [class]="plan.destacado ? 'text-zinc-200/80' : 'text-zinc-500/80'">
                                             Final ${{ plan.precioAnual }} /año
                                         </span>
                                     }
                                 </div>
                             </div>
 
-                            <ul class="my-5 space-y-4 grow">
+                            <ul role="list" class="my-5 space-y-4 grow" [attr.aria-label]="'Características del plan ' + plan.plan">
                                 @for (feat of plan.caracteristicas; track feat) {
                                     <li class="flex items-start gap-3 text-sm">
-                                        <div class="rounded-full p-1 mt-0.5 shrink-0" [class]="plan.destacado ? 'bg-white/10' : 'bg-zinc-100'">
+                                        <div class="rounded-full p-1 mt-0.5 shrink-0" [class]="plan.destacado ? 'bg-white/10' : 'bg-zinc-100'" aria-hidden="true">
                                             <svg class="size-3.5" [class]="plan.destacado ? 'text-white' : 'text-zinc-900'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                             </svg>
@@ -115,14 +128,16 @@
 
                             @if (plan.id === 'ultra') {
                                 <button (click)="contactar()"
-                                    class="mt-auto w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-900 text-white md:hover:bg-zinc-800 rounded-xl font-semibold transition-all duration-300 active:scale-95">
-                                    <app-icon name="whatsapp" classes="size-5 fill-current" />
+                                    title="Consultar por el plan personalizado"
+                                    class="mt-auto w-full flex items-center justify-center gap-2 py-3 px-4 bg-brand-accent text-white md:hover:bg-brand-accent/90 rounded-xl font-semibold transition-all duration-300 active:scale-95 focus:outline-none">
+                                    <app-icon name="whatsapp" classes="size-5 fill-current" aria-hidden="true" />
                                     Consultar por WhatsApp
                                 </button>
                             } @else {
                                 <button (click)="irARegistro()"
-                                        class="mt-auto w-full py-3 px-4 rounded-xl font-semibold transition-all duration-300 active:scale-95"
-                                        [class]="plan.destacado ? 'bg-white text-zinc-900 md:hover:bg-zinc-200' : 'bg-zinc-900 text-white hover:bg-zinc-800'">
+                                        [title]="'Registrarse con el plan ' + plan.plan"
+                                        class="mt-auto w-full py-3 px-4 rounded-xl font-semibold transition-all duration-300 active:scale-95 focus:outline-none"
+                                        [class]="plan.destacado ? 'bg-white text-zinc-900 md:hover:bg-zinc-200' : 'bg-brand-accent text-white md:hover:bg-brand-accent/90'">
                                     Registrarme ahora
                                 </button>
                             }
@@ -132,20 +147,21 @@
             </div>
 
             <!-- INDICADORES MOBILE -->
-            <div class="flex justify-center gap-2 mt-0.5 md:hidden">
+            <div class="flex justify-center gap-2 mt-0.5 md:hidden" aria-hidden="true">
                 @for (plan of planes; track plan.id; let i = $index) {
                     <button (click)="scrollTo(i, scrollContainer)"
-                        class="h-2.5 rounded-full transition-all duration-300"
-                        [class]="activeIndex === i ? 'bg-zinc-900 w-8' : 'bg-zinc-300 w-2.5'">
+                        [attr.aria-label]="'Ver plan ' + plan.plan"
+                        class="h-2.5 rounded-full transition-all duration-300 focus:outline-none"
+                        [class]="activeIndex === i ? 'bg-brand-accent w-8' : 'bg-brand-accent/20 w-2.5'">
                     </button>
                 }
             </div>
 
             <div class="mt-6 md:mt-4 flex justify-center">
-                <a routerLink="/planes"
+                <a routerLink="/planes" title="Ver tabla comparativa completa de todos los planes"
                 class="inline-flex items-center gap-2 px-6 py-2 rounded-xl bg-white border border-zinc-200 text-zinc-700 text-sm font-semibold hover:bg-zinc-50 hover:text-zinc-900 hover:border-zinc-300 transition duration-300 outline-none shadow-sm active:scale-95">
                     Ver comparativa
-                    <app-icon name="right-arrow" classes="size-4 pt-0.5 fill-current" />
+                    <app-icon name="right-arrow" classes="size-4 pt-0.5 fill-current" aria-hidden="true" />
                 </a>
             </div>
         </div>

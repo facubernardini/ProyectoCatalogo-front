@@ -1,35 +1,32 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans relative">
+<main class="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans relative">
     <div class="w-full max-w-md bg-white rounded-4xl shadow-xl border border-brand-bg p-6 relative">
 
-        <a (click)="volverPaso()"
-            class="absolute top-6 left-6 p-2 -ml-2 text-gray-400 md:hover:text-brand-text md:hover:bg-gray-100 rounded-full transition-all focus:outline-none flex items-center gap-1.5 cursor-pointer"
-            aria-label="Volver al inicio">
-            <app-icon name="back" classes="size-6 text-brand-accent fill-current" />
-        </a>
+        <button type="button" (click)="volverPaso()"
+            class="absolute top-6 left-6 p-2 -ml-2 text-gray-400 md:hover:text-brand-text md:hover:bg-gray-100 rounded-full transition-all focus:outline-none flex items-center gap-1.5 cursor-pointer bg-transparent border-none"
+            aria-label="Volver al paso anterior">
+            <app-icon name="back" classes="size-6 text-brand-accent fill-current" aria-hidden="true" />
+        </button>
 
         <!-- CABECERA -->
-        <div class="text-center my-5">
+        <header class="text-center my-5">
             <div class="flex items-center justify-center gap-3 mb-2">
-                <img src="assets/home/logo_color.webp" alt="Logo" class="h-8 w-auto object-contain" />
-                <h2 class="text-3xl font-extrabold text-brand-accent tracking-tight">
+                <img src="assets/home/logo_color.webp" [alt]="BRAND_DATA.name + ' Logo'" class="h-8 w-auto object-contain" />
+                <h1 class="text-3xl font-extrabold text-brand-accent tracking-tight">
                     {{ BRAND_DATA.name }}
-                </h2>
+                </h1>
             </div>
-            <p class="text-brand-text-sec text-base md:text-lg pt-3">
+            <p class="text-brand-text-sec text-base md:text-lg pt-3" aria-live="polite">
                 @if (pasoActual() === 1) { Completá tus datos personales }
                 @else if (pasoActual() === 2) { Datos de tu tienda }
                 @else { Verificá tu correo electrónico }
             </p>
-        </div>
+        </header>
 
         <!-- INDICADOR DE PASOS -->
-        <div class="flex items-center justify-center gap-2 mb-6">
-            <div class="h-1.5 flex-1 rounded-full transition-all duration-300" 
-                [class]="pasoActual() >= 1 ? 'bg-brand-accent' : 'bg-gray-200'"></div>
-            <div class="h-1.5 flex-1 rounded-full transition-all duration-300"
-                [class]="pasoActual() >= 2 ? 'bg-brand-accent' : 'bg-gray-200'"></div>
-            <div class="h-1.5 flex-1 rounded-full transition-all duration-300"
-                [class]="pasoActual() === 3 ? 'bg-brand-accent' : 'bg-gray-200'"></div>
+        <div class="flex items-center justify-center gap-2 mb-6" role="progressbar" [attr.aria-valuenow]="pasoActual()" aria-valuemin="1" aria-valuemax="3">
+            <div class="h-1.5 flex-1 rounded-full transition-all duration-300" [class]="pasoActual() >= 1 ? 'bg-brand-accent' : 'bg-gray-200'" aria-hidden="true"></div>
+            <div class="h-1.5 flex-1 rounded-full transition-all duration-300" [class]="pasoActual() >= 2 ? 'bg-brand-accent' : 'bg-gray-200'" aria-hidden="true"></div>
+            <div class="h-1.5 flex-1 rounded-full transition-all duration-300" [class]="pasoActual() === 3 ? 'bg-brand-accent' : 'bg-gray-200'" aria-hidden="true"></div>
         </div>
 
         <form class="space-y-6">
@@ -38,44 +35,45 @@
             @if (pasoActual() === 1) {
                 <section class="animate-in fade-in slide-in-from-left-4 duration-500 space-y-6">
                     
-                    <!-- NUEVO: AVISO DE PRUEBA PREMIUM -->
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 px-3 py-1.5 bg-brand-bg/50 border border-brand-accent/20 rounded-xl mb-6">
-                            <span class="text-sm text-brand-text">Prueba gratis 30 días plan <strong>Premium</strong></span>
-                        <a (click)="verPlanes()"
-                           class="text-[11px] font-bold uppercase tracking-wide text-brand-accent hover:text-brand-accent/80 transition-colors shrink-0 whitespace-nowrap cursor-pointer">
+                        <span class="text-sm text-brand-text">Prueba gratis 30 días plan <strong>Premium</strong></span>
+                        <button type="button" (click)="verPlanes()"
+                            class="text-[11px] font-bold uppercase tracking-wide text-brand-accent hover:text-brand-accent/80 transition-colors shrink-0 whitespace-nowrap cursor-pointer bg-transparent border-none p-0 focus:outline-none">
                             Ver planes
-                        </a>
+                        </button>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-brand-text mb-2">Nombre</label>
-                            <input type="text" name="nombre" [(ngModel)]="nombre"
+                            <label for="nombre" class="block text-sm font-semibold text-brand-text mb-2">Nombre</label>
+                            <input id="nombre" type="text" name="nombre" [(ngModel)]="nombre" autocomplete="given-name"
                                 class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white text-brand-text">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-brand-text mb-2">Apellido</label>
-                            <input type="text" name="apellido" [(ngModel)]="apellido"
+                            <label for="apellido" class="block text-sm font-semibold text-brand-text mb-2">Apellido</label>
+                            <input id="apellido" type="text" name="apellido" [(ngModel)]="apellido" autocomplete="family-name"
                                 class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white text-brand-text">
                         </div>
                     </div>
 
-                    <!-- RESTO DEL PASO 1 (Sin cambios) -->
                     <div>
                         <div class="flex justify-between items-end mb-2">
-                            <label class="block text-sm font-semibold text-brand-text">Correo Electrónico</label>
+                            <label for="correo" class="block text-sm font-semibold text-brand-text">Correo Electrónico</label>
                             
-                            @if (validandoCorreo()) {
-                                <span class="text-[10px] font-bold text-gray-400 animate-pulse">Verificando...</span>
-                            } @else if (correoDisponible() === true) {
-                                <span class="text-[10px] font-bold text-green-600 animate-in fade-in">✓ Disponible</span>
-                            }
+                            <div aria-live="polite">
+                                @if (validandoCorreo()) {
+                                    <span class="text-[10px] font-bold text-gray-400 animate-pulse">Verificando...</span>
+                                } @else if (correoDisponible() === true) {
+                                    <span class="text-[10px] font-bold text-green-600 animate-in fade-in">✓ Disponible</span>
+                                }
+                            </div>
                         </div>
 
-                        <input type="email" name="correo"
+                        <input id="correo" type="email" name="correo" autocomplete="email"
                             [ngModel]="vendedorReq.correo" 
                             (ngModelChange)="onCorreoChange($event)"
+                            [attr.aria-invalid]="correoDisponible() === false ? 'true' : null"
                             class="w-full px-4 py-3 rounded-xl border outline-none transition-all duration-200 placeholder:text-gray-400 text-brand-text"
                             [class.border-gray-200]="correoDisponible() !== false"
                             [class.bg-gray-50]="correoDisponible() !== false"
@@ -89,28 +87,31 @@
                             [class.focus:ring-red-100]="correoDisponible() === false"
                             [class.bg-red-50]="correoDisponible() === false">
                         
-                        @if (correoDisponible() === false && correoErrorMensaje()) {
-                            <p class="text-[11px] font-bold text-red-500 mt-1.5 ml-1 animate-in slide-in-from-top-1 fade-in duration-200">
-                                ✕ {{ correoErrorMensaje() }}
-                            </p>
-                        }
+                        <div aria-live="assertive">
+                            @if (correoDisponible() === false && correoErrorMensaje()) {
+                                <p class="text-[11px] font-bold text-red-500 mt-1.5 ml-1 animate-in slide-in-from-top-1 fade-in duration-200">
+                                    ✕ {{ correoErrorMensaje() }}
+                                </p>
+                            }
+                        </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-brand-text mb-2">Contraseña</label>
-                        <input type="password" name="password" [(ngModel)]="vendedorReq.password" placeholder="Mínimo 8 caracteres" 
+                        <label for="password" class="block text-sm font-semibold text-brand-text mb-2">Contraseña</label>
+                        <input id="password" type="password" name="password" [(ngModel)]="vendedorReq.password" placeholder="Mínimo 8 caracteres" autocomplete="new-password"
                             class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white text-brand-text">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-brand-text mb-2">Repetir Contraseña</label>
+                        <label for="confirmPassword" class="block text-sm font-semibold text-brand-text mb-2">Repetir Contraseña</label>
                         <div class="relative">
-                            <input 
+                            <input id="confirmPassword"
                                 [type]="showConfirmPassword() ? 'text' : 'password'"
                                 name="confirmPassword" 
                                 [(ngModel)]="confirmPassword" 
                                 (paste)="$event.preventDefault()"
                                 (input)="confirmPassword === '' ? showConfirmPassword.set(false) : null"
+                                autocomplete="new-password"
                                 placeholder="Confirmá tu clave"
                                 class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white text-brand-text"
                             >
@@ -119,12 +120,14 @@
                                 <button 
                                     type="button" 
                                     (click)="showConfirmPassword.set(!showConfirmPassword())"
+                                    [attr.aria-pressed]="showConfirmPassword()"
                                     class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 md:hover:text-gray-600 transition-colors focus:outline-none animate-in fade-in duration-200"
                                     aria-label="Alternar visibilidad de la contraseña"
                                 >
                                     <app-icon 
                                         [name]="showConfirmPassword() ? 'eye-off' : 'eye'" 
                                         classes="size-5 fill-current" 
+                                        aria-hidden="true"
                                     />
                                 </button>
                             }
@@ -145,19 +148,21 @@
                 <section class="animate-in fade-in slide-in-from-right-4 duration-500 space-y-5">
                     
                     <div>
-                        <label class="block text-sm font-semibold text-brand-text mb-2">Nombre de tu Negocio</label>
-                        <input type="text" name="nombre_tienda" [(ngModel)]="catalogo.nombre_tienda" (ngModelChange)="generarSlug()"
+                        <label for="nombre_tienda" class="block text-sm font-semibold text-brand-text mb-2">Nombre de tu Negocio</label>
+                        <input id="nombre_tienda" type="text" name="nombre_tienda" [(ngModel)]="catalogo.nombre_tienda" (ngModelChange)="generarSlug()" autocomplete="organization"
                             class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white text-brand-text">
                     </div>
 
                     <div>
                         <div class="flex justify-between items-end mb-2">
-                            <label class="block text-sm font-semibold text-brand-text">Enlace de tu Tienda</label>
-                            @if (validandoSlug()) {
-                                <span class="text-[10px] font-bold text-gray-400 animate-pulse">Verificando...</span>
-                            } @else if (slugDisponible() === true) {
-                                <span class="text-[10px] font-bold text-green-600 animate-in fade-in">✓ Disponible</span>
-                            }
+                            <label for="slug" class="block text-sm font-semibold text-brand-text">Enlace de tu Tienda</label>
+                            <div aria-live="polite">
+                                @if (validandoSlug()) {
+                                    <span class="text-[10px] font-bold text-gray-400 animate-pulse">Verificando...</span>
+                                } @else if (slugDisponible() === true) {
+                                    <span class="text-[10px] font-bold text-green-600 animate-in fade-in">✓ Disponible</span>
+                                }
+                            </div>
                         </div>
                         
                         <div class="flex items-center w-full bg-gray-50 focus-within:bg-white border rounded-xl transition-all duration-200"
@@ -171,31 +176,37 @@
                             [class.focus-within:ring-red-100]="slugDisponible() === false"
                             [class.bg-red-50]="slugDisponible() === false">
                             
-                            <input type="text" name="slug" 
+                            <input id="slug" type="text" name="slug" 
                                 [ngModel]="catalogo.slug" 
                                 (ngModelChange)="onSlugChange($event)"
                                 (keypress)="validarCaracteresSlug($event)"
+                                [attr.aria-invalid]="slugDisponible() === false ? 'true' : null"
                                 placeholder="mi-tienda" 
                                 class="flex-1 w-full py-3 pl-4 pr-0.5 bg-transparent outline-none text-right text-brand-accent placeholder:text-gray-300 font-medium">
                             
-                            <span class="text-gray-400 pr-4 pointer-events-none select-none shrink-0 font-medium">
+                            <span class="text-gray-400 pr-4 pointer-events-none select-none shrink-0 font-medium" aria-hidden="true">
                                 .{{ BRAND_DATA.domain }}
                             </span>
                             
                         </div>
                         
-                        @if (slugDisponible() === false) {
-                            <p class="text-[11px] font-bold text-red-500 mt-1.5 ml-1 animate-in shake duration-200">
-                                ✕ Este enlace ya está ocupado
-                            </p>
-                        }
+                        <div aria-live="assertive">
+                            @if (slugDisponible() === false) {
+                                <p class="text-[11px] font-bold text-red-500 mt-1.5 ml-1 animate-in shake duration-200">
+                                    ✕ Este enlace ya está ocupado
+                                </p>
+                            }
+                        </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-brand-text mb-2">Rubro Comercial</label>
+                        <label id="rubro_label" class="block text-sm font-semibold text-brand-text mb-2">Rubro Comercial</label>
                         <div class="relative">
                             <button type="button" (click)="toggleRubroDropdown()"
-                                    class="w-full px-4 py-3 flex justify-between items-center text-sm bg-gray-50 border rounded-xl outline-none transition-all duration-200"
+                                    aria-haspopup="listbox"
+                                    [attr.aria-expanded]="isRubroDropdownOpen()"
+                                    aria-labelledby="rubro_label"
+                                    class="w-full px-4 py-3 flex justify-between items-center text-sm bg-gray-50 border rounded-xl outline-none transition-all duration-200 focus:outline-none"
                                     [class.border-gray-200]="!isRubroDropdownOpen()"
                                     [class.bg-white]="isRubroDropdownOpen()"
                                     [class.border-brand-accent/40]="isRubroDropdownOpen()"
@@ -204,20 +215,20 @@
                                 <span class="truncate" [class.text-brand-text]="catalogo.rubro_id" [class.text-gray-400]="!catalogo.rubro_id">
                                     {{ rubroSeleccionadoNombre() || 'Seleccioná el rubro de tu negocio...' }}
                                 </span>
-                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-300" [class.rotate-180]="isRubroDropdownOpen()" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-300" [class.rotate-180]="isRubroDropdownOpen()" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
 
                             @if (isRubroDropdownOpen()) {
-                                <div class="fixed inset-0 z-40" (click)="isRubroDropdownOpen.set(false)"></div>
+                                <div class="fixed inset-0 z-40" (click)="isRubroDropdownOpen.set(false)" aria-hidden="true"></div>
                                 
-                                <ul class="absolute z-50 w-full bottom-full mb-2 origin-bottom bg-white border border-gray-100 rounded-xl shadow-xl shadow-brand-bg/50 max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200 py-1">
+                                <ul role="listbox" class="absolute z-50 w-full bottom-full mb-2 origin-bottom bg-white border border-gray-100 rounded-xl shadow-xl shadow-brand-bg/50 max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200 py-1">
                                     
                                     @for (rubro of rubros(); track rubro.id) {
-                                        <li>
+                                        <li role="option" [attr.aria-selected]="catalogo.rubro_id === rubro.id">
                                             <button type="button" (click)="seleccionarRubroCustom(rubro)"
-                                                    class="w-full text-left px-4 py-2.5 text-sm font-medium transition-colors"
+                                                    class="w-full text-left px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none"
                                                     [class.bg-brand-bg]="catalogo.rubro_id === rubro.id" 
                                                     [class.text-brand-accent]="catalogo.rubro_id === rubro.id"
                                                     [class.text-brand-text-sec]="catalogo.rubro_id !== rubro.id" 
@@ -235,10 +246,10 @@
                     <div class="pt-2">
                         <button type="button" (click)="solicitarCodigo()"
                                 [disabled]="loading()"
-                                class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none">
+                                class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none focus:outline-none">
                             
                             @if (loading()) {
-                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg class="animate-spin h-5 w-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
@@ -261,8 +272,8 @@
                     </div>
 
                     <div class="relative group mt-6">
-                        <label class="block text-sm font-semibold text-brand-text mb-3 text-center">Ingresá el código</label>
-                        <div class="flex justify-between gap-2">
+                        <label for="codigoOTP" class="block text-sm font-semibold text-brand-text mb-3 text-center">Ingresá el código</label>
+                        <div class="flex justify-between gap-2" aria-hidden="true">
                             @for (i of [0, 1, 2, 3, 4, 5]; track i) {
                                 <div [class.border-brand-accent/40]="codigoOTP.length === i"
                                     [class.ring-1]="codigoOTP.length === i"
@@ -281,7 +292,7 @@
                             }
                         </div>
                         
-                        <input type="text" 
+                        <input id="codigoOTP" type="text" 
                             name="codigoOTP" 
                             [(ngModel)]="codigoOTP" 
                             (ngModelChange)="codigoOTP.length === 6 ? otpInput.blur() : null"
@@ -289,18 +300,19 @@
                             maxlength="6"
                             inputmode="numeric" 
                             pattern="[0-9]*"
+                            autocomplete="one-time-code"
                             #otpInput
                             class="absolute bottom-0 left-0 w-full h-14 opacity-0 cursor-text text-transparent caret-transparent bg-transparent outline-none">
 
-                            <div class="flex justify-end mt-2 min-h-5">
-                                @if (codigoOTP.length === 6) {
-                                    <button type="button" 
-                                            (click)="codigoOTP = ''; otpInput.focus()" 
-                                            class="relative text-[11px] font-semibold text-gray-400 hover:text-brand-accent uppercase tracking-wider transition-colors animate-in fade-in slide-in-from-top-1 duration-200 focus:outline-none">
-                                        Limpiar
-                                    </button>
-                                }
-                            </div>
+                        <div class="flex justify-end mt-2 min-h-5">
+                            @if (codigoOTP.length === 6) {
+                                <button type="button" 
+                                        (click)="codigoOTP = ''; otpInput.focus()" 
+                                        class="relative text-[11px] font-semibold text-gray-400 hover:text-brand-accent uppercase tracking-wider transition-colors animate-in fade-in slide-in-from-top-1 duration-200 focus:outline-none">
+                                    Limpiar
+                                </button>
+                            }
+                        </div>
                     </div>
 
                     <div class="pt-2 space-y-4">
@@ -311,17 +323,17 @@
                                        name="terminos" 
                                        type="checkbox" 
                                        [(ngModel)]="aceptaTerminos"
-                                       class="w-4 h-4 text-brand-accent bg-white border-gray-300 rounded cursor-pointer">
+                                       class="w-4 h-4 text-brand-accent bg-white border-gray-300 rounded cursor-pointer focus:ring-brand-accent">
                             </div>
                             <label for="terminos" class="text-sm text-brand-text-sec cursor-pointer select-none">
-                                Acepto los <a routerLink="/terminos-y-condiciones" target="_blank" rel="noopener noreferrer" class="font-bold text-brand-accent hover:underline">términos y condiciones</a>.
+                                Acepto los <a routerLink="/terminos-y-condiciones" target="_blank" rel="noopener noreferrer" class="font-bold text-brand-accent hover:underline focus:outline-none">términos y condiciones</a>.
                             </label>
                         </div>
 
                         <button type="button" (click)="verificarYRegistrar()" [disabled]="loading() || codigoOTP.length !== 6 || !aceptaTerminos"
-                                class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none">
+                                class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none focus:outline-none">
                             @if (loading()) {
-                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg class="animate-spin h-5 w-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
@@ -335,6 +347,6 @@
             }
         </form>
     </div>
-</div>
+</main>
 
 <app-toast/>

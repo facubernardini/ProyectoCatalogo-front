@@ -134,7 +134,7 @@ export class CartService {
       if (productos.length > 0 && catalogo && this.cartItems().length > 0) {
         this.sincronizarCarrito(productos, catalogo);
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   private sincronizarCarrito(productos: Producto[], catalogo: any) {
