@@ -51,6 +51,7 @@
             
             <!-- CARD 1: PREVIEW DE PEDIDOS -->
             <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group">
+                
                 <!-- CABECERA -->
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
@@ -58,124 +59,191 @@
                         <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Pedidos Nuevos</h2>
                     </div>
                     
-                    <button 
-                        class="flex items-center gap-0.5 text-[10px] font-bold text-brand-accent uppercase tracking-wide px-2.5 py-1.5 bg-brand-bg rounded-lg md:hover:bg-brand-accent/20 transition-colors"
-                        (click)="pedidoFormService.open()">
-                        
-                        <app-icon name="add-producto" classes="size-3 fill-current" />
-                        <span>Crear</span>
-                    </button>
+                    <!-- Botón Crear: Solo visible si NO es plan básico -->
+                    @if (!authService.esPlanBasico()) {
+                        <button 
+                            class="flex items-center gap-0.5 text-[10px] font-bold text-brand-accent uppercase tracking-wide px-2.5 py-1.5 bg-brand-bg rounded-lg md:hover:bg-brand-accent/20 transition-colors"
+                            (click)="pedidoFormService.open()">
+                            
+                            <app-icon name="add-producto" classes="size-3 fill-current" />
+                            <span>Crear</span>
+                        </button>
+                    }
                 </div>
 
-                <!-- LISTA RÁPIDA DE PEDIDOS PENDIENTES -->
-                @if (pedidosPendientes().length > 0) {
-                    <div class="flex flex-col gap-2">
-                        @for (pedido of pedidosPendientes() | slice:0:2; track pedido.id) {
-                            <div (click)="abrirDetallePedido(pedido)" 
-                                class="flex items-center justify-between p-2.5 bg-gray-50/80 border border-gray-100 rounded-xl cursor-pointer md:hover:bg-gray-100/80 transition-all [&:not(:has(button:active))]:active:scale-[0.98]">
-                                
-                                <!-- Info básica del pedido -->
-                                <div class="flex flex-col min-w-0 pr-2 flex-1">
-                                    <div class="flex items-center gap-1.5 mb-0.5">
-                                        <span class="text-[10px] font-black text-gray-500 uppercase tracking-wider">#{{ pedido.numero_pedido }}</span>
-                                        <span class="size-1 rounded-full bg-gray-400"></span>
-                                        <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">{{ pedido.creado_el | date:'dd MMM, HH:mm' }}</span>
-                                    </div>
-                                    <span class="text-xs font-bold text-brand-text truncate leading-tight">{{ pedido.comprador_nombre }}</span>
-                                </div>
-
-                                <!-- Precio y Acciones Rápidas -->
-                                <div class="flex items-center gap-2 shrink-0">
+                <!-- CONTENIDO DE LA TARJETA -->
+                @if (!authService.esPlanBasico()) {
+                    
+                    <!-- LISTA RÁPIDA DE PEDIDOS PENDIENTES (Plan Premium/Prueba) -->
+                    @if (pedidosPendientes().length > 0) {
+                        <div class="flex flex-col gap-2">
+                            @for (pedido of pedidosPendientes() | slice:0:2; track pedido.id) {
+                                <div (click)="abrirDetallePedido(pedido)" 
+                                    class="flex items-center justify-between p-2.5 bg-gray-50/80 border border-gray-100 rounded-xl cursor-pointer md:hover:bg-gray-100/80 transition-all [&:not(:has(button:active))]:active:scale-[0.98]">
                                     
-                                    <!-- Monto Final -->
-                                    <span class="text-sm font-black text-emerald-600 tracking-tight">
-                                        ${{ pedido.total_final | number:'1.0-0' }}
-                                    </span>
+                                    <!-- Info básica del pedido -->
+                                    <div class="flex flex-col min-w-0 pr-2 flex-1">
+                                        <div class="flex items-center gap-1.5 mb-0.5">
+                                            <span class="text-[10px] font-black text-gray-500 uppercase tracking-wider">#{{ pedido.numero_pedido }}</span>
+                                            <span class="size-1 rounded-full bg-gray-400"></span>
+                                            <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">{{ pedido.creado_el | date:'dd MMM, HH:mm' }}</span>
+                                        </div>
+                                        <span class="text-xs font-bold text-brand-text truncate leading-tight">{{ pedido.comprador_nombre }}</span>
+                                    </div>
 
-                                    <!-- Botones -->
-                                    <div class="flex items-center gap-1.5">
-                                        <button (click)="$event.stopPropagation(); finalizarPedido(pedido)" 
-                                                title="Marcar como Entregado"
-                                                class="size-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-lg md:hover:bg-emerald-500 md:hover:text-white active:scale-90 transition-all">
-                                            <app-icon name="check" classes="size-4 fill-current" />
-                                        </button>
+                                    <!-- Precio y Acciones Rápidas -->
+                                    <div class="flex items-center gap-2 shrink-0">
                                         
-                                        <button (click)="$event.stopPropagation(); cancelarPedido(pedido)" 
-                                                title="Cancelar Pedido"
-                                                class="size-8 flex items-center justify-center bg-red-50 text-red-400 rounded-lg md:hover:bg-red-500 md:hover:text-white active:scale-90 transition-all">
-                                            <app-icon name="close" classes="size-3.5 fill-current" />
-                                        </button>
+                                        <!-- Monto Final -->
+                                        <span class="text-sm font-black text-emerald-600 tracking-tight">
+                                            ${{ pedido.total_final | number:'1.0-0' }}
+                                        </span>
+
+                                        <!-- Botones -->
+                                        <div class="flex items-center gap-1.5">
+                                            <button (click)="$event.stopPropagation(); finalizarPedido(pedido)" 
+                                                    title="Marcar como Entregado"
+                                                    class="size-8 flex items-center justify-center bg-emerald-100 text-emerald-600 rounded-lg md:hover:bg-emerald-500 md:hover:text-white active:scale-90 transition-all">
+                                                <app-icon name="check" classes="size-4 fill-current" />
+                                            </button>
+                                            
+                                            <button (click)="$event.stopPropagation(); cancelarPedido(pedido)" 
+                                                    title="Cancelar Pedido"
+                                                    class="size-8 flex items-center justify-center bg-red-50 text-red-400 rounded-lg md:hover:bg-red-500 md:hover:text-white active:scale-90 transition-all">
+                                                <app-icon name="close" classes="size-3.5 fill-current" />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        }
-                        
-                        @if (pedidosPendientes().length > 2) {
-                            <div routerLink="../mis-pedidos" 
-                                [queryParams]="{ estado: estadoPedido.PENDIENTE }" 
-                                class="text-center text-[10px] font-semibold text-gray-500 uppercase pt-0.5 cursor-pointer md:hover:text-brand-accent transition-colors">
-                                +{{ pedidosPendientes().length - 2 }} {{ (pedidosPendientes().length - 2) === 1 ? 'pedido' : 'pedidos' }} más
-                            </div>
-                        }
-                    </div>
+                            }
+                            
+                            @if (pedidosPendientes().length > 2) {
+                                <div routerLink="../mis-pedidos" 
+                                    [queryParams]="{ estado: estadoPedido.PENDIENTE }" 
+                                    class="text-center text-[10px] font-semibold text-gray-500 uppercase pt-0.5 cursor-pointer md:hover:text-brand-accent transition-colors">
+                                    +{{ pedidosPendientes().length - 2 }} {{ (pedidosPendientes().length - 2) === 1 ? 'pedido' : 'pedidos' }} más
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
+                            ¡Todo al día! No tenés pedidos pendientes.
+                        </div>
+                    }
+
                 } @else {
-                    <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
-                        ¡Todo al día! No tenés pedidos pendientes.
+                    
+                    <!-- ESTADO BLOQUEADO (Plan Básico) - Call To Action -->
+                    <div class="flex flex-col items-center justify-center text-center p-4 bg-brand-accent/5 border border-dashed border-brand-accent/30 rounded-xl">
+                        <div class="size-8 rounded-full bg-brand-accent/10 flex items-center justify-center mb-2">
+                            <app-icon name="lock-fill" classes="size-4 text-brand-accent fill-current" />
+                        </div>
+                        <span class="text-[11px] text-brand-text-sec mb-3 px-2 leading-relaxed">
+                            La vista previa de los pedidos recibidos no está disponible con tu plan actual.
+                        </span>
+                        <button (click)="abrirModalUpgrade()" 
+                                class="w-full flex items-center justify-center gap-1.5 bg-brand-text text-white text-[11px] font-bold tracking-wide py-2 px-4 rounded-lg hover:bg-brand-accent active:scale-95 transition-all shadow-sm">
+                            <svg class="size-3 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            Mejorar a Premium
+                        </button>
                     </div>
+
                 }
+
             </div>
 
-            <!-- CARD 2: GESTIÓN DE INVENTARIO -->
-            <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group">
+            <!-- CARD 2: GESTIÓN DE INVENTARIO / MÉTRICAS -->
+            <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm transition-all group h-full">
                 
-                <!-- CABECERA -->
-                <div class="flex items-center gap-2 mb-3">
-                    <app-icon name="box" classes="size-4 fill-current text-gray-400" />
-                    <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Bajo Stock</h2>
-                </div>
-
-                <!-- LISTA RÁPIDA (Máximo 3) -->
-                @if (presentacionesBajoStock().length > 0) {
-                    <div class="flex flex-col gap-2">
-                        @for (item of presentacionesBajoStock() | slice:0:2; track item.productoNombre + item.unidad) {
-                            <div (click)="abrirDetalleProducto(item.producto)" 
-                                class="flex items-center justify-between p-2 bg-gray-50/80 border border-gray-100 rounded-xl cursor-pointer md:hover:bg-gray-100 transition-all active:scale-[0.98]">
-                                
-                                <div class="flex items-center gap-2.5 min-w-0 pr-2">
-                                    <!-- Mini imagen -->
-                                    <div class="size-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
-                                        @if (item.imagen) {
-                                            <img [src]="item.imagen" class="w-full h-full object-cover">
-                                        } @else {
-                                            <app-icon name="photo" classes="size-3.5 fill-current text-gray-300" />
-                                        }
-                                    </div>
-
-                                    <!-- Detalles -->
-                                    <div class="flex flex-col min-w-0">
-                                        <span class="text-xs font-bold text-gray-800 truncate leading-tight">{{ item.productoNombre }}</span>
-                                        <span class="text-[10px] font-medium text-gray-500">{{ item.unidad }}</span>
-                                    </div>
-                                </div>
-
-                                <!-- Badge de Stock -->
-                                <span class="px-1.5 py-0.5 bg-white border border-amber-300 rounded-md text-[10px] font-bold text-amber-600 shrink-0">
-                                    {{ item.stock === 1 ? 'Queda' : 'Quedan' }} {{ item.stock }}
-                                </span>
-                            </div>
-                        }
-                        
-                        @if (presentacionesBajoStock().length > 2) {
-                            <div routerLink="../mis-productos" 
-                                [queryParams]="{ filtro: 'bajo_stock' }" 
-                                class="text-center text-[10px] font-semibold text-gray-500 uppercase pt-0.5 cursor-pointer md:hover:text-brand-accent transition-colors">
-                                +{{ presentacionesBajoStock().length - 2 }} {{ (presentacionesBajoStock().length - 2) === 1 ? 'artículo' : 'artículos' }} más
-                            </div>
-                        }
+                @if (!authService.esPlanBasico()) {                    
+                    <!-- CABECERA -->
+                    <div class="flex items-center gap-2 mb-3">
+                        <app-icon name="box" classes="size-4 fill-current text-gray-400" />
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Bajo Stock</h2>
                     </div>
-                } @else {
-                    <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
-                        Ningún producto por agotarse.
+
+                    <!-- LISTA RÁPIDA (Máximo 3) -->
+                    @if (presentacionesBajoStock().length > 0) {
+                        <div class="flex flex-col gap-2">
+                            @for (item of presentacionesBajoStock() | slice:0:2; track item.productoNombre + item.unidad) {
+                                <div (click)="abrirDetalleProducto(item.producto)" 
+                                    class="flex items-center justify-between p-2 bg-gray-50/80 border border-gray-100 rounded-xl cursor-pointer md:hover:bg-gray-100 transition-all active:scale-[0.98]">
+                                    
+                                    <div class="flex items-center gap-2.5 min-w-0 pr-2">
+                                        <!-- Mini imagen -->
+                                        <div class="size-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
+                                            @if (item.imagen) {
+                                                <img [src]="item.imagen" class="w-full h-full object-cover">
+                                            } @else {
+                                                <app-icon name="photo" classes="size-3.5 fill-current text-gray-300" />
+                                            }
+                                        </div>
+
+                                        <!-- Detalles -->
+                                        <div class="flex flex-col min-w-0">
+                                            <span class="text-xs font-bold text-gray-800 truncate leading-tight">{{ item.productoNombre }}</span>
+                                            <span class="text-[10px] font-medium text-gray-500">{{ item.unidad }}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Badge de Stock -->
+                                    <span class="px-1.5 py-0.5 bg-white border border-amber-300 rounded-md text-[10px] font-bold text-amber-600 shrink-0">
+                                        {{ item.stock === 1 ? 'Queda' : 'Quedan' }} {{ item.stock }}
+                                    </span>
+                                </div>
+                            }
+                            
+                            @if (presentacionesBajoStock().length > 2) {
+                                <div routerLink="../mis-productos" 
+                                    [queryParams]="{ filtro: 'bajo_stock' }" 
+                                    class="text-center text-[10px] font-semibold text-gray-500 uppercase pt-0.5 cursor-pointer md:hover:text-brand-accent transition-colors">
+                                    +{{ presentacionesBajoStock().length - 2 }} {{ (presentacionesBajoStock().length - 2) === 1 ? 'artículo' : 'artículos' }} más
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
+                            Ningún producto por agotarse.
+                        </div>
+                    }
+
+                } @else {                    
+                    <!-- CABECERA -->
+                    <div class="flex items-center gap-2 mb-3">
+                        <app-icon name="chart-nav" classes="size-4 fill-current text-gray-400" />
+                        <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Resumen de productos</h2>
+                    </div>
+
+                    <!-- GRILLA DE MÉTRICAS -->
+                    <div class="grid grid-cols-3 gap-2 h-[calc(100%-2rem)]">
+                        
+                        <!-- Destacados -->
+                        <div 
+                            routerLink="../mis-productos" 
+                            [queryParams]="{ filtro: 'destacados' }" 
+                            class="flex flex-col items-center justify-center gap-1 p-2 bg-brand-accent/5 border border-brand-accent/10 rounded-xl cursor-pointer hover:bg-brand-accent/10 transition-colors active:scale-95">
+                            <span class="text-lg font-black text-brand-text leading-none">{{ cantidadDestacados() }}</span>
+                            <span class="text-[9px] font-bold text-brand-text-sec uppercase tracking-wider text-center">Destacados</span>
+                        </div>
+
+                        <!-- En Oferta -->
+                        <div 
+                            routerLink="../mis-productos" 
+                            [queryParams]="{ filtro: 'ofertas' }" 
+                            class="flex flex-col items-center justify-center gap-1 p-2 bg-brand-accent/5 border border-brand-accent/10 rounded-xl cursor-pointer hover:bg-brand-accent/10 transition-colors active:scale-95">
+                            <span class="text-lg font-black text-brand-text leading-none">{{ cantidadConOferta() }}</span>
+                            <span class="text-[9px] font-bold text-brand-text-sec uppercase tracking-wider text-center">En Oferta</span>
+                        </div>
+
+                        <!-- Pausados -->
+                        <div 
+                            routerLink="../mis-productos" 
+                            [queryParams]="{ filtro: 'pausados' }" 
+                            class="flex flex-col items-center justify-center gap-1 p-2 bg-brand-accent/5 border border-brand-accent/10 rounded-xl cursor-pointer hover:bg-brand-accent/10 transition-colors active:scale-95">
+                            <span class="text-lg font-black text-brand-text leading-none">{{ cantidadPausados() }}</span>
+                            <span class="text-[9px] font-bold text-brand-text-sec uppercase tracking-wider text-center">Pausados</span>
+                        </div>
+
                     </div>
                 }
             </div>

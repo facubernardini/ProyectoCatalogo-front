@@ -9,6 +9,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { ProductoManagerService } from 'src/app/core/services/producto-manager.service';
 import { SafeHtmlPipe } from "../../../core/pipes/safe-html.pipe";
 import { DisableNumberScrollDirective } from 'src/app/core/directives/disable-number-scroll.directive';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 
 @Component({
   selector: 'app-product-preview',
@@ -19,6 +20,7 @@ import { DisableNumberScrollDirective } from 'src/app/core/directives/disable-nu
 export class ProductPreview {
   public productPreviewService = inject(ProductPreviewService);
   public productoManager = inject(ProductoManagerService);
+  public authService = inject(AuthService);
   
   private confirmService = inject(ConfirmService);
   private toastService = inject(ToastService);

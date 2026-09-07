@@ -10,6 +10,7 @@ import { ConfigSection } from "./config-section/config-section";
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 import { catchError, debounceTime, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 
 @Component({
   selector: 'app-mi-tienda',
@@ -19,6 +20,7 @@ import { BRAND_DATA } from 'src/app/core/data/brand.data';
 })
 export class MiTienda implements OnInit, OnDestroy {
   public adminStore = inject(AdminStoreService);
+  public authService = inject(AuthService);
   private catalogoService = inject(CatalogoService);
   private toastService = inject(ToastService);
 

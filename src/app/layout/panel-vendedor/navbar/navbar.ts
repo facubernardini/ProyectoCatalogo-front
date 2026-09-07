@@ -3,6 +3,7 @@ import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter } from 'rxjs';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { Icon } from "src/app/shared/components/icon";
 
 @Component({
@@ -12,6 +13,7 @@ import { Icon } from "src/app/shared/components/icon";
   styleUrl: './navbar.css',
 })
 export class PanelNavbar {
+  public authService = inject(AuthService);
   private router = inject(Router);
 
   rutasNav = [

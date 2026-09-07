@@ -5,6 +5,7 @@ import { Icon } from "@shared/components/icon";
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { EstadoPedido, PedidoDTO } from 'src/app/core/models/pedido.model';
 import { Producto } from 'src/app/core/models/producto.model';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { PedidosManagerService } from 'src/app/core/services/pedidos-manager.service';
 import { ToastService } from 'src/app/core/services/toast.service';
@@ -22,6 +23,7 @@ import { ProductPreviewService } from 'src/app/shared/services/product-preview.s
 })
 export class Dashboard {
   public adminStore = inject(AdminStoreService);
+  public authService = inject(AuthService);
   public pedidoFormService = inject(PedidoFormService);
   private pedidosManager = inject(PedidosManagerService);
   private pedidoPreviewService = inject(PedidoPreviewService);
@@ -76,6 +78,24 @@ export class Dashboard {
     }
 
     return bajoStock.sort((a, b) => a.stock - b.stock);
+  });
+
+  // PRODUCTOS (Plan basico)
+  public cantidadDestacados = computed(() => {
+    const productos = this.adminStore.productos() || [];
+    return productos.filter(p => p.destacado).length;
+  });
+
+  public cantidadPausados = computed(() => {
+    const productos = this.adminStore.productos() || [];
+    return productos.filter(p => !p.activo).length; 
+  });
+
+  public cantidadConOferta = computed(() => {
+    const productos = this.adminStore.productos() || [];
+    return productos.filter(p => 
+      p.presentaciones?.some(pres => pres.precio_descuento && pres.precio_descuento > 0)
+    ).length;
   });
 
   // SUSCRIPCION
@@ -152,5 +172,15 @@ export class Dashboard {
     } else {
       this.toastService.show('Primero debés configurar el nombre de tu tienda', 'error');
     }
+  }
+
+  abrirModalUpgrade() {
+    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+            
+    const mensaje = encodeURIComponent('Hola, quiero mejorar el plan de mi tienda a PREMIUM');
+    
+    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
+    
+    window.open(url, '_blank');
   }
 }

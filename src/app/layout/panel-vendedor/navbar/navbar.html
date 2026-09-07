@@ -34,27 +34,51 @@
                 </span>
             </button>
 
-            <!-- PEDIDOS -->
-            <button (click)="navegar('/panel-vendedor/mis-pedidos')"
-               [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-pedidos')"
-               [class.text-gray-400]="!esRutaActiva('/panel-vendedor/mis-pedidos')"
-               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
-                <app-icon [name]="esRutaActiva('/panel-vendedor/mis-pedidos') ? 'receipt-fill' : 'receipt'" classes="size-6 fill-current"/>
-                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mis-pedidos')">
-                    Pedidos
-                </span>
-            </button>
+            @if (authService.esPlanBasico()){
+                <!-- CUPONES -->
+                <button (click)="navegar('/panel-vendedor/mis-cupones')"
+                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-cupones')"
+                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/mis-cupones')"
+                class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                    <app-icon [name]="esRutaActiva('/panel-vendedor/mis-cupones') ? 'ticket-fill' : 'ticket'" classes="size-6 fill-current"/>
+                    <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mis-cupones')">
+                        Cupones
+                    </span>
+                </button>
 
-            <!-- ESTADISTICAS -->
-            <button (click)="navegar('/panel-vendedor/estadisticas')"
-               [class.text-brand-accent]="esRutaActiva('/panel-vendedor/estadisticas')"
-               [class.text-gray-400]="!esRutaActiva('/panel-vendedor/estadisticas')"
-               class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
-                <app-icon [name]="esRutaActiva('/panel-vendedor/estadisticas') ? 'chart-nav-fill' : 'chart-nav'" classes="size-6 fill-current"/>
-                <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/estadisticas')">
-                    Estadísticas
-                </span>
-            </button>
+                <!-- CATEGORÍAS -->
+                <button (click)="navegar('/panel-vendedor/mis-categorias')"
+                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-categorias')"
+                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/mis-categorias')"
+                class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                    <app-icon [name]="esRutaActiva('/panel-vendedor/mis-categorias') ? 'category-fill' : 'category'" classes="size-6 fill-current"/>
+                    <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mis-categorias')">
+                        Categorias
+                    </span>
+                </button>
+            } @else {
+                <!-- PEDIDOS -->
+                <button (click)="navegar('/panel-vendedor/mis-pedidos')"
+                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-pedidos')"
+                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/mis-pedidos')"
+                class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                    <app-icon [name]="esRutaActiva('/panel-vendedor/mis-pedidos') ? 'receipt-fill' : 'receipt'" classes="size-6 fill-current"/>
+                    <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mis-pedidos')">
+                        Pedidos
+                    </span>
+                </button>
+
+                <!-- ESTADISTICAS -->
+                <button (click)="navegar('/panel-vendedor/estadisticas')"
+                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/estadisticas')"
+                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/estadisticas')"
+                class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
+                    <app-icon [name]="esRutaActiva('/panel-vendedor/estadisticas') ? 'chart-nav-fill' : 'chart-nav'" classes="size-6 fill-current"/>
+                    <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/estadisticas')">
+                        Estadísticas
+                    </span>
+                </button>
+            }
 
             <!-- MI TIENDA -->
             <button (click)="navegar('/panel-vendedor/mi-tienda')"

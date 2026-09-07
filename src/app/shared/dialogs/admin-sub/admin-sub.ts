@@ -30,13 +30,13 @@ export class AdminSub {
   suscripcion = computed(() => this.datos()?.suscripcion);
 
   esMismoPlan = computed(() => {
-    return this.suscripcion()?.plan === this.planSeleccionado()?.tipo_plan;
+    return this.suscripcion()?.tipo_plan === this.planSeleccionado()?.tipo_plan;
   });
 
   constructor() {
     effect(() => {
       if (this.subscriptionService.isOpen()) {
-        const planActualStr = this.suscripcion()?.plan;
+        const planActualStr = this.suscripcion()?.tipo_plan;
         const planes = this.subscriptionService.planesDisponibles();
         
         const planMatch = planes.find(p => p.tipo_plan === planActualStr);
@@ -94,7 +94,7 @@ export class AdminSub {
     let tipoAccion = SuscripcionAccion.RENOVACION;
 
     if (!esRenovacion) {
-      const planActualObj = this.subscriptionService.planesDisponibles().find(p => p.tipo_plan === sub.plan);
+      const planActualObj = this.subscriptionService.planesDisponibles().find(p => p.tipo_plan === sub.tipo_plan);
       if (planActualObj && planSel.id > planActualObj.id) {
         tipoAccion = SuscripcionAccion.UPGRADE;
       } else {
