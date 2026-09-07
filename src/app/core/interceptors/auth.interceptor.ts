@@ -2,8 +2,10 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
+import { AuthService } from '../services-backend/auth.ServiceBackend';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const authService = inject(AuthService);
   const router = inject(Router);
   const token = localStorage.getItem('token');
 
@@ -24,12 +26,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 401) {
         console.warn('Sesión expirada o token inválido. Redirigiendo...');
         
-        // Limpiamos los datos locales para que la app no intente usarlos de nuevo
-        localStorage.removeItem('token');
-        localStorage.removeItem('vendedor');
-        
-        // Mandamos al usuario al login
-        router.navigate(['/login']);
+        authService.logout();
+      }
+      else if (error.status === 403) {
+        console.warn('Permisos insuficientes o cambio de plan detectado. Refrescando...');
+        authService.refrescarSesion();
       }
 
       // Re-lanzamos el error para que el componente que hizo la petición también sepa que falló
