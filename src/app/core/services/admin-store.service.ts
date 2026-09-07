@@ -49,7 +49,7 @@ export class AdminStoreService {
   productos = signal<Producto[]>([]);
 
   // ONLY SELLER
-  vendedor = signal<Vendedor | null>(this.obtenerVendedorGuardado());
+  vendedor = computed(() => this.authService.vendedorActual());
   cupones = signal<Cupon[]>([]);
   mediosPago = signal<MedioPago[]>([]);
   tags = signal<Tag[]>([]);
@@ -73,18 +73,6 @@ export class AdminStoreService {
   public isLoading = signal(false);
 
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
- 
-  private obtenerVendedorGuardado(): Vendedor | null {
-    const data = localStorage.getItem('vendedor');
-    if (data && data !== 'undefined' && data !== 'null') {
-      try {
-        return JSON.parse(data);
-      } catch (e) {
-        return null;
-      }
-    }
-    return null;
-  }
 
   cargarDatosPublicos(slug: string) {
     this.isLoading.set(true);
@@ -120,8 +108,6 @@ export class AdminStoreService {
   }
 
   cargarDatosPanelVendedor(catalogoId: number) {
-    this.isLoading.set(true);
-
     const esBasico = this.authService.esPlanBasico();
     
     forkJoin({

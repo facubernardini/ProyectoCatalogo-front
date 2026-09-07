@@ -1,7 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment.dev';
 import { LoginResponse } from 'src/app/core/models/auth.model';
 import { Router } from '@angular/router';
@@ -11,28 +11,29 @@ import { Vendedor } from '../models/vendedor.model';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private API_URL = `${environment.apiUrl}`;
-
   private router = inject(Router);
+
+  public vendedorActual = signal<Vendedor | null>(this.obtenerVendedorDeStorage());
+
+  public planActual = computed(() => {
+    const vendedor = this.vendedorActual();
+    
+    if (!vendedor || !vendedor.suscripcion) {
+      return TipoPlanEnum.SIN_PLAN;
+    }
+
+    const planString = vendedor.suscripcion.tipo_plan;
+    return planString ? (planString as TipoPlanEnum) : TipoPlanEnum.SIN_PLAN;
+  });
+
+  public esPlanBasico = computed(() => {
+    const plan = this.planActual();
+    return plan === TipoPlanEnum.BASICO || plan === TipoPlanEnum.SIN_PLAN;
+  });
 
   constructor(private http: HttpClient) {}
 
-  login(credentials: any): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`, credentials).pipe(
-      tap((res: any) => {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('vendedor', JSON.stringify(res.vendedor));
-      })
-    );
-  }
-
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('vendedor');
-    
-    this.router.navigate(['/login'], { replaceUrl: true });
-  }
-
-  getVendedorActual(): Vendedor | null {
+  private obtenerVendedorDeStorage(): Vendedor | null {
     const vendedorJson = localStorage.getItem('vendedor');
     if (!vendedorJson) return null;
 
@@ -44,24 +45,42 @@ export class AuthService {
     }
   }
 
-  getPlanActual(): TipoPlanEnum {
-    const vendedor = this.getVendedorActual();
-
-    if (!vendedor || !vendedor.suscripcion) {
-      return TipoPlanEnum.SIN_PLAN;
-    }
-
-    const planString = vendedor.suscripcion.tipo_plan; 
-
-    if (planString) {
-      return planString as TipoPlanEnum;
-    }
-
-    return TipoPlanEnum.SIN_PLAN;
+  actualizarVendedor(vendedor: Vendedor) {
+    localStorage.setItem('vendedor', JSON.stringify(vendedor));
+    this.vendedorActual.set(vendedor);
   }
 
-  esPlanBasico(): boolean {
-    return this.getPlanActual() === TipoPlanEnum.BASICO;
+  login(credentials: any): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.API_URL}/auth/login`, credentials).pipe(
+      tap((res: any) => {
+        localStorage.setItem('token', res.token);
+        this.actualizarVendedor(res.vendedor);
+      })
+    );
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('vendedor');
+    this.vendedorActual.set(null);
+    
+    this.router.navigate(['/login'], { replaceUrl: true });
+  }
+
+  refrescarSesion(): Observable<any> {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      return of(null);
+    }
+
+    return this.http.get<{vendedor: Vendedor}>(`${this.API_URL}/auth/me`).pipe(
+      tap(res => {
+        if (res && res.vendedor) {
+          this.actualizarVendedor(res.vendedor);
+        }
+      })
+    );
   }
 
   solicitarCodigo(email: string): Observable<any> {

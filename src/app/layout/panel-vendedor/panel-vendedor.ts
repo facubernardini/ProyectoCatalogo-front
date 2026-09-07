@@ -20,6 +20,7 @@ import { MenuLateralVendedor } from "./menu-lateral-vendedor/menu-lateral-vended
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { Icon } from "src/app/shared/components/icon";
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 
 @Component({
   selector: 'app-panel-vendedor',
@@ -29,6 +30,7 @@ import { Icon } from "src/app/shared/components/icon";
 })
 export class PanelVendedor {
   public adminStore = inject(AdminStoreService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   isDesktop = signal(window.innerWidth >= 768);
@@ -39,13 +41,22 @@ export class PanelVendedor {
   }
 
   ngOnInit() {
-    const data = localStorage.getItem('vendedor');
-    if (data) {
-      const vendedor = JSON.parse(data);
-      if (vendedor.catalogoId) {
-        this.adminStore.cargarDatosPanelVendedor(vendedor.catalogoId);
+    this.adminStore.isLoading.set(true);
+    this.authService.refrescarSesion().subscribe({
+      next: () => {
+        const vendedor = this.authService.vendedorActual();
+        
+        if (vendedor && vendedor.catalogoId) {
+          this.adminStore.cargarDatosPanelVendedor(vendedor.catalogoId);
+        }
+        else {
+          this.adminStore.isLoading.set(false);
+        }
+      },
+      error: () => {
+        this.adminStore.isLoading.set(false);
       }
-    }
+    });
   }
 
   public tituloPanelActual = toSignal(
