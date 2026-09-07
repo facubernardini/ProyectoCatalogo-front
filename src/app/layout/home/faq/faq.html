@@ -1,5 +1,9 @@
-<section id="faq" class="py-18 bg-brand-bg relative">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
+<!-- SEO: aria-label y declaración de Schema.org FAQPage en la sección principal -->
+<section 
+    id="faq" 
+    aria-label="Preguntas Frecuentes sobre la plataforma" itemscope itemtype="https://schema.org/FAQPage" 
+    class="py-18 bg-brand-bg relative">
+    <div class="max-w-4xl mx-auto px-4 xl:px-0">
         
         <div class="text-center max-w-2xl mx-auto mb-16">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-brand-text mb-4">
@@ -13,22 +17,25 @@
         <div class="space-y-4">
             
             @for (faq of faqs; track faq.pregunta; let i = $index) {
-                <div class="border border-gray-100 bg-gray-50 rounded-2xl overflow-hidden transition-colors duration-300"
+                <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question" 
+                    class="border border-gray-100 bg-gray-50 rounded-2xl overflow-hidden transition-colors duration-300"
                     [class.bg-white]="openIndex() === i"
                     [class.shadow-sm]="openIndex() === i"
                     [class.border-brand-accent/20]="openIndex() === i">
                     
                     <button type="button" 
                             (click)="toggle(i)"
+                            [attr.aria-expanded]="openIndex() === i"
+                            [attr.aria-controls]="'faq-answer-' + i"
                             class="w-full px-6 py-5 flex items-center justify-between gap-4 text-left focus:outline-none md:hover:bg-brand-bg/30 transition-colors">
                         
-                        <span class="text-base md:text-lg font-bold transition-colors"
+                        <h3 itemprop="name" class="text-base md:text-lg font-bold transition-colors m-0"
                             [class.text-brand-accent]="openIndex() === i"
                             [class.text-brand-text]="openIndex() !== i">
                             {{ faq.pregunta }}
-                        </span>
+                        </h3>
                         
-                        <div class="shrink-0 size-8 rounded-full flex items-center justify-center transition-colors"
+                        <div class="shrink-0 size-8 rounded-full flex items-center justify-center transition-colors" aria-hidden="true"
                             [class.bg-brand-accent/10]="openIndex() === i"
                             [class.bg-gray-200]="openIndex() !== i">
                             
@@ -42,7 +49,9 @@
                         </div>
                     </button>
 
-                    <div class="grid transition-all duration-300 ease-in-out px-6"
+                    <div [id]="'faq-answer-' + i" 
+                        itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"
+                        class="grid transition-all duration-300 ease-in-out px-6"
                         [class.grid-rows-[1fr]]="openIndex() === i"
                         [class.grid-rows-[0fr]]="openIndex() !== i"
                         [class.opacity-100]="openIndex() === i"
@@ -50,7 +59,7 @@
                         [class.pb-5]="openIndex() === i">
                          
                         <div class="overflow-hidden">
-                            <p class="text-sm md:text-base text-brand-text-sec leading-relaxed">
+                            <p itemprop="text" class="text-sm md:text-base text-brand-text-sec leading-relaxed m-0">
                                 {{ faq.respuesta }}
                             </p>
                         </div>
@@ -65,10 +74,12 @@
         <div class="mt-12 text-center p-6 bg-white rounded-2xl border border-brand-accent/10">
             <p class="text-sm font-semibold text-brand-text">
                 ¿Seguís con dudas? 
-                <a (click)="contactarSoporte()" 
-                    class="text-brand-accent hover:underline ml-1 cursor-pointer">
+                <button (click)="contactarSoporte()" 
+                    title="Contactar al equipo de soporte por WhatsApp"
+                    aria-label="Contactar a soporte técnico a través de WhatsApp"
+                    class="text-brand-accent hover:underline ml-1 cursor-pointer focus:outline-none bg-transparent border-none p-0">
                     Escribinos por WhatsApp
-                </a>.
+                </button>.
             </p>
         </div>
 

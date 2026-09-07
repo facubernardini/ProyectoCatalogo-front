@@ -1,10 +1,12 @@
-<!-- Agregamos el ID solicitado y un fondo sutil que lo separe de la sección anterior -->
-<section id="tiendas-ejemplo" class="pt-20 pb-10 bg-brand-bg relative overflow-hidden">
+<section 
+    id="tiendas-ejemplo" 
+    aria-label="Ejemplos de tiendas online creadas con Listalo" 
+    class="pt-20 pb-10 bg-brand-bg relative overflow-hidden">
     
     <!-- Elemento decorativo de fondo -->
-    <div class="absolute inset-0 bg-brand-bg/40 -skew-y-3 origin-top-left -z-10"></div>
+    <div class="absolute inset-0 bg-brand-bg/40 -skew-y-3 origin-top-left -z-10" aria-hidden="true"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 xl:px-0 relative z-10">
         
         <!-- Título de la sección -->
         <div class="text-center max-w-2xl mx-auto mb-16">
@@ -21,15 +23,16 @@
             
             @for (tienda of tiendas; track tienda.id) {
                 <!-- Tarjeta -->
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm md:hover:shadow-lg md:hover:shadow-brand-accent/10 md:hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden">
+                <article class="bg-white rounded-3xl border border-gray-100 shadow-sm md:hover:shadow-lg md:hover:shadow-brand-accent/10 md:hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden">
                     
                     <!-- Contenedor de la Imagen Superior -->
                     <div class="h-44 w-full relative overflow-hidden bg-gray-100">
                         <img [src]="tienda.imagen" 
-                            [alt]="'Tienda de ' + tienda.nombre" 
+                            [alt]="'Ejemplo de tienda online para el rubro ' + tienda.rubro + ': ' + tienda.nombre" 
+                            loading="lazy"
                             class="w-full h-full object-cover object-center" />
                             
-                        <div class="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-black/20 to-transparent"></div>
+                        <div class="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-black/20 to-transparent" aria-hidden="true"></div>
                     </div>
 
                     <!-- Contenido Textual -->
@@ -50,14 +53,16 @@
 
                         <!-- Botón de acción (Enlace directo a la tienda) -->
                         <a [href]="tienda.url" target="_blank" rel="noopener noreferrer"
+                            [title]="'Visitar tienda de demostración: ' + tienda.nombre"
+                            [attr.aria-label]="'Explorar tienda online de ' + tienda.nombre + ' en una nueva pestaña'"
                             class="mt-auto flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-gray-100 text-brand-text md:hover:bg-brand-accent md:hover:text-white rounded-xl font-bold text-sm transition-all focus:outline-none active:scale-95 border border-gray-100 md:hover:border-brand-accent">
                             Explorar tienda
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                             </svg>
                         </a>
                     </div>
-                </div>
+                </article>
             }
 
         </div>

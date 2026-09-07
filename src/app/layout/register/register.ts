@@ -10,7 +10,7 @@ import { Toast } from "src/app/shared/components/toast/toast";
 import { RubroService } from 'src/app/core/services-backend/rubros.ServiceBackend';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
-import { catchError, debounceTime, distinctUntilChanged, of, Subject, switchMap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, of, Subject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -253,11 +253,12 @@ export class Register implements OnInit, OnDestroy {
   private configurarDebounceCorreo() {
     this.correoSubject.pipe(
       debounceTime(500),
+      map(correo => (correo || '').trim()),
       distinctUntilChanged(),
       switchMap(correo => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
-        if (!correo || correo.trim() === '' || !emailRegex.test(correo)) {
+        if (!correo || !emailRegex.test(correo)) {
           this.correoDisponible.set(null);
           this.validandoCorreo.set(false);
           this.correoErrorMensaje.set(null);

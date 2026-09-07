@@ -1,12 +1,13 @@
 <section 
     id="funcionalidades" 
+    aria-label="Características y funcionalidades de la plataforma"
     class="pt-20 pb-10 bg-brand-bg relative overflow-hidden">
 
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] h-10 bg-brand-accent md:hidden pointer-events-none"
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] h-10 bg-brand-accent md:hidden pointer-events-none" aria-hidden="true"
          style="border-bottom-left-radius: 50% 100%; border-bottom-right-radius: 50% 100%;">
     </div>
 
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
+    <div class="mx-auto max-w-7xl px-4 xl:px-0">
         
         <!-- CABECERA DE LA SECCIÓN -->
         <div class="max-w-2xl mx-auto text-center mb-16 md:mb-20">
@@ -40,10 +41,11 @@
                             <div #catalogoScrollContainer (scroll)="onCatalogoScroll($event)" 
                                  class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                  
-                                @for (img of catalogoImages; track img.src) {
+                                @for (img of catalogoImages; track img.src; let i = $index) {
                                     <div class="min-w-full w-full shrink-0 snap-center snap-always flex justify-center">
                                         <img [src]="img.src" 
                                              [alt]="img.alt" 
+                                             [attr.loading]="i === 0 ? 'eager' : 'lazy'"
                                              class="w-full h-auto object-cover object-top pointer-events-none select-none block" />
                                     </div>
                                 }
@@ -54,14 +56,18 @@
                         <!-- FLECHAS DESKTOP -->
                         <div class="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                             
-                            <button (click)="scrollCatalogo(catalogoScrollContainer, -1)" [disabled]="currentCatalogoIndex === 0" 
+                            <button (click)="scrollCatalogo(catalogoScrollContainer, -1)" 
+                                    [disabled]="currentCatalogoIndex === 0" 
+                                    aria-label="Ver imagen anterior del catálogo"
                                     class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
-                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                                <svg class="size-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
                             </button>
                             
-                            <button (click)="scrollCatalogo(catalogoScrollContainer, 1)" [disabled]="currentCatalogoIndex === catalogoImages.length - 1" 
+                            <button (click)="scrollCatalogo(catalogoScrollContainer, 1)" 
+                                    [disabled]="currentCatalogoIndex === catalogoImages.length - 1" 
+                                    aria-label="Ver siguiente imagen del catálogo"
                                     class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
-                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                <svg class="size-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
                             </button>
                             
                         </div>
@@ -72,6 +78,7 @@
                 <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 md:hidden">
                     @for (img of catalogoImages; track img.src; let i = $index) {
                         <button (click)="scrollToCatalogo(i, catalogoScrollContainer)"
+                            [attr.aria-label]="'Ir a la imagen ' + (i + 1) + ' del catálogo'"
                             class="h-1.5 rounded-full transition-all duration-300 z-20"
                             [class]="currentCatalogoIndex === i ? 'bg-brand-accent w-5' : 'bg-zinc-300 w-1.5'">
                         </button>
@@ -94,7 +101,8 @@
                     
                     <div class="relative w-full max-w-65 sm:max-w-70 mx-auto overflow-hidden md:group-hover:scale-105 transition-transform duration-500">
                         <img src="assets/home/ejemplo_pedido.webp" 
-                            alt="Ejemplo de pedido" 
+                            alt="Ejemplo de pedido de tienda online llegando por WhatsApp" 
+                            loading="lazy"
                             class="w-full h-auto object-cover object-top p-2" />
                     </div>
 
@@ -111,7 +119,7 @@
                     </p>
                 </div>
 
-                <div #cuponesContainer class="flex-1 flex items-center justify-center pb-2 relative z-10 mt-4 md:mt-0 min-h-30">
+                <div #cuponesContainer aria-hidden="true" class="flex-1 flex items-center justify-center pb-2 relative z-10 mt-4 md:mt-0 min-h-30">
                     
                     <!-- CUPÓN FRENTE -->
                     <div class="relative z-10 w-full max-w-65 h-22.5 transform transition-all duration-700 drop-shadow-xl 
@@ -173,10 +181,12 @@
                             <div #panelScrollContainer (scroll)="onPanelScroll($event)" 
                                  class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                                  
-                                @for (img of panelImages; track img.src) {
+                                @for (img of panelImages; track img.src; let i = $index) {
                                     <div class="min-w-full w-full shrink-0 snap-center snap-always flex justify-center">
+                                        <!-- SEO: loading="lazy" implementado -->
                                         <img [src]="img.src" 
                                             [alt]="img.alt" 
+                                            loading="lazy"
                                             class="w-full h-auto object-contain pointer-events-none select-none block" />
                                     </div>
                                 }
@@ -187,14 +197,18 @@
                         <!-- FLECHAS DESKTOP -->
                         <div class="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                             
-                            <button (click)="scrollPanel(panelScrollContainer, -1)" [disabled]="currentPanelIndex === 0" 
+                            <button (click)="scrollPanel(panelScrollContainer, -1)" 
+                                    [disabled]="currentPanelIndex === 0" 
+                                    aria-label="Ver imagen anterior del panel"
                                     class="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
-                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                                <svg class="size-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
                             </button>
                             
-                            <button (click)="scrollPanel(panelScrollContainer, 1)" [disabled]="currentPanelIndex === panelImages.length - 1" 
+                            <button (click)="scrollPanel(panelScrollContainer, 1)" 
+                                    [disabled]="currentPanelIndex === panelImages.length - 1" 
+                                    aria-label="Ver siguiente imagen del panel"
                                     class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md text-zinc-600 hover:text-zinc-900 pointer-events-auto transition-all active:scale-95 disabled:opacity-0 border border-zinc-200/80">
-                                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                <svg class="size-4" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
                             </button>
                             
                         </div>
@@ -205,6 +219,7 @@
                 <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 md:hidden">
                     @for (img of panelImages; track img.src; let i = $index) {
                         <button (click)="scrollToPanel(i, panelScrollContainer)"
+                            [attr.aria-label]="'Ir a la imagen ' + (i + 1) + ' del panel'"
                             class="h-1.5 rounded-full transition-all duration-300 z-20"
                             [class]="currentPanelIndex === i ? 'bg-brand-accent w-5' : 'bg-zinc-300 w-1.5'">
                         </button>
