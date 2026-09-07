@@ -1,10 +1,11 @@
+import { CommonModule, SlicePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-toast',
-  imports: [Icon],
+  imports: [Icon, SlicePipe],
   templateUrl: './toast.html',
   styleUrl: './toast.css',
 })

@@ -1,3 +1,5 @@
+import { TipoPlanEnum } from "src/app/shared/enums/tipo-plan.enum";
+
 export enum TemaCatalogo {
   MIDNIGHT = 'MIDNIGHT',
   SUNSET = 'SUNSET',
@@ -60,4 +62,6 @@ export interface Catalogo {
   permitir_ventas_sin_stock: boolean;
   
   medios_pago: MedioPago[];
+
+  plan_vendedor: TipoPlanEnum | null;
 }

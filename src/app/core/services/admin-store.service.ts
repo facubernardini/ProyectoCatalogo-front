@@ -2,7 +2,7 @@ import { inject, Injectable, signal, computed } from "@angular/core";
 import { ProductoService } from "../services-backend/productos.ServiceBackend";
 import { CategoriaService } from "../services-backend/categorias.ServiceBackend";
 import { Producto, Tag } from "../models/producto.model";
-import { forkJoin } from "rxjs";
+import { forkJoin, of } from "rxjs";
 import { CategoriaVendedor } from "../models/categoriaVendedor.model";
 import { Catalogo, MedioPago } from "../models/catalogo.model";
 import { CatalogoService } from "../services-backend/catalogo.ServiceBackend";
@@ -24,11 +24,13 @@ import { EstadisticasServiceBackend } from "../services-backend/estadisticas.Ser
 import { ResumenDiarioGraficoDTO, ResumenMensualDTO, TopCategoriaDTO, TopProductoDTO } from "../models/estadisticas.model";
 import { SuscripcionEstado } from "src/app/shared/enums/suscripcion.enum";
 import { TEST_EMAILS_BLACKLIST } from "../data/blacklist.data";
+import { AuthService } from "../services-backend/auth.ServiceBackend";
 
 declare var gtag: Function;
 
 @Injectable({ providedIn: 'root' })
 export class AdminStoreService {
+  private authService = inject(AuthService);
   private router = inject(Router);
   private productoService = inject(ProductoService);
   private categoriaService = inject(CategoriaService);
@@ -47,7 +49,7 @@ export class AdminStoreService {
   productos = signal<Producto[]>([]);
 
   // ONLY SELLER
-  vendedor = signal<Vendedor | null>(this.obtenerVendedorGuardado());
+  vendedor = computed(() => this.authService.vendedorActual());
   cupones = signal<Cupon[]>([]);
   mediosPago = signal<MedioPago[]>([]);
   tags = signal<Tag[]>([]);
@@ -71,18 +73,6 @@ export class AdminStoreService {
   public isLoading = signal(false);
 
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
- 
-  private obtenerVendedorGuardado(): Vendedor | null {
-    const data = localStorage.getItem('vendedor');
-    if (data && data !== 'undefined' && data !== 'null') {
-      try {
-        return JSON.parse(data);
-      } catch (e) {
-        return null;
-      }
-    }
-    return null;
-  }
 
   cargarDatosPublicos(slug: string) {
     this.isLoading.set(true);
@@ -118,7 +108,7 @@ export class AdminStoreService {
   }
 
   cargarDatosPanelVendedor(catalogoId: number) {
-    this.isLoading.set(true);
+    const esBasico = this.authService.esPlanBasico();
     
     forkJoin({
       catalogo: this.catalogoService.getCatalogoById(catalogoId),
@@ -127,7 +117,7 @@ export class AdminStoreService {
       cupones: this.cuponService.getCuponesByCatalogo(catalogoId),
       mediosPago: this.mediosPagoService.getMediosDePago(),
       tags: this.tagsService.getTagsByCatalogo(catalogoId),
-      pedidosActivos: this.pedidosService.obtenerPedidosActivos(),
+      pedidosActivos: esBasico ? of([]) : this.pedidosService.obtenerPedidosActivos(),
     }).subscribe({
       next: ({ catalogo, productos, categorias, cupones, mediosPago, tags, pedidosActivos }) => {
         this.catalogo.set(catalogo);

@@ -16,9 +16,9 @@ import { Icon } from "src/app/shared/components/icon";
 export class MenuLateralVendedor {
   public adminStore = inject(AdminStoreService);
   public exportPDFService = inject(PdfExportService);
+  public authService = inject(AuthService);
   private router = inject(Router);
   private confirmService = inject(ConfirmService);
-  private authService = inject(AuthService);
 
   irAMiPerfil() {
     this.router.navigate(['/panel-vendedor/perfil']);

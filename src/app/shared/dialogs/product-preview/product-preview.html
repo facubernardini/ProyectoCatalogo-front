@@ -145,28 +145,31 @@
                                 </div>
                             </div>
 
-                            <!-- Fila 2: Costo | Stock -->
-                            <div class="grid grid-cols-12 gap-1 mt-1">
-                                <!-- Precio Costo -->
-                                <div class="col-span-6">
-                                    <label class="text-[9px] font-bold text-gray-400 uppercase ml-1" title="Costo interno. No visible para clientes">Precio Costo</label>
-                                    <div class="relative">
-                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">$</span>
-                                        <input type="number" [(ngModel)]="pres.precio_costo"
-                                            class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-6 pr-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
-                                            placeholder="Opcional">
+                            @if (!authService.esPlanBasico()) {
+                                <!-- Fila 2: Costo | Stock -->
+                                <div class="grid grid-cols-12 gap-1 mt-1">
+                                    <!-- Precio Costo -->
+                                    <div class="col-span-6">
+                                        <label class="text-[9px] font-bold text-gray-400 uppercase ml-1" title="Costo interno. No visible para clientes">Precio Costo</label>
+                                        <div class="relative">
+                                            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">$</span>
+                                            <input type="number" [(ngModel)]="pres.precio_costo"
+                                                class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 pl-6 pr-2 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all"
+                                                placeholder="Opcional">
+                                        </div>
+                                    </div>
+    
+                                    <!-- Stock -->
+                                    <div class="col-span-6">
+                                        <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Stock disponible</label>
+                                        <input type="number" [(ngModel)]="pres.stock"
+                                            class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 px-2.5 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-gray-400"
+                                            [class.border-red-400]="pres.stock === 0 || (pres.stock !== null && pres.stock < 0)"
+                                            placeholder="Ilimitado">
                                     </div>
                                 </div>
+                            }
 
-                                <!-- Stock -->
-                                <div class="col-span-6">
-                                    <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Stock disponible</label>
-                                    <input type="number" [(ngModel)]="pres.stock"
-                                        class="no-spinners w-full bg-white border border-gray-200 rounded-lg py-1.5 px-2.5 text-xs font-bold text-brand-text outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all placeholder:text-gray-400"
-                                        [class.border-red-400]="pres.stock === 0 || (pres.stock !== null && pres.stock < 0)"
-                                        placeholder="Ilimitado">
-                                </div>
-                            </div>
 
                             <!-- Mensajes de Error (Condicionales) -->
                             @if (pres.precio_descuento && pres.precio && pres.precio_descuento >= pres.precio) {

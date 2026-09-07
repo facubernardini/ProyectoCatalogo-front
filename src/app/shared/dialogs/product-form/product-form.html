@@ -375,32 +375,34 @@
                                 }
                             </div>
 
-                            <div class="col-span-6">
-                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1" title="Cuanto te costó a ti el producto. No visible para clientes.">Precio Costo</label>
-                                <div class="relative group/input">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 transition-colors group-focus-within/input:text-brand-accent">
-                                        $
-                                    </span>
-                                    <input type="number" [(ngModel)]="pres.precio_costo" 
-                                        class="no-spinners w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
-                                        placeholder="Opcional">
+                            @if (!authService.esPlanBasico()) {
+                                <div class="col-span-6">
+                                    <label class="text-[9px] font-bold text-gray-400 uppercase ml-1" title="Cuanto te costó a ti el producto. No visible para clientes.">Precio Costo</label>
+                                    <div class="relative group/input">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 transition-colors group-focus-within/input:text-brand-accent">
+                                            $
+                                        </span>
+                                        <input type="number" [(ngModel)]="pres.precio_costo" 
+                                            class="no-spinners w-full p-2.5 pl-7 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                            placeholder="Opcional">
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="col-span-6">
-                                <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Stock disponible</label>
-                                <div class="relative group/input">
-                                    <input type="number" min="0" [(ngModel)]="pres.stock" 
-                                        [class.border-red-400]="pres.stock === 0 || (pres.stock !== null && pres.stock < 0)"
-                                        class="no-spinners w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
-                                        placeholder="Ilimitado">
+                                <div class="col-span-6">
+                                    <label class="text-[9px] font-bold text-gray-400 uppercase ml-1">Stock disponible</label>
+                                    <div class="relative group/input">
+                                        <input type="number" min="0" [(ngModel)]="pres.stock" 
+                                            [class.border-red-400]="pres.stock === 0 || (pres.stock !== null && pres.stock < 0)"
+                                            class="no-spinners w-full p-2.5 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold text-brand-text placeholder:text-gray-300" 
+                                            placeholder="Ilimitado">
+                                    </div>
+                                    @if (pres.stock === 0) {
+                                        <p class="text-[8px] text-red-500 font-black mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
+                                            EL STOCK DEBE SER MAYOR A 0
+                                        </p>
+                                    }
                                 </div>
-                                @if (pres.stock === 0) {
-                                    <p class="text-[8px] text-red-500 font-black mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
-                                        EL STOCK DEBE SER MAYOR A 0
-                                    </p>
-                                }
-                            </div>
+                            }
                         </div>
 
                         @if (!pres.activo) {

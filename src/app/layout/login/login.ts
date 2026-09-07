@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { Toast } from "src/app/shared/components/toast/toast";
-import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "@shared/components/icon";
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
@@ -16,11 +15,11 @@ import { BRAND_DATA } from 'src/app/core/data/brand.data';
   styleUrl: './login.css',
 })
 export class Login {
-  private adminStore = inject(AdminStoreService);
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   public BRAND_DATA = BRAND_DATA;
   
@@ -59,11 +58,11 @@ export class Login {
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
         this.isLoading.set(false);
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'];
         if (res.vendedor.admin) {
-          this.router.navigate(['/backoffice/inicio']);
+          this.router.navigateByUrl(returnUrl || '/backoffice/inicio');
         } else {
-          this.adminStore.vendedor.set(res.vendedor);
-          this.router.navigate(['/panel-vendedor/inicio']);
+          this.router.navigateByUrl(returnUrl || '/panel-vendedor/inicio');
         }
       },
       error: (err) => {

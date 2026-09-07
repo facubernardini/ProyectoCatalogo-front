@@ -11,6 +11,7 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
 import { CategoryFormService } from 'src/app/shared/services/category-form.service';
 import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 
 @Component({
   selector: 'app-mis-productos',
@@ -23,6 +24,7 @@ export class MisProductos {
   private productFormService = inject(ProductFormService);
   private categoryFormService = inject(CategoryFormService);
   private route = inject(ActivatedRoute);
+  public authService = inject(AuthService);
   //private contextMenu = inject(ContextMenuService);
   
   public productManager = inject(ProductoManagerService); 
