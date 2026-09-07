@@ -11,11 +11,3 @@ export enum SuscripcionAccion {
     RENOVACION = 'RENOVACION',
     CANCELACION = 'CANCELACION'
 }
-
-export enum TipoPlan {
-    PRUEBA = 'PRUEBA',
-    BASE = 'BASE',
-    PREMIUM = 'PREMIUM',
-    SIN_PLAN = 'SIN_PLAN',
-    CUSTOM = 'CUSTOM'
-}

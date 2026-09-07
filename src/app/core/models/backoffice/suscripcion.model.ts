@@ -7,7 +7,7 @@ export interface PlanSuscripcion {
 
 export interface Suscripcion {
     id: number;
-    plan: string; 
+    tipo_plan: string; 
     estado: SuscripcionEstado;
     fecha_inicio: Date;
     fecha_fin: Date | null;

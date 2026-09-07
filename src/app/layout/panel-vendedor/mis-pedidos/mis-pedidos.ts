@@ -10,6 +10,9 @@ import { PedidoPreviewService } from 'src/app/shared/services/pedido-preview.ser
 import { PedidoFormService } from 'src/app/shared/services/pedido-form.service';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { TipoPlanEnum } from 'src/app/shared/enums/tipo-plan.enum';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-mis-pedidos',
@@ -22,7 +25,10 @@ export class MisPedidos implements OnInit, OnDestroy {
   public adminStore = inject(AdminStoreService);
   public pedidoPreviewService = inject(PedidoPreviewService);
   public pedidoFormService = inject(PedidoFormService);
+  public authService = inject(AuthService);
   private pedidoServiceBackend = inject(PedidosServiceBackend);
+
+  public tipoPlanEnum = TipoPlanEnum;
 
   viendoHistorial = signal<boolean>(false);
   busquedaRaw = signal<string>('');
@@ -229,5 +235,15 @@ export class MisPedidos implements OnInit, OnDestroy {
 
   registrarNuevoPedido() {
     this.pedidoFormService.open();
+  }
+
+  abrirModalUpgrade() {
+    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+        
+    const mensaje = encodeURIComponent('Hola, quiero mejorar el plan de mi tienda a PREMIUM');
+    
+    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
+    
+    window.open(url, '_blank');
   }
 }

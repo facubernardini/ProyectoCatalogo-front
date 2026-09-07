@@ -54,7 +54,7 @@ export class Perfil {
   mejorarPlan() {
     const vendedor = this.adminStore.vendedor();
     const nombre = vendedor?.nombre_apellido;
-    const planActual = vendedor?.suscripcion?.plan || 'Actual';
+    const planActual = vendedor?.suscripcion?.tipo_plan || 'Actual';
     
     const mensaje = `¡Hola! Soy ${nombre}. Me gustaría recibir más información para mejorar el plan ${planActual} de mi tienda.`;
     

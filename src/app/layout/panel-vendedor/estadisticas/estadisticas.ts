@@ -4,6 +4,8 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "src/app/shared/components/icon";
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-estadisticas',
@@ -13,6 +15,7 @@ import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
 })
 export class Estadisticas implements OnInit {
   public adminStore = inject(AdminStoreService);
+  public authService = inject(AuthService);
 
   public mostrarBeneficios = signal(true);
   public isDropdownMesOpen = signal(false);
@@ -137,9 +140,11 @@ export class Estadisticas implements OnInit {
   }
 
   ngOnInit() {
-    this.generarMesesPrevios(this.mesesAnteriores);
-    this.adminStore.cargarEstadisticasVendedor();
-    window.addEventListener('scroll', this.onScroll, true);
+    if (!this.authService.esPlanBasico()) {
+      this.generarMesesPrevios(this.mesesAnteriores);
+      this.adminStore.cargarEstadisticasVendedor();
+      window.addEventListener('scroll', this.onScroll, true);
+    }
   }
 
   private generarMesesPrevios(cantidad: number) {
@@ -168,7 +173,7 @@ export class Estadisticas implements OnInit {
     if (!this.isScrolling) {
       this.isScrolling = true;
 
-      // 3. LA MAGIA: Buscamos específicamente las barras (etiquetas <g> del SVG)
+      // 3. Buscamos específicamente las barras (etiquetas <g> del SVG)
       // y les enviamos el evento para que la librería reinicie su memoria interna.
       const barras = document.querySelectorAll('ngx-charts-bar-vertical g');
       barras.forEach(barra => {
@@ -187,5 +192,15 @@ export class Estadisticas implements OnInit {
 
   toggleBeneficios() {
     this.mostrarBeneficios.set(!this.mostrarBeneficios());
+  }
+
+  abrirModalUpgrade() {
+    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+            
+    const mensaje = encodeURIComponent('Hola, quiero mejorar el plan de mi tienda a PREMIUM');
+    
+    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
+    
+    window.open(url, '_blank');
   }
 }

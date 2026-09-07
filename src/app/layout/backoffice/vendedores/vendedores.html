@@ -79,15 +79,15 @@
                                 
                                 <div class="flex items-center justify-between sm:justify-end gap-2 w-full">
                                     <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider"
-                                        [class.bg-blue-100]="vendedor.suscripcion?.plan?.toLowerCase() === 'prueba'"
-                                        [class.text-blue-700]="vendedor.suscripcion?.plan?.toLowerCase() === 'prueba'"
-                                        [class.bg-gray-200]="vendedor.suscripcion?.plan?.toLowerCase() === 'base'"
-                                        [class.text-gray-700]="vendedor.suscripcion?.plan?.toLowerCase() === 'base'"
-                                        [class.bg-purple-100]="vendedor.suscripcion?.plan?.toLowerCase() === 'premium'"
-                                        [class.text-purple-700]="vendedor.suscripcion?.plan?.toLowerCase() === 'premium'"
+                                        [class.bg-blue-100]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'prueba'"
+                                        [class.text-blue-700]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'prueba'"
+                                        [class.bg-gray-200]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'base'"
+                                        [class.text-gray-700]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'base'"
+                                        [class.bg-purple-100]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'premium'"
+                                        [class.text-purple-700]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'premium'"
                                         [class.bg-gray-100]="!vendedor.suscripcion"
                                         [class.text-gray-500]="!vendedor.suscripcion">
-                                        {{ vendedor.suscripcion?.plan || 'Sin Plan' }}
+                                        {{ vendedor.suscripcion?.tipo_plan || 'Sin Plan' }}
                                     </span>
 
                                     @if (vendedor.suscripcion?.estado === 'CANCELADA') {

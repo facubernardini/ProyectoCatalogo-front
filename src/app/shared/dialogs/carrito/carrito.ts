@@ -10,6 +10,7 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { PedidosServiceBackend } from 'src/app/core/services-backend/pedidos.ServiceBackend';
 import { CrearPedidoRequest } from 'src/app/core/models/pedido.model';
+import { TipoPlanEnum } from '../../enums/tipo-plan.enum';
 
 @Component({
   selector: 'app-carrito',
@@ -246,104 +247,116 @@ export class Carrito {
       }
     }
 
-    // 3. Armamos el Payload (CrearPedidoRequest) para el backend
-    const payload: CrearPedidoRequest = {
-      catalogo_id: Number(catalogoId),
-      comprador_nombre: this.nombreCliente().trim(),
-      comprador_direccion: envio ? this.direccionEnvio().trim() : null,
-      comprador_telefono: this.telefonoCliente() ? this.telefonoCliente() : null,
-      metodo_entrega: deliveryMethod,
-      costo_envio: costoEnvioFinal,
-      metodo_pago: String(metodoPago),
-      cupon_codigo: cupon ? cupon.codigo : null,
-      productos: items.map(item => ({
-        producto_id: item.productoId,
-        presentacion_id: item.presentacionId,
-        cantidad: item.cantidad
-      }))
-    };
+    const esPlanBasico = this.catalogo()?.plan_vendedor === TipoPlanEnum.BASICO;
 
     this.isSubmitting.set(true);
 
-    // 4. Llamamos al backend para registrar la compra
-    this.pedidosServiceBackend.registrarPedido(payload).subscribe({
-      next: (response) => {
-        const numeroPedidoFormateado = `#${response.numero_pedido}`;
+    if (esPlanBasico){
+      this.enviarWhatsappYLimpiarCarrito(null, items, envio, cupon);
+      this.isSubmitting.set(false);
+    }
+    else{
+      const payload: CrearPedidoRequest = {
+        catalogo_id: Number(catalogoId),
+        comprador_nombre: this.nombreCliente().trim(),
+        comprador_direccion: envio ? this.direccionEnvio().trim() : null,
+        comprador_telefono: this.telefonoCliente() ? this.telefonoCliente() : null,
+        metodo_entrega: deliveryMethod,
+        costo_envio: costoEnvioFinal,
+        metodo_pago: String(metodoPago),
+        cupon_codigo: cupon ? cupon.codigo : null,
+        productos: items.map(item => ({
+          producto_id: item.productoId,
+          presentacion_id: item.presentacionId,
+          cantidad: item.cantidad
+        }))
+      };
 
-        // 5. Armamos el mensaje de WhatsApp incluyendo el Número de Pedido
-        let mensaje = `🛎️ NUEVO PEDIDO ${numeroPedidoFormateado} de *${this.nombreCliente().trim()}*\n\n`;
-
-        if (envio) {
-          mensaje += `🛵 Envío a domicilio: *${this.direccionEnvio().trim()}*\n`;
-        } else {
-          mensaje += `🏪 Retiro en el local\n`;
+      this.pedidosServiceBackend.registrarPedido(payload).subscribe({
+        next: (response) => {
+          const numeroPedidoFormateado = `#${response.numero_pedido}`;
+          this.enviarWhatsappYLimpiarCarrito(numeroPedidoFormateado, items, envio, cupon);
+          this.isSubmitting.set(false);
+        },
+        error: (err) => {
+          console.error('Error al registrar pedido', err);
+          this.toastService.show('Ups! Algo salió mal, vuelve a intentarlo', 'error');
+          this.isSubmitting.set(false);
         }
+      });
+    }
+    this.enviarAlertaTelegram();
+  }
 
-        mensaje += `💵 Medio de pago: *${this.cartService.selectedPaymentMethod()?.nombre}*\n\n`;
+  private enviarWhatsappYLimpiarCarrito(numeroPedido: string | null, items: any[], envio: boolean, cupon: any) {
+    let mensaje = '';
+    
+    if (numeroPedido) {
+        mensaje = `🛎️ NUEVO PEDIDO ${numeroPedido} de *${this.nombreCliente().trim()}*\n\n`;
+    } else {
+        mensaje = `🛎️ NUEVO PEDIDO de *${this.nombreCliente().trim()}*\n\n`;
+    }
 
-        // Productos
-        mensaje += `🛒 *Detalle del pedido*\n`;
-        mensaje += ` ────────────────\n`;
-        items.forEach(item => {
-          const subtotalItem = item.precio * item.cantidad;
-          let lineaItem = `• ${item.cantidad} x ${item.nombre} (${item.unidad}): *$${subtotalItem.toLocaleString('es-AR')}*`;
-          if (item.cantidad >= 2) {
-            lineaItem += ` _($${item.precio.toLocaleString('es-AR')} c/u)_`; 
-          }
-          mensaje += lineaItem + `\n`;
-        });
-        mensaje += ` ────────────────\n\n`;
+    if (envio) {
+      mensaje += `🛵 Envío a domicilio: *${this.direccionEnvio().trim()}*\n`;
+    } else {
+      mensaje += `🏪 Retiro en el local\n`;
+    }
 
-        // Resumen
-        mensaje += `🧾 *Resumen de cuenta*\n`;
-        mensaje += `🛍️ Productos: *$${this.cartService.subtotalPrice().toLocaleString('es-AR')}*\n`;
+    mensaje += `💵 Medio de pago: *${this.cartService.selectedPaymentMethod()?.nombre}*\n\n`;
 
-        if (cupon) {
-          mensaje += `🎟️ Cupón (${cupon.codigo}): *-$${this.cartService.discountAmount().toLocaleString('es-AR')}*\n`;
-        }
-
-        const descuentoEfectivo = this.cartService.cashDiscountAmount();
-        const porcentajeEfectivo = this.cartService.catalogConfig()?.descuentoEfectivo;
-        if (descuentoEfectivo > 0 && porcentajeEfectivo) {
-          mensaje += `💸 Dto. pago en efectivo (${porcentajeEfectivo}%): *-$${descuentoEfectivo.toLocaleString('es-AR')}*\n`;
-        }
-
-        if (envio) {
-          if (this.cartService.esEnvioGratis()) {
-            mensaje += `🛵 Costo de envío: *Bonificado*\n`;
-          } else {
-            const costoEnvioSeguro = Number(this.catalogo()?.costo_envio || 0);
-            mensaje += `🛵 Costo de envío: *$${costoEnvioSeguro.toLocaleString('es-AR')}*\n`;
-          }
-        }
-
-        mensaje += `\n💰 *TOTAL:   $${this.cartService.totalFinal().toLocaleString('es-AR')}*`;
-
-        // 6. Ejecutamos las acciones finales
-        const phone = this.catalogo()?.wpp_numero;
-        const url = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
-        
-        window.open(url, '_blank');
-        
-        this.cartService.limpiarCarrito(true);
-        this.nombreCliente.set('');
-        this.direccionEnvio.set('');
-        this.telefonoCliente.set('');
-
-        this.isSubmitting.set(false);
-
-        this.enviarAlertaTelegram();
-
-        setTimeout(() => {
-          this.pedidoRealizadoService.open(url);
-        }, 5000);
-      },
-      error: (err) => {
-        console.error('Error al registrar pedido', err);
-        this.toastService.show('Ups! Algo salió mal, vuelve a intentarlo', 'error');
-        this.isSubmitting.set(false);
+    // Productos
+    mensaje += `🛒 *Detalle del pedido*\n`;
+    mensaje += ` ────────────────\n`;
+    items.forEach(item => {
+      const subtotalItem = item.precio * item.cantidad;
+      let lineaItem = `• ${item.cantidad} x ${item.nombre} (${item.unidad}): *$${subtotalItem.toLocaleString('es-AR')}*`;
+      if (item.cantidad >= 2) {
+        lineaItem += ` _($${item.precio.toLocaleString('es-AR')} c/u)_`; 
       }
+      mensaje += lineaItem + `\n`;
     });
+    mensaje += ` ────────────────\n\n`;
+
+    // Resumen
+    mensaje += `🧾 *Resumen de cuenta*\n`;
+    mensaje += `🛍️ Productos: *$${this.cartService.subtotalPrice().toLocaleString('es-AR')}*\n`;
+
+    if (cupon) {
+      mensaje += `🎟️ Cupón (${cupon.codigo}): *-$${this.cartService.discountAmount().toLocaleString('es-AR')}*\n`;
+    }
+
+    const descuentoEfectivo = this.cartService.cashDiscountAmount();
+    const porcentajeEfectivo = this.cartService.catalogConfig()?.descuentoEfectivo;
+    if (descuentoEfectivo > 0 && porcentajeEfectivo) {
+      mensaje += `💸 Dto. pago en efectivo (${porcentajeEfectivo}%): *-$${descuentoEfectivo.toLocaleString('es-AR')}*\n`;
+    }
+
+    if (envio) {
+      if (this.cartService.esEnvioGratis()) {
+        mensaje += `🛵 Costo de envío: *Bonificado*\n`;
+      } else {
+        const costoEnvioSeguro = Number(this.catalogo()?.costo_envio || 0);
+        mensaje += `🛵 Costo de envío: *$${costoEnvioSeguro.toLocaleString('es-AR')}*\n`;
+      }
+    }
+
+    mensaje += `\n💰 *TOTAL:   $${this.cartService.totalFinal().toLocaleString('es-AR')}*`;
+
+    // Ejecutamos las acciones finales
+    const phone = this.catalogo()?.wpp_numero;
+    const url = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
+    
+    window.open(url, '_blank');
+    
+    this.cartService.limpiarCarrito(true);
+    this.nombreCliente.set('');
+    this.direccionEnvio.set('');
+    this.telefonoCliente.set('');
+
+    setTimeout(() => {
+      this.pedidoRealizadoService.open(url);
+    }, 5000);
   }
 
   // Prueba temporal

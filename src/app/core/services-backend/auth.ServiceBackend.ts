@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.dev';
 import { LoginResponse } from 'src/app/core/models/auth.model';
 import { Router } from '@angular/router';
+import { TipoPlanEnum } from 'src/app/shared/enums/tipo-plan.enum';
+import { Vendedor } from '../models/vendedor.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -28,6 +30,38 @@ export class AuthService {
     localStorage.removeItem('vendedor');
     
     this.router.navigate(['/login'], { replaceUrl: true });
+  }
+
+  getVendedorActual(): Vendedor | null {
+    const vendedorJson = localStorage.getItem('vendedor');
+    if (!vendedorJson) return null;
+
+    try {
+      return JSON.parse(vendedorJson) as Vendedor;
+    } catch (error) {
+      console.error('Error al parsear el vendedor del localStorage', error);
+      return null;
+    }
+  }
+
+  getPlanActual(): TipoPlanEnum {
+    const vendedor = this.getVendedorActual();
+
+    if (!vendedor || !vendedor.suscripcion) {
+      return TipoPlanEnum.SIN_PLAN;
+    }
+
+    const planString = vendedor.suscripcion.tipo_plan; 
+
+    if (planString) {
+      return planString as TipoPlanEnum;
+    }
+
+    return TipoPlanEnum.SIN_PLAN;
+  }
+
+  esPlanBasico(): boolean {
+    return this.getPlanActual() === TipoPlanEnum.BASICO;
   }
 
   solicitarCodigo(email: string): Observable<any> {

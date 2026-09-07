@@ -11,6 +11,7 @@ import { PresentacionForm } from 'src/app/core/models/presentacion.model';
 import { CategoriaManagerService } from 'src/app/core/services/categoria-manager.service';
 import { CategoryFormService } from '../../services/category-form.service';
 import { DisableNumberScrollDirective } from 'src/app/core/directives/disable-number-scroll.directive';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 
 @Component({
   selector: 'app-product-form',
@@ -21,10 +22,11 @@ import { DisableNumberScrollDirective } from 'src/app/core/directives/disable-nu
 export class ProductForm {
   public productFormService = inject(ProductFormService);
   public adminStore = inject(AdminStoreService);
+  public authService = inject(AuthService);
   public confirmService = inject(ConfirmService);
-  private toastService = inject(ToastService);
   public categoriaManager = inject(CategoriaManagerService);
   public categoryFormService = inject(CategoryFormService);
+  private toastService = inject(ToastService);
 
   isTagsDropdownOpen = signal<boolean>(false);
   isTagsMenuUpward = signal<boolean>(false);

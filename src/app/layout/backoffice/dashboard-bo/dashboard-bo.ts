@@ -57,15 +57,15 @@ export class DashboardBO {
 
   // --- PLANES SUSCRIPCION ---
   totalPrueba = computed(() => 
-    this.vendedores().filter(v => v.suscripcion?.plan?.toLowerCase() === 'prueba').length
+    this.vendedores().filter(v => v.suscripcion?.tipo_plan?.toLowerCase() === 'prueba').length
   );
 
   totalBase = computed(() => 
-    this.vendedores().filter(v => v.suscripcion?.plan?.toLowerCase() === 'base').length
+    this.vendedores().filter(v => v.suscripcion?.tipo_plan?.toLowerCase() === 'base').length
   );
 
   totalPremium = computed(() => 
-    this.vendedores().filter(v => v.suscripcion?.plan?.toLowerCase() === 'premium').length
+    this.vendedores().filter(v => v.suscripcion?.tipo_plan?.toLowerCase() === 'premium').length
   );
   
   async onLogout() {

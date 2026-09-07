@@ -52,18 +52,6 @@
                 Productos
             </button>
 
-            <!-- CATEGORÍAS -->
-            <button (click)="navegar('/panel-vendedor/mis-categorias')"
-                [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/mis-categorias')"
-                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-categorias')"
-                [class.text-gray-500]="!esRutaActiva('/panel-vendedor/mis-categorias')"
-                [class.hover:bg-gray-100]="!esRutaActiva('/panel-vendedor/mis-categorias')"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
-                <app-icon [name]="esRutaActiva('/panel-vendedor/mis-categorias') ? 'category-fill' : 'category'" 
-                          classes="size-5 fill-current transition-transform group-active:scale-95" />
-                Categorías
-            </button>
-
             <!-- PEDIDOS -->
             <button (click)="navegar('/panel-vendedor/mis-pedidos')"
                 [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/mis-pedidos')"
@@ -71,9 +59,43 @@
                 [class.text-gray-500]="!esRutaActiva('/panel-vendedor/mis-pedidos')"
                 [class.hover:bg-gray-100]="!esRutaActiva('/panel-vendedor/mis-pedidos')"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
-                <app-icon [name]="esRutaActiva('/panel-vendedor/mis-pedidos') ? 'receipt-fill' : 'receipt'" 
-                          classes="size-5 fill-current transition-transform group-active:scale-95" />
-                Pedidos
+                
+                <app-icon 
+                    [name]="authService.esPlanBasico() 
+                        ? (esRutaActiva('/panel-vendedor/mis-pedidos') ? 'lock-fill' : 'lock2') 
+                        : (esRutaActiva('/panel-vendedor/mis-pedidos') ? 'receipt-fill' : 'receipt')" 
+                    classes="size-5 fill-current transition-transform group-active:scale-95" />
+                
+                <span class="flex-1">Pedidos</span>
+
+                @if (authService.esPlanBasico()) {
+                    <span class="text-[9px] font-black uppercase tracking-wider text-brand-accent bg-brand-accent/10 px-1.5 py-0.5 rounded-md">
+                        Premium
+                    </span>
+                }
+            </button>
+
+            <!-- ESTADÍSTICAS -->
+            <button (click)="navegar('/panel-vendedor/estadisticas')"
+                [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/estadisticas')"
+                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/estadisticas')"
+                [class.text-gray-500]="!esRutaActiva('/panel-vendedor/estadisticas')"
+                [class.hover:bg-gray-100]="!esRutaActiva('/panel-vendedor/estadisticas')"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
+                
+                <app-icon 
+                    [name]="authService.esPlanBasico() 
+                        ? (esRutaActiva('/panel-vendedor/estadisticas') ? 'lock-fill' : 'lock2') 
+                        : (esRutaActiva('/panel-vendedor/estadisticas') ? 'chart-nav-fill' : 'chart-nav')" 
+                    classes="size-5 fill-current transition-transform group-active:scale-95" />
+                
+                <span class="flex-1">Estadísticas</span>
+
+                @if (authService.esPlanBasico()) {
+                    <span class="text-[9px] font-black uppercase tracking-wider text-brand-accent bg-brand-accent/10 px-1.5 py-0.5 rounded-md">
+                        Premium
+                    </span>
+                }
             </button>
 
             <!-- CUPONES -->
@@ -88,16 +110,16 @@
                 Cupones
             </button>
 
-            <!-- ESTADÍSTICAS -->
-            <button (click)="navegar('/panel-vendedor/estadisticas')"
-                [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/estadisticas')"
-                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/estadisticas')"
-                [class.text-gray-500]="!esRutaActiva('/panel-vendedor/estadisticas')"
-                [class.hover:bg-gray-100]="!esRutaActiva('/panel-vendedor/estadisticas')"
+            <!-- CATEGORÍAS -->
+            <button (click)="navegar('/panel-vendedor/mis-categorias')"
+                [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/mis-categorias')"
+                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-categorias')"
+                [class.text-gray-500]="!esRutaActiva('/panel-vendedor/mis-categorias')"
+                [class.hover:bg-gray-100]="!esRutaActiva('/panel-vendedor/mis-categorias')"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
-                <app-icon [name]="esRutaActiva('/panel-vendedor/estadisticas') ? 'chart-nav-fill' : 'chart-nav'" 
+                <app-icon [name]="esRutaActiva('/panel-vendedor/mis-categorias') ? 'category-fill' : 'category'" 
                           classes="size-5 fill-current transition-transform group-active:scale-95" />
-                Estadísticas
+                Categorías
             </button>
 
             <!-- MI TIENDA -->
