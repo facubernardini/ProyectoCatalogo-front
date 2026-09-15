@@ -6,42 +6,44 @@
             <h3 class="text-xs font-bold uppercase tracking-widest mb-4 opacity-90">Contacto</h3>
             
             <div class="flex items-center justify-center gap-6 mb-3">
-                @if (adminStore.catalogo()?.wpp_numero) {
-                    <a [href]="'https://wa.me/' + adminStore.catalogo()?.wpp_numero" target="_blank"
+                @if (catalogo()?.wpp_numero) {
+                    <a (click)="abrirWhatsapp()"
+                        role="button" rel="noopener noreferrer"
                         class="flex items-center gap-2 hover:opacity-90 transition-all">
                         <app-icon name="whatsapp" classes="size-5 fill-current" />
-                        <span class="font-medium text-sm"> +549{{adminStore.catalogo()?.wpp_numero}} </span>
+                        <span class="font-medium text-sm"> +549{{catalogo()?.wpp_numero}} </span>
                     </a>
                 }
 
-                @if (adminStore.catalogo()?.instagram_usuario) {
-                    <a [href]="'https://instagram.com/' + adminStore.catalogo()?.instagram_usuario" target="_blank"
+                @if (catalogo()?.instagram_usuario) {
+                    <a (click)="abrirInstagram()"
+                        role="button" rel="noopener noreferrer"
                         class="flex items-center gap-2 hover:opacity-90 transition-all">
                         <app-icon name="instagram" classes="size-5 fill-current" />
-                        <span class="font-medium text-sm"> @{{adminStore.catalogo()?.instagram_usuario}} </span>
+                        <span class="font-medium text-sm"> @{{catalogo()?.instagram_usuario}} </span>
                     </a>
                 }
             </div>
 
-            @if (adminStore.catalogo()?.direccion || adminStore.catalogo()?.ciudad) {
+            @if (catalogo()?.direccion || catalogo()?.ciudad) {
                 <a target="_blank" 
                     rel="noopener noreferrer"
-                    [href]="'https://www.google.com/maps/search/?api=1&query=' + (adminStore.catalogo()?.direccion || '') + ' ' + (adminStore.catalogo()?.ciudad || '')"
+                    [href]="'https://www.google.com/maps/search/?api=1&query=' + (catalogo()?.direccion || '') + ' ' + (catalogo()?.ciudad || '')"
                     class="flex items-center gap-1 text-sm mt-1 hover:opacity-90 transition-all cursor-pointer">
                     
                     <app-icon name="location" classes="size-5 fill-current" />
                     
                     <span class="text-left">
-                        @if (adminStore.catalogo()?.direccion) {
-                            {{ adminStore.catalogo()?.direccion }}
+                        @if (catalogo()?.direccion) {
+                            {{ catalogo()?.direccion }}
                         }
                         
-                        @if (adminStore.catalogo()?.direccion && adminStore.catalogo()?.ciudad) {
+                        @if (catalogo()?.direccion && catalogo()?.ciudad) {
                             , 
                         }
                         
-                        @if (adminStore.catalogo()?.ciudad) {
-                            {{ adminStore.catalogo()?.ciudad }}
+                        @if (catalogo()?.ciudad) {
+                            {{ catalogo()?.ciudad }}
                         }
                     </span>
                 </a>
