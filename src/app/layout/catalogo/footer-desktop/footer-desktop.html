@@ -1,19 +1,69 @@
-<footer class="w-full pt-1 pb-3 mt-auto bg-transparent">
-    <div class="max-w-5xl mx-auto flex flex-col items-center gap-1 text-center">
+<footer class="w-full pt-6 mt-auto bg-transparent">
+    <div class="flex flex-col items-center text-center">
     
-        <button (click)="irACreacion()"
-                class="px-4 py-1 bg-brand-accent text-white text-[10px] font-medium uppercase tracking-wide rounded-full shadow-sm shadow-brand-accent/20 hover:shadow-md hover:shadow-brand-accent/40 hover:-translate-y-0.5 active:scale-95 transition-all">
-            ¡Necesito una tienda como esta!
-        </button>
+        <div class="w-full flex flex-col items-center bg-brand-accent text-white py-6 px-2">
+            
+            <h3 class="text-xs font-bold uppercase tracking-widest mb-4 opacity-90">Contacto</h3>
+            
+            <div class="flex items-center justify-center gap-6 mb-3">
+                @if (adminStore.catalogo()?.wpp_numero) {
+                    <a [href]="'https://wa.me/' + adminStore.catalogo()?.wpp_numero" target="_blank"
+                        class="flex items-center gap-2 hover:opacity-90 transition-all">
+                        <app-icon name="whatsapp" classes="size-5 fill-current" />
+                        <span class="font-medium text-sm"> +549{{adminStore.catalogo()?.wpp_numero}} </span>
+                    </a>
+                }
 
-        <div class="flex flex-col gap-1">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            © {{ currentYear }} - 
-                <button (click)="irAHome()"
-                    class="text-[9px] font-black text-gray-500 md:hover:text-brand-accent md:hover:underline transition-colors uppercase tracking-widest">
+                @if (adminStore.catalogo()?.instagram_usuario) {
+                    <a [href]="'https://instagram.com/' + adminStore.catalogo()?.instagram_usuario" target="_blank"
+                        class="flex items-center gap-2 hover:opacity-90 transition-all">
+                        <app-icon name="instagram" classes="size-5 fill-current" />
+                        <span class="font-medium text-sm"> @{{adminStore.catalogo()?.instagram_usuario}} </span>
+                    </a>
+                }
+            </div>
+
+            @if (adminStore.catalogo()?.direccion || adminStore.catalogo()?.ciudad) {
+                <a target="_blank" 
+                    rel="noopener noreferrer"
+                    [href]="'https://www.google.com/maps/search/?api=1&query=' + (adminStore.catalogo()?.direccion || '') + ' ' + (adminStore.catalogo()?.ciudad || '')"
+                    class="flex items-center gap-1 text-sm mt-1 hover:opacity-90 transition-all cursor-pointer">
+                    
+                    <app-icon name="location" classes="size-5 fill-current" />
+                    
+                    <span class="text-left">
+                        @if (adminStore.catalogo()?.direccion) {
+                            {{ adminStore.catalogo()?.direccion }}
+                        }
+                        
+                        @if (adminStore.catalogo()?.direccion && adminStore.catalogo()?.ciudad) {
+                            , 
+                        }
+                        
+                        @if (adminStore.catalogo()?.ciudad) {
+                            {{ adminStore.catalogo()?.ciudad }}
+                        }
+                    </span>
+                </a>
+            }
+        </div>
+
+        <div class="w-full flex flex-col md:flex-row items-center justify-center py-2 gap-2 md:gap-4 bg-white">
+            
+            <div class="text-xs text-gray-800 font-medium flex items-end justify-center gap-2">
+                Catálogo creado con 
+                
+                <button (click)="irAHome()" class="inline-flex text-sm items-center gap-2 font-bold text-indigo-600 md:hover:text-indigo-600/90 transition-colors">
+                    <img src="assets/logo_color.png" alt="Logo Listalo" class="size-4 object-contain">
                     {{ BRAND_DATA.name }}
                 </button>
-            </p>
+            </div>
+
+            <button (click)="irACreacion()"
+                    class="px-3.5 py-1 text-indigo-600 text-[10px] md:border-l md:border-indigo-300 md:hover:underline md:hover:text-indigo-500 font-bold uppercase tracking-wider transition-colors">
+                ¡Necesito una tienda como esta!
+            </button>
+            
         </div>
     
     </div>
