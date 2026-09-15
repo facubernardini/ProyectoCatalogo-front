@@ -13,6 +13,8 @@ import { Icon } from 'src/app/shared/components/icon';
 export class FooterDesktop {
   public adminStore = inject(AdminStoreService);
   public BRAND_DATA = BRAND_DATA;
+
+  catalogo = this.adminStore.catalogo;
   
   currentYear = new Date().getFullYear();
 
@@ -40,5 +42,31 @@ export class FooterDesktop {
   irACreacion() {
     const urlBase = this.obtenerUrlBasePlataforma();
     window.open(`${urlBase}`, '_blank');
+  }
+
+  abrirWhatsapp(): void {
+    const numero = this.catalogo()?.wpp_numero;
+    
+    if (!numero) {
+      console.warn('No hay número de WhatsApp configurado.');
+      return;
+    }
+    
+    const url = `https://wa.me/+549${numero}`;
+    
+    window.open(url, '_blank');
+  }
+
+  abrirInstagram(): void {
+    const usuario = this.catalogo()?.instagram_usuario;
+    
+    if (!usuario) {
+      console.warn('No hay usuario de Instagram configurado.');
+      return;
+    }
+
+    const url = `https://instagram.com/${usuario}`;
+    
+    window.open(url, '_blank');
   }
 }
