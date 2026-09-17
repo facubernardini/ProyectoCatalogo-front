@@ -31,9 +31,16 @@ import { ExploradorProductosDesktop } from "./explorador-productos-desktop/explo
 import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
 import { CartService } from 'src/app/shared/services/cart.service';
 import { ConfirmDialog } from "src/app/shared/dialogs/confirm-dialog/confirm-dialog";
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { isDominioBase } from 'src/app/core/data/domains.data';
 import { ImageViewer } from "src/app/shared/dialogs/image-viewer/image-viewer";
+import { Indumentaria } from './indumentaria/indumentaria';
+import { HeroIndumentaria } from './indumentaria/hero-indumentaria/hero-indumentaria';
+import { ProductosIndumentaria } from './indumentaria/productos-indumentaria/productos-indumentaria';
+import { ProductoDetalle } from './indumentaria/producto-detalle/producto-detalle';
+import { Producto } from 'src/app/core/models/producto.model';
+import { GrillaProductos } from './indumentaria/grilla-productos/grilla-productos';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-catalogo',
@@ -58,13 +65,19 @@ import { ImageViewer } from "src/app/shared/dialogs/image-viewer/image-viewer";
     FooterDesktop,
     ExploradorProductosDesktop,
     ConfirmDialog,
-    ImageViewer
+    ImageViewer,
+    Indumentaria,
+    HeroIndumentaria,
+    ProductosIndumentaria,
+    ProductoDetalle,
+    GrillaProductos
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
 export class CatalogoPublico implements OnInit, OnDestroy {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private titleService = inject(Title);
   public adminStore = inject(AdminStoreService);
   public exploradorProductosService = inject(ExploradorProductosService);
@@ -74,6 +87,12 @@ export class CatalogoPublico implements OnInit, OnDestroy {
   private document = inject(DOCUMENT);
 
   isDesktop = signal(window.innerWidth >= 768);
+
+  // Indumentaria
+  vistaActual = signal<'home' | 'detalle' | 'grilla'>('home');
+  productoSlugActivo = signal<string | null>(null);
+  tituloGrilla = signal<string>('');
+  productosFiltrados = signal<Producto[]>([]);
 
   @HostListener('window:resize')
   onResize() {
@@ -107,6 +126,52 @@ export class CatalogoPublico implements OnInit, OnDestroy {
         this.renderer.removeClass(this.document.body, 'overflow-hidden');
       }
     });
+
+    effect(() => {
+      this.vistaActual(); 
+      
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'auto'
+      });
+    });
+
+    effect(() => {
+      const productos = this.adminStore.productos();
+      const categorias = this.adminStore.categorias();
+      const segmentos = this.route.snapshot.url;
+      const query = this.route.snapshot.queryParamMap.get('q');
+      const vista = this.vistaActual();
+      
+      if (productos.length === 0 || vista !== 'grilla') return;
+
+      // Escenario A: Búsqueda (ej: /buscar?q=remera)
+      if (segmentos.length > 0 && segmentos[0].path === 'buscar' && query) {
+        this.tituloGrilla.set(`Resultados para: "${query}"`);
+        const queryLimpia = query.toLowerCase();
+        
+        const filtrados = productos.filter(p => 
+          p.nombre.toLowerCase().includes(queryLimpia) || 
+          p.marca?.toLowerCase().includes(queryLimpia)
+        );
+        this.productosFiltrados.set(filtrados);
+      } 
+      
+      // Escenario B: Categoría (ej: /categoria/remeras)
+      else if (segmentos.length >= 2 && segmentos[0].path === 'categoria') {
+        const catSlug = segmentos[1].path;
+        
+        // Buscamos la categoría para obtener su nombre real
+        const catEncontrada = categorias.find(c => this.crearSlug(c.nombre) === catSlug);
+        this.tituloGrilla.set(catEncontrada ? `${catEncontrada.nombre}` : 'Categoría');
+        
+        const filtrados = productos.filter(p => 
+          p.categorias?.some(c => this.crearSlug(c.nombre) === catSlug)
+        );
+        this.productosFiltrados.set(filtrados);
+      }
+    }, { allowSignalWrites: true });
   }
 
   ngOnInit() {
@@ -119,6 +184,22 @@ export class CatalogoPublico implements OnInit, OnDestroy {
       this.adminStore.isLoading.set(false);
       this.router.navigate(['/']);
     }
+
+    combineLatest([this.route.url, this.route.queryParams]).subscribe(([segments, queryParams]) => {
+      if (segments.length === 0) {
+        this.vistaActual.set('home');
+      } 
+      else if (segments.length >= 3 && segments[0].path === 'productos') {
+        this.vistaActual.set('detalle');
+        this.productoSlugActivo.set(segments[2].path);
+      } 
+      else if (segments[0].path === 'categoria' || segments[0].path === 'buscar') {
+        this.vistaActual.set('grilla');
+      } 
+      else {
+        this.vistaActual.set('home');
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -134,5 +215,16 @@ export class CatalogoPublico implements OnInit, OnDestroy {
     }
 
     return host.split('.')[0];
+  }
+
+  public crearSlug(texto: string): string {
+    if (!texto) return '';
+
+    return texto
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
   }
 }

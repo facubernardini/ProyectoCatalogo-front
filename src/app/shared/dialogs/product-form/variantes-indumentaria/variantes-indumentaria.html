@@ -1,0 +1,148 @@
+<div class="space-y-3">
+
+    <div class="flex flex-col md:flex-row md:items-end">
+        <div class="w-full md:w-64">
+            <label class="text-xs font-bold text-gray-600 ml-1">
+                Precio
+            </label>
+            <div class="relative group/input">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 group-focus-within/input:text-brand-accent transition-colors">
+                    $
+                </span>
+                <input type="number" 
+                    [(ngModel)]="precioBase" 
+                    (change)="sincronizarPrecios()"
+                    (focus)="precioBase = precioBase === 0 ? null : precioBase"
+                    (blur)="precioBase = precioBase === null ? 0 : precioBase"
+                    class="w-full p-2.5 pl-7 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text" 
+                    placeholder="0">
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- SECCIÓN: TALLES -->
+        <div class="space-y-3">
+            <label class="text-xs font-bold text-gray-600 ml-1">
+                Talles
+            </label>
+            
+            <div class="flex gap-2">
+                <input type="text" [(ngModel)]="nuevoTalle" (keyup.enter)="agregarTalle()"
+                       placeholder="Ej: M, XL, 38-42" 
+                       class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 text-sm font-bold text-brand-text uppercase">
+                
+                <button (click)="agregarTalle()" class="bg-brand-accent/10 text-brand-accent px-3 rounded-xl font-bold text-sm md:hover:bg-brand-accent/20 transition-all">
+                    Añadir
+                </button>
+            </div>
+
+            <!-- Chips de talles agregados -->
+            <div class="flex flex-wrap gap-2">
+                @for (t of talles(); track t) {
+                    <span class="flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 shadow-sm">
+                        {{ t }}
+                        <button (click)="eliminarTalle(t)" class="text-gray-400 hover:text-red-500 transition-colors ml-1">✕</button>
+                    </span>
+                }
+            </div>
+        </div>
+
+        <!-- SECCIÓN: COLORES -->
+        <div class="space-y-3">
+            <label class="text-xs font-bold text-gray-600 ml-1">
+                Colores
+            </label>
+            
+            <div class="flex gap-2">
+                <!-- Color picker nativo -->
+                <input type="color" 
+                    [(ngModel)]="nuevoColorHex"
+                    class="h-10.5 w-10.5 rounded-xl cursor-pointer border-0 p-0 bg-transparent shrink-0">
+                
+                <!-- Nombre del color -->
+                <input type="text" 
+                    [(ngModel)]="nuevoColorNombre" 
+                    (keyup.enter)="agregarColor()"
+                    placeholder="Ej: Rojo" 
+                    class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 text-sm font-bold text-brand-text">
+                
+                <button (click)="agregarColor()" class="bg-brand-accent/10 text-brand-accent px-3 rounded-xl font-bold text-sm md:hover:bg-brand-accent/20 transition-all">
+                    Añadir
+                </button>
+            </div>
+
+            <!-- Chips de colores agregados -->
+            <div class="flex flex-wrap gap-2">
+                @for (c of colores(); track c.nombre) {
+                    <span class="flex items-center gap-2 px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 shadow-sm">
+                        <div class="w-3 h-3 rounded-full border border-gray-200 shadow-inner" [style.backgroundColor]="c.hex"></div>
+                        {{ c.nombre }}
+                        <button (click)="eliminarColor(c.nombre)" class="text-gray-400 hover:text-red-500 transition-colors ml-1">✕</button>
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: MATRIZ DE RESULTADOS (TABLA) -->
+    @if (variantes().length > 0) {
+        <div class="pt-2">
+            <div class="flex items-center mb-3">
+                <h4 class="font-bold text-brand-text text-sm">Inventario y Precios</h4>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                    <thead class="bg-gray-50 text-gray-500 text-[10px] uppercase font-black tracking-wider">
+                        <tr>
+                            <th class="p-3">Variante</th>
+                            <th class="p-3 w-28">Precio ($)</th>
+                            <th class="p-3 w-24">Stock</th>
+                            <th class="p-3 w-16 text-center">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 bg-white">
+                        @for (v of variantes(); track v.id_temporal) {
+                            <tr [class.opacity-50]="!v.activo" class="transition-opacity hover:bg-gray-50/50">
+                                
+                                <!-- Nombre Variante -->
+                                <td class="p-3 font-bold text-gray-700">
+                                    <div class="flex items-center gap-2">
+                                        @if (v.color_hex) {
+                                            <div class="w-3 h-3 rounded-full border border-gray-200" [style.backgroundColor]="v.color_hex"></div>
+                                        }
+                                        {{ v.unidad_venta }}
+                                    </div>
+                                </td>
+
+                                <!-- Precio -->
+                                <td class="p-2">
+                                    <input type="number" [(ngModel)]="v.precio" (change)="notificarCambioTabla()" min="0"
+                                           class="w-full p-2 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold text-gray-700 outline-none focus:border-brand-accent/40 no-spinners">
+                                </td>
+
+                                <!-- Stock -->
+                                <td class="p-2">
+                                    <input type="number" [(ngModel)]="v.stock" (change)="notificarCambioTabla()" min="0" placeholder="∞"
+                                           class="w-full p-2 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold text-gray-700 outline-none focus:border-brand-accent/40 no-spinners">
+                                </td>
+
+                                <!-- Activar/Desactivar -->
+                                <td class="p-2 text-center">
+                                    <button (click)="v.activo = !v.activo; notificarCambioTabla()" 
+                                            [class]="v.activo ? 'bg-green-500' : 'bg-gray-300'"
+                                            class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                        <div [class]="v.activo ? 'translate-x-5' : 'translate-x-0'"
+                                             class="w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm transition-transform transform"></div>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

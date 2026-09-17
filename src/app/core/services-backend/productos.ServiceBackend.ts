@@ -40,4 +40,16 @@ export class ProductoService {
 		
 		return this.http.post<{ url: string }>(`${this.API_URL}/seller/productos/upload-imagen`, formData);
 	}
+
+	uploadGaleria(files: File[], catalogoId: number): Observable<{urls: string[]}> {
+		const formData = new FormData();
+
+		formData.append('catalogoId', catalogoId.toString());
+		
+		files.forEach((file) => {
+			formData.append('imagenes', file);
+		});
+
+		return this.http.post<{urls: string[]}>(`${this.API_URL}/seller/productos/upload-galeria`, formData);
+	}
 }

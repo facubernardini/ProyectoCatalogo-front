@@ -17,7 +17,6 @@ import { HistorialSuscripcion, PlanSuscripcion } from "../models/backoffice/susc
 import { SuscripcionesService } from "../services-backend/suscripciones.ServiceBackend";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { Vendedor } from "../models/vendedor.model";
 import { PedidoDTO } from "../models/pedido.model";
 import { PedidosServiceBackend } from "../services-backend/pedidos.ServiceBackend";
 import { EstadisticasServiceBackend } from "../services-backend/estadisticas.ServiceBackend";
@@ -25,6 +24,7 @@ import { ResumenDiarioGraficoDTO, ResumenMensualDTO, TopCategoriaDTO, TopProduct
 import { SuscripcionEstado } from "src/app/shared/enums/suscripcion.enum";
 import { TEST_EMAILS_BLACKLIST } from "../data/blacklist.data";
 import { AuthService } from "../services-backend/auth.ServiceBackend";
+import { RUBROS } from "src/app/shared/constants/rubros.constants";
 
 declare var gtag: Function;
 
@@ -73,6 +73,7 @@ export class AdminStoreService {
   public isLoading = signal(false);
 
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
+  esIndumentaria = computed(() => this.catalogo()?.rubro_id === RUBROS.INDUMENTARIA);
 
   cargarDatosPublicos(slug: string) {
     this.isLoading.set(true);

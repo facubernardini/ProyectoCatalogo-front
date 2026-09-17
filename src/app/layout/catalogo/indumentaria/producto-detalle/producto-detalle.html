@@ -1,0 +1,121 @@
+<div class="min-h-screen flex flex-col bg-white">
+    @if (productoActual(); as prod) {
+        <main class="flex-1 max-w-7xl mx-auto w-full pb-12 md:pt-8 px-4">
+            
+            <!-- Grid: 1 col en mobile, 2 cols en desktop -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                
+                <!-- COLUMNA IZQUIERDA: Galería de Fotos -->
+                <div class="flex flex-col gap-3">
+                    <!-- Foto Principal -->
+                    <div class="w-full aspect-4/5 bg-gray-50 overflow-hidden">
+                        @if (imagenPrincipal()) {
+                            <img [src]="imagenPrincipal()" class="w-full h-full object-cover">
+                        }
+                    </div>
+
+                    <!-- Miniaturas (Scroll horizontal oculto) -->
+                    @if (prod.imagenes && prod.imagenes.length > 1) {
+                        <div class="flex gap-2 overflow-x-auto pb-2 snap-x [&::-webkit-scrollbar]:hidden">
+                            @for (img of prod.imagenes; track img.id) {
+                                <button (click)="imagenPrincipal.set(img.url)"
+                                        class="shrink-0 w-16 h-20 md:w-20 md:h-24 rounded-lg overflow-hidden border-2 transition-all"
+                                        [class.border-brand-accent]="imagenPrincipal() === img.url"
+                                        [class.border-transparent]="imagenPrincipal() !== img.url"
+                                        [class.opacity-50]="imagenPrincipal() !== img.url">
+                                    <img [src]="img.url" class="w-full h-full object-cover">
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- COLUMNA DERECHA: Info y Selectores -->
+                <div class="flex flex-col">
+                    
+                    @if (prod.marca) {
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{{ prod.marca }}</p>
+                    }
+                    <h1 class="text-2xl md:text-3xl font-black text-brand-text leading-tight mb-4">{{ prod.nombre }}</h1>
+
+                    <!-- Precios dinámicos basados en la variante seleccionada -->
+                    @if (presentacionActiva(); as pres) {
+                        <div class="flex flex-col mb-6 pb-6 border-b border-gray-100">
+                            <div class="flex items-center gap-3">
+                                @if (pres.precio_descuento) {
+                                    <span class="text-2xl font-black text-brand-text">${{ pres.precio_descuento | number:'1.0-0' }}</span>
+                                    <span class="text-sm font-medium text-gray-400 line-through">${{ pres.precio | number:'1.0-0' }}</span>
+                                } @else {
+                                    <span class="text-2xl font-black text-brand-text">${{ pres.precio | number:'1.0-0' }}</span>
+                                }
+                            </div>
+                            
+                            <!-- Precio Efectivo si aplica -->
+                            @if (adminStore.catalogo()!.descuento_en_efectivo > 0) {
+                                <p class="text-sm font-bold text-green-600 mt-1">
+                                    ${{ (pres.precio_descuento || pres.precio) * (1 - adminStore.catalogo()!.descuento_en_efectivo / 100) | number:'1.0-0' }} abonando en efectivo
+                                </p>
+                            }
+                        </div>
+                    }
+
+                    <!-- SELECTOR DE COLOR -->
+                    @if (coloresUnicos().length > 0) {
+                        <div class="mb-6">
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
+                                Color: <span class="text-brand-text font-black">{{ colorSeleccionado() }}</span>
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                @for (color of coloresUnicos(); track color.nombre) {
+                                    <button (click)="seleccionarColor(color.hex, color.nombre)"
+                                            class="size-10 rounded-full border-2 transition-all p-0.5"
+                                            [class.border-brand-accent]="colorSeleccionado() === color.nombre"
+                                            [class.border-gray-200]="colorSeleccionado() !== color.nombre">
+                                        <div class="w-full h-full rounded-full shadow-inner border border-black/10" [style.backgroundColor]="color.hex"></div>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- SELECTOR DE TALLE -->
+                    @if (tallesUnicos().length > 0) {
+                        <div class="mb-6">
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Talle</p>
+                            <div class="flex flex-wrap gap-2">
+                                @for (talle of tallesUnicos(); track talle) {
+                                    <button (click)="talleSeleccionado.set(talle)"
+                                            class="px-5 py-2.5 rounded-xl text-sm font-bold border transition-all"
+                                            [class.border-brand-accent]="talleSeleccionado() === talle"
+                                            [class.bg-brand-accent]="talleSeleccionado() === talle"
+                                            [class.text-white]="talleSeleccionado() === talle"
+                                            [class.border-gray-200]="talleSeleccionado() !== talle"
+                                            [class.bg-white]="talleSeleccionado() !== talle"
+                                            [class.text-gray-600]="talleSeleccionado() !== talle">
+                                        {{ talle }}
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="mt-2 mb-8">
+                        <button (click)="agregarAlCarrito()"
+                                class="w-full bg-brand-accent text-xs text-white font-medium uppercase tracking-widest py-3 rounded-xl shadow-lg shadow-brand-accent/30 active:scale-95 transition-all">
+                            Agregar al carrito
+                        </button>
+                    </div>
+
+                    <!-- Descripción -->
+                    @if (prod.descripcion) {
+                        <div class="mb-8 prose prose-sm max-w-none text-gray-500">
+                            <h3 class="text-xs font-bold text-brand-text uppercase tracking-widest mb-2">Descripción</h3>
+                            <p>{{ prod.descripcion }}</p>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </main>
+    }
+</div>

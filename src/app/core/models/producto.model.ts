@@ -12,6 +12,13 @@ export interface Tag {
   icono: string;
 }
 
+export interface ProductoImagen {
+  id: number;
+  url: string;
+  orden: number;
+  color_asociado: string | null;
+}
+
 export interface Producto {
   id: number;
   nombre: string;
@@ -25,4 +32,5 @@ export interface Producto {
   
   categorias: CategoriaSimplificada[];
   tags: Tag[];
+  imagenes: ProductoImagen[];
 }

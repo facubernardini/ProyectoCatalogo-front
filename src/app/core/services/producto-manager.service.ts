@@ -5,6 +5,7 @@ import { ConfirmService } from './confirm.service';
 import { Producto } from '../models/producto.model';
 import { finalize, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { ProductoService } from '../services-backend/productos.ServiceBackend';
+import { ImagenPreview } from 'src/app/shared/dialogs/product-form/galeria-imagenes/galeria-imagenes';
 
 @Injectable({ providedIn: 'root' })
 export class ProductoManagerService {
@@ -173,32 +174,61 @@ export class ProductoManagerService {
   }
 
   // --- CREAR O EDITAR ---
-  guardar(productData: any, currentProduct?: Producto | null, imagenFile?: File | null) {
+  guardar(productData: any, currentProduct?: Producto | null, imagenFile?: File | null, galeriaImagenes: ImagenPreview[] = []) {
     const catalogoId = this.adminStore.catalogo()?.id;
-    const catalogo = this.adminStore.catalogo();
 
-    if (!catalogo || !catalogo.id) {
+    if (!catalogoId) {
       this.toastService.show('Ocurrió un error inesperado', 'error');
       return;
     }
 
     const proceso = this.toastService.loading(currentProduct ? 'Actualizando producto...' : 'Creando producto...');
-
     this.isLoading.set(true);
 
-    // Creamos un observable para la subida de la imagen.
-    // Si NO hay imagen, usamos 'of(null)' para continuar inmediatamente.
-    const uploadImage$: Observable<string | null> = imagenFile 
-    ? this.subirImagenR2(imagenFile) 
-    : of(null);
+    const esIndumentaria = this.adminStore.esIndumentaria();
+    
+    let upload$: Observable<{ mainUrl: string | null, galeriaUrls: string[] }>;
 
-    uploadImage$.pipe(
-      // switchMap espera a que termine la subida de imagen, toma la URL y ejecuta el guardado
-      switchMap((urlImagen: string | null) => {
+    if (esIndumentaria) {
+      const fotosNuevas = galeriaImagenes.filter(img => img.file).map(img => img.file!);
+      
+      upload$ = fotosNuevas.length > 0
+        ? this.subirGaleriaR2(fotosNuevas).pipe(
+            map(urlsSubidas => ({ mainUrl: null, galeriaUrls: urlsSubidas }))
+          )
+        : of({ mainUrl: null, galeriaUrls: [] });
 
-        // Si subimos una imagen nueva, pisamos la propiedad imagen
-        if (urlImagen) {
-          productData.imagen = urlImagen;
+    } else {
+      upload$ = imagenFile 
+        ? this.subirImagenR2(imagenFile).pipe(
+            map(url => ({ mainUrl: url, galeriaUrls: [] }))
+          )
+        : of({ mainUrl: null, galeriaUrls: [] });
+    }
+
+    // EJECUTAMOS LA SUBIDA EN R2 Y LUEGO EL PRODUCTO EN LA BDD
+    upload$.pipe(
+      switchMap(({ mainUrl, galeriaUrls }) => {
+
+        if (esIndumentaria) {
+          let urlIndex = 0;
+          const imagenesFinales = galeriaImagenes.map(img => ({
+            url: img.file ? galeriaUrls[urlIndex++] : img.url_preview,
+            orden: img.orden,
+            color_asociado: img.color_asociado
+          }));
+          
+          productData.imagenes = imagenesFinales;
+
+          // Guardamos la foto 1 de la galería como foto principal
+          if (imagenesFinales.length > 0) {
+            productData.imagen = imagenesFinales[0].url;
+          }
+
+        } else {
+          if (mainUrl) {
+            productData.imagen = mainUrl;
+          }
         }
 
         const finalData = { 
@@ -206,7 +236,6 @@ export class ProductoManagerService {
           catalogo_id: catalogoId 
         };
 
-        // Decidimos si es un Update o un Create
         return currentProduct && currentProduct.id
           ? this.productoBackend.updateProducto(currentProduct.id, finalData)
           : this.productoBackend.createProducto(finalData);
@@ -227,15 +256,13 @@ export class ProductoManagerService {
         console.error('Error al guardar:', err);
 
         if (err.status === 429) {
-          const mensajeError = err.error.message;
-          proceso.error(mensajeError);
-        }
-        else{
+          proceso.error(err.error.message);
+        } else {
           proceso.error('Hubo un error al guardar o actualizar el producto');
         }
       }
     });
-  }
+}
 
   // SUBIR FOTO DE PRODUCTO
   private subirImagenR2(file: File) {
@@ -247,6 +274,18 @@ export class ProductoManagerService {
 
     return this.productoBackend.uploadImagen(file, catalogoId).pipe(
       map(res => res.url) 
+    );
+  }
+
+  private subirGaleriaR2(files: File[]) {
+    const catalogoId = this.adminStore.catalogo()?.id;
+    if (!catalogoId) {
+      this.toastService.show('Ocurrió un error al cargar la galería', 'error');
+      return throwError(() => new Error('No catalogoId'));
+    }
+
+    return this.productoBackend.uploadGaleria(files, catalogoId).pipe(
+      map(res => res.urls)
     );
   }
 }

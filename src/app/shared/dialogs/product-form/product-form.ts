@@ -12,10 +12,12 @@ import { CategoriaManagerService } from 'src/app/core/services/categoria-manager
 import { CategoryFormService } from '../../services/category-form.service';
 import { DisableNumberScrollDirective } from 'src/app/core/directives/disable-number-scroll.directive';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { GaleriaImagenes, ImagenPreview } from './galeria-imagenes/galeria-imagenes';
+import { VariantesIndumentaria } from './variantes-indumentaria/variantes-indumentaria';
 
 @Component({
   selector: 'app-product-form',
-  imports: [DisableNumberScrollDirective, Icon, CommonModule, FormsModule, SafeHtmlPipe],
+  imports: [DisableNumberScrollDirective, Icon, CommonModule, FormsModule, SafeHtmlPipe, GaleriaImagenes, VariantesIndumentaria],
   templateUrl: './product-form.html',
   styleUrl: './product-form.css',
 })
@@ -31,6 +33,11 @@ export class ProductForm {
   isTagsDropdownOpen = signal<boolean>(false);
   isTagsMenuUpward = signal<boolean>(false);
 
+  // Indumentaria
+  coloresCreados: { nombre: string, hex: string }[] = [];
+  imagenesGaleria: ImagenPreview[] = [];
+  variantesIndumentaria: any[] = [];
+
   public producto = {
     nombre: '',
     marca: '',
@@ -39,9 +46,9 @@ export class ProductForm {
     destacado: false,
     categorias_ids: [] as number[],
     tags_ids: [] as number[],
-    presentaciones: [
-      { unidad_venta: '', precio: null, precio_descuento: null, precio_costo: null, stock: null, activo: true }
-    ] as PresentacionForm[]
+    presentaciones: this.adminStore.esIndumentaria()
+      ? []
+      : [{ unidad_venta: '', precio: null, precio_descuento: null, precio_costo: null, stock: null, activo: true }] as PresentacionForm[]
   };
 
   public imagenPendiente: File | null = null;
@@ -86,6 +93,19 @@ export class ProductForm {
         this.resetForm();
       }
     });
+  }
+
+  // Indumentaria
+  actualizarColores(colores: any[]) {
+    this.coloresCreados = colores;
+  }
+
+  actualizarVariantes(variantes: any[]) {
+    this.variantesIndumentaria = variantes;
+  }
+
+  actualizarImagenes(imagenes: any[]) {
+    this.imagenesGaleria = imagenes;
   }
 
   // --- LÓGICA DE CATEGORÍAS Y BUSCADOR ---
@@ -193,13 +213,19 @@ export class ProductForm {
       destacado: false,
       categorias_ids: [],
       tags_ids: [],
-      presentaciones: [{ unidad_venta: '', precio: null, precio_descuento: null, precio_costo: null, stock: null, activo: true }]
+      presentaciones: this.adminStore.esIndumentaria()
+      ? [] 
+      : [{ unidad_venta: '', precio: null, precio_descuento: null, precio_costo: null, stock: null, activo: true }] as PresentacionForm[]
     };
 
     this.imagenPendiente = null;
     this.imagenPreviewTemporal.set(null);
     this.searchQuery.set('');
     this.isCategoriaDropdownOpen.set(false);
+
+    this.coloresCreados = [];
+    this.imagenesGaleria = [];
+    this.variantesIndumentaria = [];
   }
 
   onFileChange(event: any) {
@@ -273,9 +299,19 @@ export class ProductForm {
       return;
     }
 
+    if (this.adminStore.esIndumentaria()) {
+      if (this.variantesIndumentaria.length === 0) {
+        this.toastService.show('Debes crear al menos una variante (Talle/Color)', 'error');
+        return;
+      }
+      this.producto.presentaciones = this.variantesIndumentaria;
+    }
+
     for (let i = 0; i < this.producto.presentaciones.length; i++) {
       const pres = this.producto.presentaciones[i];
       const numeroV = i + 1;
+
+      if (!pres.activo) continue; 
 
       if (!pres.unidad_venta || pres.unidad_venta.trim() === '') {
         this.toastService.show(`Variante ${numeroV}: Falta indicar la unidad de venta`, 'error');
@@ -292,15 +328,13 @@ export class ProductForm {
         return;
       }
 
-      // Validación estricta de Stock (no puede ser 0 al crear/editar, null es válido porque es Ilimitado)
       if (pres.stock !== null && (pres.stock === 0 || pres.stock < 0)) {
         this.toastService.show(`Variante ${numeroV}: El stock debe mayor a 0`, 'error');
         return;
       }
     }
 
-    // Si pasa todas las validaciones, enviamos a guardar
-    this.productFormService.save(this.producto, this.imagenPendiente);
+    this.productFormService.save(this.producto, this.imagenPendiente, this.imagenesGaleria);
   }
 
   @HostListener('window:scroll')

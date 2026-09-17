@@ -1,0 +1,132 @@
+<div 
+    (click)="navegarAlDetalle()"
+    class="bg-white rounded-lg flex flex-col overflow-hidden active:scale-[0.98] transition-all cursor-pointer h-full shadow-sm relative group">
+    
+    <div class="absolute top-2 left-2 right-2 z-10 flex items-start justify-between pointer-events-none">
+        
+        <div class="flex flex-col gap-1">
+            @for (tag of producto().tags; track tag.id) {
+                <span class="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-white bg-black/40 backdrop-blur-md px-1.5 py-0.5 rounded shadow-sm">
+                    @if (tag.icono) {
+                        <div [innerHTML]="tag.icono | safeHtml" class="size-3 flex items-center justify-center shrink-0 drop-shadow-md"></div>
+                    }
+                    {{ tag.nombre }}
+                </span>
+            }
+        </div>
+
+        @if (mejorOferta()?.precio_descuento) {
+            <span class="bg-brand-accent text-white text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full shadow-md">
+                Oferta
+            </span>
+        }
+    </div>
+
+    <!-- Contenedor de la Imagen -->
+    <div class="relative w-full aspect-4/5 bg-gray-50 overflow-hidden flex items-center justify-center p-2">
+        
+        <div class="absolute inset-0 flex items-center justify-center text-gray-300 transition-opacity duration-300"
+            [class.opacity-0]="imageLoaded() || !portada()">
+            <app-icon name="photo" classes="size-8 fill-current" />
+        </div>
+
+        @if (portada()) {
+            <img [src]="portada()" 
+                (load)="onImageLoad()"
+                alt="Foto de {{ producto().nombre }}"
+                class="absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-out"
+                [class.opacity-0]="!imageLoaded()"
+                [class.opacity-100]="imageLoaded() && !estaAgotado()"
+                [class.opacity-70]="imageLoaded() && estaAgotado()"
+                [class.grayscale]="estaAgotado()">
+        }
+        
+        @if (estaAgotado()) {
+            <div class="absolute inset-0 bg-black/5 backdrop-blur-[1px] flex items-center justify-center">
+                <span class="bg-white/90 text-gray-800 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
+                    Agotado
+                </span>
+            </div>
+        }
+    </div>
+
+    <div class="p-3 flex flex-col flex-1">
+        
+        @if (producto().marca) {
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest truncate mb-0.5">
+                {{ producto().marca }}
+            </p>
+        }
+
+        <h3 class="text-brand-text font-bold text-xs sm:text-[13px] line-clamp-2 leading-tight mb-2">
+            {{ producto().nombre }}
+        </h3>
+
+        @if (!estaAgotado() && tallesDisponibles().length > 0) {
+            <div class="flex flex-wrap gap-1 mb-2">
+                @for (talle of tallesDisponibles().slice(0, 4); track talle) {
+                    <span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded uppercase border border-gray-200/50">
+                        {{ talle }}
+                    </span>
+                }
+                @if (tallesDisponibles().length > 4) {
+                    <span class="text-[10px] font-bold text-gray-400 self-center ml-0.5">
+                        +{{ tallesDisponibles().length - 4 }}
+                    </span>
+                }
+            </div>
+        }
+
+        @if (!estaAgotado() && coloresDisponibles().length > 0) {
+            <div class="flex items-center gap-1 mb-2">
+                @for (color of coloresDisponibles().slice(0, 5); track color.hex) {
+                    <div class="w-2.5 h-2.5 rounded-full border border-gray-300 shadow-inner" 
+                         [style.backgroundColor]="color.hex" 
+                         [title]="color.nombre"></div>
+                }
+                @if (coloresDisponibles().length > 5) {
+                    <span class="text-[8px] font-bold text-gray-400 ml-0.5">
+                        +{{ coloresDisponibles().length - 5 }}
+                    </span>
+                }
+            </div>
+        }
+
+        <div class="mt-auto"></div>
+
+        <!-- SECCIÓN DE PRECIOS -->
+        <div class="flex flex-col pt-2">
+            @if (mejorOferta(); as cheapest) {
+                
+                <!-- Precio Principal -->
+                <div class="flex items-baseline gap-1.5">
+                    @if (cheapest.precio_descuento) {
+                        <div class="flex items-center gap-2">
+                            <span class="text-brand-text font-black text-sm sm:text-base leading-none tracking-tighter">
+                                ${{ cheapest.precio_descuento | number:'1.0-0' }}
+                            </span>
+                            <span class="text-[10px] text-gray-400 line-through font-medium tracking-tighter leading-none">
+                                ${{ cheapest.precio | number:'1.0-0' }}
+                            </span>
+                        </div>
+                    } @else {
+                        <span class="text-brand-text font-black text-sm sm:text-base leading-none tracking-tighter">
+                            ${{ cheapest.precio | number:'1.0-0' }}
+                        </span>
+                    }
+                </div>
+
+                @if (adminStore.catalogo()!.descuento_en_efectivo > 0) {
+                    <div class="flex items-center gap-1 mt-1">
+                        <span class="text-green-600 font-semibold text-[11px] tracking-tighter">
+                            ${{ calcularPrecioEfectivo(cheapest.precio_descuento || cheapest.precio) | number:'1.0-0' }}
+                        </span>
+                        <span class="text-green-600/70 text-[9px] font-semibold uppercase tracking-wider">
+                            pago ef.
+                        </span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

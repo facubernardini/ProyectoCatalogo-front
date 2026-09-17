@@ -1,0 +1,56 @@
+<section class="w-full py-6 px-4 md:py-8">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="grid grid-cols-2 gap-3 md:flex md:flex-wrap md:justify-center md:gap-6">
+            
+            @for (cat of adminStore.categorias(); track cat.id) {
+                <div (click)="seleccionarCategoria(cat)" 
+                    class="group cursor-pointer md:w-64 lg:w-72 shrink-0">
+                    
+                    <!-- Contenedor Principal de la Tarjeta -->
+                    <div class="relative w-full aspect-4/5 bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all duration-300 
+                        group-hover:shadow-md group-hover:border-brand-accent/30">
+                        
+                        <!-- Placeholder Ícono -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-300/80 bg-gray-50/50">
+                            <app-icon name="photo" classes="size-10 md:size-12 fill-current mb-2" />
+                            <span class="text-[8px] font-bold uppercase tracking-widest text-gray-400">Imagen</span>
+                        </div>
+
+                        <!-- (Aquí irá tu etiqueta <img> cuando le agregues fotos a las categorías) -->
+
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+
+                        <div class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
+                        
+                        <h3 class="absolute bottom-2 left-3 right-3 text-left font-black text-xs md:text-sm text-white uppercase tracking-[0.2em] line-clamp-2 z-10 drop-shadow-md">
+                            {{ cat.nombre }}
+                        </h3>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+        @if (adminStore.catalogo()!.descuento_en_efectivo > 0) {
+            <div class="mt-10 md:mt-12 flex flex-col items-center justify-center text-center gap-1">
+                
+                <!-- Ícono Centrado -->
+                <div class="flex items-center justify-center size-10 md:size-12 text-brand-text">
+                    <app-icon name="discount" classes="size-6 md:size-8 fill-current" />
+                </div>
+                
+                <!-- Texto -->
+                <div class="flex flex-col">
+                    <span class="text-sm md:text-base font-black text-brand-text uppercase tracking-widest">
+                        {{ adminStore.catalogo()!.descuento_en_efectivo }}% OFF
+                    </span>
+                    <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mt-0.5">
+                        Abonando en efectivo
+                    </span>
+                </div>
+                
+            </div>
+        }
+    </div>
+</section>

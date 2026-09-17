@@ -1,0 +1,119 @@
+import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { CartService } from '@shared/services/cart.service';
+import { CommonModule } from '@angular/common';
+import { isDominioBase } from 'src/app/core/data/domains.data';
+
+@Component({
+  selector: 'app-producto-detalle',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './producto-detalle.html',
+})
+export class ProductoDetalle implements OnInit {
+  private router = inject(Router);
+  public adminStore = inject(AdminStoreService);
+  public cartService = inject(CartService);
+
+  slug = input.required<string>();
+
+  // 1. Lo volvemos computado para que reaccione automáticamente cuando los productos lleguen del backend
+  productoActual = computed(() => {
+    const productos = this.adminStore.productos();
+    const productSlug = this.slug();
+    
+    if (productos.length === 0) return null; 
+    return productos.find(p => this.crearSlug(p.nombre) === productSlug) || null;
+  });
+  
+  imagenPrincipal = signal<string | null>(null);
+  talleSeleccionado = signal<string | null>(null);
+  colorSeleccionado = signal<string | null>(null);
+
+  tallesUnicos = computed(() => {
+    const prod = this.productoActual();
+    if (!prod) return [];
+    return [...new Set(prod.presentaciones.map(p => p.talle).filter((t): t is string => !!t))];
+  });
+
+  coloresUnicos = computed(() => {
+    const prod = this.productoActual();
+    if (!prod) return [];
+    const colores = new Map<string, {nombre: string, hex: string}>();
+    prod.presentaciones.forEach(p => {
+      if (p.color_nombre && p.color_hex && !colores.has(p.color_nombre)) {
+        colores.set(p.color_nombre, { nombre: p.color_nombre, hex: p.color_hex });
+      }
+    });
+    return Array.from(colores.values());
+  });
+
+  presentacionActiva = computed(() => {
+    const prod = this.productoActual();
+    if (!prod) return null;
+    return prod.presentaciones.find(p => 
+      (this.talleSeleccionado() ? p.talle === this.talleSeleccionado() : true) && 
+      (this.colorSeleccionado() ? p.color_nombre === this.colorSeleccionado() : true)
+    ) || prod.presentaciones[0];
+  });
+
+  constructor() {
+    // 2. Efecto para inicializar la imagen, talle y color UNA VEZ que el producto cargó
+    effect(() => {
+      const prod = this.productoActual();
+      if (prod) {
+        if (!this.imagenPrincipal()) {
+          this.imagenPrincipal.set(prod.imagenes?.length > 0 ? prod.imagenes[0].url : prod.imagen);
+        }
+        if (!this.talleSeleccionado() && this.tallesUnicos().length > 0) {
+          this.talleSeleccionado.set(this.tallesUnicos()[0]);
+        }
+        if (!this.colorSeleccionado() && this.coloresUnicos().length > 0) {
+          this.colorSeleccionado.set(this.coloresUnicos()[0].nombre);
+        }
+      }
+    });
+
+    // 3. Efecto para manejar el error (404) si el producto realmente no existe
+    effect(() => {
+      const loading = this.adminStore.isLoading();
+      const productos = this.adminStore.productos();
+      
+      if (!loading && productos.length > 0 && !this.productoActual()) {
+        this.router.navigate(['/']);
+      }
+    });
+  }
+
+  ngOnInit() {
+    // 4. Si entramos por link directo, el store está vacío. Obligamos a cargar los datos de la tienda.
+    if (this.adminStore.productos().length === 0 && !this.adminStore.isLoading()) {
+      const host = window.location.hostname;
+      if (!isDominioBase(host)) {
+        const slug = host.split('.')[0]; // Ajusta esto si obtienes el slug de otra manera
+        this.adminStore.cargarDatosPublicos(slug);
+      } else {
+        this.router.navigate(['/not-found']);
+      }
+    }
+  }
+
+  seleccionarColor(colorHex: string, colorNombre: string) {
+    this.colorSeleccionado.set(colorNombre);
+    const imgAsociada = this.productoActual()?.imagenes.find(img => img.color_asociado === colorNombre);
+    if (imgAsociada) this.imagenPrincipal.set(imgAsociada.url);
+  }
+
+  agregarAlCarrito() {
+    const presentacion = this.presentacionActiva();
+    const producto = this.productoActual();
+    if (presentacion && producto) {
+      this.cartService.open();
+    }
+  }
+
+  private crearSlug(texto: string): string {
+    return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+  }
+}
