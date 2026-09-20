@@ -35,10 +35,10 @@ export class CategoryFormService {
     this.nombre.set('');
   }
 
-  save(datos: Partial<CategoriaVendedor>) {
+  save(datos: Partial<CategoriaVendedor>, imagenFile?: File) {
     if (!datos.nombre?.trim()) return;
 
-    this.categoriaManager.guardar(datos, this.editingCategory());
+    this.categoriaManager.guardar(datos, this.editingCategory(), imagenFile);
     this.close();
   }
 }

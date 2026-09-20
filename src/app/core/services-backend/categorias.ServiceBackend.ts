@@ -42,4 +42,12 @@ export class CategoriaService {
 
         return this.http.delete<any>(`${this.API_URL}/seller/categorias/${id}`, { params });
     }
+
+    uploadImagenCategoria(file: File, catalogoId: number): Observable<{ url: string }> {
+        const formData = new FormData();
+        formData.append('catalogoId', catalogoId.toString());
+        formData.append('foto', file); 
+        
+        return this.http.post<{ url: string }>(`${this.API_URL}/seller/categorias/upload-imagen`, formData);
+    }
 }

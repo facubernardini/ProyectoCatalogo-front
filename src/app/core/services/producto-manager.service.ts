@@ -262,7 +262,7 @@ export class ProductoManagerService {
         }
       }
     });
-}
+  }
 
   // SUBIR FOTO DE PRODUCTO
   private subirImagenR2(file: File) {

@@ -18,7 +18,6 @@ export class ProductoDetalle implements OnInit {
 
   slug = input.required<string>();
 
-  // 1. Lo volvemos computado para que reaccione automáticamente cuando los productos lleguen del backend
   productoActual = computed(() => {
     const productos = this.adminStore.productos();
     const productSlug = this.slug();
@@ -91,7 +90,7 @@ export class ProductoDetalle implements OnInit {
     if (this.adminStore.productos().length === 0 && !this.adminStore.isLoading()) {
       const host = window.location.hostname;
       if (!isDominioBase(host)) {
-        const slug = host.split('.')[0]; // Ajusta esto si obtienes el slug de otra manera
+        const slug = host.split('.')[0];
         this.adminStore.cargarDatosPublicos(slug);
       } else {
         this.router.navigate(['/not-found']);

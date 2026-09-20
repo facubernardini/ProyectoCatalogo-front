@@ -3,7 +3,7 @@ import { AdminStoreService } from './admin-store.service';
 import { ToastService } from './toast.service';
 import { ConfirmService } from './confirm.service';
 import { CategoriaService } from '../services-backend/categorias.ServiceBackend';
-import { finalize, Subject } from 'rxjs';
+import { finalize, map, Observable, of, Subject, switchMap, throwError } from 'rxjs';
 import { CategoriaVendedor } from '../models/categoriaVendedor.model';
 
 @Injectable({ providedIn: 'root' })
@@ -116,7 +116,7 @@ export class CategoriaManagerService {
   }
 
   // --- CREAR O EDITAR ---
-  guardar(categoriaData: any, currentCategoria?: CategoriaVendedor | null) {
+  guardar(categoriaData: any, currentCategoria?: CategoriaVendedor | null, imagenFile?: File | null) {
     const catalogoId = this.adminStore.catalogo()?.id;
 
     if (!catalogoId) {
@@ -125,19 +125,32 @@ export class CategoriaManagerService {
     }
 
     const proceso = this.toastService.loading(currentCategoria ? 'Actualizando categoría...' : 'Creando categoría...');
-
     this.isLoading.set(true);
-    
-    const finalData = { 
-      ...categoriaData, 
-      catalogo_id: catalogoId 
-    };
 
-    const request = currentCategoria && currentCategoria.id
-      ? this.categoriaBackend.updateCategoria(currentCategoria.id, finalData)
-      : this.categoriaBackend.createCategoria(finalData);
+    // 1. Preparamos el Observable de subida de imagen
+    const upload$: Observable<string | null> = imagenFile 
+      ? this.subirImagenR2(imagenFile)
+      : of(null);
 
-    request.pipe(
+    // 2. Ejecutamos la subida en R2 y luego guardamos la categoría en la BDD
+    upload$.pipe(
+      switchMap((urlSubida) => {
+        
+        // Si se subió una imagen nueva, la agregamos a los datos a guardar
+        if (urlSubida) {
+          categoriaData.imagen = urlSubida;
+        }
+
+        const finalData = { 
+          ...categoriaData, 
+          catalogo_id: catalogoId 
+        };
+
+        // Retornamos el Observable de creación o actualización
+        return currentCategoria && currentCategoria.id
+          ? this.categoriaBackend.updateCategoria(currentCategoria.id, finalData)
+          : this.categoriaBackend.createCategoria(finalData);
+      }),
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (res) => {
@@ -152,9 +165,22 @@ export class CategoriaManagerService {
       },
       error: (err) => {
         console.error('Error al guardar categoría:', err);
-        const mensajeError = err.error?.error;
+        const mensajeError = err.error?.error || 'Hubo un error al guardar la categoría';
         proceso.error(mensajeError);
       }
     });
+  }
+
+  private subirImagenR2(file: File) {
+    const catalogoId = this.adminStore.catalogo()?.id;
+    
+    if (!catalogoId) {
+      this.toastService.show('Ocurrió un error al cargar la imagen', 'error');
+      return throwError(() => new Error('No catalogoId'));
+    }
+
+    return this.categoriaBackend.uploadImagenCategoria(file, catalogoId).pipe(
+      map(res => res.url) 
+    );
   }
 }

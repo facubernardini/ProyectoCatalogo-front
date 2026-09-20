@@ -18,13 +18,15 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
   styleUrl: './mis-categorias.css',
 })
 export class MisCategorias {
-  private adminStore = inject(AdminStoreService);
+  public adminStore = inject(AdminStoreService);
   private categoryFormService = inject(CategoryFormService);
   private categoryDeleteService = inject(CategoryDeleteService);
   private confirmService = inject(ConfirmService);
 
   public categoriaManager = inject(CategoriaManagerService);
   public categoryPreview = inject(CategoryPreviewService);
+
+  public imageLoaded = signal(false);
 
   hasCategorias = computed(() => this.adminStore.categorias().length > 0);
 
@@ -94,6 +96,10 @@ export class MisCategorias {
     }
 
     this.searchSubject.next(valor);
+  }
+
+  onImageLoad() {
+    this.imageLoaded.set(true);
   }
 
   toggleFiltrosDropdown() {

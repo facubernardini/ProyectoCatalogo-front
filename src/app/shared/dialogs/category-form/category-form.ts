@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,13 +13,18 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 })
 export class CategoryForm {
   public categoryFormService = inject(CategoryFormService);
-  private adminStore = inject(AdminStoreService);
+  public adminStore = inject(AdminStoreService);
 
   public categoria = {
     nombre: '',
     activo: true,
-    especial: false
+    especial: false,
+    imagen: '' as string | null
   };
+
+  imagenArchivo = signal<File | null>(null);
+  imagenPreviewTemporal = signal<string | null>(null);
+  isUploading = signal(false);
 
   constructor() {
     effect(() => {
@@ -31,12 +36,15 @@ export class CategoryForm {
           this.categoria = { 
             nombre: editing.nombre, 
             activo: editing.activo,
-            especial: editing.especial ?? false
+            especial: editing.especial ?? false,
+            imagen: editing.imagen ?? null
           };
           this.categoryFormService.nombre.set(editing.nombre);
         } else {
           this.resetLocalForm();
         }
+      } else {
+        this.resetLocalForm();
       }
     });
   }
@@ -65,16 +73,33 @@ export class CategoryForm {
     this.categoria = { 
         nombre: nombrePrecargado, 
         activo: true, 
-        especial: false 
+        especial: false ,
+        imagen: null
     };
     
-    // (Ya no hacemos this.categoryFormService.nombre.set('') porque destruiría el dato)
+    this.imagenArchivo.set(null);
+    this.imagenPreviewTemporal.set(null);
+  }
+
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.imagenArchivo.set(file);
+      
+      // Creamos una URL temporal para mostrar la vista previa al instante
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagenPreviewTemporal.set(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   guardar() {
     if (this.isNameDuplicate()) return;
     
     this.categoria.nombre = this.categoryFormService.nombre();
-    this.categoryFormService.save(this.categoria);
+    const imagenPendiente = this.imagenArchivo();
+    this.categoryFormService.save(this.categoria, imagenPendiente || undefined);
   }
 }

@@ -51,7 +51,7 @@ export class ProductForm {
       : [{ unidad_venta: '', precio: null, precio_descuento: null, precio_costo: null, stock: null, activo: true }] as PresentacionForm[]
   };
 
-  public imagenPendiente: File | null = null;
+  private imagenPendiente: File | null = null;
   public imagenPreviewTemporal = signal<string | null>(null);
 
   MAX_SIZE_MB = 10;

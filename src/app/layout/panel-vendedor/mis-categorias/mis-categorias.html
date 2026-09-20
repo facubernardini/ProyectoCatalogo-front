@@ -179,13 +179,37 @@
                             <div class="flex flex-1 items-center gap-2.5 min-w-0"
                                 [class.opacity-50]="!cat.activo">
                                 
-                                <div class="shrink-0 size-12 rounded-xl flex items-center justify-center transition-colors"
-                                    [class]="!cat.activo 
-                                        ? 'bg-gray-100 text-gray-400' 
-                                        : (cat.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/30 text-brand-accent')">
-                                    <app-icon [name]="!cat.activo ? 'hidden' : (cat.especial ? 'star' : 'category')" 
-                                        classes="size-5 fill-current" />
-                                </div>
+                                @if (adminStore.esIndumentaria() && cat.imagen) {
+                                    <div class="relative shrink-0 size-12 rounded-xl overflow-hidden border border-gray-100">
+                                        <div class="relative w-full h-full bg-brand-bg shrink-0 overflow-hidden"
+                                            [class.animate-pulse]="!imageLoaded()"
+                                            [class.grayscale]="!cat.activo">
+                                            
+                                            <!-- Placeholder (Ícono que desaparece al cargar) -->
+                                            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-gray-300 transition-opacity duration-300"
+                                                [class.opacity-0]="imageLoaded()">
+                                                <app-icon name="photo" classes="size-5 fill-current" />
+                                            </div>
+
+                                            <!-- Imagen Real -->
+                                            <img [src]="cat.imagen" 
+                                                [alt]="cat.nombre"
+                                                (load)="onImageLoad()"
+                                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out"
+                                                [class.opacity-0]="!imageLoaded()"
+                                                [class.opacity-100]="imageLoaded()">
+                                        </div>
+                                    </div>
+                                        
+                                } @else {
+                                    <div class="shrink-0 size-12 rounded-xl flex items-center justify-center transition-colors"
+                                        [class]="!cat.activo 
+                                            ? 'bg-gray-100 text-gray-400' 
+                                            : (cat.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/30 text-brand-accent')">
+                                        <app-icon [name]="!cat.activo ? 'hidden' : (cat.especial ? 'star' : 'category')" 
+                                            classes="size-5 fill-current" />
+                                    </div>
+                                }
                                 
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">

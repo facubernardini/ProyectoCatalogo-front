@@ -22,12 +22,12 @@
                 </div>
 
                 <button (click)="guardar()" 
-                        [disabled]="!categoryFormService.nombre().trim() || isNameDuplicate()"
+                        [disabled]="!categoryFormService.nombre().trim() || isNameDuplicate() || isUploading()"
                         class="relative px-4 py-2 bg-brand-accent text-white text-sm font-bold rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
                     
                     <div class="flex items-center gap-2">
                         <span>
-                            {{ categoryFormService.editingCategory() ? 'Guardar' : 'Crear categoría' }}
+                            {{ isUploading() ? 'Guardando...' : (categoryFormService.editingCategory() ? 'Guardar' : 'Crear categoría') }}
                         </span>
                     </div>
                 </button>
@@ -35,6 +35,37 @@
 
             <div class="flex-1 overflow-y-auto px-5 py-4 space-y-7">
                 
+                @if (adminStore.esIndumentaria()) {
+                    <section>
+                        <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest mb-3">
+                            Imagen
+                        </p>
+                
+                        <div class="flex items-center gap-4">
+                            <div class="size-24 bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center relative group">
+                                @if (categoria.imagen || imagenPreviewTemporal()) {
+                                    <img [src]="imagenPreviewTemporal() || categoria.imagen" class="w-full h-full object-cover">
+                                    
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <app-icon name="edit" classes="size-6 text-white fill-current" />
+                                    </div>
+                                } @else {
+                                    <app-icon name="image-add" classes="size-6 text-gray-300 fill-current" />
+                                }
+                                <input 
+                                    type="file"
+                                    accept="image/*"
+                                    (change)="onFileChange($event)" 
+                                    class="absolute inset-0 opacity-0 cursor-pointer">
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-brand-text">Foto de la categoría</p>
+                                <p class="pt-1 text-xs font-base text-brand-text">Recomendado: Foto cuadrada, producto centrado.</p>
+                            </div>
+                        </div>
+                    </section>
+                }
+
                 <section class="space-y-4">
                     <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">General</p>
                     <div class="flex flex-col gap-1.5 relative">

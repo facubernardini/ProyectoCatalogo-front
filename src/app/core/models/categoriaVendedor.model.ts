@@ -3,6 +3,7 @@ export interface CategoriaVendedor {
   nombre: string;
   catalogo_id: number;
   productos_count: number;
+  imagen: string | null;
   activo: boolean;
   especial: boolean;
 }

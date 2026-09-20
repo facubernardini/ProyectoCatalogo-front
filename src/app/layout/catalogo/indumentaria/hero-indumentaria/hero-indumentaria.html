@@ -8,21 +8,42 @@
                     class="group cursor-pointer md:w-64 lg:w-72 shrink-0">
                     
                     <!-- Contenedor Principal de la Tarjeta -->
-                    <div class="relative w-full aspect-4/5 bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all duration-300 
-                        group-hover:shadow-md group-hover:border-brand-accent/30">
+                    <div class="relative w-full aspect-4/5 bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:border-brand-accent/30">
                         
-                        <!-- Placeholder Ícono -->
-                        <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-300/80 bg-gray-50/50">
-                            <app-icon name="photo" classes="size-10 md:size-12 fill-current mb-2" />
-                            <span class="text-[8px] font-bold uppercase tracking-widest text-gray-400">Imagen</span>
-                        </div>
+                        @if (cat.imagen) {
+                            <div class="absolute inset-0 w-full h-full bg-brand-bg overflow-hidden"
+                                [class.animate-pulse]="!isImageLoaded(cat.id)">
+                                
+                                <!-- Ícono de placeholder mientras carga -->
+                                <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-accent/10 transition-opacity duration-300"
+                                    [class.opacity-0]="isImageLoaded(cat.id)">
+                                    <app-icon name="photo" classes="size-10 fill-current" />
+                                </div>
 
-                        <!-- (Aquí irá tu etiqueta <img> cuando le agregues fotos a las categorías) -->
+                                <!-- Imagen Real -->
+                                <img [src]="cat.imagen" 
+                                    [alt]="cat.nombre"
+                                    (load)="onImageLoad(cat.id)"
+                                    class="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110"
+                                    [class.opacity-0]="!isImageLoaded(cat.id)"
+                                    [class.opacity-100]="isImageLoaded(cat.id)">
+                            </div>
 
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+                        } @else {
+                            <!-- Placeholder para cuando NO tiene imagen asignada en BDD -->
+                            <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-300/80 bg-gray-50/50">
+                                <app-icon name="photo" classes="size-10 md:size-12 fill-current mb-2" />
+                                <span class="text-[8px] font-bold uppercase tracking-widest text-gray-400">Imagen</span>
+                            </div>
+                        }
 
-                        <div class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
+                        <!-- Overlay oscuro al hacer hover -->
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 z-0"></div>
+
+                        <!-- Gradiente inferior para asegurar que el texto blanco siempre se lea -->
+                        <div class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/70 via-black/10 to-transparent pointer-events-none z-0"></div>
                         
+                        <!-- Título de la categoría -->
                         <h3 class="absolute bottom-2 left-3 right-3 text-left font-black text-xs md:text-sm text-white uppercase tracking-[0.2em] line-clamp-2 z-10 drop-shadow-md">
                             {{ cat.nombre }}
                         </h3>
