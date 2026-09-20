@@ -146,8 +146,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
       
       if (productos.length === 0 || vista !== 'grilla') return;
 
-      // Escenario A: Búsqueda (ej: /buscar?q=remera)
-      if (segmentos.length > 0 && segmentos[0].path === 'buscar' && query) {
+      if (segmentos.length > 0 && segmentos[0].path === 'search' && query) {
         this.tituloGrilla.set(`Resultados para: "${query}"`);
         const queryLimpia = query.toLowerCase();
         
@@ -157,21 +156,27 @@ export class CatalogoPublico implements OnInit, OnDestroy {
         );
         this.productosFiltrados.set(filtrados);
       } 
-      
-      // Escenario B: Categoría (ej: /categoria/remeras)
-      else if (segmentos.length >= 2 && segmentos[0].path === 'categoria') {
-        const catSlug = segmentos[1].path;
-        
-        // Buscamos la categoría para obtener su nombre real
-        const catEncontrada = categorias.find(c => this.crearSlug(c.nombre) === catSlug);
-        this.tituloGrilla.set(catEncontrada ? `${catEncontrada.nombre}` : 'Categoría');
-        
-        const filtrados = productos.filter(p => 
-          p.categorias?.some(c => this.crearSlug(c.nombre) === catSlug)
-        );
-        this.productosFiltrados.set(filtrados);
+
+      else if (segmentos.length === 1 && segmentos[0].path === 'productos') {
+        this.tituloGrilla.set('Todos los productos');
+        this.productosFiltrados.set(productos);
       }
-    }, { allowSignalWrites: true });
+      
+      else if (segmentos.length === 1 && segmentos[0].path !== 'search') {
+        const catSlug = segmentos[0].path;
+        
+        const catEncontrada = categorias.find(c => this.crearSlug(c.nombre) === catSlug);
+        
+        if (catEncontrada) {
+            this.tituloGrilla.set(catEncontrada.nombre);
+            
+            const filtrados = productos.filter(p => 
+                p.categorias?.some(c => this.crearSlug(c.nombre) === catSlug)
+            );
+            this.productosFiltrados.set(filtrados);
+        }
+      }
+    });
   }
 
   ngOnInit() {
@@ -189,13 +194,16 @@ export class CatalogoPublico implements OnInit, OnDestroy {
       if (segments.length === 0) {
         this.vistaActual.set('home');
       } 
-      else if (segments.length >= 3 && segments[0].path === 'productos') {
+      else if (segments.length === 2 && segments[0].path === 'productos') {
         this.vistaActual.set('detalle');
-        this.productoSlugActivo.set(segments[2].path);
+        this.productoSlugActivo.set(segments[1].path); 
       } 
-      else if (segments[0].path === 'categoria' || segments[0].path === 'buscar') {
+      else if (segments[0].path === 'buscar') {
         this.vistaActual.set('grilla');
       } 
+      else if (segments.length === 1) {
+        this.vistaActual.set('grilla');
+      }
       else {
         this.vistaActual.set('home');
       }

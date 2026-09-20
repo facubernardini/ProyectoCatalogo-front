@@ -1,4 +1,5 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "@shared/components/icon";
 import { ProductCardIndumentaria } from '../product-card-indumentaria/product-card-indumentaria';
@@ -12,9 +13,7 @@ import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 })
 export class ProductosIndumentaria {
   public adminStore = inject(AdminStoreService);
-
-  // Emitimos evento al hacer clic en "Ver más" para que el padre aplique el filtro
-  categoriaSeleccionada = output<CategoriaVendedor>();
+  private router = inject(Router);
 
   // Agrupamos y limitamos los productos en tiempo real
   categoriasConProductos = computed(() => {
@@ -30,7 +29,7 @@ export class ProductosIndumentaria {
       // 2. Retornamos la estructura para el carrusel
       return {
         categoria: cat,
-        productos: prodsDeCategoria.slice(0, 3), // Máximo 10
+        productos: prodsDeCategoria.slice(0, 3), 
         tieneMas: prodsDeCategoria.length > 3
       };
     })
@@ -39,6 +38,18 @@ export class ProductosIndumentaria {
   });
 
   verMas(categoria: CategoriaVendedor) {
-    this.categoriaSeleccionada.emit(categoria);
+    const slug = this.crearSlug(categoria.nombre);
+    
+    this.router.navigate(['/', slug]);
+  }
+
+  private crearSlug(texto: string): string {
+    if (!texto) return '';
+    return texto
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
   }
 }

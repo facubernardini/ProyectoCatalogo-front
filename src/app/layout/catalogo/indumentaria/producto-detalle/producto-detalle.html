@@ -99,9 +99,34 @@
                         </div>
                     }
 
-                    <div class="mt-2 mb-8">
+                    <div class="mt-2 mb-8 flex items-stretch gap-3 h-10">
+    
+                        <!-- CONTROL DE CANTIDAD -->
+                        <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-xl px-1.5 w-32 shrink-0">
+                            <button (click)="decrementar()"
+                                    [disabled]="cantidad() <= 1"
+                                    class="p-2 text-gray-400 md:hover:text-brand-accent disabled:opacity-30 disabled:pointer-events-none transition-colors rounded-lg active:scale-95">
+                                <app-icon name="remove" classes="size-4 fill-current" />
+                            </button>
+                            
+                            <!-- Animación del número -->
+                            <div class="relative w-6 h-full flex items-center justify-center overflow-hidden">
+                                <span class="absolute text-sm font-black text-brand-text select-none" 
+                                    [@popAnimation]="cantidad()">
+                                    {{ cantidad() }}
+                                </span>
+                            </div>
+                            
+                            <button (click)="incrementar()"
+                                    [disabled]="!puedeIncrementar()"
+                                    class="p-2 text-gray-400 md:hover:text-brand-accent disabled:opacity-30 disabled:pointer-events-none transition-colors rounded-lg active:scale-95">
+                                <app-icon name="add-producto" classes="size-4 fill-current" />
+                            </button>
+                        </div>
+
+                        <!-- BOTÓN AGREGAR AL CARRITO -->
                         <button (click)="agregarAlCarrito()"
-                                class="w-full bg-brand-accent text-xs text-white font-medium uppercase tracking-widest py-3 rounded-xl shadow-lg shadow-brand-accent/30 active:scale-95 transition-all">
+                                class="flex-1 bg-brand-accent text-xs text-white font-medium uppercase tracking-widest rounded-xl shadow-lg shadow-brand-accent/30 active:scale-95 transition-all">
                             Agregar al carrito
                         </button>
                     </div>

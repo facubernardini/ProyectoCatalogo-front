@@ -72,15 +72,12 @@ export class ProductCardIndumentaria {
 
   navegarAlDetalle() {
     const prod = this.producto();
-    
-    const categoriaNombre = prod.categorias?.[0]?.nombre || 'general';
-    
+        
     // Armamos la URL limpia
-    const catSlug = this.crearSlug(categoriaNombre);
     const prodSlug = this.crearSlug(prod.nombre);
 
     // Navegamos
-    this.router.navigate(['/productos', catSlug, prodSlug]);
+    this.router.navigate(['/productos', prodSlug]);
   }
 
   private crearSlug(texto: string): string {

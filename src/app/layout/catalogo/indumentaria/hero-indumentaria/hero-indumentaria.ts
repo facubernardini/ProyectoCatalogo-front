@@ -17,11 +17,9 @@ export class HeroIndumentaria {
   imagenesCargadas = signal<Set<number>>(new Set());
 
   seleccionarCategoria(categoria: CategoriaVendedor) {
-    // Creamos el slug a partir del nombre (ej: "Buzos Negros" -> "buzos-negros")
     const slug = this.crearSlug(categoria.nombre);
     
-    // Navegamos a la ruta que armamos en CatalogoPublico
-    this.router.navigate(['/categoria', slug]);
+    this.router.navigate(['/', slug]);
   }
 
   onImageLoad(categoriaId: number) {
@@ -32,7 +30,6 @@ export class HeroIndumentaria {
     });
   }
 
-  // 👇 3. Función auxiliar para consultar el estado en el HTML
   isImageLoaded(categoriaId: number): boolean {
     return this.imagenesCargadas().has(categoriaId);
   }

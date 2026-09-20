@@ -4,19 +4,37 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CartService } from '@shared/services/cart.service';
 import { CommonModule } from '@angular/common';
 import { isDominioBase } from 'src/app/core/data/domains.data';
+import { ToastService } from 'src/app/core/services/toast.service';
+import { Icon } from 'src/app/shared/components/icon';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-producto-detalle',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Icon],
   templateUrl: './producto-detalle.html',
+  animations: [
+    trigger('popAnimation', [
+      transition(':decrement', [
+        style({ transform: 'translateY(10px)', opacity: 0 }),
+        animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+      ]),
+      transition(':increment', [
+        style({ transform: 'translateY(-10px)', opacity: 0 }),
+        animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class ProductoDetalle implements OnInit {
   private router = inject(Router);
+  private toastService = inject(ToastService);
   public adminStore = inject(AdminStoreService);
   public cartService = inject(CartService);
 
   slug = input.required<string>();
+
+  cantidad = signal<number>(1);
 
   productoActual = computed(() => {
     const productos = this.adminStore.productos();
@@ -83,6 +101,13 @@ export class ProductoDetalle implements OnInit {
         this.router.navigate(['/']);
       }
     });
+
+    effect(() => {
+      const pres = this.presentacionActiva();
+      if (pres) {
+        this.cantidad.set(1);
+      }
+    });
   }
 
   ngOnInit() {
@@ -104,11 +129,52 @@ export class ProductoDetalle implements OnInit {
     if (imgAsociada) this.imagenPrincipal.set(imgAsociada.url);
   }
 
+  permiteVentaSinStock(): boolean {
+    return this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
+  }
+
+  puedeIncrementar(): boolean {
+    const pres = this.presentacionActiva();
+    if (!pres) return false;
+    
+    if (this.permiteVentaSinStock() || pres.stock === null) return true;
+    
+    // Validamos la cantidad local + lo que ya tenga en el carrito
+    const cantidadEnCarrito = this.cartService.getCantidadEnCarrito(pres.id) ?? 0;
+    const cantidadTotal = this.cantidad() + cantidadEnCarrito;
+    
+    return cantidadTotal < pres.stock;
+  }
+
+  incrementar() {
+    if (this.puedeIncrementar()) {
+      this.cantidad.update(c => c + 1);
+    }
+  }
+
+  decrementar() {
+    if (this.cantidad() > 1) {
+      this.cantidad.update(c => c - 1);
+    }
+  }
+
   agregarAlCarrito() {
     const presentacion = this.presentacionActiva();
     const producto = this.productoActual();
+    
     if (presentacion && producto) {
+      const permiteVentaSinStock = this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
+      if (!permiteVentaSinStock && presentacion.stock !== null && presentacion.stock <= 0) {
+        this.toastService.show('Esta variante se encuentra agotada', 'error');
+        return;
+      }
+
+      const cantidadAAgregar = this.cantidad();
+
+      this.cartService.agregarProducto(producto, presentacion, cantidadAAgregar); 
+
       this.cartService.open();
+      this.cantidad.set(1);
     }
   }
 

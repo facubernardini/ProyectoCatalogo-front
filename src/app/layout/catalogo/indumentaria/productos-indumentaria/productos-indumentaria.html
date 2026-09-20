@@ -5,25 +5,21 @@
             <div class="mb-5 last:mb-0">
                 
                 <!-- ENCABEZADO DE LA CATEGORÍA -->
-                <div class="flex items-center justify-between mb-2 px-4 md:px-0">
+                <div class="flex items-center justify-between mb-3 px-4 md:px-0">
                     <h2 class="text-sm md:text-base font-black text-brand-text uppercase tracking-widest">
                         {{ grupo.categoria.nombre }}
                     </h2>
                     
-                    @if (grupo.tieneMas) {
-                        <button (click)="verMas(grupo.categoria)" 
-                                class="text-[10px] md:text-xs font-bold text-brand-accent uppercase tracking-widest hover:underline active:opacity-70 transition-opacity">
-                            Ver todo
-                        </button>
-                    }
+                    <button (click)="verMas(grupo.categoria)" 
+                            class="text-[10px] md:text-xs font-semibold text-brand-accent uppercase tracking-widest hover:underline active:opacity-70 transition-opacity">
+                        Ver todo
+                    </button>
                 </div>
 
                 <!-- CARRUSEL DE PRODUCTOS -->
-                <!-- 👇 MODIFICADO: Agregamos scroll-pl-8 para que al scrollear deje un margen y se vea el producto anterior -->
                 <div class="flex overflow-x-auto gap-3 md:gap-4 pb-4 px-4 scroll-pl-8 md:scroll-pl-12 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
                     
                     @for (prod of grupo.productos; track prod.id) {
-                        <!-- 👇 MODIFICADO: w-[42%] en mobile garantiza que siempre entren 2 exactas y se asome la 3ra, sin importar el celular -->
                         <div class="w-[45%] md:w-[30%] lg:w-[22%] shrink-0 snap-start flex">
                             <app-product-card-indumentaria class="w-full" [producto]="prod"></app-product-card-indumentaria>
                         </div>
@@ -39,14 +35,14 @@
                                     <app-icon name="chevron-right" classes="size-6 text-brand-accent fill-current" />
                                 </div>
                                 
-                                <span class="text-[10px] md:text-xs font-bold text-gray-400 group-hover:text-brand-accent uppercase tracking-widest text-center px-4 transition-colors">
+                                <span class="text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-accent uppercase tracking-widest text-center px-4 transition-colors">
                                     Ver más
                                 </span>
                             </button>
                         </div>
                     }
                     
-                    <!-- Espaciador final para que el último elemento pueda scrollear hasta el final correctamente -->
+                    <!-- Espaciador final -->
                     <div class="w-4 md:hidden shrink-0"></div>
                 </div>
                 

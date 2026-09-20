@@ -5,7 +5,6 @@
         <h2 class="text-base md:text-lg font-semibold text-brand-text tracking-wide">
             {{ titulo() }}
         </h2>
-        
         <button (click)="toggleFiltros()" 
                 class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors">
             <app-icon name="filter" classes="size-4 text-brand-text fill-current" />
@@ -14,18 +13,18 @@
     </div>
 
     <!-- Resultados -->
-    @if (productos().length > 0) {
+    @if (productosFiltradosYOrdenados().length > 0) {
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-            @for (prod of productos(); track prod.id) {
+            @for (prod of productosFiltradosYOrdenados(); track prod.id) {
                 <app-product-card-indumentaria class="block w-full h-full" [producto]="prod" />
             }
         </div>
     } @else {
         <div class="flex flex-col items-center justify-center py-20 text-center gap-4 text-gray-400">
-            <app-icon name="search_off" classes="size-16 fill-current opacity-20" />
+            <app-icon name="search-off" classes="size-16 fill-current opacity-20" />
             <div class="flex flex-col">
-                <span class="font-bold text-brand-text uppercase tracking-widest text-lg">Sin resultados</span>
-                <span class="text-xs font-bold uppercase tracking-widest mt-1">Intenta con otra búsqueda o categoría</span>
+                <span class="text-base font-bold text-brand-text uppercase tracking-wide">Sin resultados</span>
+                <span class="text-xs font-semibold uppercase tracking-wide mt-1">Intenta con otra búsqueda o categoría</span>
             </div>
         </div>
     }
@@ -36,79 +35,170 @@
             (click)="toggleFiltros()"></div>
     }
 
-    <!-- Panel deslizable desde la derecha -->
+    <!-- Panel deslizable -->
     <div class="fixed top-0 right-0 h-full w-[80%] md:w-[30%] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col"
         [class.translate-x-full]="!isFiltrosOpen()"
         [class.translate-x-0]="isFiltrosOpen()">
          
-        <!-- Header del Modal -->
-        <div class="flex items-center justify-between p-5 border-b border-gray-100">
-            <h3 class="text-base font-bold text-brand-text uppercase tracking-widest">Filtros</h3>
+        <!-- Header -->
+        <div class="flex items-center justify-between py-4 px-5 border-b border-gray-100">
+            <h3 class="text-base font-semibold text-brand-text tracking-wide">Filtros</h3>
             <button (click)="toggleFiltros()" class="p-2 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors">
                 <app-icon name="close" classes="size-5 text-gray-500 fill-current" />
             </button>
         </div>
 
-        <!-- Contenido de los filtros (Scrollable) -->
-        <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-8">
-            
-            <!-- Ejemplo: Filtro por Marca -->
-            <div class="flex flex-col gap-3">
-                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Marca</h4>
-                <div class="flex flex-col gap-2">
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" class="size-4 rounded border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
-                        <span class="text-sm font-medium text-gray-700 group-hover:text-brand-text transition-colors">Adidas</span>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" class="size-4 rounded border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
-                        <span class="text-sm font-medium text-gray-700 group-hover:text-brand-text transition-colors">Nike</span>
-                    </label>
-                </div>
+        <!-- Contenido -->
+        <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-7">
+
+            <!-- ORDENAR POR -->
+            <div class="flex flex-col">
+                <button (click)="toggleAcordeonOrden()" class="flex items-center justify-between w-full text-left py-2">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Ordenar por</h4>
+                    <app-icon name="chevron-down" 
+                            [classes]="'size-4 text-gray-400 fill-current transition-transform duration-300 ' + (isOrdenDesplegado() ? 'rotate-180' : '')" />
+                </button>
+                
+                @if (isOrdenDesplegado()) {
+                    <div class="flex flex-col gap-3 mt-3 animate-in fade-in slide-in-from-top-2">
+                        
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="orden" value="nuevo" 
+                                   [ngModel]="tempOrdenActual()" (ngModelChange)="cambiarOrden($event)" 
+                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
+                            <span class="text-sm font-medium transition-colors"
+                                  [class]="tempOrdenActual() === 'nuevo' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
+                                Más nuevo al más viejo
+                            </span>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="orden" value="viejo" 
+                                   [ngModel]="tempOrdenActual()" (ngModelChange)="cambiarOrden($event)" 
+                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
+                            <span class="text-sm font-medium transition-colors"
+                                  [class]="tempOrdenActual() === 'viejo' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
+                                Más viejo al más nuevo
+                            </span>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="orden" value="precio_alto" 
+                                   [ngModel]="tempOrdenActual()" (ngModelChange)="cambiarOrden($event)" 
+                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
+                            <span class="text-sm font-medium transition-colors"
+                                  [class]="tempOrdenActual() === 'precio_alto' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
+                                Precio: Mayor a Menor
+                            </span>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="orden" value="precio_bajo" 
+                                   [ngModel]="tempOrdenActual()" (ngModelChange)="cambiarOrden($event)" 
+                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
+                            <span class="text-sm font-medium transition-colors"
+                                  [class]="tempOrdenActual() === 'precio_bajo' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
+                                Precio: Menor a Mayor
+                            </span>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="orden" value="az" 
+                                   [ngModel]="tempOrdenActual()" (ngModelChange)="cambiarOrden($event)" 
+                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
+                            <span class="text-sm font-medium transition-colors"
+                                  [class]="tempOrdenActual() === 'az' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
+                                Nombre: A - Z
+                            </span>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="radio" name="orden" value="za" 
+                                   [ngModel]="tempOrdenActual()" (ngModelChange)="cambiarOrden($event)" 
+                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
+                            <span class="text-sm font-medium transition-colors"
+                                  [class]="tempOrdenActual() === 'za' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
+                                Nombre: Z - A
+                            </span>
+                        </label>
+
+                    </div>
+                }
             </div>
 
-            <!-- Filtro por Talle -->
-            <div class="flex flex-col gap-3">
-                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Talle</h4>
-                <div class="flex flex-wrap gap-2">
-                    <button class="px-4 py-2 border border-gray-200 rounded-lg text-sm font-bold text-gray-600 hover:border-brand-text hover:text-brand-text transition-colors">S</button>
-                    <button class="px-4 py-2 border-2 border-brand-accent bg-brand-accent/5 rounded-lg text-sm font-bold text-brand-accent">M</button>
-                    <button class="px-4 py-2 border border-gray-200 rounded-lg text-sm font-bold text-gray-600 hover:border-brand-text hover:text-brand-text transition-colors">L</button>
+            <!-- Marca -->
+            @if (marcasDisponibles().length > 0) {
+                <div class="flex flex-col gap-3">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Marca</h4>
+                    <div class="flex flex-col gap-2">
+                        @for (marca of marcasDisponibles(); track marca) {
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" 
+                                       [checked]="tempMarcas().has(marca)"
+                                       (change)="toggleMarca(marca)"
+                                       class="size-4 rounded border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
+                                <span class="text-sm font-medium text-gray-700 group-hover:text-brand-text transition-colors">
+                                    {{ marca }}
+                                </span>
+                            </label>
+                        }
+                    </div>
                 </div>
-            </div>
+            }
 
-            <!-- Filtro por Color -->
-            <div class="flex flex-col gap-3">
-                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Color</h4>
-                <div class="flex flex-wrap gap-3">
-                    <button class="size-8 rounded-full border-2 border-transparent transition-all p-0.5 hover:border-brand-accent focus:border-brand-accent">
-                        <div class="w-full h-full rounded-full shadow-inner border border-black/10" style="background-color: #000000;"></div>
-                    </button>
-                    <button class="size-8 rounded-full border-2 border-brand-accent transition-all p-0.5">
-                        <div class="w-full h-full rounded-full shadow-inner border border-black/10" style="background-color: #FFFFFF;"></div>
-                    </button>
-                    <button class="size-8 rounded-full border-2 border-transparent transition-all p-0.5 hover:border-brand-accent focus:border-brand-accent">
-                        <div class="w-full h-full rounded-full shadow-inner border border-black/10" style="background-color: #FF0000;"></div>
-                    </button>
-                    <button class="size-8 rounded-full border-2 border-transparent transition-all p-0.5 hover:border-brand-accent focus:border-brand-accent">
-                        <div class="w-full h-full rounded-full shadow-inner border border-black/10" style="background-color: #0000FF;"></div>
-                    </button>
+            <!-- Talle -->
+            @if (tallesDisponibles().length > 0) {
+                <div class="flex flex-col gap-3">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Talle</h4>
+                    <div class="flex flex-wrap gap-2">
+                        @for (talle of tallesDisponibles(); track talle) {
+                            <button (click)="toggleTalle(talle)"
+                                    class="px-4 py-2 rounded-lg text-sm font-bold transition-colors border"
+                                    [class]="tempTalles().has(talle) 
+                                        ? 'border-brand-accent bg-brand-accent/5 text-brand-accent' 
+                                        : 'border-gray-200 text-gray-600 hover:border-brand-text hover:text-brand-text'">
+                                {{ talle }}
+                            </button>
+                        }
+                    </div>
                 </div>
-            </div>
+            }
 
-            <!-- Filtro por Precio (Rango) -->
+            <!-- Color -->
+            @if (coloresDisponibles().length > 0) {
+                <div class="flex flex-col gap-3">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Color</h4>
+                    <div class="flex flex-wrap gap-3">
+                        @for (color of coloresDisponibles(); track color.nombre) {
+                            <button (click)="toggleColor(color.nombre)" 
+                                    [title]="color.nombre"
+                                    class="size-8 rounded-full border-2 transition-all p-0.5"
+                                    [class]="tempColores().has(color.nombre) ? 'border-brand-accent scale-110' : 'border-transparent hover:border-brand-accent/50'">
+                                <div class="w-full h-full rounded-full shadow-inner border border-black/10" 
+                                     [style.background-color]="color.hex"></div>
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Precio -->
             <div class="flex flex-col gap-3">
                 <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Precio</h4>
                 <div class="flex items-center gap-3">
                     <div class="relative w-full">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
                         <input type="number" placeholder="Mínimo" 
+                               [value]="tempPrecioMin() === null ? '' : tempPrecioMin()"
+                               (input)="actualizarPrecio('min', $event)"
                                class="w-full pl-7 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-brand-accent focus:border-brand-accent transition-all placeholder:text-gray-400">
                     </div>
                     <span class="text-gray-400 font-bold">-</span>
                     <div class="relative w-full">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
                         <input type="number" placeholder="Máximo" 
+                               [value]="tempPrecioMax() === null ? '' : tempPrecioMax()"
+                               (input)="actualizarPrecio('max', $event)"
                                class="w-full pl-7 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-brand-accent focus:border-brand-accent transition-all placeholder:text-gray-400">
                     </div>
                 </div>
@@ -116,12 +206,13 @@
 
         </div>
 
-        <!-- Footer del Modal (Botones de acción) -->
-        <div class="p-5 border-t border-gray-100 flex gap-3 bg-white">
-            <button class="w-1/3 py-3 rounded-xl font-bold text-xs uppercase tracking-widest text-gray-500 bg-gray-50 hover:bg-gray-100 transition-colors">
+        <div class="p-4 border-t border-gray-100 flex gap-3 bg-white">
+            <button (click)="limpiarFiltrosTemporales()" 
+                    class="w-1/3 py-3 rounded-xl font-bold text-xs uppercase tracking-widest text-gray-500 bg-gray-50 hover:bg-gray-100 transition-colors">
                 Limpiar
             </button>
-            <button (click)="toggleFiltros()" class="w-2/3 py-3 rounded-xl font-black text-xs uppercase tracking-widest text-white bg-brand-text hover:opacity-90 transition-opacity">
+            <button (click)="aplicarFiltros()" 
+                    class="w-2/3 py-3 rounded-xl font-black text-xs uppercase tracking-widest text-white bg-brand-text hover:opacity-90 transition-opacity">
                 Aplicar filtros
             </button>
         </div>
