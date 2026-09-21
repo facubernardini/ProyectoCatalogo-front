@@ -9,29 +9,28 @@
     <div class="w-full max-w-7xl mx-auto px-4 py-2 flex items-center gap-2.5">
         <button (click)="menuService.open()" 
                 class="relative shrink-0 p-2.5 bg-white border border-brand-bg text-brand-text rounded-xl shadow-sm active:scale-90 transition-transform" 
-                aria-label="Ver carrito">
+                aria-label="Ver menú">
             <app-icon name="menu" classes="size-6 fill-current" />
         </button>
 
-        <div class="relative flex-1 group">
+        <div class="relative flex-1 group" (click)="abrirBuscador()">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <app-icon name="search" classes="size-5 fill-current text-brand-accent" />
             </div>
 
             <input 
                 type="text" 
+                readonly
                 placeholder="Buscar productos..."
                 [value]="searchService.query()"
-                (input)="onSearch($event)"
-                class="w-full p-2.5 pl-11 bg-white border border-brand-bg rounded-xl 
+                class="w-full p-2.5 pl-11 bg-white border border-brand-bg rounded-xl cursor-pointer
                     text-brand-text placeholder:text-brand-text-sec/60 placeholder:text-sm
-                    focus:outline-none focus:ring-2 focus:ring-brand-bg focus:border-brand-accent 
-                    transition-all duration-300 shadow-sm"
+                    focus:outline-none transition-all duration-300 shadow-sm"
             >
 
             @if (searchService.query()) {
-                <button (click)="clearSearch()" 
-                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
+                <button (click)="clearSearch($event)" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 z-10">
                     <app-icon name="close-circle" classes="size-5 fill-current" />
                 </button>
             }
