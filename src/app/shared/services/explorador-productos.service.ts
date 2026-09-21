@@ -96,8 +96,13 @@ export class ExploradorProductosService {
 
     if (vista === 'categoria') {
       const categoria = this.categoriaSeleccionada();
+
+      if (categoria === 'Ver todos los productos') {
+        return todosLosProductos.filter(p => p.activo);
+      }
+
       return todosLosProductos.filter(p => 
-        p.categorias.some(c => c.nombre === categoria)
+        p.categorias?.some(c => c.nombre === categoria) && p.activo
       );
     }
 
