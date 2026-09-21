@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, computed, inject, signal, OnDestroy, ViewChild, ElementRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -190,6 +190,20 @@ export class CategoryProductsView implements OnDestroy {
 
       this.paginaActual.set(1);
     });
+
+    effect(() => {
+      const estaAbierto = this.categoryViewService.isOpen();
+      
+      if (!estaAbierto) {
+        this.ordenSeleccionado.set('default');
+        
+        this.paginaActual.set(1);
+        
+        this.busquedaRaw.set('');
+        this.filtro.set('');
+        this.isBuscando.set(false);
+      }
+    });
   }
 
   onScroll(event: Event) {
@@ -259,7 +273,6 @@ export class CategoryProductsView implements OnDestroy {
     this.isBuscando.set(false);
     this.paginaActual.set(1);
     this.scrollToTop();
-    this.ordenSeleccionado.set('default');
     this.searchSubject.next('');
   }
 
