@@ -1,4 +1,4 @@
-@if (viewService.isOpen()) {
+@if (categoryViewService.isOpen()) {
     <div class="fixed inset-0 z-50 bg-gray-50 flex flex-col animate-in slide-in-from-bottom-8 fade-in duration-300">
         
         <header class="bg-white px-4 pt-4 pb-3 flex flex-col gap-3 shadow-sm shrink-0 relative z-10 border-b border-gray-100">
@@ -9,42 +9,53 @@
                         <app-icon name="back" classes="size-6 fill-current" />
                     </button>
                     <h2 class="text-base font-bold text-brand-text tracking-tight line-clamp-2">
-                        {{ viewService.categoria() | titlecase}}
+                        {{ categoryViewService.categoria() | titlecase}}
                     </h2>
                 </div>
                 
-                <button (click)="viewService.close()" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 hover:text-brand-text active:scale-90 transition-all duration-200">
+                <button (click)="categoryViewService.close()" class="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 hover:text-brand-text active:scale-90 transition-all duration-200">
                     <app-icon name="close" classes="size-5 fill-current" />
                 </button>
             </div>
 
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <app-icon name="search" classes="size-5 fill-current text-brand-accent" />
-                </div>
-            
-                <input type="text" 
-                    [ngModel]="busquedaRaw()" 
-                    (ngModelChange)="onSearchChange($event)"
-                    placeholder="Buscar en esta categoría..."
-                    class="w-full bg-gray-50 border border-gray-100 rounded-2xl py-3 pl-11 pr-12 text-sm text-brand-text outline-none focus:bg-white focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all duration-300 shadow-inner">
-
-                @if (isBuscando()) {
-                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                        <svg class="animate-spin size-5 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+            <div class="flex items-center gap-2 relative">
+                
+                <!-- Input de búsqueda (flex-1 para que tome el espacio sobrante) -->
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <app-icon name="search" classes="size-5 fill-current text-brand-accent" />
                     </div>
-                } @else if (busquedaRaw().length > 0) {
-                    <button (click)="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-brand-accent transition-colors duration-200 focus:outline-none">
-                        <app-icon name="close" classes="size-5 fill-current" />
-                    </button>
-                }
+                
+                    <input type="text" 
+                        [ngModel]="busquedaRaw()" 
+                        (ngModelChange)="onSearchChange($event)"
+                        placeholder="Buscar..."
+                        class="w-full bg-gray-50 border border-gray-100 rounded-2xl py-3 pl-11 pr-10 text-base text-brand-text outline-none focus:bg-white focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all duration-300 shadow-inner">
+
+                    <!-- Spinner de carga o cruz de limpiar -->
+                    @if (isBuscando()) {
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                            <svg class="animate-spin size-4 text-brand-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                    } @else if (busquedaRaw().length > 0) {
+                        <button (click)="limpiarBusqueda()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-brand-accent transition-colors duration-200 focus:outline-none">
+                            <app-icon name="close" classes="size-5 fill-current" />
+                        </button>
+                    }
+                </div>
+
+                <button (click)="abrirFiltros()"
+                        [class]="ordenSeleccionado() !== 'default' ? 'bg-brand-accent/10 border-brand-accent/30 text-brand-accent' : 'bg-gray-50 border-gray-100 text-gray-500'"
+                        class="shrink-0 size-12.5 flex items-center justify-center border rounded-2xl active:scale-95 transition-all">
+                    <app-icon name="filter" classes="size-5 fill-current" />
+                </button>
             </div>
         </header>
 
-        <main class="flex-1 overflow-y-auto p-3 custom-scrollbar">
+        <main #scrollContainer class="flex-1 overflow-y-auto p-3 custom-scrollbar" (scroll)="onScroll($event)">
         
             @if (!isBuscando() && resultados().length === 0 && filtro().length >= 2) {
                 <div class="text-center py-20 animate-in fade-in duration-500">
@@ -60,11 +71,93 @@
                     [class.opacity-40]="isBuscando()" 
                     [class.pointer-events-none]="isBuscando()">
                     
-                    @for (producto of resultados(); track producto.id) {
+                    @for (producto of resultadosVisibles(); track producto.id) {
                         <app-product-card [producto]="producto"></app-product-card>
                     }
                 </div>
+
+                @if (resultadosVisibles().length < resultados().length) {
+                    <div class="py-6 flex justify-center">
+                        <div class="size-6 border-2 border-brand-accent border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                }
             }
         </main>
+
+        @if (mostrarModalFiltros()) {
+            <div [@backdropFiltros]
+                class="fixed inset-0 z-60 bg-black/60 transform-gpu will-change-opacity" 
+                (click)="cerrarFiltros()">
+                
+                <div appSwipeDown
+                    [@slideUpFiltros]
+                    (onSwipe)="cerrarFiltros()"
+                    class="absolute bottom-0 left-0 w-full bg-white rounded-t-4xl p-4 shadow-2xl transform-gpu will-change-transform backface-hidden" 
+                    (click)="$event.stopPropagation()">
+                    
+                    <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-5"></div>
+                    <h3 class="text-lg font-black text-brand-text mb-4">Ordenar por</h3>
+
+                    <div class="flex flex-col gap-2">
+                        <!-- Botón 1: Por Defecto -->
+                        <button (click)="aplicarOrden('default')"
+                                [class.bg-brand-bg]="ordenSeleccionado() === 'default'"
+                                class="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 active:scale-95 transition-all text-left">
+                            <span class="flex items-center gap-2 font-semibold text-brand-text">
+                                <app-icon name="sparks" classes="size-4 text-brand-accent fill-current" />
+                                Por defecto
+                            </span>
+                            @if (ordenSeleccionado() === 'default') {
+                                <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                            }
+                        </button>
+
+                        <!-- Botón 2: Menor Precio -->
+                        <button (click)="aplicarOrden('menor-precio')"
+                                [class.bg-brand-bg]="ordenSeleccionado() === 'menor-precio'"
+                                class="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 active:scale-95 transition-all text-left">
+                            <span class="flex items-center gap-2 font-semibold text-brand-text">
+                                <app-icon name="filter-by-price" classes="size-5 text-brand-accent fill-current rotate-180" />
+                                Menor precio
+                            </span>
+                            @if (ordenSeleccionado() === 'menor-precio') {
+                                <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                            }
+                        </button>
+
+                        <!-- Botón 3: Mayor Precio -->
+                        <button (click)="aplicarOrden('mayor-precio')"
+                                [class.bg-brand-bg]="ordenSeleccionado() === 'mayor-precio'"
+                                class="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 active:scale-95 transition-all text-left">
+                            <span class="flex items-center gap-2 font-semibold text-brand-text">
+                                <app-icon name="filter-by-price" classes="size-5 text-brand-accent fill-current" />
+                                Mayor precio
+                            </span>
+                            @if (ordenSeleccionado() === 'mayor-precio') {
+                                <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                            }
+                        </button>
+
+                        <!-- Botón 4: Alfabéticamente -->
+                        <button (click)="aplicarOrden('alfa')"
+                                [class.bg-brand-bg]="ordenSeleccionado() === 'alfa'"
+                                class="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 active:scale-95 transition-all text-left">
+                            <span class="flex items-center gap-2 font-semibold text-brand-text">
+                                <app-icon name="filter-by-alpha" classes="size-5 text-brand-accent fill-current" />
+                                Alfabéticamente
+                            </span>
+                            @if (ordenSeleccionado() === 'alfa') {
+                                <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                            }
+                        </button>
+                    </div>
+
+                    <button (click)="cerrarFiltros()" 
+                            class="w-full mt-5 py-3 bg-brand-accent text-white font-semibold rounded-xl active:scale-95 transition-transform">
+                        Listo
+                    </button>
+                </div>
+            </div>
+        }
     </div>
 }
