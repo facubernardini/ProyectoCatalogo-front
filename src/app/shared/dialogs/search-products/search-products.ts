@@ -27,10 +27,14 @@ export class SearchProducts {
       
       if (isAbierto) {
         setTimeout(() => {
-          if (this.searchInput?.nativeElement) {
-            this.searchInput.nativeElement.focus();
+          const inputEl = this.searchInput?.nativeElement;
+          if (inputEl) {
+            inputEl.focus();
+            
+            const length = inputEl.value.length;
+            inputEl.setSelectionRange(length, length);
           }
-        }, 50); 
+        }, 10); 
       }
     });
   }
