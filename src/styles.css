@@ -89,10 +89,10 @@
   }
 
   :root[data-theme="aqua" i] {
-    --theme-bg: #F0FDFB;
-    --theme-accent: #2DD4BF;
-    --theme-text: #134E4A;
-    --theme-text-sec: #0F766E;
+    --theme-bg: #F8FAF0;
+    --theme-accent: #8C9A4D;
+    --theme-text: #2A3114;
+    --theme-text-sec: #4F5A26;
   }
 }
 
