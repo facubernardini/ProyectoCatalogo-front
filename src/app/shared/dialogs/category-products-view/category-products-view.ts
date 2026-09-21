@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, OnDestroy } from '@angular/core';
+import { Component, computed, inject, signal, OnDestroy, ViewChild, ElementRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -10,15 +10,43 @@ import { CategoryViewService } from '@shared/services/category-view.service';
 import { MenuLateralService } from '@shared/services/menu-lateral.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { ProductCard } from "src/app/layout/catalogo/lista-productos/product-card/product-card";
+import { SwipeDownDirective } from 'src/app/core/directives/swipe-down.directive';
+import { trigger, transition, style, animate } from '@angular/animations';
+
+type OrdenCriterio = 'menor-precio' | 'mayor-precio' | 'alfa' | 'default';
 
 @Component({
   selector: 'app-category-products-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon, ProductCard],
-  templateUrl: './category-products-view.html'
+  imports: [CommonModule, FormsModule, Icon, ProductCard, SwipeDownDirective],
+  templateUrl: './category-products-view.html',
+  animations: [
+    // 1. Animación para el fondo oscuro (fade in/out)
+    trigger('backdropFiltros', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0 }))
+      ])
+    ]),
+    // 2. Animación para el panel blanco (slide up/down)
+    trigger('slideUpFiltros', [
+      transition(':enter', [
+        style({ transform: 'translateY(100%)' }),
+        animate('300ms cubic-bezier(0.16, 1, 0.3, 1)', style({ transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ transform: 'translateY(100%)' }))
+      ])
+    ])
+  ]
 })
 export class CategoryProductsView implements OnDestroy {
-  public viewService = inject(CategoryViewService);
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLElement>;
+  
+  public categoryViewService = inject(CategoryViewService);
   public menuService = inject(MenuLateralService);
   private adminStore = inject(AdminStoreService);
   private selectorService = inject(ProductSelectorService);
@@ -27,13 +55,25 @@ export class CategoryProductsView implements OnDestroy {
   filtro = signal<string>('');
   isBuscando = signal<boolean>(false);
 
+  paginaActual = signal<number>(1);
+  itemsPorPagina = 10;
+
+  ordenSeleccionado = signal<OrdenCriterio>('default');
+  mostrarModalFiltros = signal(false);
+
   private searchSubject = new Subject<string>();
 
   productosDeCategoria = computed(() => {
-    const catSeleccionada = this.viewService.categoria();
+    const catSeleccionada = this.categoryViewService.categoria();
     if (!catSeleccionada) return [];
     
-    return this.adminStore.productos().filter(p => 
+    const todosLosProductos = this.adminStore.productos();
+
+    if (catSeleccionada === 'Ver todos los productos') {
+      return todosLosProductos.filter(p => p.activo);
+    }
+    
+    return todosLosProductos.filter(p => 
       p.categorias?.some(c => c.nombre === catSeleccionada) && p.activo
     );
   });
@@ -113,6 +153,29 @@ export class CategoryProductsView implements OnDestroy {
     return listaBase;
   });
 
+  resultadosVisibles = computed(() => {
+    let listaFiltrada = [...this.resultados()];
+    
+    const criterio = this.ordenSeleccionado();
+
+    if (criterio !== 'default') {
+      listaFiltrada.sort((a, b) => {
+        const precioA = this.getPrecioDesde(a.presentaciones);
+        const precioB = this.getPrecioDesde(b.presentaciones);
+
+        switch (criterio) {
+          case 'menor-precio': return precioA - precioB;
+          case 'mayor-precio': return precioB - precioA;
+          case 'alfa': return a.nombre.localeCompare(b.nombre);
+          default: return 0;
+        }
+      });
+    }
+
+    const limite = this.paginaActual() * this.itemsPorPagina;
+    return listaFiltrada.slice(0, limite);
+  });
+
   constructor() {
     this.searchSubject.pipe(
       debounceTime(400),
@@ -124,7 +187,52 @@ export class CategoryProductsView implements OnDestroy {
         this.filtro.set(termino);
       }
       this.isBuscando.set(false);
+
+      this.paginaActual.set(1);
     });
+
+    effect(() => {
+      const estaAbierto = this.categoryViewService.isOpen();
+      
+      if (!estaAbierto) {
+        this.ordenSeleccionado.set('default');
+        
+        this.paginaActual.set(1);
+        
+        this.busquedaRaw.set('');
+        this.filtro.set('');
+        this.isBuscando.set(false);
+      }
+    });
+  }
+
+  onScroll(event: Event) {
+    const target = event.target as HTMLElement;
+    
+    const scrollPosition = target.offsetHeight + target.scrollTop;
+    const scrollThreshold = target.scrollHeight - 200;
+
+    if (scrollPosition >= scrollThreshold) {
+      this.cargarMas();
+    }
+  }
+
+  scrollToTop() {
+    if (this.scrollContainer?.nativeElement) {
+      this.scrollContainer.nativeElement.scrollTo({ 
+        top: 0, 
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  cargarMas() {
+    const totalMostrados = this.paginaActual() * this.itemsPorPagina;
+    const totalDisponibles = this.resultados().length;
+
+    if (totalMostrados < totalDisponibles) {
+      this.paginaActual.update(p => p + 1);
+    }
   }
 
   onSearchChange(termino: string) {
@@ -133,6 +241,8 @@ export class CategoryProductsView implements OnDestroy {
     if (!termino || termino.trim().length < 2) {
       this.filtro.set('');
       this.isBuscando.set(false);
+      this.paginaActual.set(1);
+      this.scrollToTop();
     } else {
       this.isBuscando.set(true);
     }
@@ -140,16 +250,35 @@ export class CategoryProductsView implements OnDestroy {
     this.searchSubject.next(termino); 
   }
 
+  abrirFiltros() {
+    if (this.mostrarModalFiltros()) return;
+    this.mostrarModalFiltros.set(true);
+  }
+
+  cerrarFiltros() {
+    if (!this.mostrarModalFiltros()) return;
+    this.mostrarModalFiltros.set(false);
+  }
+
+  aplicarOrden(criterio: OrdenCriterio) {
+    this.ordenSeleccionado.set(criterio);
+    this.paginaActual.set(1);
+    this.cerrarFiltros();
+    this.scrollToTop();
+  }
+
   limpiarBusqueda() {
     this.busquedaRaw.set('');
     this.filtro.set('');
     this.isBuscando.set(false);
+    this.paginaActual.set(1);
+    this.scrollToTop();
     this.searchSubject.next('');
   }
 
   volverAlMenu() {
     this.limpiarBusqueda();
-    this.viewService.close();
+    this.categoryViewService.close();
     this.menuService.open();
   }
   

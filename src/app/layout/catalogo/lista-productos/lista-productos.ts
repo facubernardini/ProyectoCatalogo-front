@@ -80,7 +80,7 @@ export class ListaProductos {
   @HostListener('window:scroll')
   onScroll() {
     const scrollPosition = window.innerHeight + window.scrollY;
-    const scrollThreshold = document.documentElement.scrollHeight - 200;
+    const scrollThreshold = document.documentElement.scrollHeight - 300;
 
     if (scrollPosition >= scrollThreshold) {
       this.cargarMas();

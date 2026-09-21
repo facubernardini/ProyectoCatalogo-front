@@ -31,11 +31,19 @@ export class MenuLateral {
   categoriasOrdenadas = computed(() => {
     const lista = this.categorias();
     
-    return [...lista].sort((a, b) => {
+    const ordenadas = [...lista].sort((a, b) => {
       if (a.especial && !b.especial) return -1;
       if (!a.especial && b.especial) return 1;
       return a.nombre.localeCompare(b.nombre);
     });
+
+    const opcionTodos: any = {
+      id: -1,
+      nombre: 'Ver todos los productos',
+      especial: false
+    };
+
+    return [opcionTodos, ...ordenadas];
   });
 
   selected = computed(() => this.menuService.categoriaSeleccionada());

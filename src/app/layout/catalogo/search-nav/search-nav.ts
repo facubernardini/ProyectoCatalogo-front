@@ -10,7 +10,7 @@ import { SearchService } from '@shared/services/search.service';
   templateUrl: './search-nav.html',
   styleUrl: './search-nav.css',
 })
-export class SearchNav implements AfterViewInit{
+export class SearchNav implements AfterViewInit {
   @ViewChild('sentinel') sentinel!: ElementRef;
 
   public searchService = inject(SearchService);
@@ -24,26 +24,17 @@ export class SearchNav implements AfterViewInit{
       ([entry]) => {
         this.isStuck.set(!entry.isIntersecting);
       },
-      {
-        threshold: [0],
-        rootMargin: '0px'
-      }
+      { threshold: [0], rootMargin: '0px' }
     );
-
     observer.observe(this.sentinel.nativeElement);
   }
 
-  onSearch(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    
-    this.searchService.query.set(value);
-
-    if (value.trim().length > 0) {
-      this.searchService.open();
-    }
+  abrirBuscador() {
+    this.searchService.open();
   }
 
-  clearSearch() {
+  clearSearch(event: Event) {
+    event.stopPropagation();
     this.searchService.query.set('');
   }
 }

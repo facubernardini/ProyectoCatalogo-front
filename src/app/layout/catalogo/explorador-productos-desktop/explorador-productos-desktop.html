@@ -7,12 +7,12 @@
             <app-icon name="back" classes="size-5 fill-current" />
         </button>
 
-        <div>
+        <div class="flex-1 min-w-0">
             <h2 class="text-lg font-bold text-brand-text">
                 @if (explorador.vistaActual() === 'busqueda') {
                     Resultados para: <span class="text-brand-accent">"{{ explorador.terminoBusqueda() }}"</span>
                 } @else if (explorador.vistaActual() === 'categoria') {
-                    Categoría: <span class="text-brand-accent">{{ explorador.categoriaSeleccionada() }}</span>
+                    Categoría: <span class="text-brand-accent">{{ explorador.categoriaSeleccionada() | titlecase}}</span>
                 } @else if (explorador.vistaActual() === 'destacados') {
                     Destacados <span class="animate-pulse">🔥</span>
                 } @else if (explorador.vistaActual() === 'ofertas') {
@@ -23,14 +23,28 @@
                 {{ explorador.productosFiltrados().length }} productos encontrados
             </p>
         </div>
+
+        <button (click)="explorador.limpiarVista()"
+                class="size-10 rounded-xl bg-gray-50 text-gray-400 hover:text-red-500 hover:bg-red-100 flex items-center justify-center transition-all shrink-0"
+                title="Limpiar vista">
+            <app-icon name="close" classes="size-5 fill-current" />
+        </button>
     </div>
 
-    @if (explorador.productosFiltrados().length > 0) {
+    @if (productosVisibles().length > 0) {
+        
         <div class="grid grid-cols-2 xl:grid-cols-3 gap-2.5">
-            @for (producto of explorador.productosFiltrados(); track producto.id) {
+            @for (producto of productosVisibles(); track producto.id) {
                 <app-product-card-desktop [producto]="producto" />
             }
         </div>
+
+        @if (productosVisibles().length < explorador.productosFiltrados().length) {
+            <div class="py-10 flex justify-center items-center w-full">
+                <div class="size-8 border-4 border-brand-accent/20 border-t-brand-accent rounded-full animate-spin"></div>
+            </div>
+        }
+
     } @else {
         <div class="flex-1 flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-gray-100 border-dashed">
             <div class="size-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
