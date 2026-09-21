@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, ViewChild } from '@angular/core';
 import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
@@ -13,11 +13,27 @@ import { ProductCard } from "src/app/layout/catalogo/lista-productos/product-car
   styleUrl: './search-products.css',
 })
 export class SearchProducts {
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  
   public adminStore = inject(AdminStoreService);
   public searchService = inject(SearchService);
   private selectorService = inject(ProductSelectorService);
   
   productos = this.adminStore.productos;
+
+  constructor() {
+    effect(() => {
+      const isAbierto = this.searchService.isOpen();
+      
+      if (isAbierto) {
+        setTimeout(() => {
+          if (this.searchInput?.nativeElement) {
+            this.searchInput.nativeElement.focus();
+          }
+        }, 50); 
+      }
+    });
+  }
 
   resultados = computed(() => {
     const queryOriginal = this.searchService.debouncedQuery().trim();
