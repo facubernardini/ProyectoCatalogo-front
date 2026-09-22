@@ -140,6 +140,85 @@ export class PedidoPreview implements OnInit, OnDestroy {
     }
   }
 
+  generarTextoTicket(): string {
+    const p = this.pedidoEditable();
+    if (!p) return '';
+
+    // 1. Cabecera
+    let mensaje = `🛎️ Resumen de tu pedido #${p.numero_pedido}\n\n`;
+
+    // 2. Método de Entrega
+    if (p.metodo_entrega === 'Envio') {
+      if (p.comprador_direccion) {
+        mensaje += `🛵 Envío a domicilio: *${p.comprador_direccion.trim()}*\n`;
+      } else {
+        mensaje += `🛵 Envío a domicilio\n`;
+      }
+    } else {
+      mensaje += `🏪 Retiro en el local\n`;
+    }
+
+    // 3. Medio de Pago
+    mensaje += `💵 Medio de pago: *${p.metodo_pago || 'A convenir'}*\n\n`;
+
+    // 4. Detalle de Productos
+    mensaje += `🛒 *Detalle del pedido*\n`;
+    mensaje += ` ────────────────\n`;
+    p.productos.forEach(item => {
+      const subtotalItem = Number(item.precio_unitario) * item.cantidad;
+      let lineaItem = `• ${item.cantidad} x ${item.producto_nombre} (${item.presentacion_unidad}): *$${subtotalItem.toLocaleString('es-AR')}*`;
+      
+      if (item.cantidad >= 2) {
+        lineaItem += ` _($${Number(item.precio_unitario).toLocaleString('es-AR')} c/u)_`; 
+      }
+      mensaje += lineaItem + `\n`;
+    });
+    mensaje += ` ────────────────\n\n`;
+
+    // 5. Resumen Financiero
+    mensaje += `🧾 *Resumen de cuenta*\n`;
+    mensaje += `🛍️ Productos: *$${Number(p.subtotal).toLocaleString('es-AR')}*\n`;
+
+    // Descuento por Cupón
+    if (Number(p.descuento_cupon) > 0) {
+      const codigoStr = p.cupon_codigo ? ` (${p.cupon_codigo})` : '';
+      mensaje += `🎟️ Cupón${codigoStr}: *-$${Number(p.descuento_cupon).toLocaleString('es-AR')}*\n`;
+    }
+
+    // Descuento por Efectivo
+    if (Number(p.descuento_pago_efectivo) > 0) {
+      const porcentajeEfectivo = this.descuentoEfectivoCatalogo();
+      const pctStr = porcentajeEfectivo > 0 ? ` (${porcentajeEfectivo}%)` : '';
+      mensaje += `💸 Dto. pago en efectivo${pctStr}: *-$${Number(p.descuento_pago_efectivo).toLocaleString('es-AR')}*\n`;
+    }
+
+    // Costo de Envío
+    if (p.metodo_entrega === 'Envio') {
+      if (Number(p.costo_envio) === 0) {
+        mensaje += `🛵 Costo de envío: *Bonificado*\n`;
+      } else {
+        mensaje += `🛵 Costo de envío: *$${Number(p.costo_envio).toLocaleString('es-AR')}*\n`;
+      }
+    }
+
+    // 6. Total Final
+    mensaje += `\n💰 *TOTAL:   $${Number(p.total_final).toLocaleString('es-AR')}*`;
+
+    return mensaje;
+  }
+
+  async copiarTicket() {
+    const texto = this.generarTextoTicket();
+    
+    try {
+      await navigator.clipboard.writeText(texto);
+      this.toastService.show('Detalle del pedido copiado al portapapeles', 'success');
+    }catch (err) {
+      console.error('Error al copiar: ', err);
+      this.toastService.show('No se pudo copiar', 'error');
+    }
+  }
+
   // --- Lógica del Buscador ---
   onSearchInput() {
     const query = this.searchQuery.trim();
@@ -346,9 +425,9 @@ export class PedidoPreview implements OnInit, OnDestroy {
         const minimoEnvioGratis = this.envioGratisDesdeCatalogo();
 
         if (minimoEnvioGratis > 0 && subtotalConDescuentos >= minimoEnvioGratis) {
-          p.costo_envio = 0; // Bonificado
+          p.costo_envio = 0;
         } else {
-          p.costo_envio = this.costoEnvioCatalogo(); // Cobrado
+          p.costo_envio = this.costoEnvioCatalogo();
         }
       } else {
         p.costo_envio = 0;
@@ -374,7 +453,10 @@ export class PedidoPreview implements OnInit, OnDestroy {
     if (!p) return;
 
     this.pedidosManager.editarPedido(p.id, p, () => {
-      this.cerrar();
+      this.pedidoPreviewService.pedidoSeleccionado.set(JSON.parse(JSON.stringify(p)));
+      
+      this.isEditing.set(false);
+      this.cancelarBusqueda();
     });
   }
 }
