@@ -356,7 +356,7 @@ export class Carrito {
 
     setTimeout(() => {
       this.pedidoRealizadoService.open(url);
-    }, 5000);
+    }, 2500);
   }
 
   // Prueba temporal
