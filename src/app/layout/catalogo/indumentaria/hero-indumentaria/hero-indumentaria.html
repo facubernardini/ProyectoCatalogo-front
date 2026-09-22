@@ -1,67 +1,101 @@
-<section class="w-full py-6 px-4 md:py-8">
-    <div class="max-w-7xl mx-auto">
+<section class="w-full py-5 px-3 md:py-8 relative">
+    <div class="max-w-7xl mx-auto relative">
 
-        <div class="grid grid-cols-2 gap-3 md:flex md:flex-wrap md:justify-center md:gap-6">
+        <!-- Contenedor Principal Scrolleable -->
+        <div #scrollContainer class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth">
             
-            @for (cat of adminStore.categorias(); track cat.id) {
-                <div (click)="seleccionarCategoria(cat)" 
-                    class="group cursor-pointer md:w-64 lg:w-72 shrink-0">
+            <!-- Iteramos sobre las PÁGINAS (bloques de 4) -->
+            @for (pagina of paginasDeCategorias(); track $index; let pageIndex = $index) {
+                
+                <!-- Cada página ocupa el 100% del ancho del contenedor (w-full shrink-0) y fuerza el snap (snap-start) -->
+                <div class="w-full shrink-0 snap-start snap-always">
                     
-                    <!-- Contenedor Principal de la Tarjeta -->
-                    <div class="relative w-full aspect-4/5 bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:border-brand-accent/30">
+                    <!-- Tu diseño original de Grid (Mobile: 2 columnas, Desktop: flex fila) -->
+                    <div class="grid grid-cols-2 gap-3 md:flex md:flex-wrap md:justify-center md:gap-6 px-1.5">
                         
-                        @if (cat.imagen) {
-                            <div class="absolute inset-0 w-full h-full bg-brand-bg overflow-hidden"
-                                [class.animate-pulse]="!isImageLoaded(cat.id)">
+                        <!-- Iteramos sobre las CATEGORÍAS de esta página específica -->
+                        @for (cat of pagina; track cat.id) {
+                            <div (click)="seleccionarCategoria(cat)" 
+                                class="group cursor-pointer md:w-64 lg:w-72 shrink-0">
                                 
-                                <!-- Ícono de placeholder mientras carga -->
-                                <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-accent/10 transition-opacity duration-300"
-                                    [class.opacity-0]="isImageLoaded(cat.id)">
-                                    <app-icon name="photo" classes="size-10 fill-current" />
+                                <!-- Contenedor Principal de la Tarjeta (No se modificó nada de tus estilos) -->
+                                <div class="relative w-full aspect-4/5 bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:border-brand-accent/30">
+                                    
+                                    @if (cat.imagen) {
+                                        <div class="absolute inset-0 w-full h-full bg-brand-bg overflow-hidden"
+                                            [class.animate-pulse]="!isImageLoaded(cat.id)">
+                                            
+                                            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-brand-accent/40 bg-brand-accent/10 transition-opacity duration-300"
+                                                [class.opacity-0]="isImageLoaded(cat.id)">
+                                                <app-icon name="photo" classes="size-10 fill-current" />
+                                            </div>
+
+                                            <img [src]="cat.imagen" 
+                                                [alt]="cat.nombre"
+                                                (load)="onImageLoad(cat.id)"
+                                                class="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110"
+                                                [class.opacity-0]="!isImageLoaded(cat.id)"
+                                                [class.opacity-100]="isImageLoaded(cat.id)">
+                                        </div>
+
+                                    } @else {
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-300/80 bg-gray-50/50">
+                                            <app-icon name="photo" classes="size-10 md:size-12 fill-current mb-2" />
+                                            <span class="text-[8px] font-bold uppercase tracking-widest text-gray-400">Imagen</span>
+                                        </div>
+                                    }
+
+                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 z-0"></div>
+
+                                    <div class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/60 via-black/10 to-transparent pointer-events-none z-0"></div>
+                                    
+                                    <h3 class="absolute bottom-2 left-3 right-3 text-left font-black text-xs md:text-sm text-white uppercase tracking-[0.2em] line-clamp-2 z-10 drop-shadow-md">
+                                        {{ cat.nombre }}
+                                    </h3>
                                 </div>
-
-                                <!-- Imagen Real -->
-                                <img [src]="cat.imagen" 
-                                    [alt]="cat.nombre"
-                                    (load)="onImageLoad(cat.id)"
-                                    class="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110"
-                                    [class.opacity-0]="!isImageLoaded(cat.id)"
-                                    [class.opacity-100]="isImageLoaded(cat.id)">
-                            </div>
-
-                        } @else {
-                            <!-- Placeholder para cuando NO tiene imagen asignada en BDD -->
-                            <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-300/80 bg-gray-50/50">
-                                <app-icon name="photo" classes="size-10 md:size-12 fill-current mb-2" />
-                                <span class="text-[8px] font-bold uppercase tracking-widest text-gray-400">Imagen</span>
                             </div>
                         }
-
-                        <!-- Overlay oscuro al hacer hover -->
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 z-0"></div>
-
-                        <!-- Gradiente inferior para asegurar que el texto blanco siempre se lea -->
-                        <div class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/70 via-black/10 to-transparent pointer-events-none z-0"></div>
-                        
-                        <!-- Título de la categoría -->
-                        <h3 class="absolute bottom-2 left-3 right-3 text-left font-black text-xs md:text-sm text-white uppercase tracking-[0.2em] line-clamp-2 z-10 drop-shadow-md">
-                            {{ cat.nombre }}
-                        </h3>
                     </div>
                 </div>
             }
-
         </div>
 
+        <!-- CONTROLES DE ESCRITORIO (Flechas Izquierda / Derecha) -->
+        <!-- Solo visibles en md o más, y solo cuando se hace hover sobre el contenedor -->
+        @if (paginasDeCategorias().length > 1) {
+            <button (click)="irAPagina(paginaActual() - 1)" 
+                    [class.opacity-0]="paginaActual() === 0"
+                    [class.pointer-events-none]="paginaActual() === 0"
+                    class="hidden md:flex absolute top-1/2 -left-6 -translate-y-1/2 size-12 bg-white rounded-full shadow-lg border border-gray-100 items-center justify-center text-gray-700 hover:text-brand-accent hover:scale-105 active:scale-95 transition-all opacity-0 group-hover:opacity-100 z-20">
+                <app-icon name="chevron-left" classes="size-6 fill-current" />
+            </button>
+            
+            <button (click)="irAPagina(paginaActual() + 1)" 
+                    [class.opacity-0]="paginaActual() === paginasDeCategorias().length - 1"
+                    [class.pointer-events-none]="paginaActual() === paginasDeCategorias().length - 1"
+                    class="hidden md:flex absolute top-1/2 -right-6 -translate-y-1/2 size-12 bg-white rounded-full shadow-lg border border-gray-100 items-center justify-center text-gray-700 hover:text-brand-accent hover:scale-105 active:scale-95 transition-all opacity-0 group-hover:opacity-100 z-20">
+                <app-icon name="chevron-right" classes="size-6 fill-current" />
+            </button>
+        }
+
+        <!-- CONTROLES MÓVILES (Dots / Indicadores) -->
+        <!-- Solo visibles si hay más de 1 página -->
+        @if (paginasDeCategorias().length > 1) {
+            <div class="flex items-center justify-center gap-2 mt-4 md:hidden">
+                @for (pagina of paginasDeCategorias(); track $index; let i = $index) {
+                    <div class="h-1.5 rounded-full transition-all duration-300"
+                         [class]="paginaActual() === i ? 'w-5 bg-brand-accent' : 'w-1.5 bg-gray-300'">
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Sección de Descuento Efectivo (No se modificó) -->
         @if (adminStore.catalogo()!.descuento_en_efectivo > 0) {
-            <div class="mt-10 md:mt-12 flex flex-col items-center justify-center text-center gap-1">
-                
-                <!-- Ícono Centrado -->
+            <div class="mt-8 md:mt-12 flex flex-col items-center justify-center text-center gap-1">
                 <div class="flex items-center justify-center size-10 md:size-12 text-brand-text">
                     <app-icon name="discount" classes="size-6 md:size-8 fill-current" />
                 </div>
-                
-                <!-- Texto -->
                 <div class="flex flex-col">
                     <span class="text-sm md:text-base font-black text-brand-text uppercase tracking-widest">
                         {{ adminStore.catalogo()!.descuento_en_efectivo }}% OFF
@@ -70,7 +104,6 @@
                         Abonando en efectivo
                     </span>
                 </div>
-                
             </div>
         }
     </div>

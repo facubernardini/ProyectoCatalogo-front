@@ -7,11 +7,12 @@ import { isDominioBase } from 'src/app/core/data/domains.data';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { Icon } from 'src/app/shared/components/icon';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { ProductCardIndumentaria } from '../product-card-indumentaria/product-card-indumentaria';
 
 @Component({
   selector: 'app-producto-detalle',
   standalone: true,
-  imports: [CommonModule, Icon],
+  imports: [CommonModule, Icon, ProductCardIndumentaria],
   templateUrl: './producto-detalle.html',
   animations: [
     trigger('popAnimation', [
@@ -75,6 +76,29 @@ export class ProductoDetalle implements OnInit {
     ) || prod.presentaciones[0];
   });
 
+  productosSimilares = computed(() => {
+    const prodActual = this.productoActual();
+    const todosProductos = this.adminStore.productos();
+
+    if (!prodActual || !prodActual.categorias || prodActual.categorias.length === 0) {
+      return { productos: [], categoriaPrincipal: null };
+    }
+
+    const categoriaId = prodActual.categorias[0].id;
+    const categoriaNombre = prodActual.categorias[0].nombre;
+
+    const relacionados = todosProductos.filter(p => 
+      p.id !== prodActual.id && 
+      p.categorias?.some(c => c.id === categoriaId)
+    );
+
+    return {
+      categoriaPrincipal: { id: categoriaId, nombre: categoriaNombre },
+      productos: relacionados.slice(0, 4),
+      tieneMas: relacionados.length > 4
+    };
+  });
+
   constructor() {
     // 2. Efecto para inicializar la imagen, talle y color UNA VEZ que el producto cargó
     effect(() => {
@@ -120,6 +144,14 @@ export class ProductoDetalle implements OnInit {
       } else {
         this.router.navigate(['/not-found']);
       }
+    }
+  }
+
+  verMasCategoria() {
+    const data = this.productosSimilares();
+    if (data.categoriaPrincipal) {
+      const slug = this.crearSlug(data.categoriaPrincipal.nombre);
+      this.router.navigate(['/', slug]);
     }
   }
 

@@ -106,6 +106,28 @@ export class GrillaProductos {
     });
   });
 
+  hayFiltrosActivos(): boolean {
+    return this.marcasSeleccionadas().size > 0 || 
+           this.tallesSeleccionados().size > 0 || 
+           this.coloresSeleccionados().size > 0 || 
+           this.precioMin() !== null || 
+           this.precioMax() !== null;
+  }
+
+  limpiarTodosLosFiltros() {
+    this.marcasSeleccionadas.set(new Set());
+    this.tallesSeleccionados.set(new Set());
+    this.coloresSeleccionados.set(new Set());
+    this.precioMin.set(null);
+    this.precioMax.set(null);
+    
+    this.tempMarcas.set(new Set());
+    this.tempTalles.set(new Set());
+    this.tempColores.set(new Set());
+    this.tempPrecioMin.set(null);
+    this.tempPrecioMax.set(null);
+  }
+
   toggleFiltros() {
     this.isFiltrosOpen.update(v => !v);
     

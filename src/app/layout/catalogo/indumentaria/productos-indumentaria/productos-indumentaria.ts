@@ -29,8 +29,8 @@ export class ProductosIndumentaria {
       // 2. Retornamos la estructura para el carrusel
       return {
         categoria: cat,
-        productos: prodsDeCategoria.slice(0, 3), 
-        tieneMas: prodsDeCategoria.length > 3
+        productos: prodsDeCategoria.slice(0, 4), 
+        tieneMas: prodsDeCategoria.length > 4
       };
     })
     // 3. Ocultamos las categorías que no tienen productos

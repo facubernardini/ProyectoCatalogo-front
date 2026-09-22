@@ -5,10 +5,11 @@ import { InfoService } from '@shared/services/info.service';
 import { CartService } from '@shared/services/cart.service';
 import { MenuLateralService } from '@shared/services/menu-lateral.service';
 import { SearchService } from '@shared/services/search.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar-indumentaria',
-  imports: [Icon],
+  imports: [Icon, RouterLink],
   templateUrl: './navbar-indumentaria.html',
   styleUrl: './navbar-indumentaria.css',
 })
