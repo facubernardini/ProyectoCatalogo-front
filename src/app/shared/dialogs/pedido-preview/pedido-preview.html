@@ -12,30 +12,45 @@
 
             <!-- HEADER DEL DIALOG -->
             <div class="flex items-center justify-between mb-0.5 shrink-0">
-                <h2 class="text-lg font-black text-brand-text">
+                <!-- IZQUIERDA: Título -->
+                <h2 class="text-lg font-black text-brand-text truncate mr-2">
                     Detalle del Pedido
                     <span class="text-xs text-gray-400 font-bold ml-1">#{{ pedidoEditable()!.numero_pedido }}</span>
                 </h2>
-                
-                @if (pedidoEditable()!.estado !== estadoPedido.ENTREGADO && pedidoEditable()!.estado !== estadoPedido.CANCELADO) {
-                    <button (click)="toggleEdit()" 
-                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors"
-                            [class]="isEditing() ? 'bg-brand-accent text-white' : 'bg-gray-100 text-gray-500'">
-                        <app-icon [name]="isEditing() ? 'check' : 'edit'" classes="size-3.5 fill-current" />
-                        {{ isEditing() ? 'Editando' : 'Editar' }}
-                    </button>
-                } @else {
-                    <div class="px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-widest cursor-default select-none"
-                        [class.bg-emerald-50]="pedidoEditable()!.estado === estadoPedido.ENTREGADO"
-                        [class.text-emerald-600]="pedidoEditable()!.estado === estadoPedido.ENTREGADO"
-                        [class.border-emerald-200]="pedidoEditable()!.estado === estadoPedido.ENTREGADO"
-                        [class.bg-red-50]="pedidoEditable()!.estado === estadoPedido.CANCELADO"
-                        [class.text-red-500]="pedidoEditable()!.estado === estadoPedido.CANCELADO"
-                        [class.border-red-200]="pedidoEditable()!.estado === estadoPedido.CANCELADO">
-                        
-                        {{ pedidoEditable()!.estado === estadoPedido.ENTREGADO ? 'Entregado' : 'Cancelado' }}
-                    </div>
-                }
+
+                <!-- DERECHA: Contenedor de botones -->
+                <div class="flex items-center gap-2.5 shrink-0">
+                    
+                    <!-- Botón Copiar -->
+                    @if (!isEditing() && !isSearchingActive() && pedidoEditable()!.estado !== estadoPedido.CANCELADO) {
+                        <button (click)="copiarTicket()" 
+                                title="Copiar para WhatsApp"
+                                class="flex items-center justify-center size-8 rounded-lg bg-gray-100 text-gray-500 md:hover:text-brand-accent md:hover:bg-brand-accent/10 active:scale-95 transition-all">
+                            <app-icon name="copy" classes="size-4 fill-current" />
+                        </button>
+                    }
+                    
+                    <!-- Botón Editar / Etiqueta de Estado -->
+                    @if (pedidoEditable()!.estado !== estadoPedido.ENTREGADO && pedidoEditable()!.estado !== estadoPedido.CANCELADO) {
+                        <button (click)="toggleEdit()" 
+                                class="flex items-center gap-1.5 px-3 py-1.5 h-8 rounded-lg text-xs font-bold transition-colors"
+                                [class]="isEditing() ? 'bg-brand-accent text-white' : 'bg-gray-100 text-gray-500'">
+                            <app-icon [name]="isEditing() ? 'check' : 'edit'" classes="size-3.5 fill-current" />
+                            {{ isEditing() ? 'Editando' : 'Editar' }}
+                        </button>
+                    } @else {
+                        <div class="px-2.5 py-1.5 h-8 flex items-center rounded-lg border text-[10px] font-black uppercase tracking-widest cursor-default select-none"
+                            [class.bg-emerald-50]="pedidoEditable()!.estado === estadoPedido.ENTREGADO"
+                            [class.text-emerald-600]="pedidoEditable()!.estado === estadoPedido.ENTREGADO"
+                            [class.border-emerald-200]="pedidoEditable()!.estado === estadoPedido.ENTREGADO"
+                            [class.bg-red-50]="pedidoEditable()!.estado === estadoPedido.CANCELADO"
+                            [class.text-red-500]="pedidoEditable()!.estado === estadoPedido.CANCELADO"
+                            [class.border-red-200]="pedidoEditable()!.estado === estadoPedido.CANCELADO">
+                            
+                            {{ pedidoEditable()!.estado === estadoPedido.ENTREGADO ? 'Entregado' : 'Cancelado' }}
+                        </div>
+                    }
+                </div>
             </div>
 
             <!-- ÁREA GENERAL -->
@@ -341,7 +356,7 @@
 
                 <!-- TOTAL FIJO (Se oculta al buscar) -->
                 @if (!isSearchingActive()) {
-                    <div class="mt-1 flex flex-col gap-1 px-3.5 py-2.5 bg-gray-900 rounded-xl shadow-sm shrink-0 animate-in fade-in">
+                    <div class="mt-1 flex flex-col gap-1 px-3 py-2 bg-gray-900 rounded-xl shadow-sm shrink-0 animate-in fade-in">
                         
                         <!-- Subtotal -->
                         <div class="flex justify-between items-center text-[11px] text-gray-400 font-medium">
@@ -367,7 +382,8 @@
 
                         <!-- Envío -->
                         @if (pedidoEditable()!.metodo_entrega === 'Envio') {
-                            <div class="flex justify-between items-center text-[11px] font-medium" [class.text-emerald-400]="pedidoEditable()!.costo_envio === 0" [class.text-gray-400]="pedidoEditable()!.costo_envio > 0">
+                            <div class="flex justify-between items-center text-[11px] font-medium" 
+                                 [class]="pedidoEditable()!.costo_envio > 0 ? 'text-gray-400' : 'text-emerald-400'">
                                 <span>Envío a domicilio</span>
                                 <span>
                                     @if (pedidoEditable()!.costo_envio > 0) {
@@ -379,7 +395,7 @@
                             </div>
                         }
 
-                        <div class="h-px w-full bg-gray-700/60 my-1"></div>
+                        <div class="h-px w-full bg-gray-700/60 mt-0.5"></div>
 
                         <!-- Total Final -->
                         <div class="flex items-center justify-between mt-0.5">
@@ -397,14 +413,14 @@
             @if (!isSearchingActive()) {
                 <div class="flex gap-3 shrink-0 pt-2 border-t border-gray-100 animate-in fade-in">
                     <button (click)="cerrar()" 
-                            class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
+                            class="flex-1 py-2.5 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
                         {{ isEditing() ? 'Cancelar' : 'Cerrar' }}
                     </button>
                     
                     @if (isEditing()) {
                         <button (click)="guardar()" 
                                 [disabled]="datosInvalidos()"
-                                class="flex-1 py-3 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale animate-in fade-in duration-200">
+                                class="flex-1 py-2.5 bg-brand-accent text-white font-bold rounded-2xl shadow-lg shadow-brand-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale animate-in fade-in duration-200">
                             Guardar cambios
                         </button>
                     }
