@@ -345,7 +345,6 @@ export class Carrito {
 
     // Ejecutamos las acciones finales
     const phone = this.catalogo()?.wpp_numero;
-    const url = `https://wa.me/549${phone}?text=${encodeURIComponent(mensaje)}`;
     
     this.cartService.limpiarCarrito(true);
     this.nombreCliente.set('');
@@ -354,15 +353,25 @@ export class Carrito {
 
     const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
+    const isAndroid = /Android/.test(ua);
+    
+    const isMetaInApp = ua.includes('Instagram') || ua.includes('FBAN') || ua.includes('FBAV');
+
+    const urlWeb = `https://wa.me/549${phone}?text=${encodeURIComponent(mensaje)}`;
 
     if (isIOS) {
-      window.location.href = url;
+      window.location.href = urlWeb;
+      
+    } else if (isAndroid && isMetaInApp) {
+      const urlNativa = `whatsapp://send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
+      window.location.href = urlNativa;
+      
     } else {
-      window.open(url, '_blank');
+      window.open(urlWeb, '_blank');
     }
 
     setTimeout(() => {
-      this.pedidoRealizadoService.open(url);
+      this.pedidoRealizadoService.open(urlWeb); 
     }, 2000);
   }
 
