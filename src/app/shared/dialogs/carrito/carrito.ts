@@ -345,26 +345,26 @@ export class Carrito {
 
     // Ejecutamos las acciones finales
     const phone = this.catalogo()?.wpp_numero;
-    
-    this.cartService.limpiarCarrito(true);
-    this.nombreCliente.set('');
-    this.direccionEnvio.set('');
-    this.telefonoCliente.set('');
 
     const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
     
-    const urlWeb = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
+    const url = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
 
     if (isIOS) {
       const urlIOS = `https://wa.me/549${phone}?text=${encodeURIComponent(mensaje)}`;
       window.location.href = urlIOS;
     } else {
-      window.open(urlWeb, '_blank');
+      window.open(url, '_blank');
     }
 
+    this.cartService.limpiarCarrito(true);
+    this.nombreCliente.set('');
+    this.direccionEnvio.set('');
+    this.telefonoCliente.set('');
+
     setTimeout(() => {
-      this.pedidoRealizadoService.open(urlWeb); 
+      this.pedidoRealizadoService.open(url); 
     }, 2000);
   }
 
