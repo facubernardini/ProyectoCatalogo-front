@@ -345,18 +345,26 @@ export class Carrito {
 
     // Ejecutamos las acciones finales
     const phone = this.catalogo()?.wpp_numero;
-    const url = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
-    
-    window.open(url, '_blank');
+    const url = `https://wa.me/549${phone}?text=${encodeURIComponent(mensaje)}`;
     
     this.cartService.limpiarCarrito(true);
     this.nombreCliente.set('');
     this.direccionEnvio.set('');
     this.telefonoCliente.set('');
 
+    const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
+    const isInstagram = ua.includes('Instagram');
+
+    if (isIOS || isInstagram) {
+      window.location.href = url;
+    } else {
+      window.open(url, '_blank');
+    }
+
     setTimeout(() => {
       this.pedidoRealizadoService.open(url);
-    }, 2500);
+    }, 2000);
   }
 
   // Prueba temporal
@@ -364,12 +372,46 @@ export class Carrito {
     const token = "8649133296:AAHzrBQtAJbYCPQHOdIT5N-UU7ryEgJVHCk";
     const chatId = "5097936005";
 
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const dispositivo = isMobile ? 'Mobile' : 'Desktop';
+    const ua = navigator.userAgent;
+
+    // 1. Detectar Sistema Operativo
+    let os = 'Desktop/Otro';
+    if (/iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream) {
+      os = 'iOS';
+    } else if (/Android/.test(ua)) {
+      os = 'Android';
+    } else if (/Windows/.test(ua)) {
+      os = 'Windows';
+    } else if (/Mac OS/.test(ua)) {
+      os = 'Mac';
+    }
+
+    // 2. Detectar Navegador / Red Social (In-App Browser)
+    let navegador = 'Estándar (Chrome/Safari)';
+    if (ua.includes('Instagram')) {
+      navegador = 'Instagram In-App';
+    } else if (ua.includes('FBAN') || ua.includes('FBAV')) {
+      navegador = 'Facebook In-App';
+    }
+
+    // 3. Detectar Origen (Desde qué página llegaron a tu web)
+    let origen = 'Directo / Link en Bio';
+    if (document.referrer) {
+      try {
+        origen = new URL(document.referrer).hostname;
+      } catch (e) {
+        origen = document.referrer;
+      }
+    }
 
     const nombreTienda = this.catalogo()?.nombre_tienda;
     
-    const mensajeTelegram = `Nueva venta de ${nombreTienda} desde ${dispositivo}`;
+    // 4. Armado del mensaje solo con datos técnicos
+    const mensajeTelegram = 
+      `*Nueva venta en ${nombreTienda}*\n\n` +
+      `*OS:* ${os}\n` +
+      `*Navegador:* ${navegador}\n` +
+      `*Origen:* ${origen}`;
     
     const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&parse_mode=Markdown&text=${encodeURIComponent(mensajeTelegram)}`;
     
