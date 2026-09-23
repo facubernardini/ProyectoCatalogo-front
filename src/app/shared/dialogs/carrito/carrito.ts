@@ -353,19 +353,12 @@ export class Carrito {
 
     const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
-    const isAndroid = /Android/.test(ua);
     
-    const isMetaInApp = ua.includes('Instagram') || ua.includes('FBAN') || ua.includes('FBAV');
-
-    const urlWeb = `https://wa.me/549${phone}?text=${encodeURIComponent(mensaje)}`;
+    const urlWeb = `https://api.whatsapp.com/send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
 
     if (isIOS) {
-      window.location.href = urlWeb;
-      
-    } else if (isAndroid && isMetaInApp) {
-      const urlNativa = `whatsapp://send?phone=549${phone}&text=${encodeURIComponent(mensaje)}`;
-      window.location.href = urlNativa;
-      
+      const urlIOS = `https://wa.me/549${phone}?text=${encodeURIComponent(mensaje)}`;
+      window.location.href = urlIOS;
     } else {
       window.open(urlWeb, '_blank');
     }
