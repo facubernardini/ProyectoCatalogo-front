@@ -354,9 +354,8 @@ export class Carrito {
 
     const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
-    const isInstagram = ua.includes('Instagram');
 
-    if (isIOS || isInstagram) {
+    if (isIOS) {
       window.location.href = url;
     } else {
       window.open(url, '_blank');
@@ -395,7 +394,7 @@ export class Carrito {
     }
 
     // 3. Detectar Origen (Desde qué página llegaron a tu web)
-    let origen = 'Directo / Link en Bio';
+    let origen = 'Directo';
     if (document.referrer) {
       try {
         origen = new URL(document.referrer).hostname;
