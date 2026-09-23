@@ -375,7 +375,6 @@ export class Carrito {
 
     const ua = navigator.userAgent;
 
-    // 1. Detectar Sistema Operativo
     let os = 'Desktop/Otro';
     if (/iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream) {
       os = 'iOS';
@@ -387,7 +386,6 @@ export class Carrito {
       os = 'Mac';
     }
 
-    // 2. Detectar Navegador / Red Social (In-App Browser)
     let navegador = 'Estándar (Chrome/Safari)';
     if (ua.includes('Instagram')) {
       navegador = 'Instagram In-App';
@@ -395,7 +393,6 @@ export class Carrito {
       navegador = 'Facebook In-App';
     }
 
-    // 3. Detectar Origen (Desde qué página llegaron a tu web)
     let origen = 'Directo';
     if (document.referrer) {
       try {
@@ -407,7 +404,6 @@ export class Carrito {
 
     const nombreTienda = this.catalogo()?.nombre_tienda;
     
-    // 4. Armado del mensaje solo con datos técnicos
     const mensajeTelegram = 
       `*Nueva venta en ${nombreTienda}*\n\n` +
       `*OS:* ${os}\n` +
