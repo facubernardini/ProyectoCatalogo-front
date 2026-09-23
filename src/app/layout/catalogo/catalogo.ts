@@ -155,11 +155,25 @@ export class CatalogoPublico implements OnInit, OnDestroy {
           p.marca?.toLowerCase().includes(queryLimpia)
         );
         this.productosFiltrados.set(filtrados);
-      } 
+      }
 
       else if (segmentos.length === 1 && segmentos[0].path === 'productos') {
         this.tituloGrilla.set('Todos los productos');
         this.productosFiltrados.set(productos);
+      }
+
+      else if (segmentos.length === 1 && segmentos[0].path === 'destacados') {
+        this.tituloGrilla.set('Destacados');
+        const filtrados = productos.filter(p => p.destacado);
+        this.productosFiltrados.set(filtrados);
+      }
+
+      else if (segmentos.length === 1 && segmentos[0].path === 'ofertas') {
+        this.tituloGrilla.set('Ofertas Especiales');
+        const filtrados = productos.filter(p => 
+          p.presentaciones?.some(pres => pres.precio_descuento && pres.precio_descuento > 0)
+        );
+        this.productosFiltrados.set(filtrados);
       }
       
       else if (segmentos.length === 1 && segmentos[0].path !== 'search') {
@@ -198,9 +212,9 @@ export class CatalogoPublico implements OnInit, OnDestroy {
         this.vistaActual.set('detalle');
         this.productoSlugActivo.set(segments[1].path); 
       } 
-      else if (segments[0].path === 'buscar') {
+      else if (segments.length > 0 && (segments[0].path === 'search' || segments[0].path === 'destacados' || segments[0].path === 'ofertas' || segments[0].path === 'productos')) { 
         this.vistaActual.set('grilla');
-      } 
+      }
       else if (segments.length === 1) {
         this.vistaActual.set('grilla');
       }

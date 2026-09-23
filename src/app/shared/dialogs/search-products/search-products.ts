@@ -5,10 +5,12 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { SearchService } from '@shared/services/search.service';
 import { ProductCard } from "src/app/layout/catalogo/lista-productos/product-card/product-card";
+import { Router } from '@angular/router';
+import { ProductCardIndumentaria } from 'src/app/layout/catalogo/indumentaria/product-card-indumentaria/product-card-indumentaria';
 
 @Component({
   selector: 'app-search-products',
-  imports: [Icon, ProductCard],
+  imports: [Icon, ProductCard, ProductCardIndumentaria],
   templateUrl: './search-products.html',
   styleUrl: './search-products.css',
 })
@@ -18,6 +20,7 @@ export class SearchProducts {
   public adminStore = inject(AdminStoreService);
   public searchService = inject(SearchService);
   private selectorService = inject(ProductSelectorService);
+  private router = inject(Router);
   
   productos = this.adminStore.productos;
 
@@ -123,8 +126,14 @@ export class SearchProducts {
     this.searchService.query.set(val);
   }
 
-  abrirProducto(producto: Producto, fromModal: boolean = false) {
-    this.selectorService.open(producto, fromModal);
+  irAGrilla() {
+    const query = this.searchService.query().trim();
+    
+    if (query.length > 0) {
+      this.searchService.close();
+      
+      this.router.navigate(['/search'], { queryParams: { q: query } });
+    }
   }
 
 }

@@ -8,6 +8,7 @@ import { CategoryViewService } from '@shared/services/category-view.service';
 import { ProductosDestacadosService } from '@shared/services/productos-destacados.service';
 import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu-lateral',
@@ -16,6 +17,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './menu-lateral.css',
 })
 export class MenuLateral {
+  private router = inject(Router);
   private categoryViewService = inject(CategoryViewService);
   private productosDestacadosService = inject(ProductosDestacadosService);
   public productosOfertasService = inject(ProductosOfertasService);
@@ -61,17 +63,34 @@ export class MenuLateral {
   seleccionarYFechar(nombre: string) {
     this.menuService.close(); 
 
-    this.categoryViewService.open(nombre);
+    if (this.adminStore.esIndumentaria()) {
+      if (nombre === 'Ver todos los productos') {
+        this.router.navigate(['/productos']);
+      } else {
+        const slug = this.crearSlug(nombre);
+        this.router.navigate(['/', slug]);
+      }
+    } else {
+      this.categoryViewService.open(nombre);
+    }
   }
 
   abrirDestacados(){
     this.menuService.close();
-    this.productosDestacadosService.open();
+    if (this.adminStore.esIndumentaria()) {
+      this.router.navigate(['/destacados']);
+    } else {
+      this.productosDestacadosService.open();
+    }
   }
 
   abrirOfertas(){
     this.menuService.close();
-    this.productosOfertasService.open();
+    if (this.adminStore.esIndumentaria()) {
+      this.router.navigate(['/ofertas']);
+    } else {
+      this.productosOfertasService.open();
+    }
   }
 
   abrirWhatsapp(): void {
@@ -96,5 +115,20 @@ export class MenuLateral {
     const url = `https://instagram.com/${usuario}`;
     
     window.open(url, '_blank');
+  }
+
+  irAlInicio() {
+    this.menuService.close();
+    this.router.navigate(['/']);
+  }
+
+  private crearSlug(texto: string): string {
+    if (!texto) return '';
+    return texto
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
   }
 }
