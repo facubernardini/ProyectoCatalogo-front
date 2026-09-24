@@ -2,31 +2,22 @@
     (click)="navegarAlDetalle()"
     class="bg-white rounded-lg flex flex-col overflow-hidden active:scale-[0.98] transition-all cursor-pointer h-full shadow-sm relative group">
     
-    <div class="absolute top-2 left-2 right-2 z-10 flex items-start justify-between pointer-events-none">
-        
-        <div class="flex flex-col gap-1">
-            @for (tag of producto().tags; track tag.id) {
-                <span class="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-white bg-black/40 backdrop-blur-md px-1.5 py-0.5 rounded shadow-sm">
-                    @if (tag.icono) {
-                        <div [innerHTML]="tag.icono | safeHtml" class="size-3 flex items-center justify-center shrink-0 drop-shadow-md"></div>
-                    }
-                    {{ tag.nombre }}
-                </span>
-            }
-        </div>
-
-        @if (mejorOferta()?.precio_descuento) {
-            <span class="bg-brand-accent text-white text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full shadow-md">
-                Oferta
-            </span>
-        }
-    </div>
-
     <!-- Contenedor de la Imagen -->
     <div class="relative w-full aspect-4/5 bg-gray-50 overflow-hidden flex items-center justify-center p-2">
         
+        @if (mejorOferta(); as oferta) {
+            @if (oferta.precio_descuento) {
+                <div class="absolute -top-0.5 left-1.5 z-20 pointer-events-none">
+                    <span class="bg-brand-accent text-white text-[9px] font-semibold uppercase tracking-wider px-1 py-0.5 rounded-sm">
+                        {{ calcularPorcentajeOff(oferta.precio, oferta.precio_descuento) }}% OFF
+                    </span>
+                </div>
+            }
+        }
+
+        <!-- Placeholder / Loading -->
         <div class="absolute inset-0 flex items-center justify-center text-gray-300 transition-opacity duration-300"
-            [class.opacity-0]="imageLoaded() || !portada()">
+            [class.opacity-0]="imageLoaded()">
             <app-icon name="photo" classes="size-8 fill-current" />
         </div>
 
@@ -42,7 +33,7 @@
         }
         
         @if (estaAgotado()) {
-            <div class="absolute inset-0 bg-black/5 backdrop-blur-[1px] flex items-center justify-center">
+            <div class="absolute inset-0 bg-black/5 backdrop-blur-[1px] flex items-center justify-center z-10">
                 <span class="bg-white/90 text-gray-800 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
                     Agotado
                 </span>
@@ -50,10 +41,10 @@
         }
     </div>
 
-    <div class="p-3 flex flex-col flex-1">
+    <div class="p-2 flex flex-col flex-1">
         
         @if (producto().marca) {
-            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest truncate mb-0.5">
+            <p class="text-[9px] font-medium text-gray-500 uppercase tracking-wider truncate mb-0.5">
                 {{ producto().marca }}
             </p>
         }
@@ -71,12 +62,12 @@
                 <!-- Precio Principal -->
                 <div class="flex items-baseline gap-1.5">
                     @if (cheapest.precio_descuento) {
-                        <div class="flex items-center gap-2">
-                            <span class="text-brand-text font-black text-sm sm:text-base leading-none tracking-tighter">
-                                ${{ cheapest.precio_descuento | number:'1.0-0' }}
-                            </span>
+                        <div class="flex flex-col gap-0.5">
                             <span class="text-[10px] text-gray-400 line-through font-medium tracking-tighter leading-none">
                                 ${{ cheapest.precio | number:'1.0-0' }}
+                            </span>
+                            <span class="text-brand-text font-black text-sm sm:text-base leading-none tracking-tighter">
+                                ${{ cheapest.precio_descuento | number:'1.0-0' }}
                             </span>
                         </div>
                     } @else {
@@ -88,10 +79,10 @@
 
                 @if (adminStore.catalogo()!.descuento_en_efectivo > 0) {
                     <div class="flex items-center gap-1 mt-1">
-                        <span class="text-green-600 font-semibold text-[11px] tracking-tighter">
+                        <span class="text-green-600 font-semibold text-[10px] tracking-tighter">
                             ${{ calcularPrecioEfectivo(cheapest.precio_descuento || cheapest.precio) | number:'1.0-0' }}
                         </span>
-                        <span class="text-green-600/70 text-[9px] font-semibold uppercase tracking-wider">
+                        <span class="text-green-600/70 text-[8px] font-semibold uppercase tracking-wider">
                             pago ef.
                         </span>
                     </div>

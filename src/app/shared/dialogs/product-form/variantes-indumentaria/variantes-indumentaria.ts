@@ -15,6 +15,7 @@ export interface PresentacionUI {
   color_nombre: string | null;
   color_hex: string | null;
   precio: number;
+  precio_descuento: number | null;
   stock: number | null;
   activo: boolean;
 }
@@ -32,6 +33,7 @@ export class VariantesIndumentaria {
   @Output() coloresActualizados = new EventEmitter<ColorVariante[]>();
 
   precioBase: number | null = 0;
+  precioOferta: number | null = null;
 
   // Signals para manejar el estado local
   talles = signal<string[]>([]);
@@ -74,6 +76,7 @@ export class VariantesIndumentaria {
       this.variantes.set(variantesCargadas);
       
       this.precioBase = variantesCargadas[0]?.precio || 0;
+      this.precioOferta = variantesCargadas[0]?.precio_descuento || null;
       
       this.variantesActualizadas.emit(this.variantes());
     }
@@ -133,15 +136,17 @@ export class VariantesIndumentaria {
     tallesIterables.forEach(talle => {
       coloresIterables.forEach(color => {
         
-        // 1. Buscamos si esta variante ya existía para no borrarle el precio/stock/sku al vendedor
         const existente = this.variantes().find(v => 
           v.talle === talle && v.color_nombre === (color ? color.nombre : null)
         );
 
         if (existente) {
-          nuevasVariantes.push(existente);
+          nuevasVariantes.push({
+              ...existente,
+              precio: this.precioBase || 0,
+              precio_descuento: this.precioOferta
+          });
         } else {
-          // 2. Si es nueva, la creamos
           nuevasVariantes.push({
             id_temporal: Math.random().toString(36).substring(2, 9),
             unidad_venta: this.generarUnidadVenta(talle, color?.nombre || null),
@@ -150,6 +155,7 @@ export class VariantesIndumentaria {
             color_nombre: color?.nombre || null,
             color_hex: color?.hex || null,
             precio: this.precioBase || 0,
+            precio_descuento: this.precioOferta,
             stock: null,
             activo: true
           });
@@ -157,7 +163,6 @@ export class VariantesIndumentaria {
       });
     });
 
-    // Filtramos el caso donde no hay ni talles ni colores (limpiamos la tabla)
     if (this.talles().length === 0 && this.colores().length === 0) {
       this.variantes.set([]);
     } else {
@@ -168,13 +173,13 @@ export class VariantesIndumentaria {
   }
 
   sincronizarPrecios() {    
-    // Validamos que el precio sea válido
     if (this.precioBase === null || this.precioBase < 0) return;
 
     this.variantes.update(vars => {
       return vars.map(v => ({
         ...v,
         precio: this.precioBase || 0,
+        precio_descuento: this.precioOferta
       }));
     });
     

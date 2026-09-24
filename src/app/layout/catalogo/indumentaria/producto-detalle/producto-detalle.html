@@ -2,29 +2,73 @@
     @if (productoActual(); as prod) {
         <main class="flex-1 max-w-7xl mx-auto w-full pb-12 md:pt-8 px-4">
             
-            <!-- Grid: 1 col en mobile, 2 cols en desktop -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12">
                 
                 <!-- COLUMNA IZQUIERDA: Galería de Fotos -->
-                <div class="flex flex-col gap-3">
-                    <!-- Foto Principal -->
-                    <div class="w-full aspect-4/5 bg-gray-50 overflow-hidden">
-                        @if (imagenPrincipal()) {
-                            <img [src]="imagenPrincipal()" class="w-full h-full object-cover">
+                <div class="flex flex-col gap-3 -mx-4 md:mx-0">
+                    
+                    <!-- Foto Principal con Swipe y Flechas -->
+                    <!-- 👇 MODIFICADO: Agregado cursor-pointer y (click) -->
+                    <div class="relative w-full aspect-4/5 bg-gray-50 overflow-hidden md:rounded-2xl group cursor-pointer"
+                        (click)="abrirVisualizador()"
+                        (touchstart)="onTouchStart($event)"
+                        (touchend)="onTouchEnd($event, prod.imagenes)">
+                        
+                        @if (prod.imagenes && prod.imagenes.length > 0) {
+                            @for (img of prod.imagenes; track img.id) {
+                                <img [src]="img.url" 
+                                    class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
+                                    [class.opacity-100]="imagenPrincipal() === img.url"
+                                    [class.opacity-0]="imagenPrincipal() !== img.url"
+                                    [class.pointer-events-none]="imagenPrincipal() !== img.url"
+                                    alt="Foto {{ prod.nombre }}">
+                            }
+                        } @else if (imagenPrincipal()) {
+                            <img [src]="imagenPrincipal()" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500">
+                        }
+
+                        <!-- Flechas Desktop (Ocultas en mobile, visibles al hacer hover en PC) -->
+                        @if (prod.imagenes && prod.imagenes.length > 1) {
+                            <!-- Botón Anterior -->
+                            <!-- 👇 NOTA: $event.stopPropagation() ya está ahí, eso evita que abra el modal al clickear la flecha -->
+                            <button (click)="imagenAnterior(prod.imagenes); $event.stopPropagation()"
+                                    class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 size-10 items-center justify-center rounded-full bg-white/70 hover:bg-white text-gray-800 shadow-md transition-all active:scale-95 opacity-0 group-hover:opacity-100 z-10">
+                                <app-icon name="chevron-left" classes="size-6 fill-current"></app-icon>
+                            </button>
+                            
+                            <!-- Botón Siguiente -->
+                            <button (click)="imagenSiguiente(prod.imagenes); $event.stopPropagation()"
+                                    class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 size-10 items-center justify-center rounded-full bg-white/70 hover:bg-white text-gray-800 shadow-md transition-all active:scale-95 opacity-0 group-hover:opacity-100 z-10">
+                                <app-icon name="chevron-right" classes="size-6 fill-current"></app-icon>
+                            </button>
                         }
                     </div>
 
-                    <!-- Miniaturas (Scroll horizontal oculto) -->
+                    <!-- Miniaturas (Se mantienen intactas como menú rápido) -->
                     @if (prod.imagenes && prod.imagenes.length > 1) {
-                        <div class="flex gap-2 overflow-x-auto pb-2 snap-x [&::-webkit-scrollbar]:hidden">
-                            @for (img of prod.imagenes; track img.id) {
-                                <button (click)="imagenPrincipal.set(img.url)"
-                                        class="shrink-0 w-16 h-20 md:w-20 md:h-24 rounded-lg overflow-hidden border-2 transition-all"
-                                        [class.border-brand-accent]="imagenPrincipal() === img.url"
-                                        [class.border-transparent]="imagenPrincipal() !== img.url"
-                                        [class.opacity-50]="imagenPrincipal() !== img.url">
-                                    <img [src]="img.url" class="w-full h-full object-cover">
-                                </button>
+                        <div class="flex flex-col">
+                            <div #thumbnailsContainer class="flex gap-1 overflow-x-auto snap-x scroll-smooth [&::-webkit-scrollbar]:hidden px-3 md:px-0">
+                                @for (img of prod.imagenes; track img.id) {
+                                    <button (click)="imagenPrincipal.set(img.url)"
+                                            class="shrink-0 w-16 h-20 md:w-20 md:h-24 overflow-hidden transition-all md:hover:scale-103"
+                                            [class.opacity-30]="imagenPrincipal() !== img.url">
+                                        <img [src]="img.url" class="w-full h-full object-cover">
+                                    </button>
+                                }
+                            </div>
+                            
+                            @if (prod.imagenes.length > 4) {
+                                <div class="hidden md:flex items-center justify-center gap-4 mt-2">
+                                    <button (click)="scrollThumbnails(thumbnailsContainer, -200)" 
+                                            class="p-1 rounded-full text-gray-400 hover:text-brand-accent hover:bg-gray-100 transition-colors active:scale-95">
+                                        <app-icon name="chevron-left" classes="size-5 fill-current"></app-icon>
+                                    </button>
+                                    
+                                    <button (click)="scrollThumbnails(thumbnailsContainer, 200)" 
+                                            class="p-1 rounded-full text-gray-400 hover:text-brand-accent hover:bg-gray-100 transition-colors active:scale-95">
+                                        <app-icon name="chevron-right" classes="size-5 fill-current"></app-icon>
+                                    </button>
+                                </div>
                             }
                         </div>
                     }
@@ -34,7 +78,7 @@
                 <div class="flex flex-col">
                     
                     @if (prod.marca) {
-                        <p class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-1">{{ prod.marca }}</p>
+                        <p class="text-[11px] font-medium text-gray-500 uppercase tracking-widest mb-0.5">{{ prod.marca }}</p>
                     }
                     <h1 class="text-base md:text-xl font-extrabold text-brand-text leading-tight mb-4">{{ prod.nombre }}</h1>
 
@@ -43,16 +87,16 @@
                         <div class="flex flex-col mb-4 pb-4 border-b border-gray-200">
                             <div class="flex items-center gap-3">
                                 @if (pres.precio_descuento) {
-                                    <span class="text-xl font-extrabold text-brand-text">${{ pres.precio_descuento | number:'1.0-0' }}</span>
-                                    <span class="text-sm font-medium text-gray-400 line-through">${{ pres.precio | number:'1.0-0' }}</span>
+                                    <span class="text-base font-extrabold text-gray-400 line-through">${{ pres.precio | number:'1.0-0' }}</span>
+                                    <span class="text-base font-extrabold text-brand-text">${{ pres.precio_descuento | number:'1.0-0' }}</span>
                                 } @else {
-                                    <span class="text-xl font-extrabold text-brand-text">${{ pres.precio | number:'1.0-0' }}</span>
+                                    <span class="text-base font-extrabold text-brand-text">${{ pres.precio | number:'1.0-0' }}</span>
                                 }
                             </div>
                             
                             <!-- Precio Efectivo si aplica -->
                             @if (adminStore.catalogo()!.descuento_en_efectivo > 0) {
-                                <p class="text-sm font-bold text-green-600 mt-1">
+                                <p class="text-xs font-medium text-green-600 mt-1">
                                     ${{ (pres.precio_descuento || pres.precio) * (1 - adminStore.catalogo()!.descuento_en_efectivo / 100) | number:'1.0-0' }} abonando en efectivo
                                 </p>
                             }
@@ -81,11 +125,14 @@
                     <!-- SELECTOR DE TALLE -->
                     @if (tallesUnicos().length > 0) {
                         <div class="mb-5">
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Talle</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+                                Talle: <span class="text-brand-text font-bold">{{ talleSeleccionado() }}</span>
+                            </p>
+                            
                             <div class="flex flex-wrap gap-2">
                                 @for (talle of tallesUnicos(); track talle) {
                                     <button (click)="talleSeleccionado.set(talle)"
-                                            class="px-4 py-2.5 rounded-xl text-sm font-bold border transition-all"
+                                            class="px-3 py-1 rounded-sm text-sm font-bold border transition-all"
                                             [class.border-brand-accent]="talleSeleccionado() === talle"
                                             [class.bg-brand-accent]="talleSeleccionado() === talle"
                                             [class.text-white]="talleSeleccionado() === talle"
@@ -102,10 +149,10 @@
                     <div class="mt-2 mb-8 flex items-stretch gap-3 h-10">
     
                         <!-- CONTROL DE CANTIDAD -->
-                        <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-xl px-1.5 w-32 shrink-0">
+                        <div class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-1.5 w-30 shrink-0">
                             <button (click)="decrementar()"
                                     [disabled]="cantidad() <= 1"
-                                    class="p-2 text-gray-400 md:hover:text-brand-accent disabled:opacity-30 disabled:pointer-events-none transition-colors rounded-lg active:scale-95">
+                                    class="p-2 text-gray-500 md:hover:text-brand-accent disabled:opacity-30 disabled:pointer-events-none transition-colors rounded-lg active:scale-95">
                                 <app-icon name="remove" classes="size-4 fill-current" />
                             </button>
                             
@@ -119,14 +166,14 @@
                             
                             <button (click)="incrementar()"
                                     [disabled]="!puedeIncrementar()"
-                                    class="p-2 text-gray-400 md:hover:text-brand-accent disabled:opacity-30 disabled:pointer-events-none transition-colors rounded-lg active:scale-95">
+                                    class="p-2 text-gray-500 md:hover:text-brand-accent disabled:opacity-30 disabled:pointer-events-none transition-colors rounded-lg active:scale-95">
                                 <app-icon name="add-producto" classes="size-4 fill-current" />
                             </button>
                         </div>
 
                         <!-- BOTÓN AGREGAR AL CARRITO -->
                         <button (click)="agregarAlCarrito()"
-                                class="flex-1 bg-brand-accent text-xs text-white font-medium uppercase tracking-widest rounded-xl shadow-lg shadow-brand-accent/30 active:scale-95 transition-all">
+                                class="flex-1 bg-brand-accent text-xs text-white font-medium uppercase tracking-widest rounded-lg active:scale-95 transition-all">
                             Agregar al carrito
                         </button>
                     </div>
@@ -142,7 +189,7 @@
                 </div>
             </div>
 
-            <!-- 👇 NUEVO: CARRUSEL DE PRODUCTOS SIMILARES -->
+            <!-- CARRUSEL DE PRODUCTOS SIMILARES -->
             @if (productosSimilares().productos.length > 0) {
                 <div class="mt-16 md:mt-24 pt-8 border-t border-gray-100 -mx-4 md:mx-0">
                     
@@ -160,7 +207,7 @@
                         }
                     </div>
 
-                    <!-- CARRUSEL DE PRODUCTOS (Estructura idéntica al que funciona) -->
+                    <!-- CARRUSEL DE PRODUCTOS -->
                     <div class="flex overflow-x-auto gap-3 md:gap-4 pb-4 px-4 scroll-pl-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
                         
                         @for (simil of productosSimilares().productos; track simil.id) {
@@ -190,5 +237,66 @@
                 </div>
             }
         </main>
+    }
+
+    <!-- VISUALIZADOR DE IMÁGENES A PANTALLA COMPLETA -->
+    @if (visualizadorAbierto() && productoActual(); as prod) {
+        <div class="fixed inset-0 z-100 flex flex-col animate-in fade-in zoom-in-95 duration-300">
+            
+            <div class="absolute inset-0 bg-black/95 transition-opacity" 
+                (click)="cerrarVisualizador()">
+            </div>
+            
+            <!-- HEADER DEL VISUALIZADOR -->
+            <div class="absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-4 z-50 pointer-events-none">
+                <!-- Contador (Izquierda) -->
+                <div class="pointer-events-auto">
+                    @if (prod.imagenes && prod.imagenes.length > 1) {
+                        <span class="text-white text-xs font-semibold tracking-widest ml-2">
+                            {{ indiceImagenActual() }} / {{ prod.imagenes.length }}
+                        </span>
+                    }
+                </div>
+
+                <!-- Botón Cerrar (Derecha) -->
+                <button (click)="cerrarVisualizador()" 
+                        class="pointer-events-auto p-2 text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full backdrop-blur-md transition-colors active:scale-95">
+                    <app-icon name="close" classes="size-6 md:size-8 fill-current"></app-icon>
+                </button>
+            </div>
+
+            <!-- Contenedor Principal (Gestos Táctiles y Fusión) -->
+            <div class="flex-1 relative flex items-center justify-center overflow-hidden"
+                 (touchstart)="onTouchStart($event)"
+                 (touchend)="onTouchEnd($event, prod.imagenes)">
+                
+                @if (prod.imagenes && prod.imagenes.length > 0) {
+                    @for (img of prod.imagenes; track img.id) {
+                        <!-- Usamos object-contain para que no se corte nada de la foto -->
+                        <img [src]="img.url" 
+                             class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 ease-in-out"
+                             [class.opacity-100]="imagenPrincipal() === img.url"
+                             [class.opacity-0]="imagenPrincipal() !== img.url"
+                             [class.pointer-events-none]="imagenPrincipal() !== img.url"
+                             alt="Foto ampliada {{ prod.nombre }}">
+                    }
+                } @else if (imagenPrincipal()) {
+                    <img [src]="imagenPrincipal()" class="absolute inset-0 w-full h-full object-contain">
+                }
+
+                <!-- Flechas Desktop (Siempre visibles en PC para mejor usabilidad) -->
+                @if (prod.imagenes && prod.imagenes.length > 1) {
+                    <button (click)="imagenAnterior(prod.imagenes); $event.stopPropagation()"
+                            class="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 size-12 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all active:scale-95 z-20">
+                        <app-icon name="chevron-left" classes="size-8 fill-current"></app-icon>
+                    </button>
+                    
+                    <button (click)="imagenSiguiente(prod.imagenes); $event.stopPropagation()"
+                            class="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 size-12 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-all active:scale-95 z-20">
+                        <app-icon name="chevron-right" classes="size-8 fill-current"></app-icon>
+                    </button>
+                }
+            </div>
+        </div>
     }
 </div>

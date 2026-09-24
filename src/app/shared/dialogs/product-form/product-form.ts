@@ -324,7 +324,7 @@ export class ProductForm {
       }
 
       if (pres.precio_descuento !== null && pres.precio !== null && Number(pres.precio_descuento) >= Number(pres.precio)) {
-        this.toastService.show(`Variante ${numeroV}: El precio de oferta no puede ser mayor o igual al precio normal`, 'error');
+        this.toastService.show(`Variante ${numeroV}: El precio de oferta no puede ser mayor o igual al precio base`, 'error');
         return;
       }
 

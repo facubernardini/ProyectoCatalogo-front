@@ -1,7 +1,9 @@
 <div class="space-y-3">
 
-    <div class="flex flex-col md:flex-row md:items-end">
-        <div class="w-full md:w-64">
+    <div class="flex gap-4 mb-4">
+        
+        <!-- Precio Base -->
+        <div class="flex-1 md:flex-none md:w-64">
             <label class="text-xs font-bold text-gray-600 ml-1">
                 Precio
             </label>
@@ -13,11 +15,36 @@
                     [(ngModel)]="precioBase" 
                     (change)="sincronizarPrecios()"
                     (focus)="precioBase = precioBase === 0 ? null : precioBase"
-                    (blur)="precioBase = precioBase === null ? 0 : precioBase"
-                    class="w-full p-2.5 pl-7 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text" 
+                    (blur)="precioBase = precioBase === null ? 0 : precioBase; sincronizarPrecios()"
+                    class="w-full p-2.5 pl-7 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text no-spinners" 
                     placeholder="0">
             </div>
         </div>
+
+        <!-- Precio Oferta -->
+        <div class="flex-1 md:flex-none md:w-64">
+            <label class="text-xs font-bold text-gray-600 ml-1">
+                Precio Oferta
+            </label>
+            <div class="relative group/input">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 group-focus-within/input:text-brand-accent transition-colors">
+                    $
+                </span>
+                <input type="number" 
+                    [(ngModel)]="precioOferta" 
+                    (change)="sincronizarPrecios()"
+                    [class.border-red-400]="precioOferta && precioBase && precioOferta >= precioBase"
+                    class="w-full p-2.5 pl-7 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text placeholder:text-gray-300 no-spinners" 
+                    placeholder="(Opcional)">
+            </div>
+            
+            @if (precioOferta && precioBase && precioOferta >= precioBase) {
+                <p class="text-[8px] text-red-500 font-black mt-1 ml-1 animate-in fade-in slide-in-from-top-1">
+                    DEBE SER MENOR AL PRECIO BASE
+                </p>
+            }
+        </div>
+
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -90,7 +117,7 @@
     @if (variantes().length > 0) {
         <div class="pt-2">
             <div class="flex items-center mb-3">
-                <h4 class="font-bold text-brand-text text-sm">Inventario y Precios</h4>
+                <h4 class="font-bold text-brand-text text-sm">Inventario</h4>
             </div>
 
             <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
@@ -98,9 +125,8 @@
                     <thead class="bg-gray-50 text-gray-500 text-[10px] uppercase font-black tracking-wider">
                         <tr>
                             <th class="p-3">Variante</th>
-                            <th class="p-3 w-28">Precio ($)</th>
-                            <th class="p-3 w-24">Stock</th>
-                            <th class="p-3 w-16 text-center">Estado</th>
+                            <th class="p-3 w-20">Stock</th>
+                            <th class="p-3 w-20 text-center">Estado</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 bg-white">
@@ -117,12 +143,6 @@
                                     </div>
                                 </td>
 
-                                <!-- Precio -->
-                                <td class="p-2">
-                                    <input type="number" [(ngModel)]="v.precio" (change)="notificarCambioTabla()" min="0"
-                                           class="w-full p-2 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold text-gray-700 outline-none focus:border-brand-accent/40 no-spinners">
-                                </td>
-
                                 <!-- Stock -->
                                 <td class="p-2">
                                     <input type="number" [(ngModel)]="v.stock" (change)="notificarCambioTabla()" min="0" placeholder="∞"
@@ -133,7 +153,7 @@
                                 <td class="p-2 text-center">
                                     <button (click)="v.activo = !v.activo; notificarCambioTabla()" 
                                             [class]="v.activo ? 'bg-green-500' : 'bg-gray-300'"
-                                            class="w-10 h-5 rounded-full relative transition-colors shadow-inner">
+                                            class="w-10 h-5 rounded-full relative transition-colors shadow-inner mx-auto block">
                                         <div [class]="v.activo ? 'translate-x-5' : 'translate-x-0'"
                                              class="w-5 h-5 bg-white rounded-full border border-gray-200 shadow-sm transition-transform transform"></div>
                                     </button>

@@ -2,7 +2,6 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { Presentacion } from 'src/app/core/models/presentacion.model';
-import { SafeHtmlPipe } from "../../../../core/pipes/safe-html.pipe";
 import { CommonModule } from '@angular/common';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Router } from '@angular/router';
@@ -10,7 +9,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-product-card-indumentaria',
   standalone: true,
-  imports: [CommonModule, Icon, SafeHtmlPipe],
+  imports: [CommonModule, Icon],
   templateUrl: './product-card-indumentaria.html',
 })
 export class ProductCardIndumentaria {
@@ -32,6 +31,8 @@ export class ProductCardIndumentaria {
     return prod.imagen;
   });
 
+  estaAgotado = computed(() => this.presentacionesDisponibles().length === 0);
+
   presentacionesDisponibles = computed(() => {
     const prod = this.producto();
     const permiteVentaSinStock = this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
@@ -42,8 +43,6 @@ export class ProductCardIndumentaria {
 
     return prod.presentaciones.filter(p => p.stock === null || p.stock > 0);
   });
-
-  estaAgotado = computed(() => this.presentacionesDisponibles().length === 0);
 
   tallesDisponibles = computed(() => {
     const presentaciones = this.presentacionesDisponibles();
@@ -73,10 +72,8 @@ export class ProductCardIndumentaria {
   navegarAlDetalle() {
     const prod = this.producto();
         
-    // Armamos la URL limpia
     const prodSlug = this.crearSlug(prod.nombre);
 
-    // Navegamos
     this.router.navigate(['/productos', prodSlug]);
   }
 
@@ -107,6 +104,11 @@ export class ProductCardIndumentaria {
     
     const descuento = (precioActual * descuentoPorcentaje) / 100;
     return precioActual - descuento;
+  }
+
+  calcularPorcentajeOff(precio: number, precioDescuento: number): number {
+    if (!precio || !precioDescuento) return 0;
+    return Math.round(((precio - precioDescuento) / precio) * 100);
   }
 
   onImageLoad() {

@@ -28,14 +28,22 @@ import { ProductCardIndumentaria } from '../product-card-indumentaria/product-ca
   ]
 })
 export class ProductoDetalle implements OnInit {
-  private router = inject(Router);
-  private toastService = inject(ToastService);
   public adminStore = inject(AdminStoreService);
   public cartService = inject(CartService);
+  private router = inject(Router);
+  private toastService = inject(ToastService);
 
   slug = input.required<string>();
 
   cantidad = signal<number>(1);
+
+  visualizadorAbierto = signal<boolean>(false);
+  
+  imagenPrincipal = signal<string | null>(null);
+  talleSeleccionado = signal<string | null>(null);
+  colorSeleccionado = signal<string | null>(null);
+  
+  touchStartX = 0;
 
   productoActual = computed(() => {
     const productos = this.adminStore.productos();
@@ -44,10 +52,6 @@ export class ProductoDetalle implements OnInit {
     if (productos.length === 0) return null; 
     return productos.find(p => this.crearSlug(p.nombre) === productSlug) || null;
   });
-  
-  imagenPrincipal = signal<string | null>(null);
-  talleSeleccionado = signal<string | null>(null);
-  colorSeleccionado = signal<string | null>(null);
 
   tallesUnicos = computed(() => {
     const prod = this.productoActual();
@@ -99,6 +103,14 @@ export class ProductoDetalle implements OnInit {
     };
   });
 
+  indiceImagenActual = computed(() => {
+    const prod = this.productoActual();
+    if (!prod || !prod.imagenes || prod.imagenes.length === 0) return 1;
+    const url = this.imagenPrincipal();
+    const index = prod.imagenes.findIndex(img => img.url === url);
+    return index !== -1 ? index + 1 : 1;
+  });
+
   constructor() {
     // 2. Efecto para inicializar la imagen, talle y color UNA VEZ que el producto cargó
     effect(() => {
@@ -145,6 +157,37 @@ export class ProductoDetalle implements OnInit {
         this.router.navigate(['/not-found']);
       }
     }
+  }
+
+  onTouchStart(event: TouchEvent) {
+    this.touchStartX = event.changedTouches[0].screenX;
+  }
+
+  onTouchEnd(event: TouchEvent, imagenes: any[]) {
+    if (!imagenes || imagenes.length <= 1) return;
+    
+    const touchEndX = event.changedTouches[0].screenX;
+    const umbral = 50;
+
+    if (this.touchStartX - touchEndX > umbral) {
+      this.imagenSiguiente(imagenes);
+    } else if (touchEndX - this.touchStartX > umbral) {
+      this.imagenAnterior(imagenes);
+    }
+  }
+
+  imagenSiguiente(imagenes: any[]) {
+    if (!imagenes || imagenes.length <= 1) return;
+    const indexActual = imagenes.findIndex(img => img.url === this.imagenPrincipal());
+    const nextIndex = (indexActual + 1) % imagenes.length;
+    this.imagenPrincipal.set(imagenes[nextIndex].url);
+  }
+
+  imagenAnterior(imagenes: any[]) {
+    if (!imagenes || imagenes.length <= 1) return;
+    const indexActual = imagenes.findIndex(img => img.url === this.imagenPrincipal());
+    const prevIndex = (indexActual - 1 + imagenes.length) % imagenes.length;
+    this.imagenPrincipal.set(imagenes[prevIndex].url);
   }
 
   verMasCategoria() {
@@ -208,6 +251,20 @@ export class ProductoDetalle implements OnInit {
       this.cartService.open();
       this.cantidad.set(1);
     }
+  }
+
+  abrirVisualizador() {
+    this.visualizadorAbierto.set(true);
+    document.body.style.overflow = 'hidden';
+  }
+
+  cerrarVisualizador() {
+    this.visualizadorAbierto.set(false);
+    document.body.style.overflow = '';
+  }
+
+  scrollThumbnails(element: HTMLElement, distance: number) {
+    element.scrollBy({ left: distance, behavior: 'smooth' });
   }
 
   private crearSlug(texto: string): string {
