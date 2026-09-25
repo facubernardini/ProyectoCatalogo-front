@@ -8,7 +8,7 @@
         @if (mejorOferta(); as oferta) {
             @if (oferta.precio_descuento) {
                 <div class="absolute -top-0.5 left-1.5 z-20 pointer-events-none">
-                    <span class="bg-brand-accent text-white text-[9px] font-semibold uppercase tracking-wider px-1 py-0.5 rounded-sm">
+                    <span class="text-[9px] md:text-[10px] bg-brand-accent text-white font-semibold uppercase tracking-wider px-1 py-0.5 rounded-sm">
                         {{ calcularPorcentajeOff(oferta.precio, oferta.precio_descuento) }}% OFF
                     </span>
                 </div>
@@ -44,12 +44,12 @@
     <div class="p-2 flex flex-col flex-1">
         
         @if (producto().marca) {
-            <p class="text-[9px] font-medium text-gray-500 uppercase tracking-wider truncate mb-0.5">
+            <p class="text-[9px] md:text-[11px] font-medium text-gray-500 uppercase tracking-wider truncate mb-0.5">
                 {{ producto().marca }}
             </p>
         }
 
-        <h3 class="text-brand-text font-bold text-xs sm:text-[13px] line-clamp-2 leading-tight mb-1.5">
+        <h3 class="text-xs md:text-sm text-brand-text font-bold line-clamp-2 leading-tight mb-1.5">
             {{ producto().nombre }}
         </h3>
 
@@ -63,10 +63,10 @@
                 <div class="flex items-baseline gap-1.5">
                     @if (cheapest.precio_descuento) {
                         <div class="flex flex-col gap-0.5">
-                            <span class="text-[10px] text-gray-400 line-through font-medium tracking-tighter leading-none">
+                            <span class="text-[10px] md:text-xs text-gray-400 line-through font-medium tracking-tighter leading-none">
                                 ${{ cheapest.precio | number:'1.0-0' }}
                             </span>
-                            <span class="text-brand-text font-black text-sm sm:text-base leading-none tracking-tighter">
+                            <span class="text-sm md:text-base text-brand-text font-black leading-none tracking-tighter">
                                 ${{ cheapest.precio_descuento | number:'1.0-0' }}
                             </span>
                         </div>
@@ -79,10 +79,10 @@
 
                 @if (adminStore.catalogo()!.descuento_en_efectivo > 0) {
                     <div class="flex items-center gap-1 mt-1">
-                        <span class="text-green-600 font-semibold text-[10px] tracking-tighter">
+                        <span class="text-[10px] md:text-xs text-green-600 font-semibold tracking-tighter">
                             ${{ calcularPrecioEfectivo(cheapest.precio_descuento || cheapest.precio) | number:'1.0-0' }}
                         </span>
-                        <span class="text-green-600/70 text-[8px] font-semibold uppercase tracking-wider">
+                        <span class="text-[8px] md:text-[10px] text-green-600/70 font-semibold uppercase tracking-wider">
                             pago ef.
                         </span>
                     </div>

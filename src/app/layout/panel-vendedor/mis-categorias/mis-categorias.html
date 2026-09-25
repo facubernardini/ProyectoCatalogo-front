@@ -180,7 +180,7 @@
                                 [class.opacity-50]="!cat.activo">
                                 
                                 @if (adminStore.esIndumentaria() && cat.imagen) {
-                                    <div class="relative shrink-0 size-12 rounded-xl overflow-hidden border border-gray-100">
+                                    <div class="relative shrink-0 size-12 md:size-14 rounded-xl overflow-hidden border border-gray-100">
                                         <div class="relative w-full h-full bg-brand-bg shrink-0 overflow-hidden"
                                             [class.animate-pulse]="!imageLoaded()"
                                             [class.grayscale]="!cat.activo">
@@ -202,7 +202,7 @@
                                     </div>
                                         
                                 } @else {
-                                    <div class="shrink-0 size-12 rounded-xl flex items-center justify-center transition-colors"
+                                    <div class="shrink-0 size-12 md:size-14 rounded-lg flex items-center justify-center transition-colors"
                                         [class]="!cat.activo 
                                             ? 'bg-gray-100 text-gray-400' 
                                             : (cat.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/30 text-brand-accent')">

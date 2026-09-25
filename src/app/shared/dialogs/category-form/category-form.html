@@ -11,7 +11,7 @@
             <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 border-b border-gray-100">
                 <div class="flex items-center gap-3">
                     <button (click)="categoryFormService.close()" 
-                            class="group p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-all duration-300 active:scale-90 border border-gray-200/50">
+                            class="group p-2 bg-gray-50 md:hover:bg-gray-100 rounded-full transition-all duration-300 active:scale-90 border border-gray-200/50">
                         <app-icon name="back" 
                                 classes="size-5 text-gray-500 group-hover:text-brand-accent transition-colors fill-current" />
                     </button>
@@ -23,7 +23,7 @@
 
                 <button (click)="guardar()" 
                         [disabled]="!categoryFormService.nombre().trim() || isNameDuplicate() || isUploading()"
-                        class="relative px-4 py-2 bg-brand-accent text-white text-sm font-bold rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
+                        class="relative px-4 py-2 bg-brand-accent text-white text-sm font-bold rounded-2xl shadow-lg shadow-brand-accent/20 md:hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
                     
                     <div class="flex items-center gap-2">
                         <span>
@@ -42,7 +42,7 @@
                         </p>
                 
                         <div class="flex items-center gap-4">
-                            <div class="size-24 bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center relative group">
+                            <div class="w-24 aspect-4/5 bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center relative group">
                                 @if (categoria.imagen || imagenPreviewTemporal()) {
                                     <img [src]="imagenPreviewTemporal() || categoria.imagen" class="w-full h-full object-cover">
                                     
@@ -60,7 +60,7 @@
                             </div>
                             <div class="flex-1">
                                 <p class="text-sm font-bold text-brand-text">Foto de la categoría</p>
-                                <p class="pt-1 text-xs font-base text-brand-text">Recomendado: Foto cuadrada, producto centrado.</p>
+                                <p class="pt-1 text-xs font-base text-brand-text">Recomendado: Foto vertical, producto centrado.</p>
                             </div>
                         </div>
                     </section>
@@ -96,7 +96,7 @@
                             {{ categoria.especial ? 'Categoría Especial' : 'Marcar como Especial' }}
                         </button>
                         <p class="text-[10px] text-gray-400 ml-1 mt-1 italic">
-                            * Aparecerá al principio de la lista con un diseño destacado.
+                            * Aparecerá al principio de la lista.
                         </p>
                     </div>
                 </section>

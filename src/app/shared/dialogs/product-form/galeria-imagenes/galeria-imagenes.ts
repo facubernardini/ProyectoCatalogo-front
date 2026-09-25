@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, computed, signal } from
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import { ProductoImagen } from 'src/app/core/models/producto.model';
+import { Icon } from 'src/app/shared/components/icon';
 
 export interface ImagenPreview {
   id_temporal: string;
@@ -14,7 +15,7 @@ export interface ImagenPreview {
 @Component({
   selector: 'app-galeria-imagenes',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder, FormsModule],
+  imports: [CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder, FormsModule, Icon],
   templateUrl: './galeria-imagenes.html'
 })
 export class GaleriaImagenes implements OnInit {

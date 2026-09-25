@@ -364,11 +364,11 @@
                 <!-- LISTADO DE PRODUCTOS -->
                 <div class="flex flex-col gap-2 pb-22">
                     @for (producto of productosVisibles(); track producto.id) {
-                        <div (click)="productPreviewService.open(producto)"
-                            class="relative flex items-start gap-2.5 bg-white p-2.5 rounded-xl border border-gray-100 md:hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] transition-all group shadow-xs cursor-pointer">
+                        <div (click)="manejarClickProducto(producto)"
+                            class="relative flex items-start gap-2.5 bg-white p-2 rounded-xl border border-gray-100 md:hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] transition-all group shadow-xs cursor-pointer">
                             
                             <!-- IMAGEN -->
-                            <div class="relative shrink-0 w-12 h-12 rounded-lg overflow-hidden mt-0.5">
+                            <div class="relative shrink-0 size-12 md:size-14 rounded-lg overflow-hidden mt-0.5">
                                 <div class="relative w-full h-full bg-brand-bg shrink-0 overflow-hidden"
                                     [class.animate-pulse]="!imageLoaded() && producto.imagen"
                                     [class.grayscale]="!producto.activo">
@@ -421,38 +421,52 @@
                                 @if (producto.activo) {                                
                                     <div class="w-full h-px bg-gray-100 my-1"></div>
                                     
-                                    <div class="flex flex-col gap-0.5">
-                                        @for (pres of producto.presentaciones; track $index) {
-                                            <div class="flex items-center flex-wrap gap-x-1 text-[11px]" [class.opacity-50]="pres.activo === false">
-                                                <span class="text-gray-500 font-medium">{{ pres.unidad_venta }} -</span>
-                                                
-                                                @if (pres.precio_descuento) {
-                                                    <span class="text-gray-400 line-through">${{ pres.precio | number:'1.0-0' }}</span>
-                                                    <span class="text-brand-text font-bold">${{ pres.precio_descuento | number:'1.0-0' }}</span>
-                                                } @else {
-                                                    <span class="text-brand-text font-bold">${{ pres.precio | number:'1.0-0' }}</span>
-                                                }
+                                    <!-- Indumentaria -->
+                                    @if (adminStore.esIndumentaria() && producto.presentaciones.length > 0) {
+                                        <div class="flex items-center gap-x-1 text-[11px] mt-1">
+                                            @if (producto.presentaciones[0].precio_descuento) {
+                                                <span class="text-gray-400 line-through">${{ producto.presentaciones[0].precio | number:'1.0-0' }}</span>
+                                                <span class="text-brand-text font-bold">${{ producto.presentaciones[0].precio_descuento | number:'1.0-0' }}</span>
+                                            } @else {
+                                                <span class="text-brand-text font-bold">${{ producto.presentaciones[0].precio | number:'1.0-0' }}</span>
+                                            }
+                                        </div>
+                                    } 
+                                    <!-- Tiendas Clásicas -->
+                                    @else {
+                                        <div class="flex flex-col gap-0.5">
+                                            @for (pres of producto.presentaciones; track $index) {
+                                                <div class="flex items-center flex-wrap gap-x-1 text-[11px]" [class.opacity-50]="pres.activo === false">
+                                                    <span class="text-gray-500 font-medium">{{ pres.unidad_venta }} -</span>
+                                                    
+                                                    @if (pres.precio_descuento) {
+                                                        <span class="text-gray-400 line-through">${{ pres.precio | number:'1.0-0' }}</span>
+                                                        <span class="text-brand-text font-bold">${{ pres.precio_descuento | number:'1.0-0' }}</span>
+                                                    } @else {
+                                                        <span class="text-brand-text font-bold">${{ pres.precio | number:'1.0-0' }}</span>
+                                                    }
 
-                                                @if (pres.stock !== null && pres.stock !== undefined) {
-                                                    <span class="flex items-center gap-0.5 ml-1 px-1 rounded-sm text-[9px] font-bold"
-                                                        [class.bg-red-50]="pres.stock === 0"
-                                                        [class.text-red-500]="pres.stock === 0"
-                                                        [class.bg-orange-50]="pres.stock > 0 && pres.stock <= umbralStock"
-                                                        [class.text-orange-500]="pres.stock > 0 && pres.stock <= umbralStock"
-                                                        [class.bg-green-100]="pres.stock > umbralStock"
-                                                        [class.text-green-500]="pres.stock > umbralStock">
-                                                        
-                                                        <app-icon name="box" classes="size-3 fill-current" />
-                                                        {{ pres.stock }}
-                                                    </span>
-                                                }
+                                                    @if (pres.stock !== null && pres.stock !== undefined) {
+                                                        <span class="flex items-center gap-0.5 ml-1 px-1 rounded-sm text-[9px] font-bold"
+                                                              [class.bg-red-50]="pres.stock === 0"
+                                                              [class.text-red-500]="pres.stock === 0"
+                                                              [class.bg-orange-50]="pres.stock > 0 && pres.stock <= umbralStock"
+                                                              [class.text-orange-500]="pres.stock > 0 && pres.stock <= umbralStock"
+                                                              [class.bg-green-100]="pres.stock > umbralStock"
+                                                              [class.text-green-500]="pres.stock > umbralStock">
+                                                            
+                                                            <app-icon name="box" classes="size-3 fill-current" />
+                                                            {{ pres.stock }}
+                                                        </span>
+                                                    }
 
-                                                @if (pres.activo === false) {
-                                                    <span class="text-[9px] font-semibold text-white bg-gray-500 px-1 rounded-sm uppercase tracking-wider ml-1">Pausada</span>
-                                                }
-                                            </div>
-                                        }
-                                    </div>
+                                                    @if (pres.activo === false) {
+                                                        <span class="text-[9px] font-semibold text-white bg-gray-500 px-1 rounded-sm uppercase tracking-wider ml-1">Pausada</span>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
                                 }
                             </div>
 
