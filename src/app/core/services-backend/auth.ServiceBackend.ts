@@ -67,6 +67,17 @@ export class AuthService {
     this.router.navigate(['/login'], { replaceUrl: true });
   }
 
+  logoutExpirado() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('vendedor');
+    this.vendedorActual.set(null);
+    
+    this.router.navigate(['/login'], { 
+      queryParams: { expired: true }, 
+      replaceUrl: true 
+    });
+  }
+
   refrescarSesion(): Observable<any> {
     const token = localStorage.getItem('token');
     
