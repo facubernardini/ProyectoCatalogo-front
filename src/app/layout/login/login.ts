@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
@@ -7,14 +7,15 @@ import { ToastService } from 'src/app/core/services/toast.service';
 import { Toast } from "src/app/shared/components/toast/toast";
 import { Icon } from "@shared/components/icon";
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
+import { LoadingSpinner } from 'src/app/shared/components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule, Toast, Icon],
+  imports: [CommonModule, ReactiveFormsModule, Toast, Icon, LoadingSpinner],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -26,14 +27,41 @@ export class Login {
   loginForm: FormGroup;
 
   showPassword = signal(false);
-
   isLoading = signal(false);
+  buscandoToken = signal(true);
 
   constructor() {
     this.loginForm = this.fb.group({
       correo: ['vendedor@test.com', [Validators.required, Validators.email]],
       password: ['password123', [Validators.required, Validators.minLength(8)]]
     });
+  }
+
+  ngOnInit() {
+    const token = localStorage.getItem('token');
+    const vendedorStr = localStorage.getItem('vendedor');
+    const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+    const isExpired = this.route.snapshot.queryParams['expired'];
+
+    if (isExpired) {
+      this.router.navigate([], { queryParams: { expired: null }, queryParamsHandling: 'merge', replaceUrl: true });
+      setTimeout(() => this.toastService.show('Tu sesión expiró. Ingresá nuevamente', 'error'), 100);
+    }
+
+    if (token && vendedorStr) {
+      try {
+        const vendedor = JSON.parse(vendedorStr);
+        if (vendedor.admin) {
+          this.router.navigateByUrl(returnUrl || '/backoffice/inicio', { replaceUrl: true });
+        } else {
+          this.router.navigateByUrl(returnUrl || '/panel-vendedor/inicio', { replaceUrl: true });
+        }
+      } catch (error) {
+        this.buscandoToken.set(false);
+      }
+    } else {
+      this.buscandoToken.set(false);
+    }
   }
 
   onSubmit() {
