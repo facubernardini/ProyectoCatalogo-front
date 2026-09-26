@@ -2,105 +2,109 @@
     
     <div class="w-full max-w-md bg-white rounded-4xl shadow-xl border border-brand-bg p-6 relative">
 
-        <header class="text-center my-5">
-            <div class="flex items-center justify-center gap-3 mb-2">
-                <img src="assets/home/logo_color.webp" [alt]="BRAND_DATA.name + ' Logo'" class="h-8 w-auto object-contain" />
-                <h1 class="text-3xl font-extrabold text-brand-accent tracking-tight">
-                    {{ BRAND_DATA.name }}
-                </h1>
-            </div>
-            <p class="text-brand-text-sec text-base md:text-lg pt-3">Ingresá a tu panel de control</p>
-        </header>
-
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
-        
-            <div>
-                <label for="correo" class="block text-sm font-semibold text-brand-text mb-2">Correo electrónico</label>
-                <div class="relative">
-                    <input 
-                        id="correo"
-                        type="email" 
-                        formControlName="correo" 
-                        placeholder="tu@correo.com"
-                        autocomplete="username"
-                        [readonly]="isLoading()"
-                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white read-only:opacity-70 read-only:cursor-not-allowed"
-                    >
+        @if (buscandoToken()) {
+            <app-loading-spinner/>
+        }
+        @else {
+            <header class="text-center my-5">
+                <div class="flex items-center justify-center gap-3 mb-2">
+                    <img src="assets/home/logo_color.webp" [alt]="BRAND_DATA.name + ' Logo'" class="h-8 w-auto object-contain" />
+                    <h1 class="text-3xl font-extrabold text-brand-accent tracking-tight">
+                        {{ BRAND_DATA.name }}
+                    </h1>
                 </div>
-            </div>
+                <p class="text-brand-text-sec text-base md:text-lg pt-3">Ingresá a tu panel de control</p>
+            </header>
 
-            <div>
-                <div class="flex items-center justify-between mb-2">
-                    <label for="password" class="block text-sm font-semibold text-brand-text">Contraseña</label>
-                    <button type="button" 
-                        (click)="!isLoading() && recuperarPassword()" 
-                        [disabled]="isLoading()"
-                        [class.opacity-50]="isLoading()"
-                        [class.cursor-not-allowed]="isLoading()"
-                        class="text-xs text-brand-accent font-bold md:hover:underline cursor-pointer transition-opacity bg-transparent border-none p-0 focus:outline-none">
-                        ¿Olvidaste tu contraseña?
-                    </button>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+            
+                <div>
+                    <label for="correo" class="block text-sm font-semibold text-brand-text mb-2">Correo electrónico</label>
+                    <div class="relative">
+                        <input 
+                            id="correo"
+                            type="email" 
+                            formControlName="correo" 
+                            placeholder="tu@correo.com"
+                            autocomplete="username"
+                            [readonly]="isLoading()"
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white read-only:opacity-70 read-only:cursor-not-allowed"
+                        >
+                    </div>
                 </div>
-                
-                <div class="relative">
-                    <input 
-                        id="password"
-                        [type]="showPassword() ? 'text' : 'password'" 
-                        formControlName="password" 
-                        placeholder="••••••••"
-                        autocomplete="current-password"
-                        [readonly]="isLoading()"
-                        class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white read-only:opacity-70 read-only:cursor-not-allowed"
-                        (input)="loginForm.get('password')?.value === '' ? showPassword.set(false) : null"
-                    >
-                
-                    @if (loginForm.get('password')?.value?.length > 0) {
-                        <button 
-                            type="button" 
+
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="password" class="block text-sm font-semibold text-brand-text">Contraseña</label>
+                        <button type="button" 
+                            (click)="!isLoading() && recuperarPassword()" 
                             [disabled]="isLoading()"
-                            (click)="showPassword.set(!showPassword())"
-                            [attr.aria-pressed]="showPassword()"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 md:hover:text-gray-600 transition-colors focus:outline-none animate-in fade-in duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                            aria-label="Alternar visibilidad de la contraseña">
-                            <app-icon 
-                                [name]="showPassword() ? 'eye-off' : 'eye'" 
-                                classes="size-5 fill-current" 
-                                aria-hidden="true"
-                            />
+                            [class.opacity-50]="isLoading()"
+                            [class.cursor-not-allowed]="isLoading()"
+                            class="text-xs text-brand-accent font-bold md:hover:underline cursor-pointer transition-opacity bg-transparent border-none p-0 focus:outline-none">
+                            ¿Olvidaste tu contraseña?
                         </button>
-                    }
+                    </div>
+                    
+                    <div class="relative">
+                        <input 
+                            id="password"
+                            [type]="showPassword() ? 'text' : 'password'" 
+                            formControlName="password" 
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                            [readonly]="isLoading()"
+                            class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg outline-none transition-all duration-200 placeholder:text-gray-400 bg-gray-50 focus:bg-white read-only:opacity-70 read-only:cursor-not-allowed"
+                            (input)="loginForm.get('password')?.value === '' ? showPassword.set(false) : null"
+                        >
+                    
+                        @if (loginForm.get('password')?.value?.length > 0) {
+                            <button 
+                                type="button" 
+                                [disabled]="isLoading()"
+                                (click)="showPassword.set(!showPassword())"
+                                [attr.aria-pressed]="showPassword()"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 md:hover:text-gray-600 transition-colors focus:outline-none animate-in fade-in duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                aria-label="Alternar visibilidad de la contraseña">
+                                <app-icon 
+                                    [name]="showPassword() ? 'eye-off' : 'eye'" 
+                                    classes="size-5 fill-current" 
+                                    aria-hidden="true"
+                                />
+                            </button>
+                        }
+                    </div>
                 </div>
-            </div>
 
-            <button 
-                type="submit" 
-                [disabled]="isLoading() || loginForm.invalid"
-                class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none">
-                
-                @if (isLoading()) {
-                    <svg class="animate-spin h-5 w-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Iniciando...</span>
-                } 
-                @else {
-                    <span>Iniciar Sesión</span>
-                }
-            </button>
+                <button 
+                    type="submit" 
+                    [disabled]="isLoading() || loginForm.invalid"
+                    class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none">
+                    
+                    @if (isLoading()) {
+                        <svg class="animate-spin h-5 w-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Iniciando...</span>
+                    } 
+                    @else {
+                        <span>Iniciar Sesión</span>
+                    }
+                </button>
 
-        </form>
+            </form>
 
-        <footer class="mt-8 text-center text-xs text-brand-text-sec">
-            ¿Todavía no tenés tu catálogo online? 
-            <button type="button" 
-                (click)="!isLoading() && registrarme()"
-                [disabled]="isLoading()"
-                class="text-brand-accent font-bold md:hover:underline cursor-pointer transition-opacity bg-transparent border-none p-0 focus:outline-none">
-                Crear tienda gratis
-            </button>
-        </footer>
-        
+            <footer class="mt-8 text-center text-xs text-brand-text-sec">
+                ¿Todavía no tenés tu catálogo online? 
+                <button type="button" 
+                    (click)="!isLoading() && registrarme()"
+                    [disabled]="isLoading()"
+                    class="text-brand-accent font-bold md:hover:underline cursor-pointer transition-opacity bg-transparent border-none p-0 focus:outline-none">
+                    Crear tienda gratis
+                </button>
+            </footer>
+        }
     </div>
 </main>
 

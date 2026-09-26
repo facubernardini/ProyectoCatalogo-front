@@ -51,6 +51,7 @@ export class PanelVendedor {
         }
         else {
           this.adminStore.isLoading.set(false);
+          this.authService.logoutExpirado();
         }
       },
       error: () => {
