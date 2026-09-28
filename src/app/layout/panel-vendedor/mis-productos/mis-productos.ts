@@ -20,7 +20,7 @@ import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
   styleUrl: './mis-productos.css',
 })
 export class MisProductos {
-  private adminStore = inject(AdminStoreService);
+  public adminStore = inject(AdminStoreService);
   private productFormService = inject(ProductFormService);
   private categoryFormService = inject(CategoryFormService);
   private route = inject(ActivatedRoute);
@@ -273,6 +273,12 @@ export class MisProductos {
     window.removeEventListener('scroll', this.handleInfiniteScroll, true);
 
     //this.contextMenu.limpiar();
+  }
+
+  manejarClickProducto(producto: any) {
+    if (!this.adminStore.esIndumentaria()) {
+      this.productPreviewService.open(producto);
+    }
   }
 
   getTotalProductos(): number {

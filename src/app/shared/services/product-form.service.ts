@@ -28,10 +28,10 @@ export class ProductFormService {
     document.body.style.overflow = 'auto';
   }
 
-  save(productData: any, imagenFile?: File | null) {
+  save(productData: any, imagenFile?: File | null, galeriaImagenes?: any[]) {
     const currentProduct = this.editingProduct();
     
-    this.productManager.guardar(productData, currentProduct, imagenFile);
+    this.productManager.guardar(productData, currentProduct, imagenFile, galeriaImagenes);
 
     this.close();
   }

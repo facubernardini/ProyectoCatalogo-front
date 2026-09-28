@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <aside class="absolute top-0 left-0 h-full w-[82%] bg-white shadow-2xl transition-transform duration-300 ease-in-out flex flex-col -translate-x-full transform-gpu will-change-transform backface-hidden"
+    <aside class="absolute top-0 left-0 h-full w-[82%] md:w-[25%] md:min-w-80 bg-white shadow-2xl transition-transform duration-300 ease-in-out flex flex-col -translate-x-full transform-gpu will-change-transform backface-hidden"
            [class.-translate-x-full]="!menuService.isOpen()"
            [class.translate-x-0]="menuService.isOpen()">
         
@@ -43,6 +43,14 @@
 
         <div class="px-3 pt-1.5 flex flex-col shrink-0 bg-white z-10 relative">
             <div class="flex flex-col gap-1 mb-4.5">
+                @if (adminStore.esIndumentaria()) {
+                    <button (click)="irAlInicio()" 
+                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm text-brand-accent bg-brand-accent/3">
+                        <app-icon name="home" classes="size-4 fill-current" />
+                        <span class="font-bold">Inicio</span>
+                    </button>
+                }
+
                 @if (tieneDestacados()) {
                     <button (click)="abrirDestacados()" 
                             class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm text-amber-600 bg-amber-50/50">

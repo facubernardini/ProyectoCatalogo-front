@@ -21,6 +21,11 @@ export interface ProductoPedidoDTO {
 
     producto_nombre: string;
     presentacion_unidad: string;
+
+    sku_comprado: string | null;
+    talle_comprado: string | null;
+    color_comprado: string | null;
+    
     precio_unitario: number;
     precio_costo_unitario: number | null;
     
