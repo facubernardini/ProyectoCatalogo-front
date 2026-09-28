@@ -10,6 +10,7 @@ interface GrupoProductos {
   ruta: string;
   productos: any[];
   tieneMas: boolean;
+  totalProductos: number;
 }
 
 @Component({
@@ -36,7 +37,8 @@ export class ProductosIndumentaria {
         nombre: 'Destacados',
         ruta: 'destacados',
         productos: prodsDestacados.slice(0, 4),
-        tieneMas: prodsDestacados.length > 4
+        tieneMas: prodsDestacados.length > 4,
+        totalProductos: prodsDestacados.length
       });
     }
 
@@ -54,12 +56,13 @@ export class ProductosIndumentaria {
         nombre: 'Ofertas Especiales',
         ruta: 'ofertas',
         productos: prodsOfertas.slice(0, 4),
-        tieneMas: prodsOfertas.length > 4
+        tieneMas: prodsOfertas.length > 4,
+        totalProductos: prodsOfertas.length
       });
     }
 
-    // --- 3. CATEGORÍAS NORMALES ---
-    const gruposCategorias = categorias.map(cat => {
+    // --- FUNCIÓN HELPER PARA MAPEAR CATEGORÍAS ---
+    const mapearCategoria = (cat: any) => {
       const prodsDeCategoria = todosProductos.filter(p => 
         p.categorias?.some(c => c.id === cat.id)
       );
@@ -69,11 +72,28 @@ export class ProductosIndumentaria {
         nombre: cat.nombre,
         ruta: this.crearSlug(cat.nombre),
         productos: prodsDeCategoria.slice(0, 4), 
-        tieneMas: prodsDeCategoria.length > 4
+        tieneMas: prodsDeCategoria.length > 4,
+        totalProductos: prodsDeCategoria.length
       };
-    }).filter(grupo => grupo.productos.length > 0);
+    };
 
-    return [...grupos, ...gruposCategorias];
+    // --- 3. CATEGORÍAS DESTACADAS
+    const gruposCategoriasDestacadas = categorias
+      .filter(cat => cat.especial)
+      .map(mapearCategoria)
+      .filter(grupo => grupo.productos.length > 0);
+
+    // --- 4. CATEGORÍAS NORMALES
+    const gruposCategoriasNormales = categorias
+      .filter(cat => !cat.especial)
+      .map(mapearCategoria)
+      .filter(grupo => grupo.productos.length > 0);
+
+    return [
+      ...grupos, 
+      ...gruposCategoriasDestacadas, 
+      ...gruposCategoriasNormales
+    ];
   });
 
   verMas(rutaDestino: string) {

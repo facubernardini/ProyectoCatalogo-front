@@ -219,15 +219,15 @@
 
                         <!-- TARJETA FINAL: VER MÁS -->
                         @if (productosSimilares().tieneMas) {
-                            <div class="w-[42%] md:w-[30%] lg:w-[22%] shrink-0 snap-start flex">
+                            <div class="w-[30%] md:w-[20%] lg:w-[12%] shrink-0 snap-start flex">
                                 <button (click)="verMasCategoria()"
-                                    class="w-full h-full min-h-70 flex flex-col items-center justify-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:border-brand-accent/30 transition-all group">
+                                    class="w-full h-full min-h-70 flex flex-col items-center justify-center gap-3 bg-gray-50 rounded-lg shadow-sm md:hover:bg-gray-100 transition-all group">
                                     
-                                    <div class="size-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:shadow-md transition-all">
+                                    <div class="size-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
                                         <app-icon name="chevron-right" classes="size-6 text-brand-accent fill-current" />
                                     </div>
                                     
-                                    <span class="text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-accent uppercase tracking-widest text-center px-4 transition-colors">
+                                    <span class="text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-accent uppercase tracking-wider text-center px-4 transition-colors">
                                         Ver más de {{ productosSimilares().categoriaPrincipal?.nombre }}
                                     </span>
                                 </button>

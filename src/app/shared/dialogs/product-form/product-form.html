@@ -209,7 +209,7 @@
                         </section>
                     </div>
 
-                    @if (!adminStore.esIndumentaria()) {
+                    @if (!adminStore.esIndumentaria() && (adminStore.tags().length > 0)) {
                         <section class="space-y-2 mt-6">
                             <div class="flex items-center justify-between">
                                 <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Restricciones</p>

@@ -1,56 +1,62 @@
 <footer class="w-full pt-6 mt-auto bg-transparent">
     <div class="flex flex-col items-center text-center">
     
-        <div class="w-full flex flex-col items-center bg-brand-accent text-white py-6 px-2">
-            
-            <h3 class="text-xs font-bold uppercase tracking-widest mb-4 opacity-90">Contacto</h3>
-            
-            <div class="flex items-center justify-center gap-6 mb-3">
-                @if (catalogo()?.wpp_numero) {
-                    <a (click)="abrirWhatsapp()"
-                        role="button" rel="noopener noreferrer"
-                        class="flex items-center gap-2 hover:opacity-90 transition-all">
-                        <app-icon name="whatsapp" classes="size-5 fill-current" />
-                        <span class="font-medium text-sm"> +549{{catalogo()?.wpp_numero}} </span>
-                    </a>
+        @if (catalogo()?.wpp_numero || catalogo()?.instagram_usuario || catalogo()?.direccion || catalogo()?.ciudad) {
+            <div class="w-full flex flex-col items-center bg-brand-accent text-white py-6 px-2">
+                
+                <h3 class="text-xs font-bold uppercase tracking-widest mb-4 opacity-90">
+                    {{ (catalogo()?.wpp_numero || catalogo()?.instagram_usuario) ? 'Contacto' : 'Ubicación' }}
+                </h3>
+                
+                @if (catalogo()?.wpp_numero || catalogo()?.instagram_usuario) {
+                    <div class="flex items-center justify-center gap-6 mb-3">
+                        @if (catalogo()?.wpp_numero) {
+                            <a (click)="abrirWhatsapp()"
+                                role="button" rel="noopener noreferrer"
+                                class="flex items-center gap-2 hover:opacity-90 transition-all">
+                                <app-icon name="whatsapp" classes="size-5 fill-current" />
+                                <span class="font-medium text-sm"> +549{{catalogo()?.wpp_numero}} </span>
+                            </a>
+                        }
+
+                        @if (catalogo()?.instagram_usuario) {
+                            <a (click)="abrirInstagram()"
+                                role="button" rel="noopener noreferrer"
+                                class="flex items-center gap-2 hover:opacity-90 transition-all">
+                                <app-icon name="instagram" classes="size-5 fill-current" />
+                                <span class="font-medium text-sm"> @{{catalogo()?.instagram_usuario}} </span>
+                            </a>
+                        }
+                    </div>
                 }
 
-                @if (catalogo()?.instagram_usuario) {
-                    <a (click)="abrirInstagram()"
-                        role="button" rel="noopener noreferrer"
-                        class="flex items-center gap-2 hover:opacity-90 transition-all">
-                        <app-icon name="instagram" classes="size-5 fill-current" />
-                        <span class="font-medium text-sm"> @{{catalogo()?.instagram_usuario}} </span>
+                @if (catalogo()?.direccion || catalogo()?.ciudad) {
+                    <a target="_blank" 
+                        rel="noopener noreferrer"
+                        [href]="'https://www.google.com/maps/search/?api=1&query=' + (catalogo()?.direccion || '') + ' ' + (catalogo()?.ciudad || '')"
+                        class="flex items-center gap-1 text-sm mt-1 hover:opacity-90 transition-all cursor-pointer">
+                        
+                        <app-icon name="location" classes="size-5 fill-current" />
+                        
+                        <span class="text-left">
+                            @if (catalogo()?.direccion) {
+                                {{ catalogo()?.direccion }}
+                            }
+                            
+                            @if (catalogo()?.direccion && catalogo()?.ciudad) {
+                                , 
+                            }
+                            
+                            @if (catalogo()?.ciudad) {
+                                {{ catalogo()?.ciudad }}
+                            }
+                        </span>
                     </a>
                 }
             </div>
+        }
 
-            @if (catalogo()?.direccion || catalogo()?.ciudad) {
-                <a target="_blank" 
-                    rel="noopener noreferrer"
-                    [href]="'https://www.google.com/maps/search/?api=1&query=' + (catalogo()?.direccion || '') + ' ' + (catalogo()?.ciudad || '')"
-                    class="flex items-center gap-1 text-sm mt-1 hover:opacity-90 transition-all cursor-pointer">
-                    
-                    <app-icon name="location" classes="size-5 fill-current" />
-                    
-                    <span class="text-left">
-                        @if (catalogo()?.direccion) {
-                            {{ catalogo()?.direccion }}
-                        }
-                        
-                        @if (catalogo()?.direccion && catalogo()?.ciudad) {
-                            , 
-                        }
-                        
-                        @if (catalogo()?.ciudad) {
-                            {{ catalogo()?.ciudad }}
-                        }
-                    </span>
-                </a>
-            }
-        </div>
-
-        <div class="w-full flex flex-col md:flex-row items-center justify-center pt-2 pb-3 md:py-2 gap-2 md:gap-4 bg-white">
+        <div class="w-full flex flex-col md:flex-row items-center justify-center pt-1.5 pb-2.5 md:py-1.5 gap-1.5 md:gap-4 bg-white">
             
             <div class="text-xs text-gray-800 font-medium flex items-center justify-center gap-2">
                 Catálogo creado con 

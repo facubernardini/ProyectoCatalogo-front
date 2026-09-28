@@ -41,6 +41,7 @@ import { ProductoDetalle } from './indumentaria/producto-detalle/producto-detall
 import { Producto } from 'src/app/core/models/producto.model';
 import { GrillaProductos } from './indumentaria/grilla-productos/grilla-productos';
 import { combineLatest } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-catalogo',
@@ -94,6 +95,9 @@ export class CatalogoPublico implements OnInit, OnDestroy {
   tituloGrilla = signal<string>('');
   productosFiltrados = signal<Producto[]>([]);
 
+  private urlSegments = toSignal(this.route.url, { initialValue: [] });
+  private queryMap = toSignal(this.route.queryParamMap);
+
   @HostListener('window:resize')
   onResize() {
     this.isDesktop.set(window.innerWidth >= 768);
@@ -140,9 +144,11 @@ export class CatalogoPublico implements OnInit, OnDestroy {
     effect(() => {
       const productos = this.adminStore.productos();
       const categorias = this.adminStore.categorias();
-      const segmentos = this.route.snapshot.url;
-      const query = this.route.snapshot.queryParamMap.get('q');
       const vista = this.vistaActual();
+      
+      const segmentos = this.urlSegments(); 
+      
+      const query = this.queryMap()?.get('q') || null; 
       
       if (productos.length === 0 || vista !== 'grilla') return;
 
@@ -182,12 +188,12 @@ export class CatalogoPublico implements OnInit, OnDestroy {
         const catEncontrada = categorias.find(c => this.crearSlug(c.nombre) === catSlug);
         
         if (catEncontrada) {
-            this.tituloGrilla.set(catEncontrada.nombre);
-            
-            const filtrados = productos.filter(p => 
-                p.categorias?.some(c => this.crearSlug(c.nombre) === catSlug)
-            );
-            this.productosFiltrados.set(filtrados);
+          this.tituloGrilla.set(catEncontrada.nombre);
+          
+          const filtrados = productos.filter(p => 
+            p.categorias?.some(c => this.crearSlug(c.nombre) === catSlug)
+          );
+          this.productosFiltrados.set(filtrados);
         }
       }
     });
