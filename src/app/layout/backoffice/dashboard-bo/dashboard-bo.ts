@@ -19,7 +19,7 @@ export class DashboardBO {
 
   vendedores = this.adminStore.vendedoresBackoffice;
   diasInactividad: number = 7;
-  cantUltimosLogueos: number = 4;
+  cantUltimosLogueos: number = 3;
 
   totalVendedores = computed(() => this.vendedores().length);
 
@@ -32,9 +32,9 @@ export class DashboardBO {
     haceUnaSemana.setDate(haceUnaSemana.getDate() - this.diasInactividad);
 
     return this.vendedores().filter(v => {
-      if (!v.ultimo_ingreso) return true;
+      if (!v.ultimo_login) return true;
       
-      const fechaUltimoIngreso = new Date(v.ultimo_ingreso);
+      const fechaUltimoIngreso = new Date(v.ultimo_login);
       
       return fechaUltimoIngreso < haceUnaSemana;
     }).length;
@@ -46,10 +46,21 @@ export class DashboardBO {
 
   ultimosLogueos = computed(() => {
     return this.vendedores()
-      .filter(v => v.ultimo_ingreso)
+      .filter(v => v.ultimo_login)
       .sort((a, b) => {
-        const fechaA = new Date(a.ultimo_ingreso!).getTime();
-        const fechaB = new Date(b.ultimo_ingreso!).getTime();
+        const fechaA = new Date(a.ultimo_login!).getTime();
+        const fechaB = new Date(b.ultimo_login!).getTime();
+        return fechaB - fechaA;
+      })
+      .slice(0, this.cantUltimosLogueos);
+  });
+
+  ultimasActividades = computed(() => {
+    return this.vendedores()
+      .filter(v => v.ultima_actividad)
+      .sort((a, b) => {
+        const fechaA = new Date(a.ultima_actividad!).getTime();
+        const fechaB = new Date(b.ultima_actividad!).getTime();
         return fechaB - fechaA;
       })
       .slice(0, this.cantUltimosLogueos);
@@ -67,14 +78,34 @@ export class DashboardBO {
   totalPremium = computed(() => 
     this.vendedores().filter(v => v.suscripcion?.tipo_plan?.toLowerCase() === 'premium').length
   );
+
+  diasParaOcultarTienda(fechaFin: string | Date | undefined): { dias: number; texto: string; expirado: boolean } {
+    if (!fechaFin) return { dias: 0, texto: 'Fecha no válida', expirado: true };
+
+    const fechaVencimiento = new Date(fechaFin);
+    // Fecha límite: vencimiento + 10 días
+    const fechaLimite = new Date(fechaVencimiento.getTime() + 10 * 24 * 60 * 60 * 1000);
+    const ahora = new Date();
+
+    const diferenciaMs = fechaLimite.getTime() - ahora.getTime();
+    const diasRestantes = Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+
+    if (diasRestantes <= 0) {
+      return { dias: 0, texto: 'Tienda oculta', expirado: true };
+    } else if (diasRestantes === 1) {
+      return { dias: 1, texto: 'Se oculta hoy', expirado: false };
+    } else {
+      return { dias: diasRestantes, texto: `Se oculta en ${diasRestantes}d`, expirado: false };
+    }
+  }
   
   async onLogout() {
     const confirm = await this.confirmService.ask({
-        title: '¿Cerrar sesión?',
-        message: ``,
-        icon: 'info',
-        type: 'info'
-      });
+      title: '¿Cerrar sesión?',
+      message: ``,
+      icon: 'info',
+      type: 'info'
+    });
 
     if (confirm) {
       this.authService.logout();

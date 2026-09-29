@@ -11,17 +11,17 @@
                 
                 <div class="grid grid-cols-3 gap-2 divide-x divide-gray-200">
                     <div class="flex flex-col items-center justify-center">
-                        <span class="text-2xl font-black text-brand-text">{{ totalVendedores() }}</span>
+                        <span class="text-xl font-black text-brand-text">{{ totalVendedores() }}</span>
                         <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Registrados</span>
                     </div>
                     
                     <div class="flex flex-col items-center justify-center">
-                        <span class="text-2xl font-black text-green-500">{{ vendedoresActivos() }}</span>
+                        <span class="text-xl font-black text-green-500">{{ vendedoresActivos() }}</span>
                         <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Activos</span>
                     </div>
                     
                     <div class="flex flex-col items-center justify-center">
-                        <span class="text-2xl font-black text-orange-500">{{ vendedoresInactivos() }}</span>
+                        <span class="text-xl font-black text-orange-500">{{ vendedoresInactivos() }}</span>
                         <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1 text-center leading-tight">Inactivos<br>(> 7 días)</span>
                     </div>
                 </div>
@@ -35,17 +35,17 @@
                 
                 <div class="grid grid-cols-3 gap-2 divide-x divide-gray-200">
                     <div class="flex flex-col items-center justify-center">
-                        <span class="text-2xl font-black text-blue-500">{{ totalPrueba() }}</span>
+                        <span class="text-xl font-black text-blue-500">{{ totalPrueba() }}</span>
                         <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Prueba</span>
                     </div>
                     
                     <div class="flex flex-col items-center justify-center">
-                        <span class="text-2xl font-black text-brand-text">{{ totalBase() }}</span>
+                        <span class="text-xl font-black text-brand-text">{{ totalBase() }}</span>
                         <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Base</span>
                     </div>
                     
                     <div class="flex flex-col items-center justify-center">
-                        <span class="text-2xl font-black text-purple-600">{{ totalPremium() }}</span>
+                        <span class="text-xl font-black text-purple-600">{{ totalPremium() }}</span>
                         <span class="text-[9px] sm:text-[10px] text-brand-text-sec uppercase tracking-wider font-bold mt-1">Premium</span>
                     </div>
                 </div>
@@ -59,32 +59,30 @@
 
                 <div class="flex flex-col gap-2">
                     @if (vendedoresPendientesPago().length === 0) {
-                        <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
+                        <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-lg">
                             No hay suscripciones pendientes de pago.
                         </div>
                     } @else {
                         @for (vendedor of vendedoresPendientesPago(); track vendedor.id) {
-                            <div class="flex items-center justify-between p-3 bg-orange-50/50 border border-orange-100 rounded-xl">
+                            <div class="flex items-center justify-between px-2.5 py-1.5 bg-orange-50/50 border border-orange-100 rounded-lg">
                                 
                                 <div class="flex flex-col">
                                     <span class="text-brand-text font-semibold text-sm">{{ vendedor.nombre_apellido }}</span>
                                     <span class="text-brand-text-sec text-xs">{{ vendedor.correo }}</span>
                                 </div>
                                 
-                                <div class="flex flex-col items-end text-right">
-                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
-                                        [class.bg-blue-100]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'prueba'"
-                                        [class.text-blue-700]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'prueba'"
-                                        [class.bg-gray-200]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'base'"
-                                        [class.text-gray-700]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'base'"
-                                        [class.bg-purple-100]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'premium'"
-                                        [class.text-purple-700]="vendedor.suscripcion?.tipo_plan?.toLowerCase() === 'premium'">
-                                        {{ vendedor.suscripcion?.tipo_plan }}
-                                    </span>
-                                    
+                                <div class="flex flex-col items-end text-right">                                    
                                     <span class="text-orange-600 font-bold text-xs mt-1 flex items-center gap-1">
-                                        Vence: {{ vendedor.suscripcion?.fecha_fin | date:'dd/MM':'UTC' }}
+                                        Venció: {{ vendedor.suscripcion?.fecha_fin | date:'dd/MM':'UTC' }}
                                     </span>
+
+                                    @if (vendedor.suscripcion?.fecha_fin; as fechaFin) {
+                                        @let estadoGracia = diasParaOcultarTienda(fechaFin);
+                                        <span class="text-[10px] font-semibold mt-0.5"
+                                            [class]="estadoGracia.expirado ? 'text-red-500 font-bold' : 'text-gray-400'">
+                                            {{ estadoGracia.texto }}
+                                        </span>
+                                    }
                                 </div>
 
                             </div>
@@ -101,12 +99,12 @@
 
                 <div class="flex flex-col gap-2">
                     @if (ultimosLogueos().length === 0) {
-                        <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-xl">
+                        <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-lg">
                             Nadie ha iniciado sesión aún.
                         </div>
                     } @else {
                         @for (vendedor of ultimosLogueos(); track vendedor.id) {
-                            <div class="flex items-center justify-between p-3 bg-gray-50 border border-gray-100 rounded-xl">
+                            <div class="flex items-center justify-between px-2.5 py-1.5 bg-gray-50 border border-gray-100 rounded-lg">
                                 
                                 <div class="flex flex-col">
                                     <span class="text-brand-text font-semibold text-sm">{{ vendedor.nombre_apellido }}</span>
@@ -115,10 +113,39 @@
                                 
                                 <div class="flex flex-col items-end text-right">
                                     <span class="text-gray-700 font-bold text-xs">
-                                        {{ vendedor.ultimo_ingreso | date:'dd/MM HH:mm':'-0300' }} hs
+                                        {{ vendedor.ultimo_login | date:'dd/MM HH:mm':'-0300' }} hs
                                     </span>
-                                    <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">
-                                        Conexión
+                                </div>
+
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="bg-white border border-brand-bg p-3 rounded-2xl shadow-sm shadow-blue-100/50">
+                <div class="flex items-center gap-2 mb-3">
+                    <app-icon name="history" classes="size-4 fill-current text-gray-400" />
+                    <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-500">Última Actividad</h2>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    @if (ultimasActividades().length === 0) {
+                        <div class="py-4 text-center text-xs font-medium text-gray-400 border border-dashed border-gray-200 rounded-lg">
+                            No hay actividad registrada aún.
+                        </div>
+                    } @else {
+                        @for (vendedor of ultimasActividades(); track vendedor.id) {
+                            <div class="flex items-center justify-between px-2.5 py-1.5 bg-gray-50 border border-gray-100 rounded-lg">
+                                
+                                <div class="flex flex-col">
+                                    <span class="text-brand-text font-semibold text-sm">{{ vendedor.nombre_apellido }}</span>
+                                    <span class="text-brand-text-sec text-xs">{{ vendedor.correo }}</span>
+                                </div>
+                                
+                                <div class="flex flex-col items-end text-right">
+                                    <span class="text-gray-700 font-bold text-xs">
+                                        {{ vendedor.ultima_actividad | date:'dd/MM HH:mm':'-0300' }} hs
                                     </span>
                                 </div>
 
