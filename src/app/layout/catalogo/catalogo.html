@@ -17,10 +17,10 @@
 
             <!-- Vista GRILLA (Búsqueda o Categorías) -->
             @else if (vistaActual() === 'grilla') {
-            <app-grilla-productos 
-                [titulo]="tituloGrilla()" 
-                [productos]="productosFiltrados()" />
-        }
+                <app-grilla-productos 
+                    [titulo]="tituloGrilla()" 
+                    [productos]="productosFiltrados()" />
+            }
 
         </app-indumentaria>
     } @else {

@@ -1,9 +1,10 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Producto } from 'src/app/core/models/producto.model';
 import { Icon } from "@shared/components/icon";
 import { ProductCardIndumentaria } from '../product-card-indumentaria/product-card-indumentaria';
+import { Location } from '@angular/common';
 
 export type TipoOrden = 'nuevo' | 'viejo' | 'precio_alto' | 'precio_bajo' | 'az' | 'za';
 interface ColorData {
@@ -18,6 +19,10 @@ interface ColorData {
   templateUrl: './grilla-productos.html',
 })
 export class GrillaProductos {
+  private location = inject(Location);
+  
+  layoutColumnas = signal<1 | 2>(2);
+
   titulo = input.required<string>();
   productos = input.required<Producto[]>();
 
@@ -114,6 +119,44 @@ export class GrillaProductos {
            this.precioMax() !== null;
   }
 
+  removerMarca(marca: string) {
+    const nuevasTemp = new Set(this.tempMarcas());
+    nuevasTemp.delete(marca);
+    this.tempMarcas.set(nuevasTemp);
+
+    const nuevasActivas = new Set(this.marcasSeleccionadas());
+    nuevasActivas.delete(marca);
+    this.marcasSeleccionadas.set(nuevasActivas);
+  }
+
+  removerTalle(talle: string) {
+    const nuevosTemp = new Set(this.tempTalles());
+    nuevosTemp.delete(talle);
+    this.tempTalles.set(nuevosTemp);
+
+    const nuevasActivas = new Set(this.tallesSeleccionados());
+    nuevasActivas.delete(talle);
+    this.tallesSeleccionados.set(nuevasActivas);
+  }
+
+  removerColor(color: string) {
+    const nuevosTemp = new Set(this.tempColores());
+    nuevosTemp.delete(color);
+    this.tempColores.set(nuevosTemp);
+
+    const nuevasActivas = new Set(this.coloresSeleccionados());
+    nuevasActivas.delete(color);
+    this.coloresSeleccionados.set(nuevasActivas);
+  }
+
+  removerPrecio() {
+    this.tempPrecioMin.set(null);
+    this.tempPrecioMax.set(null);
+    
+    this.precioMin.set(null);
+    this.precioMax.set(null);
+  }
+
   limpiarTodosLosFiltros() {
     this.marcasSeleccionadas.set(new Set());
     this.tallesSeleccionados.set(new Set());
@@ -150,6 +193,7 @@ export class GrillaProductos {
 
   cambiarOrden(nuevoOrden: TipoOrden) {
     this.tempOrdenActual.set(nuevoOrden);
+    this.ordenActual.set(nuevoOrden);
   }
 
   toggleMarca(marca: string) {
@@ -210,5 +254,9 @@ export class GrillaProductos {
         return Number(precioP) < Number(precioMin) ? p : min;
     });
     return Number(mejorPres.precio_descuento ?? mejorPres.precio);
+  }
+
+  volver() {
+    this.location.back();
   }
 }

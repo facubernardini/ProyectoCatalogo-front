@@ -7,6 +7,7 @@ export interface VendedorBackoffice {
     activo: boolean;
     creado_el: Date;
     actualizado_el: Date;
-    ultimo_ingreso: Date | null;
+    ultimo_login: Date | null;
+    ultima_actividad: Date | null;
     suscripcion: Suscripcion | null;
 }

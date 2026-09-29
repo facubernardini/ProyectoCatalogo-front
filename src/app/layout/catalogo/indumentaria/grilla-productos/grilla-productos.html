@@ -1,310 +1,341 @@
-<div class="max-w-7xl mx-auto p-3 md:p-5 min-h-[60vh] relative">
+<div class="relative min-h-[60vh]">
     
-    <!-- Encabezado de la Grilla -->
-    <div class="flex flex-col mb-3 md:mb-6 border-b border-gray-100 pb-3">
-        <div class="flex items-center justify-between">
-            <h2 class="text-base md:text-lg font-semibold text-brand-text tracking-wide">
-                {{ titulo() }}
-            </h2>
-            <button (click)="toggleFiltros()" 
-                    class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors">
-                <app-icon name="filter" classes="size-4 text-brand-text fill-current" />
-                <span class="text-xs font-semibold text-brand-text tracking-widest">Filtrar</span>
-            </button>
+    <!-- 1. SECCIÓN SUPERIOR: Toolbar de Controles -->
+    <div class="sticky top-16 md:top-20 z-40 bg-white border-b border-gray-100 shadow-xs w-full">
+        <div class="max-w-7xl mx-auto px-3 md:px-6 flex items-center justify-between w-full">
+            
+            <!-- BLOQUE IZQUIERDO: Botón Volver -->
+            <div class="flex items-center">
+                <button (click)="volver()" 
+                        class="flex items-center gap-1.5 py-2 text-gray-500 md:hover:text-brand-text transition-colors group">
+                    <app-icon name="back" classes="size-5 md:size-6 fill-current transition-transform group-hover:-translate-x-0.5" />
+                    <span class="text-sm font-medium hidden md:block">Volver</span>
+                </button>
+            </div>
+
+            <!-- BLOQUE CENTRAL / DERECHO: Acciones -->
+            <div class="flex items-center justify-end flex-1 md:flex-none gap-3 md:gap-5 py-2">
+                
+                <!-- Botones de Acción (Ordenar / Filtrar) -->
+                <div class="flex items-center gap-4 md:gap-3">
+                    
+                    <!-- Botón ORDENAR (Ahora con menú flotante) -->
+                    <div class="relative">
+                        <button (click)="toggleAcordeonOrden()" 
+                                class="flex items-center gap-1.5 text-gray-500 md:hover:text-brand-text transition-colors">
+                            <app-icon name="sort" classes="size-4 md:size-5 fill-current" />
+                            <span class="text-[11px] md:text-xs font-bold uppercase tracking-widest">Ordenar</span>
+                        </button>
+
+                        <!-- Menú Flotante de Orden -->
+                        @if (isOrdenDesplegado()) {
+                            <!-- Overlay invisible para cerrar al hacer clic afuera -->
+                            <div class="fixed inset-0 z-40" (click)="toggleAcordeonOrden()"></div>
+
+                            <div class="absolute top-full mt-2 -left-2 min-w-50 z-50 bg-white border border-gray-100 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100">
+                                
+                                <!-- Más nuevo -->
+                                <button type="button"
+                                        (click)="cambiarOrden('nuevo'); toggleAcordeonOrden()"
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
+                                        [class]="tempOrdenActual() === 'nuevo' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                    <span class="whitespace-nowrap">Más nuevo al más viejo</span>
+                                    @if (tempOrdenActual() === 'nuevo') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
+                                </button>
+
+                                <!-- Más viejo -->
+                                <button type="button"
+                                        (click)="cambiarOrden('viejo'); toggleAcordeonOrden()"
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
+                                        [class]="tempOrdenActual() === 'viejo' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                    <span class="whitespace-nowrap">Más viejo al más nuevo</span>
+                                    @if (tempOrdenActual() === 'viejo') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
+                                </button>
+
+                                <!-- Precio Alto -->
+                                <button type="button"
+                                        (click)="cambiarOrden('precio_alto'); toggleAcordeonOrden()"
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
+                                        [class]="tempOrdenActual() === 'precio_alto' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                    <span class="whitespace-nowrap">Precio: Mayor a Menor</span>
+                                    @if (tempOrdenActual() === 'precio_alto') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
+                                </button>
+
+                                <!-- Precio Bajo -->
+                                <button type="button"
+                                        (click)="cambiarOrden('precio_bajo'); toggleAcordeonOrden()"
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
+                                        [class]="tempOrdenActual() === 'precio_bajo' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                    <span class="whitespace-nowrap">Precio: Menor a Mayor</span>
+                                    @if (tempOrdenActual() === 'precio_bajo') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
+                                </button>
+
+                                <!-- A-Z -->
+                                <button type="button"
+                                        (click)="cambiarOrden('az'); toggleAcordeonOrden()"
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
+                                        [class]="tempOrdenActual() === 'az' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                    <span class="whitespace-nowrap">Nombre: A - Z</span>
+                                    @if (tempOrdenActual() === 'az') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
+                                </button>
+
+                                <!-- Z-A -->
+                                <button type="button"
+                                        (click)="cambiarOrden('za'); toggleAcordeonOrden()"
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
+                                        [class]="tempOrdenActual() === 'za' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                    <span class="whitespace-nowrap">Nombre: Z - A</span>
+                                    @if (tempOrdenActual() === 'za') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
+                                </button>
+
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Botón FILTRAR (Este sigue abriendo el panel lateral) -->
+                    <button (click)="toggleFiltros()" 
+                            class="flex items-center gap-1.5 text-gray-500 md:hover:text-brand-text transition-colors">
+                        <app-icon name="filter" classes="size-4 md:size-5 fill-current" />
+                        <span class="text-[11px] md:text-xs font-bold uppercase tracking-widest">Filtrar</span>
+                    </button>
+                </div>
+
+                <!-- Separador 2 -->
+                <div class="w-px h-6 bg-gray-300"></div>
+
+                <!-- Botones de Layout -->
+                <div class="flex items-center gap-1">
+                    <button (click)="layoutColumnas.set(1)"
+                            class="text-gray-600 hover:text-gray-700 p-1">
+                        <app-icon [name]="layoutColumnas() === 1 ? 'square-filled' : 'square'" 
+                                  classes="size-5 md:size-6 fill-current" />
+                    </button>
+                    
+                    <button (click)="layoutColumnas.set(2)"
+                            class="text-gray-600 hover:text-gray-700 p-1">
+                        <app-icon [name]="layoutColumnas() !== 1 ? 'grid-filled' : 'grid'" 
+                                  classes="size-5 md:size-6 fill-current" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Principal (Grilla y Títulos) -->
+    <div class="max-w-7xl mx-auto p-3 md:p-5">
+        
+        <!-- Encabezado Inferior (Título y Chips) -->
+        <div class="flex flex-col gap-2 mb-4 md:mb-6 border-b border-gray-100 pb-3">
+            
+            <!-- 2. SECCIÓN MEDIA: Título -->
+            <div>
+                <h2 class="text-base md:text-lg font-semibold text-brand-text tracking-wide">
+                    {{ titulo() }}
+                </h2>
+            </div>
+
+            <!-- 3. SECCIÓN INFERIOR: Filtros Activos -->
+            @if (hayFiltrosActivos()) {
+                <div class="flex flex-wrap items-center gap-2 pt-1">
+                    <span class="text-[11px] font-medium text-gray-500 uppercase tracking-wide mr-1">
+                        Filtros:
+                    </span>
+                    
+                    <!-- Chips de Marca -->
+                    @for (marca of marcasSeleccionadas(); track marca) {
+                        <div class="flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-sm group">
+                            <span class="text-xs font-medium text-gray-700">{{ marca }}</span>
+                            <button (click)="removerMarca(marca)" class="text-gray-400 md:hover:text-red-500 transition-colors">
+                                <app-icon name="close" classes="size-3 fill-current" />
+                            </button>
+                        </div>
+                    }
+
+                    <!-- Chips de Talle -->
+                    @for (talle of tallesSeleccionados(); track talle) {
+                        <div class="flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-sm group">
+                            <span class="text-xs font-medium text-gray-700">Talle {{ talle }}</span>
+                            <button (click)="removerTalle(talle)" class="text-gray-400 md:hover:text-red-500 transition-colors">
+                                <app-icon name="close" classes="size-3 fill-current" />
+                            </button>
+                        </div>
+                    }
+
+                    <!-- Chips de Color -->
+                    @for (color of coloresSeleccionados(); track color) {
+                        <div class="flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-sm group">
+                            <span class="text-xs font-medium text-gray-700">{{ color }}</span>
+                            <button (click)="removerColor(color)" class="text-gray-400 md:hover:text-red-500 transition-colors">
+                                <app-icon name="close" classes="size-3 fill-current" />
+                            </button>
+                        </div>
+                    }
+
+                    <!-- Chip de Precio (Combinado) -->
+                    @if (precioMin() !== null || precioMax() !== null) {
+                        <div class="flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-sm group">
+                            <span class="text-xs font-medium text-gray-700">
+                                @if (precioMin() !== null && precioMax() !== null) {
+                                    ${{ precioMin() | number:'1.0-0' }} a ${{ precioMax() | number:'1.0-0' }}
+                                } @else if (precioMin() !== null) {
+                                    Desde ${{ precioMin() | number:'1.0-0' }}
+                                } @else {
+                                    Hasta ${{ precioMax() | number:'1.0-0' }}
+                                }
+                            </span>
+                            <button (click)="removerPrecio()" class="text-gray-400 md:hover:text-red-500 transition-colors">
+                                <app-icon name="close" classes="size-3 fill-current" />
+                            </button>
+                        </div>
+                    }
+
+                    <!-- Botón Limpiar Todo -->
+                    <button (click)="limpiarTodosLosFiltros()" 
+                            class="text-xs font-bold text-brand-accent hover:underline ml-2 transition-all px-2 py-1 rounded md:hover:bg-brand-accent/5">
+                        Limpiar todo
+                    </button>
+                </div>
+            }
         </div>
 
-        <!-- Filtros Activos (Chips sin botón individual) -->
-        @if (hayFiltrosActivos()) {
-            <div class="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-50">
-                <span class="text-xs font-medium text-gray-500 uppercase tracking-wide mr-1">
-                    Filtros:
-                </span>
-                
-                <!-- Chips de Marca -->
-                @for (marca of marcasSeleccionadas(); track marca) {
-                    <div class="flex items-center px-2.5 py-1 bg-gray-100 rounded-sm">
-                        <span class="text-xs font-medium text-gray-700">{{ marca }}</span>
-                    </div>
+        <!-- Resultados -->
+        @if (productosFiltradosYOrdenados().length > 0) {
+            <div class="grid gap-3 md:gap-6" 
+                [class]="layoutColumnas() === 1 ? 'grid-cols-1 max-w-xl mx-auto' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'">
+                @for (prod of productosFiltradosYOrdenados(); track prod.id) {
+                    <app-product-card-indumentaria class="block w-full h-full" [producto]="prod" />
                 }
-
-                <!-- Chips de Talle -->
-                @for (talle of tallesSeleccionados(); track talle) {
-                    <div class="flex items-center px-2.5 py-1 bg-gray-100 rounded-sm">
-                        <span class="text-xs font-medium text-gray-700">Talle {{ talle }}</span>
-                    </div>
-                }
-
-                <!-- Chips de Color -->
-                @for (color of coloresSeleccionados(); track color) {
-                    <div class="flex items-center px-2.5 py-1 bg-gray-100 rounded-sm">
-                        <span class="text-xs font-medium text-gray-700">{{ color }}</span>
-                    </div>
-                }
-
-                <!-- Chip de Precio (Combinado) -->
-                @if (precioMin() !== null && precioMax() !== null) {
-                    <div class="flex items-center px-2.5 py-1 bg-gray-100 rounded-sm">
-                        <span class="text-xs font-medium text-gray-700">
-                            ${{ precioMin() | number:'1.0-0' }} a ${{ precioMax() | number:'1.0-0' }}
-                        </span>
-                    </div>
-                } @else if (precioMin() !== null) {
-                    <div class="flex items-center px-2.5 py-1 bg-gray-100 rounded-sm">
-                        <span class="text-xs font-medium text-gray-700">
-                            Desde ${{ precioMin() | number:'1.0-0' }}
-                        </span>
-                    </div>
-                } @else if (precioMax() !== null) {
-                    <div class="flex items-center px-2.5 py-1 bg-gray-100 rounded-sm">
-                        <span class="text-xs font-medium text-gray-700">
-                            Hasta ${{ precioMax() | number:'1.0-0' }}
-                        </span>
-                    </div>
-                }
-
-                <!-- Botón Limpiar Todo -->
-                <button (click)="limpiarTodosLosFiltros()" 
-                        class="text-xs font-bold text-brand-accent hover:underline ml-2 transition-all px-2 py-1 rounded md:hover:bg-brand-accent/5">
-                    Limpiar todo
-                </button>
+            </div>
+        } @else {
+            <div class="flex flex-col items-center justify-center py-20 text-center gap-4 text-gray-400">
+                <app-icon name="search-off" classes="size-16 fill-current opacity-20" />
+                <div class="flex flex-col">
+                    <span class="text-base font-bold text-brand-text uppercase tracking-wide">Sin resultados</span>
+                    <span class="text-xs font-semibold uppercase tracking-wide mt-1">Intenta con otra búsqueda o categoría</span>
+                </div>
             </div>
         }
     </div>
+</div>
 
-    <!-- Resultados -->
-    @if (productosFiltradosYOrdenados().length > 0) {
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-            @for (prod of productosFiltradosYOrdenados(); track prod.id) {
-                <app-product-card-indumentaria class="block w-full h-full" [producto]="prod" />
-            }
-        </div>
-    } @else {
-        <div class="flex flex-col items-center justify-center py-20 text-center gap-4 text-gray-400">
-            <app-icon name="search-off" classes="size-16 fill-current opacity-20" />
-            <div class="flex flex-col">
-                <span class="text-base font-bold text-brand-text uppercase tracking-wide">Sin resultados</span>
-                <span class="text-xs font-semibold uppercase tracking-wide mt-1">Intenta con otra búsqueda o categoría</span>
-            </div>
-        </div>
-    }
+<!-- Fondo oscuro (Overlay) -->
+@if (isFiltrosOpen()) {
+    <div class="fixed inset-0 bg-black/60 z-50 animate-backdrop transform-gpu will-change-opacity" 
+        (click)="toggleFiltros()"></div>
+}
 
-    <!-- Fondo oscuro (Overlay) -->
-    @if (isFiltrosOpen()) {
-        <div class="fixed inset-0 bg-black/60 z-50 animate-backdrop transform-gpu will-change-opacity" 
-            (click)="toggleFiltros()"></div>
-    }
+<!-- Panel deslizable -->
+<div class="fixed top-0 right-0 h-full w-full md:w-[30%] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col"
+    [class.translate-x-full]="!isFiltrosOpen()"
+    [class.translate-x-0]="isFiltrosOpen()">
+     
+    <!-- Header -->
+    <div class="flex items-center justify-between py-4 px-5 border-b border-gray-100">
+        <h3 class="text-base font-semibold text-brand-text tracking-wide">Filtros</h3>
+        <button (click)="toggleFiltros()" class="p-2 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors">
+            <app-icon name="close" classes="size-5 text-gray-500 fill-current" />
+        </button>
+    </div>
 
-    <!-- Panel deslizable -->
-    <div class="fixed top-0 right-0 h-full w-full md:w-[30%] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col"
-        [class.translate-x-full]="!isFiltrosOpen()"
-        [class.translate-x-0]="isFiltrosOpen()">
-         
-        <!-- Header -->
-        <div class="flex items-center justify-between py-4 px-5 border-b border-gray-100">
-            <h3 class="text-base font-semibold text-brand-text tracking-wide">Filtros</h3>
-            <button (click)="toggleFiltros()" class="p-2 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors">
-                <app-icon name="close" classes="size-5 text-gray-500 fill-current" />
-            </button>
-        </div>
-
-        <!-- Contenido -->
-        <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-7">
-
-            <!-- ORDENAR POR -->
-            <div class="flex flex-col">
-                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Ordenar por</h4>
-                
-                <!-- Botón del acordeón -->
-                <button (click)="toggleAcordeonOrden()" 
-                        class="flex items-center justify-between w-full text-left py-2.5 px-3 bg-gray-50 border border-gray-200 rounded-lg transition-colors hover:bg-gray-100">
-                    
-                    <span class="text-sm font-bold text-gray-700">
-                        {{ 
-                            tempOrdenActual() === 'nuevo' ? 'Más nuevo al más viejo' :
-                            tempOrdenActual() === 'viejo' ? 'Más viejo al más nuevo' :
-                            tempOrdenActual() === 'precio_alto' ? 'Precio: Mayor a Menor' :
-                            tempOrdenActual() === 'precio_bajo' ? 'Precio: Menor a Mayor' :
-                            tempOrdenActual() === 'az' ? 'Nombre: A - Z' :
-                            tempOrdenActual() === 'za' ? 'Nombre: Z - A' : 
-                            'Más nuevo al más viejo' 
-                        }}
-                    </span>
-                    
-                    <app-icon name="chevron-down" 
-                            [classes]="'size-4 text-gray-400 fill-current transition-transform duration-300 ' + (isOrdenDesplegado() ? 'rotate-180' : '')" />
-                </button>
-                
-                @if (isOrdenDesplegado()) {
-                    <div class="flex flex-col gap-3 mt-4 px-1 animate-in fade-in slide-in-from-top-2">
-                        
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="radio" name="orden" value="nuevo" 
-                                   [ngModel]="tempOrdenActual()" 
-                                   (ngModelChange)="cambiarOrden($event); toggleAcordeonOrden()" 
-                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
-                            <span class="text-sm font-medium transition-colors"
-                                  [class]="tempOrdenActual() === 'nuevo' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
-                                Más nuevo al más viejo
-                            </span>
-                        </label>
-
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="radio" name="orden" value="viejo" 
-                                   [ngModel]="tempOrdenActual()" 
-                                   (ngModelChange)="cambiarOrden($event); toggleAcordeonOrden()" 
-                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
-                            <span class="text-sm font-medium transition-colors"
-                                  [class]="tempOrdenActual() === 'viejo' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
-                                Más viejo al más nuevo
-                            </span>
-                        </label>
-
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="radio" name="orden" value="precio_alto" 
-                                   [ngModel]="tempOrdenActual()" 
-                                   (ngModelChange)="cambiarOrden($event); toggleAcordeonOrden()" 
-                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
-                            <span class="text-sm font-medium transition-colors"
-                                  [class]="tempOrdenActual() === 'precio_alto' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
-                                Precio: Mayor a Menor
-                            </span>
-                        </label>
-
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="radio" name="orden" value="precio_bajo" 
-                                   [ngModel]="tempOrdenActual()" 
-                                   (ngModelChange)="cambiarOrden($event); toggleAcordeonOrden()" 
-                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
-                            <span class="text-sm font-medium transition-colors"
-                                  [class]="tempOrdenActual() === 'precio_bajo' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
-                                Precio: Menor a Mayor
-                            </span>
-                        </label>
-
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="radio" name="orden" value="az" 
-                                   [ngModel]="tempOrdenActual()" 
-                                   (ngModelChange)="cambiarOrden($event); toggleAcordeonOrden()" 
-                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
-                            <span class="text-sm font-medium transition-colors"
-                                  [class]="tempOrdenActual() === 'az' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
-                                Nombre: A - Z
-                            </span>
-                        </label>
-
-                        <label class="flex items-center gap-3 cursor-pointer group">
-                            <input type="radio" name="orden" value="za" 
-                                   [ngModel]="tempOrdenActual()" 
-                                   (ngModelChange)="cambiarOrden($event); toggleAcordeonOrden()" 
-                                   class="size-4 rounded-full border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
-                            <span class="text-sm font-medium transition-colors"
-                                  [class]="tempOrdenActual() === 'za' ? 'text-brand-accent font-bold' : 'text-gray-700 group-hover:text-brand-text'">
-                                Nombre: Z - A
-                            </span>
-                        </label>
-
-                    </div>
-                }
-            </div>
-
-            <!-- Marca -->
-            @if (marcasDisponibles().length > 0) {
-                <div class="flex flex-col gap-3">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Marca</h4>
-                    <div class="flex flex-col gap-2">
-                        @for (marca of marcasDisponibles(); track $index) {
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" 
-                                       [checked]="tempMarcas().has(marca)"
-                                       (change)="toggleMarca(marca)"
-                                       class="size-4 rounded border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
-                                <span class="text-sm font-medium text-gray-700 group-hover:text-brand-text transition-colors">
-                                    {{ marca }}
-                                </span>
-                            </label>
-                        }
-                    </div>
-                </div>
-            }
-
-            <!-- Talle -->
-            @if (tallesDisponibles().length > 0) {
-                <div class="flex flex-col gap-3">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Talle</h4>
-                    <div class="flex flex-wrap gap-2">
-                        @for (talle of tallesDisponibles(); track talle) {
-                            <button (click)="toggleTalle(talle)"
-                                    class="px-4 py-2 rounded-lg text-sm font-bold transition-colors border"
-                                    [class]="tempTalles().has(talle) 
-                                        ? 'border-brand-accent bg-brand-accent/5 text-brand-accent' 
-                                        : 'border-gray-200 text-gray-600 hover:border-brand-text hover:text-brand-text'">
-                                {{ talle }}
-                            </button>
-                        }
-                    </div>
-                </div>
-            }
-
-            <!-- Color -->
-            @if (coloresDisponibles().length > 0) {
-                <div class="flex flex-col gap-3">
-                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Color</h4>
-                    <div class="flex flex-wrap gap-2">
-                        @for (color of coloresDisponibles(); track color.nombre) {
-                            <button (click)="toggleColor(color.nombre)" 
-                                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all"
-                                    [class]="tempColores().has(color.nombre) 
-                                        ? 'border-brand-accent bg-brand-accent/5' 
-                                        : 'border-gray-200 hover:border-brand-text bg-white'">
-                                
-                                <!-- Círculo de color -->
-                                <div class="size-4 rounded-full shadow-inner border border-black/10 shrink-0" 
-                                     [style.background-color]="color.hex"></div>
-                                
-                                <!-- Nombre del color -->
-                                <span class="text-sm font-medium transition-colors"
-                                      [class]="tempColores().has(color.nombre) ? 'text-brand-accent font-bold' : 'text-gray-600'">
-                                    {{ color.nombre }}
-                                </span>
-                            </button>
-                        }
-                    </div>
-                </div>
-            }
-
-            <!-- Precio -->
+    <!-- Contenido -->
+    <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-7">
+        <!-- Marca -->
+        @if (marcasDisponibles().length > 0) {
             <div class="flex flex-col gap-3">
-                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Precio</h4>
-                <div class="flex items-center gap-3">
-                    <div class="relative w-full">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                        <input type="number" placeholder="Mínimo" 
-                               [value]="tempPrecioMin() === null ? '' : tempPrecioMin()"
-                               (input)="actualizarPrecio('min', $event)"
-                               class="w-full pl-7 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-brand-accent focus:border-brand-accent transition-all placeholder:text-gray-400">
-                    </div>
-                    <span class="text-gray-400 font-bold">-</span>
-                    <div class="relative w-full">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
-                        <input type="number" placeholder="Máximo" 
-                               [value]="tempPrecioMax() === null ? '' : tempPrecioMax()"
-                               (input)="actualizarPrecio('max', $event)"
-                               class="w-full pl-7 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-brand-accent focus:border-brand-accent transition-all placeholder:text-gray-400">
-                    </div>
+                <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Marca</h4>
+                <div class="flex flex-col gap-2">
+                    @for (marca of marcasDisponibles(); track $index) {
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" 
+                                   [checked]="tempMarcas().has(marca)"
+                                   (change)="toggleMarca(marca)"
+                                   class="size-4 rounded border-gray-300 text-brand-accent focus:ring-brand-accent cursor-pointer">
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-brand-text transition-colors">
+                                {{ marca }}
+                            </span>
+                        </label>
+                    }
                 </div>
             </div>
+        }
 
+        <!-- Talle -->
+        @if (tallesDisponibles().length > 0) {
+            <div class="flex flex-col gap-3">
+                <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Talle</h4>
+                <div class="flex flex-wrap gap-2">
+                    @for (talle of tallesDisponibles(); track talle) {
+                        <button (click)="toggleTalle(talle)"
+                                class="px-4 py-2 rounded-lg text-sm font-bold transition-colors border"
+                                [class]="tempTalles().has(talle) 
+                                    ? 'border-brand-accent bg-brand-accent/5 text-brand-accent' 
+                                    : 'border-gray-200 text-gray-600 hover:border-brand-text hover:text-brand-text'">
+                            {{ talle }}
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Color -->
+        @if (coloresDisponibles().length > 0) {
+            <div class="flex flex-col gap-3">
+                <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Color</h4>
+                <div class="flex flex-wrap gap-2">
+                    @for (color of coloresDisponibles(); track color.nombre) {
+                        <button (click)="toggleColor(color.nombre)" 
+                                class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all"
+                                [class]="tempColores().has(color.nombre) 
+                                    ? 'border-brand-accent bg-brand-accent/5' 
+                                    : 'border-gray-200 hover:border-brand-text bg-white'">
+                            
+                            <!-- Círculo de color -->
+                            <div class="size-4 rounded-full shadow-inner border border-black/10 shrink-0" 
+                                 [style.background-color]="color.hex"></div>
+                            
+                            <!-- Nombre del color -->
+                            <span class="text-sm font-medium transition-colors"
+                                  [class]="tempColores().has(color.nombre) ? 'text-brand-accent font-bold' : 'text-gray-600'">
+                                {{ color.nombre }}
+                            </span>
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Precio -->
+        <div class="flex flex-col gap-3">
+            <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Precio</h4>
+            <div class="flex items-center gap-3">
+                <div class="relative w-full">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
+                    <input type="number" placeholder="Mínimo" 
+                           [value]="tempPrecioMin() === null ? '' : tempPrecioMin()"
+                           (input)="actualizarPrecio('min', $event)"
+                           class="w-full pl-7 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-brand-accent focus:border-brand-accent transition-all placeholder:text-gray-400">
+                </div>
+                <span class="text-gray-400 font-bold">-</span>
+                <div class="relative w-full">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
+                    <input type="number" placeholder="Máximo" 
+                           [value]="tempPrecioMax() === null ? '' : tempPrecioMax()"
+                           (input)="actualizarPrecio('max', $event)"
+                           class="w-full pl-7 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-brand-accent focus:border-brand-accent transition-all placeholder:text-gray-400">
+                </div>
+            </div>
         </div>
 
-        <div class="p-4 border-t border-gray-100 flex gap-3 bg-white">
-            <button (click)="limpiarFiltrosTemporales()" 
-                    class="w-1/3 py-3 rounded-xl font-bold text-xs uppercase tracking-widest text-gray-500 bg-gray-50 hover:bg-gray-100 transition-colors">
-                Limpiar
-            </button>
-            <button (click)="aplicarFiltros()" 
-                    class="w-2/3 py-3 rounded-xl font-black text-xs uppercase tracking-widest text-white bg-brand-text hover:opacity-90 transition-opacity">
-                Aplicar filtros
-            </button>
-        </div>
+    </div>
+
+    <div class="p-4 border-t border-gray-100 flex gap-3 bg-white">
+        <button (click)="limpiarFiltrosTemporales()" 
+                class="w-1/3 py-3 rounded-xl font-bold text-xs uppercase tracking-widest text-gray-500 bg-gray-50 hover:bg-gray-100 transition-colors">
+            Limpiar
+        </button>
+        <button (click)="aplicarFiltros()" 
+                class="w-2/3 py-3 rounded-xl font-black text-xs uppercase tracking-widest text-white bg-brand-text hover:opacity-90 transition-opacity">
+            Aplicar filtros
+        </button>
     </div>
 </div>

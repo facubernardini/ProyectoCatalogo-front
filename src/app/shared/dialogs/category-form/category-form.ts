@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -31,21 +31,23 @@ export class CategoryForm {
       const isOpen = this.categoryFormService.isOpen();
       const editing = this.categoryFormService.editingCategory();
       
-      if (isOpen) {
-        if (editing) {
-          this.categoria = { 
-            nombre: editing.nombre, 
-            activo: editing.activo,
-            especial: editing.especial ?? false,
-            imagen: editing.imagen ?? null
-          };
-          this.categoryFormService.nombre.set(editing.nombre);
+      untracked(() => {
+        if (isOpen) {
+          if (editing) {
+            this.categoria = { 
+              nombre: editing.nombre, 
+              activo: editing.activo,
+              especial: editing.especial ?? false,
+              imagen: editing.imagen ?? null
+            };
+            this.categoryFormService.nombre.set(editing.nombre);
+          } else {
+            this.resetLocalForm();
+          }
         } else {
           this.resetLocalForm();
         }
-      } else {
-        this.resetLocalForm();
-      }
+      });
     });
   }
 
@@ -66,15 +68,13 @@ export class CategoryForm {
   }
 
   private resetLocalForm() {
-    // 1. Leemos si el servicio ya traía un nombre pre-cargado
     const nombrePrecargado = this.categoryFormService.nombre();
     
-    // 2. Reseteamos el estado local, pero conservando ese nombre inicial
     this.categoria = { 
-        nombre: nombrePrecargado, 
-        activo: true, 
-        especial: false ,
-        imagen: null
+      nombre: nombrePrecargado, 
+      activo: true, 
+      especial: false ,
+      imagen: null
     };
     
     this.imagenArchivo.set(null);
@@ -86,7 +86,6 @@ export class CategoryForm {
     if (file) {
       this.imagenArchivo.set(file);
       
-      // Creamos una URL temporal para mostrar la vista previa al instante
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.imagenPreviewTemporal.set(e.target.result);
