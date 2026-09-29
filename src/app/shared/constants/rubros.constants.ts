@@ -1,0 +1,12 @@
+export const RUBROS = {
+  DIETETICA: 1,
+  INDUMENTARIA: 2,
+  ELECTRONICA: 3,
+  ARTESANIAS: 4,
+  HELADERIA: 5,
+  COMIDA_RAPIDA: 6,
+  PET_SHOP: 7,
+  SALUD_BELLEZA: 8,
+  HOGAR: 9,
+  OTROS: 10
+} as const;

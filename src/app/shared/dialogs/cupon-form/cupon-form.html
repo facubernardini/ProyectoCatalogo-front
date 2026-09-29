@@ -36,9 +36,20 @@
                 
                 <div>
                     <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Código del Cupón</label>
+                    
                     <input type="text" [(ngModel)]="formService.formData().codigo_cupon" 
                         placeholder="Ej: PROMO10"
+                        maxlength="25"
                         class="w-full mt-1 p-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-brand-accent focus:bg-white outline-none font-bold text-brand-text uppercase tracking-widest transition-all">
+                    
+                    <!-- Contador de caracteres (ahora debajo a la derecha) -->
+                    <div class="flex justify-end mt-1 mr-2">
+                        <span class="text-[10px] font-bold transition-colors"
+                              [class.text-red-500]="(formService.formData().codigo_cupon || '').length === 25"
+                              [class.text-gray-400]="(formService.formData().codigo_cupon || '').length < 25">
+                            {{ (formService.formData().codigo_cupon || '').length }}/25
+                        </span>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
