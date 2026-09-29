@@ -90,7 +90,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "allowedHosts": ["localhost", ".nip.io"]
+            "allowedHosts": ["localhost"]
           },
           "configurations": {
             "development": {
