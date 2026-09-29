@@ -15,5 +15,5 @@ export interface CatalogoBackoffice {
     cantidad_productos: number;
     cantidad_categorias: number;
     cantidad_cupones: number;
-    cantidad_medios_pago: number;
+    cantidad_pedidos: number;
 }
