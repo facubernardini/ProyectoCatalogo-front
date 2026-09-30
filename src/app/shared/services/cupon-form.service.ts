@@ -30,34 +30,34 @@ export class CuponFormService {
   }
 
   openEdit(cupon: Cupon) {
-  this.editingCupon.set({ ...cupon });
-  
-  let fechaFormat = '';
-  if (cupon.fecha_expiracion) {
-      const d = new Date(cupon.fecha_expiracion);
-      if (!isNaN(d.getTime())) {
-        // Extraemos el año, mes y día en la hora LOCAL del usuario
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        
-        fechaFormat = `${year}-${month}-${day}`;
-      }
+    this.editingCupon.set({ ...cupon });
+    
+    let fechaFormat = '';
+    if (cupon.fecha_expiracion) {
+        const d = new Date(cupon.fecha_expiracion);
+        if (!isNaN(d.getTime())) {
+          // Extraemos el año, mes y día en la hora LOCAL del usuario
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          
+          fechaFormat = `${year}-${month}-${day}`;
+        }
+    }
+
+    this.formData.set({
+      codigo_cupon: (cupon as any).codigo_cupon || (cupon as any).codigo || '',
+      es_porcentaje: cupon.es_porcentaje,
+      descuento: Number(cupon.descuento),
+      tiene_tope: cupon.tope_descuento !== null && cupon.tope_descuento > 0,
+      tope_descuento: cupon.tope_descuento ? Number(cupon.tope_descuento) : null,
+      tiene_vencimiento: !!fechaFormat,
+      fecha_expiracion: fechaFormat
+    });
+
+    this.isOpen.set(true);
+    document.body.style.overflow = 'hidden';
   }
-
-  this.formData.set({
-    codigo_cupon: (cupon as any).codigo_cupon || (cupon as any).codigo || '',
-    es_porcentaje: cupon.es_porcentaje,
-    descuento: Number(cupon.descuento),
-    tiene_tope: cupon.tope_descuento !== null && cupon.tope_descuento > 0,
-    tope_descuento: cupon.tope_descuento ? Number(cupon.tope_descuento) : null,
-    tiene_vencimiento: !!fechaFormat,
-    fecha_expiracion: fechaFormat
-  });
-
-  this.isOpen.set(true);
-  document.body.style.overflow = 'hidden';
-}
 
   close() {
     this.isOpen.set(false);

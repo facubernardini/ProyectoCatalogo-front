@@ -11,10 +11,13 @@ import { RubroService } from 'src/app/core/services-backend/rubros.ServiceBacken
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { catchError, debounceTime, distinctUntilChanged, map, of, Subject, switchMap } from 'rxjs';
+import { PlanesDialogService } from 'src/app/shared/services/planes-dialog.service';
+import { PlanesDialog } from 'src/app/shared/dialogs/planes-dialog/planes-dialog';
+import { CANALES_ADQUISICION } from 'src/app/core/data/canales-adquisicion.data';
 
 @Component({
   selector: 'app-register',
-  imports: [RouterLink, Icon, FormsModule, Toast],
+  imports: [RouterLink, Icon, FormsModule, Toast, PlanesDialog],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -23,9 +26,14 @@ export class Register implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private rubroService = inject(RubroService);
   private toastService = inject(ToastService);
+  private planesDialogService = inject(PlanesDialogService);
   private router = inject(Router);
 
   public BRAND_DATA = BRAND_DATA;
+  public CANALES = CANALES_ADQUISICION;
+  
+  public origenSeleccionado: string | null = null;
+  public isOrigenDropdownOpen = signal(false);
   
   public loading = signal(false);
   showConfirmPassword = signal(false);
@@ -56,7 +64,8 @@ export class Register implements OnInit, OnDestroy {
   public vendedorReq: RegistroVendedorRequest = {
     nombre_apellido: '',
     correo: '',
-    password: ''
+    password: '',
+    origen_trafico: null
   };
 
   public catalogo: Partial<Catalogo> = {
@@ -83,14 +92,7 @@ export class Register implements OnInit, OnDestroy {
   }
 
   verPlanes() {
-    this.router.navigate(['/']).then(() => {
-      setTimeout(() => {
-        const seccionPrecios = document.getElementById('precios');
-        if (seccionPrecios) {
-          seccionPrecios.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
-    });
+    this.planesDialogService.open();
   }
 
   cargarRubros() {
@@ -108,6 +110,21 @@ export class Register implements OnInit, OnDestroy {
     this.catalogo.rubro_id = rubro.id;
     this.rubroSeleccionadoNombre.set(rubro.nombre);
     this.isRubroDropdownOpen.set(false);
+  }
+
+  toggleOrigenDropdown() {
+    this.isOrigenDropdownOpen.update(v => !v);
+  }
+
+  seleccionarOrigen(canal: { id: string; label: string }) {
+    this.vendedorReq.origen_trafico = canal.id;
+    this.isOrigenDropdownOpen.set(false);
+  }
+
+  origenSeleccionadoNombre(): string | null {
+    if (!this.vendedorReq.origen_trafico) return null;
+    
+    return this.CANALES.find(c => c.id === this.vendedorReq.origen_trafico)?.label || null;
   }
 
   avanzarPaso() {
@@ -326,6 +343,11 @@ export class Register implements OnInit, OnDestroy {
 
     if (!this.catalogo.rubro_id || this.catalogo.rubro_id === 0) {
       this.toastService.show('Por favor, seleccioná un rubro para tu tienda.', 'error');
+      return;
+    }
+
+    if (!this.vendedorReq.origen_trafico) {
+      this.toastService.show('Por favor, contanos cómo nos conociste.', 'error');
       return;
     }
 

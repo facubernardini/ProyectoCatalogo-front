@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CatalogoService } from 'src/app/core/services-backend/catalogo.ServiceBackend';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { Catalogo, HorarioDia, TemaCatalogo } from 'src/app/core/models/catalogo.model';
+import { Catalogo, DiaSemana, HorarioDia, TemaCatalogo } from 'src/app/core/models/catalogo.model';
 import { FormsModule } from '@angular/forms';
 import { ConfigSection } from "./config-section/config-section";
 import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
@@ -92,13 +92,29 @@ export class MiTienda implements OnInit, OnDestroy {
   }
 
   private getHorariosBase(): HorarioDia[] {
-    const dias: HorarioDia['dia'][] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const dias: DiaSemana[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    
     return dias.map(dia => ({
       dia,
-      abierto: true,
-      apertura: '09:00',
-      cierre: '18:00'
+      abierto: dia !== 'Domingo',
+      corrido: true,
+      apertura: dia === 'Sábado' ? '10:00' : '09:00',
+      cierre: dia === 'Sábado' ? '14:00' : (dia === 'Domingo' ? '18:00' : '20:00'),
+      apertura2: null,
+      cierre2: null
     }));
+  }
+
+  onHorarioCorridoChange(item: HorarioDia) {
+    if (!item.corrido) {
+      item.cierre = "13:00";
+      item.apertura2 = "16:00";
+      item.cierre2 = "20:00";
+    } else {
+      item.cierre = "20:00";
+      item.apertura2 = null; 
+      item.cierre2 = null;
+    }
   }
 
   isMedioSeleccionado(id: number): boolean {
@@ -337,14 +353,26 @@ export class MiTienda implements OnInit, OnDestroy {
       return;
     }
 
-    const diasInvalidos = dataActual.horarios.filter(item => 
-      item.abierto && item.apertura >= item.cierre
-    );
+    const diasInvalidos = dataActual.horarios.filter(item => {
+      if (!item.abierto) return false;
+
+      if (item.apertura >= item.cierre) return true;
+
+      if (!item.corrido) {
+        if (!item.apertura2 || !item.cierre2) return true; 
+
+        if (item.apertura2 >= item.cierre2) return true;
+
+        if (item.cierre >= item.apertura2) return true;
+      }
+
+      return false;
+    });
 
     if (diasInvalidos.length > 0) {
       const nombresDias = diasInvalidos.map(d => d.dia).join(', ');
       this.toastService.show(
-        `Revisá los horarios de: ${nombresDias}. El cierre debe ser después de la apertura.`, 
+        `Revisá los horarios de: ${nombresDias}. Las horas deben ser cronológicas y los turnos no pueden solaparse.`, 
         'error'
       );
       return;
