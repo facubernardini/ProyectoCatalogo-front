@@ -19,11 +19,16 @@ export interface MedioPago {
   icono: string | null;
 }
 
+export type DiaSemana = 'Lunes' | 'Martes' | 'Miércoles' | 'Jueves' | 'Viernes' | 'Sábado' | 'Domingo';
+
 export interface HorarioDia {
-  dia: 'Lunes' | 'Martes' | 'Miércoles' | 'Jueves' | 'Viernes' | 'Sábado' | 'Domingo';
+  dia: DiaSemana;
   abierto: boolean;
+  corrido: boolean;
   apertura: string;
   cierre: string;
+  apertura2: string | null;
+  cierre2: string | null;
 }
 
 export interface Rubro {

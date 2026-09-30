@@ -1,4 +1,4 @@
-<main class="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans relative">
+<main class="min-h-svh flex items-center justify-center bg-gray-50 p-4 font-sans relative">
     <div class="w-full max-w-md bg-white rounded-4xl shadow-xl border border-brand-bg p-6 relative">
 
         <button type="button" (click)="volverPaso()"
@@ -223,7 +223,7 @@
                             @if (isRubroDropdownOpen()) {
                                 <div class="fixed inset-0 z-40" (click)="isRubroDropdownOpen.set(false)" aria-hidden="true"></div>
                                 
-                                <ul role="listbox" class="absolute z-50 w-full bottom-full mb-2 origin-bottom bg-white border border-gray-100 rounded-xl shadow-xl shadow-brand-bg/50 max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200 py-1">
+                                <ul role="listbox" class="absolute z-50 w-full bottom-full mb-2 origin-bottom bg-white border border-gray-100 rounded-xl shadow-xl shadow-brand-bg/50 max-h-80 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200 py-1">
                                     
                                     @for (rubro of rubros(); track rubro.id) {
                                         <li role="option" [attr.aria-selected]="catalogo.rubro_id === rubro.id">
@@ -243,7 +243,56 @@
                         </div>
                     </div>
 
+                    <!-- ¿Cómo nos conociste? -->
                     <div class="pt-2">
+                        <label id="origen_label" class="block text-sm font-semibold text-brand-text mb-2">
+                            ¿Cómo nos conociste?
+                        </label>
+                        <div class="relative">
+                            <button type="button" (click)="toggleOrigenDropdown()"
+                                    aria-haspopup="listbox"
+                                    [attr.aria-expanded]="isOrigenDropdownOpen()"
+                                    aria-labelledby="origen_label"
+                                    class="w-full px-4 py-3 flex justify-between items-center text-sm bg-gray-50 border rounded-xl outline-none transition-all duration-200 focus:outline-none"
+                                    [class.border-gray-200]="!isOrigenDropdownOpen()"
+                                    [class.bg-white]="isOrigenDropdownOpen()"
+                                    [class.border-brand-accent/40]="isOrigenDropdownOpen()"
+                                    [class.ring-1]="isOrigenDropdownOpen()"
+                                    [class.ring-brand-bg]="isOrigenDropdownOpen()">
+                                <span class="truncate" 
+                                    [class.text-brand-text]="vendedorReq.origen_trafico" 
+                                    [class.text-gray-400]="!vendedorReq.origen_trafico">
+                                    {{ origenSeleccionadoNombre() || 'Contanos cómo llegaste...' }}
+                                </span>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-300" [class.rotate-180]="isOrigenDropdownOpen()" aria-hidden="true" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            @if (isOrigenDropdownOpen()) {
+                                <div class="fixed inset-0 z-40" (click)="isOrigenDropdownOpen.set(false)" aria-hidden="true"></div>
+                                
+                                <ul role="listbox" class="absolute z-50 w-full bottom-full mb-2 origin-bottom bg-white border border-gray-100 rounded-xl shadow-xl shadow-brand-bg/50 max-h-80 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200 py-1">
+                                    
+                                    @for (canal of CANALES; track canal.id) {
+                                        <li role="option" [attr.aria-selected]="origenSeleccionado === canal.id">
+                                            <button type="button" (click)="seleccionarOrigen(canal)"
+                                                    class="w-full text-left px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none"
+                                                    [class.bg-brand-bg]="origenSeleccionado === canal.id" 
+                                                    [class.text-brand-accent]="origenSeleccionado === canal.id"
+                                                    [class.text-brand-text-sec]="origenSeleccionado !== canal.id" 
+                                                    [class.hover:bg-gray-50]="origenSeleccionado !== canal.id"
+                                                    [class.hover:text-brand-text]="origenSeleccionado !== canal.id">
+                                                {{ canal.label }}
+                                            </button>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
                         <button type="button" (click)="solicitarCodigo()"
                                 [disabled]="loading()"
                                 class="flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 md:hover:bg-brand-accent/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none focus:outline-none">
@@ -350,3 +399,4 @@
 </main>
 
 <app-toast/>
+<app-planes-dialog/>

@@ -212,7 +212,7 @@
                     @if (!adminStore.esIndumentaria() && (adminStore.tags().length > 0)) {
                         <section class="space-y-2 mt-6">
                             <div class="flex items-center justify-between">
-                                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Restricciones</p>
+                                <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Etiquetas</p>
                                 <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md font-bold">
                                     {{ producto.tags_ids.length }} {{ producto.tags_ids.length === 1 ? 'seleccionada' : 'seleccionadas' }}
                                 </span>
@@ -228,7 +228,7 @@
                                     <span class="text-sm font-bold truncate mr-2"
                                         [class.text-gray-500]="producto.tags_ids.length > 0"
                                         [class.text-gray-300]="producto.tags_ids.length === 0">
-                                        {{ producto.tags_ids.length > 0 ? 'Modificar restricciones...' : 'Seleccionar restricciones...' }}
+                                        {{ producto.tags_ids.length > 0 ? 'Modificar etiquetas...' : 'Seleccionar etiquetas...' }}
                                     </span>
                                     
                                     <div class="shrink-0 transition-transform duration-300" [class.rotate-180]="isTagsDropdownOpen()">

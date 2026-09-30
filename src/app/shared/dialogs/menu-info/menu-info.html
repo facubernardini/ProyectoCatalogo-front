@@ -92,7 +92,13 @@
                                     <div class="h-px flex-1 mx-4 border-t border-dashed border-zinc-200"></div>
                                     
                                     @if (item.abierto) {
-                                        <span class="font-semibold text-zinc-500">{{ item.apertura }} - {{ item.cierre }}</span>
+                                        <div class="flex flex-col items-end gap-0.5 font-semibold text-zinc-500 leading-tight">
+                                            <span>{{ item.apertura }} - {{ item.cierre }}</span>
+                                            
+                                            @if (!item.corrido && item.apertura2 && item.cierre2) {
+                                                <span>{{ item.apertura2 }} - {{ item.cierre2 }}</span>
+                                            }
+                                        </div>
                                     } @else {
                                         <span class="font-bold text-red-500 text-[10px] uppercase tracking-wider bg-red-50/80 px-2 py-0.5 rounded-md border border-red-100">
                                             Cerrado
