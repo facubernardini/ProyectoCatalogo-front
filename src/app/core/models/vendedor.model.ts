@@ -15,4 +15,5 @@ export interface RegistroVendedorRequest {
   nombre_apellido: string;
   correo: string;
   password: string;
+  origen_trafico?: string | null;
 }
