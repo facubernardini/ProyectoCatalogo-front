@@ -31,6 +31,18 @@ export class ProductCardIndumentaria {
     return prod.imagen;
   });
 
+  imagenHover = computed(() => {
+    const prod = this.producto();
+    
+    if (prod.imagenes && prod.imagenes.length > 1) {
+      const portadaUrl = this.portada();
+      const hoverImg = prod.imagenes.find((img: any) => img.url !== portadaUrl);
+      return hoverImg ? hoverImg.url : null;
+    }
+    
+    return null;
+  });
+
   estaAgotado = computed(() => this.presentacionesDisponibles().length === 0);
 
   presentacionesDisponibles = computed(() => {

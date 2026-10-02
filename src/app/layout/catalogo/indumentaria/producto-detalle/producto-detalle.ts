@@ -53,22 +53,53 @@ export class ProductoDetalle implements OnInit {
     return productos.find(p => this.crearSlug(p.nombre) === productSlug) || null;
   });
 
-  tallesUnicos = computed(() => {
-    const prod = this.productoActual();
-    if (!prod) return [];
-    return [...new Set(prod.presentaciones.map(p => p.talle).filter((t): t is string => !!t))];
-  });
-
   coloresUnicos = computed(() => {
     const prod = this.productoActual();
     if (!prod) return [];
-    const colores = new Map<string, {nombre: string, hex: string}>();
+    
+    const mapa = new Map<string, { nombre: string, hex: string, activo: boolean }>();
+    
     prod.presentaciones.forEach(p => {
-      if (p.color_nombre && p.color_hex && !colores.has(p.color_nombre)) {
-        colores.set(p.color_nombre, { nombre: p.color_nombre, hex: p.color_hex });
+      if (p.color_nombre && p.color_hex) {
+        const esActiva = p.activo !== false;
+        
+        if (mapa.has(p.color_nombre)) {
+          const existente = mapa.get(p.color_nombre)!;
+          existente.activo = existente.activo || esActiva;
+        } else {
+          mapa.set(p.color_nombre, { nombre: p.color_nombre, hex: p.color_hex, activo: esActiva });
+        }
       }
     });
-    return Array.from(colores.values());
+    
+    return Array.from(mapa.values());
+  });
+
+  tallesUnicos = computed(() => {
+    const prod = this.productoActual();
+    if (!prod) return [];
+
+    const colorActual = this.colorSeleccionado();
+
+    // 1. Extraemos los talles únicos
+    const tallesCrudos = [...new Set(prod.presentaciones.map(p => p.talle).filter((t): t is string => !!t))];
+    
+    // 2. LOS ORDENAMOS usando nuestra nueva función
+    const todosLosTalles = this.ordenarTalles(tallesCrudos);
+
+    // 3. Mapeamos la disponibilidad dependiente del color
+    return todosLosTalles.map(nombreTalle => {
+      const presentacionCombinada = prod.presentaciones.find(
+        p => p.color_nombre === colorActual && p.talle === nombreTalle
+      );
+
+      const esActivo = presentacionCombinada ? presentacionCombinada.activo !== false : false;
+
+      return {
+        nombre: nombreTalle,
+        activo: esActivo
+      };
+    });
   });
 
   presentacionActiva = computed(() => {
@@ -112,23 +143,22 @@ export class ProductoDetalle implements OnInit {
   });
 
   constructor() {
-    // 2. Efecto para inicializar la imagen, talle y color UNA VEZ que el producto cargó
+    // Efecto para inicializar la imagen, talle y color UNA VEZ que el producto cargó
     effect(() => {
       const prod = this.productoActual();
       if (prod) {
         if (!this.imagenPrincipal()) {
           this.imagenPrincipal.set(prod.imagenes?.length > 0 ? prod.imagenes[0].url : prod.imagen);
         }
-        if (!this.talleSeleccionado() && this.tallesUnicos().length > 0) {
-          this.talleSeleccionado.set(this.tallesUnicos()[0]);
-        }
+        
         if (!this.colorSeleccionado() && this.coloresUnicos().length > 0) {
-          this.colorSeleccionado.set(this.coloresUnicos()[0].nombre);
+          const colorPorDefecto = this.coloresUnicos().find(c => c.activo) || this.coloresUnicos()[0];
+          this.colorSeleccionado.set(colorPorDefecto.nombre);
         }
       }
     });
 
-    // 3. Efecto para manejar el error (404) si el producto realmente no existe
+    // Efecto para manejar el error (404) si el producto realmente no existe
     effect(() => {
       const loading = this.adminStore.isLoading();
       const productos = this.adminStore.productos();
@@ -147,7 +177,6 @@ export class ProductoDetalle implements OnInit {
   }
 
   ngOnInit() {
-    // 4. Si entramos por link directo, el store está vacío. Obligamos a cargar los datos de la tienda.
     if (this.adminStore.productos().length === 0 && !this.adminStore.isLoading()) {
       const host = window.location.hostname;
       if (!isDominioBase(host)) {
@@ -200,7 +229,15 @@ export class ProductoDetalle implements OnInit {
 
   seleccionarColor(colorHex: string, colorNombre: string) {
     this.colorSeleccionado.set(colorNombre);
-    const imgAsociada = this.productoActual()?.imagenes.find(img => img.color_asociado === colorNombre);
+    
+    // Deseleccionamos el talle al cambiar de color
+    this.talleSeleccionado.set(null);
+    
+    const prod = this.productoActual();
+    if (!prod) return;
+
+    // Cambiar la imagen
+    const imgAsociada = prod.imagenes.find(img => img.color_asociado === colorNombre);
     if (imgAsociada) this.imagenPrincipal.set(imgAsociada.url);
   }
 
@@ -210,11 +247,11 @@ export class ProductoDetalle implements OnInit {
 
   puedeIncrementar(): boolean {
     const pres = this.presentacionActiva();
-    if (!pres) return false;
+    // Si no hay presentación, o si explícitamente su activo es false, bloqueamos
+    if (!pres || pres.activo === false) return false;
     
     if (this.permiteVentaSinStock() || pres.stock === null) return true;
     
-    // Validamos la cantidad local + lo que ya tenga en el carrito
     const cantidadEnCarrito = this.cartService.getCantidadEnCarrito(pres.id) ?? 0;
     const cantidadTotal = this.cantidad() + cantidadEnCarrito;
     
@@ -234,10 +271,20 @@ export class ProductoDetalle implements OnInit {
   }
 
   agregarAlCarrito() {
+    if (this.tallesUnicos().length > 0 && !this.talleSeleccionado()) {
+      this.toastService.show('Por favor, seleccioná un talle antes de agregar al carrito.', 'error');
+      return;
+    }
     const presentacion = this.presentacionActiva();
     const producto = this.productoActual();
     
     if (presentacion && producto) {
+      // Bloqueo duro: Variante inactiva
+      if (presentacion.activo === false) {
+        this.toastService.show('Esta variante no se encuentra disponible por el momento.', 'error');
+        return;
+      }
+
       const permiteVentaSinStock = this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
       if (!permiteVentaSinStock && presentacion.stock !== null && presentacion.stock <= 0) {
         this.toastService.show('Esta variante se encuentra agotada', 'error');
@@ -245,9 +292,7 @@ export class ProductoDetalle implements OnInit {
       }
 
       const cantidadAAgregar = this.cantidad();
-
       this.cartService.agregarProducto(producto, presentacion, cantidadAAgregar); 
-
       this.cartService.open();
       this.cantidad.set(1);
     }
@@ -269,5 +314,40 @@ export class ProductoDetalle implements OnInit {
 
   private crearSlug(texto: string): string {
     return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+  }
+
+  private ordenarTalles(talles: string[]): string[] {
+    // Diccionario con el orden lógico de indumentaria
+    const ORDEN_LETRAS = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL', '4XL', '5XL', 'TU', 'U', 'ÚNICO'];
+
+    return talles.sort((a, b) => {
+      const aUpper = a.trim().toUpperCase();
+      const bUpper = b.trim().toUpperCase();
+
+      // 1. Verificar si AMBOS son números puros (Ej: "38", "40", "42.5")
+      const numA = parseFloat(a);
+      const numB = parseFloat(b);
+      const isNumA = !isNaN(numA) && String(numA) === a.trim();
+      const isNumB = !isNaN(numB) && String(numB) === b.trim();
+
+      if (isNumA && isNumB) {
+        return numA - numB; // Ordena de menor a mayor
+      }
+
+      // 2. Verificar si están en nuestro diccionario de indumentaria
+      const indexA = ORDEN_LETRAS.indexOf(aUpper);
+      const indexB = ORDEN_LETRAS.indexOf(bUpper);
+
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB; // Respeta el orden del array ORDEN_LETRAS
+      }
+
+      // 3. Si uno es conocido y el otro no, priorizamos el conocido
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+
+      // 4. Fallback: Si es texto raro (ej: "38/39", "A Medida"), ordenamiento alfabético estándar
+      return a.localeCompare(b);
+    });
   }
 }

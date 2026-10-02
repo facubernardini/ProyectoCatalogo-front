@@ -1,15 +1,14 @@
 <div class="min-h-screen flex flex-col bg-white">
     @if (productoActual(); as prod) {
-        <main class="flex-1 max-w-7xl mx-auto w-full pb-12 md:pt-8 px-4">
+        <main class="flex-1 max-w-7xl mx-auto w-full pb-12 md:pt-6 px-4">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                 
                 <!-- COLUMNA IZQUIERDA: Galería de Fotos -->
                 <div class="flex flex-col gap-3 -mx-4 md:mx-0">
                     
                     <!-- Foto Principal con Swipe y Flechas -->
-                    <!-- 👇 MODIFICADO: Agregado cursor-pointer y (click) -->
-                    <div class="relative w-full aspect-4/5 bg-gray-50 overflow-hidden md:rounded-2xl group cursor-pointer"
+                    <div class="relative w-full aspect-4/5 bg-gray-50 overflow-hidden group cursor-pointer"
                         (click)="abrirVisualizador()"
                         (touchstart)="onTouchStart($event)"
                         (touchend)="onTouchEnd($event, prod.imagenes)">
@@ -112,10 +111,18 @@
                             <div class="flex flex-wrap gap-3">
                                 @for (color of coloresUnicos(); track color.nombre) {
                                     <button (click)="seleccionarColor(color.hex, color.nombre)"
-                                            class="size-10 rounded-full border-2 transition-all p-0.5"
+                                            [disabled]="!color.activo"
+                                            class="relative size-10 rounded-full border-2 transition-all p-0.5 overflow-hidden disabled:cursor-not-allowed"
                                             [class.border-brand-accent]="colorSeleccionado() === color.nombre"
-                                            [class.border-gray-200]="colorSeleccionado() !== color.nombre">
+                                            [class.border-gray-200]="colorSeleccionado() !== color.nombre"
+                                            [class.opacity-40]="!color.activo"
+                                            [class.grayscale]="!color.activo">
+                                        
                                         <div class="w-full h-full rounded-full shadow-inner border border-black/10" [style.backgroundColor]="color.hex"></div>
+                                        
+                                        @if (!color.activo) {
+                                            <div class="absolute top-1/2 left-1/2 w-8 h-0.5 bg-red-500/80 -translate-x-1/2 -translate-y-1/2 -rotate-45"></div>
+                                        }
                                     </button>
                                 }
                             </div>
@@ -130,16 +137,25 @@
                             </p>
                             
                             <div class="flex flex-wrap gap-2">
-                                @for (talle of tallesUnicos(); track talle) {
-                                    <button (click)="talleSeleccionado.set(talle)"
-                                            class="px-3 py-1 rounded-sm text-sm font-bold border transition-all"
-                                            [class.border-brand-accent]="talleSeleccionado() === talle"
-                                            [class.bg-brand-accent]="talleSeleccionado() === talle"
-                                            [class.text-white]="talleSeleccionado() === talle"
-                                            [class.border-gray-200]="talleSeleccionado() !== talle"
-                                            [class.bg-white]="talleSeleccionado() !== talle"
-                                            [class.text-gray-600]="talleSeleccionado() !== talle">
-                                        {{ talle }}
+                                @for (talle of tallesUnicos(); track talle.nombre) {
+                                    <button (click)="talleSeleccionado.set(talle.nombre)"
+                                            [disabled]="!talle.activo"
+                                            class="px-3 py-1 rounded-sm text-sm font-bold border transition-all disabled:cursor-not-allowed"
+                                            
+                                            [class.border-brand-accent]="talleSeleccionado() === talle.nombre && talle.activo"
+                                            [class.bg-brand-accent]="talleSeleccionado() === talle.nombre && talle.activo"
+                                            [class.text-white]="talleSeleccionado() === talle.nombre && talle.activo"
+                                            
+                                            [class.border-gray-200]="talleSeleccionado() !== talle.nombre && talle.activo"
+                                            [class.bg-white]="talleSeleccionado() !== talle.nombre && talle.activo"
+                                            [class.text-gray-600]="talleSeleccionado() !== talle.nombre && talle.activo"
+                                            
+                                            [class.border-gray-300]="!talle.activo"
+                                            [class.bg-gray-100]="!talle.activo"
+                                            [class.text-gray-400]="!talle.activo"
+                                            [class.opacity-60]="!talle.activo"
+                                            [class.line-through]="!talle.activo">
+                                        {{ talle.nombre }}
                                     </button>
                                 }
                             </div>
