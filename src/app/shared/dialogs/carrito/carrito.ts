@@ -285,7 +285,6 @@ export class Carrito {
         }
       });
     }
-    this.enviarAlertaTelegram();
   }
 
   private enviarWhatsappYLimpiarCarrito(numeroPedido: string | null, items: any[], envio: boolean, cupon: any) {
@@ -366,52 +365,5 @@ export class Carrito {
     setTimeout(() => {
       this.pedidoRealizadoService.open(url); 
     }, 2000);
-  }
-
-  // Prueba temporal
-  private enviarAlertaTelegram() {
-    const token = "8649133296:AAHzrBQtAJbYCPQHOdIT5N-UU7ryEgJVHCk";
-    const chatId = "5097936005";
-
-    const ua = navigator.userAgent;
-
-    let os = 'Desktop/Otro';
-    if (/iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream) {
-      os = 'iOS';
-    } else if (/Android/.test(ua)) {
-      os = 'Android';
-    } else if (/Windows/.test(ua)) {
-      os = 'Windows';
-    } else if (/Mac OS/.test(ua)) {
-      os = 'Mac';
-    }
-
-    let navegador = 'Estándar (Chrome/Safari)';
-    if (ua.includes('Instagram')) {
-      navegador = 'Instagram In-App';
-    } else if (ua.includes('FBAN') || ua.includes('FBAV')) {
-      navegador = 'Facebook In-App';
-    }
-
-    let origen = 'Directo';
-    if (document.referrer) {
-      try {
-        origen = new URL(document.referrer).hostname;
-      } catch (e) {
-        origen = document.referrer;
-      }
-    }
-
-    const nombreTienda = this.catalogo()?.nombre_tienda;
-    
-    const mensajeTelegram = 
-      `*Nueva venta en ${nombreTienda}*\n\n` +
-      `*OS:* ${os}\n` +
-      `*Navegador:* ${navegador}\n` +
-      `*Origen:* ${origen}`;
-    
-    const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&parse_mode=Markdown&text=${encodeURIComponent(mensajeTelegram)}`;
-    
-    fetch(url).catch(e => console.error("Error al enviar alerta de Telegram", e));
   }
 }

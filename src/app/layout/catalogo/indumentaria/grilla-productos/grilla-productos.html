@@ -7,14 +7,14 @@
             <!-- BLOQUE IZQUIERDO: Botón Volver -->
             <div class="flex items-center">
                 <button (click)="volver()" 
-                        class="flex items-center gap-1.5 py-2 text-gray-500 md:hover:text-brand-text transition-colors group">
-                    <app-icon name="back" classes="size-5 md:size-6 fill-current transition-transform group-hover:-translate-x-0.5" />
-                    <span class="text-sm font-medium hidden md:block">Volver</span>
+                        class="flex items-center gap-1.5 py-2 text-gray-600 md:hover:text-brand-text transition-colors">
+                    <app-icon name="back" classes="size-5 md:size-6 fill-current" />
+                    <span class="text-[11px] md:text-xs font-medium uppercase tracking-wider hidden md:block">Volver</span>
                 </button>
             </div>
 
             <!-- BLOQUE CENTRAL / DERECHO: Acciones -->
-            <div class="flex items-center justify-end flex-1 md:flex-none gap-3 md:gap-5 py-2">
+            <div class="flex items-center justify-end flex-1 md:flex-none gap-3 md:gap-5 py-1">
                 
                 <!-- Botones de Acción (Ordenar / Filtrar) -->
                 <div class="flex items-center gap-4 md:gap-3">
@@ -22,14 +22,13 @@
                     <!-- Botón ORDENAR (Ahora con menú flotante) -->
                     <div class="relative">
                         <button (click)="toggleAcordeonOrden()" 
-                                class="flex items-center gap-1.5 text-gray-500 md:hover:text-brand-text transition-colors">
+                                class="flex items-center gap-1.5 text-gray-600 md:hover:text-brand-text transition-colors">
                             <app-icon name="sort" classes="size-4 md:size-5 fill-current" />
-                            <span class="text-[11px] md:text-xs font-bold uppercase tracking-widest">Ordenar</span>
+                            <span class="text-[11px] md:text-xs font-medium uppercase tracking-wider">Ordenar</span>
                         </button>
 
                         <!-- Menú Flotante de Orden -->
                         @if (isOrdenDesplegado()) {
-                            <!-- Overlay invisible para cerrar al hacer clic afuera -->
                             <div class="fixed inset-0 z-40" (click)="toggleAcordeonOrden()"></div>
 
                             <div class="absolute top-full mt-2 -left-2 min-w-50 z-50 bg-white border border-gray-100 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100">
@@ -94,9 +93,9 @@
 
                     <!-- Botón FILTRAR (Este sigue abriendo el panel lateral) -->
                     <button (click)="toggleFiltros()" 
-                            class="flex items-center gap-1.5 text-gray-500 md:hover:text-brand-text transition-colors">
+                            class="flex items-center gap-1.5 text-gray-600 md:hover:text-brand-text transition-colors">
                         <app-icon name="filter" classes="size-4 md:size-5 fill-current" />
-                        <span class="text-[11px] md:text-xs font-bold uppercase tracking-widest">Filtrar</span>
+                        <span class="text-[11px] md:text-xs font-medium uppercase tracking-wider">Filtrar</span>
                     </button>
                 </div>
 
@@ -191,7 +190,7 @@
 
                     <!-- Botón Limpiar Todo -->
                     <button (click)="limpiarTodosLosFiltros()" 
-                            class="text-xs font-bold text-brand-accent hover:underline ml-2 transition-all px-2 py-1 rounded md:hover:bg-brand-accent/5">
+                            class="text-xs font-bold text-brand-accent hover:underline ml-2">
                         Limpiar todo
                     </button>
                 </div>
@@ -200,12 +199,28 @@
 
         <!-- Resultados -->
         @if (productosFiltradosYOrdenados().length > 0) {
-            <div class="grid gap-3 md:gap-6" 
-                [class]="layoutColumnas() === 1 ? 'grid-cols-1 max-w-xl mx-auto' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'">
-                @for (prod of productosFiltradosYOrdenados(); track prod.id) {
-                    <app-product-card-indumentaria class="block w-full h-full" [producto]="prod" />
-                }
-            </div>
+            @if (layoutColumnas() === 1) {
+                <div class="grid gap-3 md:gap-6 grid-cols-1 md:grid-cols-3 mx-auto">
+                    @for (prod of productosFiltradosYOrdenados(); track prod.id; let i = $index) {
+                        <app-product-card-indumentaria 
+                            class="block w-full h-full animate-in fade-in slide-in-from-bottom-5 duration-500 ease-out" 
+                            [style.animation-delay.ms]="i * 75"
+                            [style.animation-fill-mode]="'backwards'"
+                            [producto]="prod" />
+                    }
+                </div>
+            } 
+            @else {
+                <div class="grid gap-3 md:gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                    @for (prod of productosFiltradosYOrdenados(); track prod.id; let i = $index) {
+                        <app-product-card-indumentaria 
+                            class="block w-full h-full animate-in fade-in slide-in-from-bottom-5 duration-500 ease-out" 
+                            [style.animation-delay.ms]="i * 75"
+                            [style.animation-fill-mode]="'backwards'"
+                            [producto]="prod" />
+                    }
+                </div>
+            }
         } @else {
             <div class="flex flex-col items-center justify-center py-20 text-center gap-4 text-gray-400">
                 <app-icon name="search-off" classes="size-16 fill-current opacity-20" />
