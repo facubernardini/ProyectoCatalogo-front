@@ -42,6 +42,7 @@ export class VariantesIndumentaria {
 
   // Variables para los inputs (NgModel)
   nuevoTalle: string = '';
+  esTalleUnico: boolean = false;
   nuevoColorNombre: string = '';
   nuevoColorHex: string = '#ff0000';
 
@@ -51,6 +52,10 @@ export class VariantesIndumentaria {
       // 1. Extraemos los talles únicos
       const tallesUnicos = [...new Set(this.variantesIniciales.map(v => v.talle).filter(t => t !== null))];
       this.talles.set(tallesUnicos as string[]);
+
+      if (tallesUnicos.length === 1 && (tallesUnicos[0] === 'ÚNICO' || tallesUnicos[0] === 'UNICO')) {
+        this.esTalleUnico = true;
+      }
 
       // 2. Extraemos los colores únicos
       const coloresMap = new Map();
@@ -103,7 +108,20 @@ export class VariantesIndumentaria {
   }
 
   eliminarTalle(talle: string) {
+    if (talle === 'ÚNICO') {
+      this.esTalleUnico = false;
+    }
     this.talles.update(t => t.filter(x => x !== talle));
+    this.generarMatriz();
+  }
+
+  toggleTalleUnico() {
+    if (this.esTalleUnico) {
+      this.nuevoTalle = '';
+      this.talles.set(['ÚNICO']);
+    } else {
+      this.talles.set([]);
+    }
     this.generarMatriz();
   }
 

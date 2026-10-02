@@ -20,7 +20,7 @@ export class Estadisticas implements OnInit {
   public mostrarBeneficios = signal(true);
   public isDropdownMesOpen = signal(false);
 
-  public metricaEvolucion = signal<'ganancias' | 'ventas'>('ganancias');
+  public metricaEvolucion = signal<'ganancias' | 'ventas'>('ventas');
 
   public opcionesMeses: { valor: number, anio: number, label: string }[] = [];
 
