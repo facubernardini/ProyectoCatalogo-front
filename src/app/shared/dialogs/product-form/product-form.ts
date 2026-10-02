@@ -232,9 +232,8 @@ export class ProductForm {
     const file = event.target.files[0];
     if (!file) return;
 
-    const formatosPermitidos = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!formatosPermitidos.includes(file.type)) {
-      this.toastService.show('Formato no soportado. Subí una imagen JPG, PNG o WEBP.', 'error');
+    if (!file.type.startsWith('image/')) {
+      this.toastService.show('Formato no soportado. Por favor subí un archivo de imagen válido.', 'error');
       event.target.value = '';
       return;
     }
@@ -242,7 +241,7 @@ export class ProductForm {
     const MAX_SIZE_BYTES = this.MAX_SIZE_MB * 1024 * 1024;
 
     if (file.size > MAX_SIZE_BYTES) {
-      this.toastService.show(`La imagen es demasiado grande. Máximo ${this.MAX_SIZE_MB}MB`, 'error');
+      this.toastService.show(`La imagen es demasiado grande. Máximo ${this.MAX_SIZE_MB}MB.`, 'error');
       event.target.value = ''; 
       return;
     }
