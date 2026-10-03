@@ -22,12 +22,10 @@
     </div>
 
     <!-- 2. CONTENIDO CENTRAL (Scrolleable) -->
-    <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-5">
+    <div class="flex-1 overflow-y-auto py-3 px-3 flex flex-col gap-2">
 
         <!-- Navegación Principal -->
         <div class="flex flex-col gap-1">
-            <span class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Navegación</span>
-
             <!-- INICIO -->
             <button (click)="navegar('/panel-vendedor/inicio')"
                 [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/inicio')"
@@ -120,25 +118,11 @@
                 <app-icon [name]="esRutaActiva('/panel-vendedor/mis-categorias') ? 'category-fill' : 'category'" 
                           classes="size-5 fill-current transition-transform group-active:scale-95" />
                 Categorías
-            </button>
-
-            <!-- MI TIENDA -->
-            <button (click)="navegar('/panel-vendedor/mi-tienda')"
-                [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/mi-tienda')"
-                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mi-tienda')"
-                [class.text-gray-500]="!esRutaActiva('/panel-vendedor/mi-tienda')"
-                [class.hover:bg-gray-100]="!esRutaActiva('/panel-vendedor/mi-tienda')"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
-                <app-icon [name]="esRutaActiva('/panel-vendedor/mi-tienda') ? 'shop-fill' : 'shop'" 
-                          classes="size-5 fill-current transition-transform group-active:scale-95" />
-                Configurar Tienda
-            </button>
+            </button>            
         </div>
 
         <!-- Herramientas y Ajustes (Ex Menú Principal) -->
-        <div class="flex flex-col gap-1">
-            <span class="px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Herramientas</span>
-
+        <div class="flex flex-col gap-1 border-t border-gray-200 pt-2">
             <!-- MI PERFIL -->
             <button (click)="irAMiPerfil()"
                 [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/perfil')"
@@ -154,11 +138,16 @@
                 Mi Perfil
             </button>
 
-            <!-- CATÁLOGO PDF -->
-            <button (click)="exportPDFService.generarPdf()"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-gray-500 hover:bg-gray-100 transition-all w-full text-left group">
-                <app-icon name="download-file" classes="size-5 fill-current text-gray-500 group-hover:text-gray-600 transition-colors" />
-                Catálogo PDF
+            <!-- MI TIENDA -->
+            <button (click)="navegar('/panel-vendedor/mi-tienda')"
+                [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/mi-tienda')"
+                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mi-tienda')"
+                [class.text-gray-500]="!esRutaActiva('/panel-vendedor/mi-tienda')"
+                [class.hover:bg-gray-100]="!esRutaActiva('/panel-vendedor/mi-tienda')"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm transition-all w-full text-left group">
+                <app-icon [name]="esRutaActiva('/panel-vendedor/mi-tienda') ? 'shop-fill' : 'shop'" 
+                          classes="size-5 fill-current transition-transform group-active:scale-95" />
+                Configurar Tienda
             </button>
 
             @if (adminStore.productos().length === 0){
@@ -176,6 +165,15 @@
                 Carga Inicial
             </button>
             }
+        </div>
+
+        <div class="flex flex-col gap-1 border-t border-gray-200 pt-2">
+            <!-- CATÁLOGO PDF -->
+            <button (click)="exportPDFService.generarPdf()"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-gray-500 hover:bg-gray-100 transition-all w-full text-left group">
+                <app-icon name="download-file" classes="size-5 fill-current text-gray-500 group-hover:text-gray-600 transition-colors" />
+                Catálogo PDF
+            </button>
         </div>
 
     </div>

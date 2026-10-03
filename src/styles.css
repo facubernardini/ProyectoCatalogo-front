@@ -40,17 +40,17 @@
   }
 
   :root[data-theme="zafiro" i] {
-    --theme-bg: #F8FAFC; 
-    --theme-accent: #0EA5E9;
-    --theme-text: #0F172A;
-    --theme-text-sec: #64748B;
+    --theme-bg: #F4F8FA; 
+    --theme-accent: #0284C7;
+    --theme-text: #082F49;
+    --theme-text-sec: #38576E;
   }
 
   :root[data-theme="forest" i] {
-    --theme-bg: #F0FDF4;
-    --theme-accent: #16A34A;
-    --theme-text: #14532D;
-    --theme-text-sec: #166534;
+    --theme-bg: #F7F9F6;
+    --theme-accent: #3F6253;
+    --theme-text: #1C2E25;
+    --theme-text-sec: #546E63;
   }
 
   :root[data-theme="sakura" i] {
@@ -76,7 +76,7 @@
 
   :root[data-theme="minimal" i] {
     --theme-bg: #FFFFFF;
-    --theme-accent: #171717;
+    --theme-accent: #0A0A0A;
     --theme-text: #0A0A0A;
     --theme-text-sec: #737373;
   }

@@ -12,7 +12,6 @@
                         [ngModel]="busquedaRaw()" 
                         (ngModelChange)="onSearchInput($event)" 
                         placeholder='Buscar por nombre o #...'
-                        [disabled]="adminStore.pedidosActivos().length === 0"
                         class="w-full p-3 pl-4 pr-11 bg-white border border-gray-100 rounded-xl outline-none focus:ring focus:ring-brand-accent/20 transition-all text-sm font-medium text-brand-text shadow-sm disabled:opacity-60 disabled:bg-gray-100 disabled:cursor-not-allowed">
                     
                     @if (isBuscando()) {
@@ -68,7 +67,7 @@
 
         <!-- ÁREA SCROLLEABLE: LISTA DE PEDIDOS -->
         <main class="flex-1 overflow-y-auto px-3 pt-1 relative">
-            <div class="flex flex-col gap-2 max-w-4xl mx-auto w-full min-h-[75vh] pb-20">
+            <div class="flex flex-col gap-2 max-w-4xl mx-auto w-full md:min-h-[75vh] pb-20">
                 
                 <!-- Spinner Central de Carga Inicial -->
                 @if (viendoHistorial() && isLoadingHistorial() && historialPage() === 1 && !busquedaRaw()) {
