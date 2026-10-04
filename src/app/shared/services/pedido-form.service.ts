@@ -11,7 +11,7 @@ const estadoInicial: PedidoFormData = {
   metodo_pago: MedioPago.EFECTIVO, 
   cupon_codigo: '',
 
-  estado: EstadoPedido.ENTREGADO,
+  estado: EstadoPedido.PENDIENTE,
   estado_pago: EstadoPago.PAGADO,
   
   productos: []

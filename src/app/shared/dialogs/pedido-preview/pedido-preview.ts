@@ -443,7 +443,7 @@ export class PedidoPreview implements OnInit, OnDestroy {
   datosInvalidos(): boolean {
     const p = this.pedidoEditable();
     if (!p) return true;
-    return !p.comprador_nombre || (p.productos?.length === 0);
+    return p.productos?.length === 0;
   }
 
   guardar() {

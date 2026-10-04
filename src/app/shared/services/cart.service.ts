@@ -23,7 +23,7 @@ export class CartService {
   selectedPaymentMethod = signal<MedioPago | null>(null);
   deliveryMethod = signal<'Envio' | 'Retiro' | null>(null);
   isOpen = signal(false);
-  umbralMontoFaltanteEnvioGratis = 70;
+  umbralMontoFaltanteEnvioGratis = 80;
 
   catalogConfig = signal<{ costoEnvio: number; envioGratisDesde: number; descuentoEfectivo: number } | null>(null);
 
