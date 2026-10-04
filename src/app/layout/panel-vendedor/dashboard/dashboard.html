@@ -88,7 +88,7 @@
                                             <span class="size-1 rounded-full bg-gray-400"></span>
                                             <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">{{ pedido.creado_el | date:'dd MMM, HH:mm' }}</span>
                                         </div>
-                                        <span class="text-xs font-bold text-brand-text truncate leading-tight">{{ pedido.comprador_nombre }}</span>
+                                        <span class="text-xs font-bold text-brand-text truncate leading-tight">{{ pedido.comprador_nombre || 'Consumidor Final' }}</span>
                                     </div>
 
                                     <!-- Precio y Acciones Rápidas -->

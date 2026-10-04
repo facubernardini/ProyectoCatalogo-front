@@ -219,6 +219,12 @@ export class Carrito {
       return;
     }
 
+    if (this.telefonoCliente().trim().length < 10) {
+      this.toastService.show('Ingresá un número de teléfono válido', 'error');
+      document.getElementById('seccion-datos')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     if (this.cartService.deliveryMethod() === 'Envio' && this.direccionEnvio().trim().length <= 5) {
       this.toastService.show('Ingresá la dirección de envío', 'error');
       document.getElementById('seccion-datos')?.scrollIntoView({ behavior: 'smooth', block: 'center' });

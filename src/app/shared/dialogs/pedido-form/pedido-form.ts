@@ -338,16 +338,25 @@ export class PedidoForm implements OnInit, OnDestroy {
     const formData = this.pedidoFormService.formData();
     const catalogoId = this.adminStore.catalogo()?.id;
     
-    // 1. Validaciones
-    if (!catalogoId || formData.productos.length === 0 || !formData.comprador_nombre) {
-      this.toastService.show('Faltan datos obligatorios', 'error');
+    // 1. Validaciones (¡Quitamos la restricción del nombre aquí!)
+    if (!catalogoId || formData.productos.length === 0) {
+      this.toastService.show('Faltan productos o catálogo', 'error');
+      return;
+    }
+
+    // Validación extra recomendada: Si es envío, la dirección debería ser obligatoria
+    if (formData.metodo_entrega === 'Envio' && (!formData.comprador_direccion || formData.comprador_direccion.trim() === '')) {
+      this.toastService.show('La dirección de envío es obligatoria', 'error');
       return;
     }
 
     // 2. Mapeamos la data de la UI a tu CrearPedidoRequest estricto
     const payload: CrearPedidoRequest = {
       catalogo_id: catalogoId,
-      comprador_nombre: formData.comprador_nombre,
+      
+      // EL CAMBIO PRINCIPAL: Si está vacío, enviamos `null`
+      comprador_nombre: formData.comprador_nombre?.trim() || null,
+      
       comprador_direccion: formData.metodo_entrega === 'Envio' ? formData.comprador_direccion : null,
       comprador_telefono: null,
       metodo_entrega: formData.metodo_entrega,
