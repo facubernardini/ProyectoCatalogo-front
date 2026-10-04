@@ -42,7 +42,7 @@ export interface PedidoDTO {
     estado: EstadoPedido;
     estado_pago: EstadoPago;
     
-    comprador_nombre: string;
+    comprador_nombre: string | null;
     comprador_direccion: string | null;
     comprador_telefono: string | null;
     metodo_entrega: string;
@@ -78,7 +78,7 @@ export interface ProductoPedidoRequest {
 // DTO con la estructura exacta que espera tu backend
 export interface CrearPedidoRequest {
     catalogo_id: number;
-    comprador_nombre: string;
+    comprador_nombre?: string | null;
     comprador_direccion?: string | null;
     comprador_telefono?: string | null;
     metodo_entrega: string;
@@ -89,11 +89,7 @@ export interface CrearPedidoRequest {
     estado?: EstadoPedido; 
     estado_pago?: EstadoPago;
 
-    productos: {
-        producto_id: number;
-        presentacion_id: number;
-        cantidad: number;
-    }[];
+    productos: ProductoPedidoRequest[];
 }
 
 // DTO con la respuesta

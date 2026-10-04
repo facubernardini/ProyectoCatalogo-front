@@ -51,26 +51,52 @@
         
         <!-- SECCIÓN: TALLES -->
         <div class="space-y-3">
-            <label class="text-xs font-bold text-gray-600 ml-1">
-                Talles
-            </label>
-            
-            <div class="flex gap-2">
-                <input type="text" [(ngModel)]="nuevoTalle" (keyup.enter)="agregarTalle()"
-                       placeholder="Ej: M, XL, 38-42" 
-                       class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 text-sm font-bold text-brand-text uppercase">
+            <!-- Header con label y switch integrado -->
+            <div class="flex items-center justify-between ml-1">
+                <label class="text-xs font-bold text-gray-600">
+                    Talles
+                </label>
                 
-                <button (click)="agregarTalle()" class="bg-brand-accent/10 text-brand-accent px-3 rounded-xl font-bold text-sm md:hover:bg-brand-accent/20 transition-all">
+                <!-- Checkbox integrado estilo chip / switch suave -->
+                <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                    <input type="checkbox" 
+                        [(ngModel)]="esTalleUnico" 
+                        (change)="toggleTalleUnico()" 
+                        class="sr-only peer">
+                    
+                    <div class="w-7 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-accent relative"></div>
+                    
+                    <span class="text-[11px] font-bold text-gray-500 peer-checked:text-brand-accent transition-colors">
+                        Talle único
+                    </span>
+                </label>
+            </div>
+            
+            <!-- Input y botón (deshabilitados cuando esTalleUnico es true) -->
+            <div class="flex gap-2">
+                <input type="text" 
+                    [(ngModel)]="nuevoTalle" 
+                    (keyup.enter)="!esTalleUnico && agregarTalle()"
+                    [disabled]="esTalleUnico"
+                    [placeholder]="esTalleUnico ? 'Talle único asignado' : 'Ej: M, XL, 38-42'" 
+                    class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 text-sm font-bold text-brand-text uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 placeholder:normal-case placeholder:font-normal">
+                
+                <button type="button"
+                        (click)="agregarTalle()" 
+                        [disabled]="esTalleUnico"
+                        class="bg-brand-accent/10 text-brand-accent px-3 rounded-xl font-bold text-sm md:hover:bg-brand-accent/20 transition-all disabled:opacity-40 disabled:pointer-events-none">
                     Añadir
                 </button>
             </div>
 
             <!-- Chips de talles agregados -->
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2 min-h-6">
                 @for (t of talles(); track t) {
-                    <span class="flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 shadow-sm">
+                    <span class="flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-600 shadow-sm animate-in fade-in zoom-in-95 duration-150"
+                        [class.border-brand-accent/40]="t === 'ÚNICO'"
+                        [class.text-brand-text]="t === 'ÚNICO'">
                         {{ t }}
-                        <button (click)="eliminarTalle(t)" class="text-gray-400 hover:text-red-500 transition-colors ml-1">✕</button>
+                        <button type="button" (click)="eliminarTalle(t)" class="text-gray-400 hover:text-red-500 transition-colors ml-1">✕</button>
                     </span>
                 }
             </div>

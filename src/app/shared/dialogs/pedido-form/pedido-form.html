@@ -23,7 +23,7 @@
                 </div>
 
                 <button (click)="guardarPedido()" 
-                        [disabled]="pedidoFormService.formData().productos.length === 0 || !pedidoFormService.formData().comprador_nombre"
+                        [disabled]="pedidoFormService.formData().productos.length === 0"
                         class="px-4 py-2 bg-brand-accent text-white text-sm font-bold rounded-2xl shadow-lg shadow-brand-accent/20 hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
                     Crear pedido
                 </button>
@@ -43,7 +43,9 @@
                         <label class="text-xs font-bold text-gray-600 ml-1">
                             Nombre y Apellido
                         </label>
-                        <input type="text" [(ngModel)]="pedidoFormService.formData().comprador_nombre"
+                        <input type="text" 
+                            [(ngModel)]="pedidoFormService.formData().comprador_nombre"
+                            placeholder="(Opcional)"
                             class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text">
                     </div>
 

@@ -111,6 +111,13 @@ export class ProductoDetalle implements OnInit {
     ) || prod.presentaciones[0];
   });
 
+  sinStockTotal = computed(() => {
+    const prod = this.productoActual();
+    if (!prod || !prod.presentaciones || prod.presentaciones.length === 0) return true;
+
+    return !prod.presentaciones.some(p => p.activo !== false);
+  });
+
   productosSimilares = computed(() => {
     const prodActual = this.productoActual();
     const todosProductos = this.adminStore.productos();

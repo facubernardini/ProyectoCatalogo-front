@@ -34,12 +34,12 @@
 
                             <!-- Menú Desplegable -->
                             @if (isDropdownMesOpen()) {
-                                <div class="absolute top-full right-0 w-36 mt-1 z-50 bg-white border border-gray-100 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100">
+                                <div class="absolute top-full right-0 w-max min-w-36 mt-1 z-50 bg-white border border-gray-100 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100">
                                     
                                     @for (opcion of opcionesMeses; track opcion.valor) {
                                         <button type="button"
                                                 (click)="cambiarMes(opcion)"
-                                                class="w-full flex items-center justify-between px-2.5 py-2 text-xs transition-colors rounded-lg"
+                                                class="w-full flex items-center justify-between gap-3 px-2.5 py-2 text-xs transition-colors rounded-lg"
                                                 [class.bg-brand-accent/10]="adminStore.mesEstadisticas() === opcion.valor"
                                                 [class.text-brand-accent]="adminStore.mesEstadisticas() === opcion.valor"
                                                 [class.font-bold]="adminStore.mesEstadisticas() === opcion.valor"
@@ -47,10 +47,10 @@
                                                 [class.font-medium]="adminStore.mesEstadisticas() !== opcion.valor"
                                                 [class.md:hover:bg-gray-50]="adminStore.mesEstadisticas() !== opcion.valor">
                                             
-                                            <span>{{ opcion.label }}</span>
+                                            <span class="whitespace-nowrap">{{ opcion.label }}</span>
                                             
                                             @if (adminStore.mesEstadisticas() === opcion.valor) {
-                                                <app-icon name="check" classes="size-3.5 fill-current" />
+                                                <app-icon name="check" classes="size-3.5 fill-current shrink-0" />
                                             }
                                         </button>
                                     }
@@ -173,14 +173,6 @@
 
                         <!-- Selector Ganancias / Ventas -->
                         <div class="flex bg-gray-100/80 p-0.5 rounded-lg border border-gray-200/60">
-                            <button (click)="metricaEvolucion.set('ganancias')"
-                                    class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-300"
-                                    [class.bg-white]="metricaEvolucion() === 'ganancias'"
-                                    [class.shadow-sm]="metricaEvolucion() === 'ganancias'"
-                                    [class.text-brand-text]="metricaEvolucion() === 'ganancias'"
-                                    [class.text-gray-400]="metricaEvolucion() !== 'ganancias'">
-                                Ganancias
-                            </button>
                             <button (click)="metricaEvolucion.set('ventas')"
                                     class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-300"
                                     [class.bg-white]="metricaEvolucion() === 'ventas'"
@@ -188,6 +180,14 @@
                                     [class.text-brand-text]="metricaEvolucion() === 'ventas'"
                                     [class.text-gray-400]="metricaEvolucion() !== 'ventas'">
                                 Ventas
+                            </button>
+                            <button (click)="metricaEvolucion.set('ganancias')"
+                                    class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-300"
+                                    [class.bg-white]="metricaEvolucion() === 'ganancias'"
+                                    [class.shadow-sm]="metricaEvolucion() === 'ganancias'"
+                                    [class.text-brand-text]="metricaEvolucion() === 'ganancias'"
+                                    [class.text-gray-400]="metricaEvolucion() !== 'ganancias'">
+                                Ganancias
                             </button>
                         </div>
                     </div>
