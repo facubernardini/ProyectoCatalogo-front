@@ -452,6 +452,10 @@ export class PedidoPreview implements OnInit, OnDestroy {
     const p = this.pedidoEditable();
     if (!p) return;
 
+    p.comprador_nombre = p.comprador_nombre?.trim() || null;
+    p.comprador_direccion = p.comprador_direccion?.trim() || null;
+    p.comprador_telefono = p.comprador_telefono?.trim() || null;
+
     this.pedidosManager.editarPedido(p.id, p, () => {
       this.pedidoPreviewService.pedidoSeleccionado.set(JSON.parse(JSON.stringify(p)));
       
