@@ -103,7 +103,7 @@ export class PedidosManagerService {
   async finalizarPedido(pedido: PedidoDTO) {
     const confirmacion = await this.confirmService.ask({
       title: '¿Marcar como Entregado?',
-      message: `El pedido #${pedido.numero_pedido} de ${pedido.comprador_nombre} pasará a estar finalizado.`,
+      message: `El pedido #${pedido.numero_pedido}${pedido.comprador_nombre ? ` de ${pedido.comprador_nombre}` : ''} pasará a estar finalizado.`,
       confirmText: 'Confirmar',
       cancelText: 'Volver',
       icon: 'check',
