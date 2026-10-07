@@ -2,12 +2,12 @@
     
     <!-- 1. SECCIÓN SUPERIOR: Toolbar de Controles -->
     <div class="sticky top-16 md:top-20 z-40 bg-white border-b border-gray-100 shadow-xs w-full">
-        <div class="max-w-7xl mx-auto px-3 md:px-6 flex items-center justify-between w-full">
+        <div class="max-w-7xl mx-auto px-3 md:px-0 flex items-center justify-between w-full">
             
             <!-- BLOQUE IZQUIERDO: Botón Volver -->
             <div class="flex items-center">
                 <button (click)="volver()" 
-                        class="flex items-center gap-1.5 py-2 text-gray-600 md:hover:text-brand-text transition-colors">
+                        class="flex items-center gap-1.5 py-2 text-brand-text md:hover:text-brand-text/80 transition-colors">
                     <app-icon name="back" classes="size-5 md:size-6 fill-current" />
                     <span class="text-[11px] md:text-xs font-medium uppercase tracking-wider hidden md:block">Volver</span>
                 </button>
@@ -22,7 +22,7 @@
                     <!-- Botón ORDENAR (Ahora con menú flotante) -->
                     <div class="relative">
                         <button (click)="toggleAcordeonOrden()" 
-                                class="flex items-center gap-1.5 text-gray-600 md:hover:text-brand-text transition-colors">
+                                class="flex items-center gap-1.5 text-brand-text md:hover:text-brand-text/80 transition-colors">
                             <app-icon name="sort" classes="size-4 md:size-5 fill-current" />
                             <span class="text-[11px] md:text-xs font-medium uppercase tracking-wider">Ordenar</span>
                         </button>
@@ -31,13 +31,13 @@
                         @if (isOrdenDesplegado()) {
                             <div class="fixed inset-0 z-40" (click)="toggleAcordeonOrden()"></div>
 
-                            <div class="absolute top-full mt-2 -left-2 min-w-50 z-50 bg-white border border-gray-100 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100">
+                            <div class="absolute top-full mt-2 -left-2 min-w-50 z-50 bg-white border border-gray-100 rounded-sm shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100">
                                 
                                 <!-- Más nuevo -->
                                 <button type="button"
                                         (click)="cambiarOrden('nuevo'); toggleAcordeonOrden()"
-                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
-                                        [class]="tempOrdenActual() === 'nuevo' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-sm group"
+                                        [class]="tempOrdenActual() === 'nuevo' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-brand-text font-medium hover:bg-gray-50'">
                                     <span class="whitespace-nowrap">Más nuevo al más viejo</span>
                                     @if (tempOrdenActual() === 'nuevo') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
                                 </button>
@@ -45,8 +45,8 @@
                                 <!-- Más viejo -->
                                 <button type="button"
                                         (click)="cambiarOrden('viejo'); toggleAcordeonOrden()"
-                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
-                                        [class]="tempOrdenActual() === 'viejo' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-sm group"
+                                        [class]="tempOrdenActual() === 'viejo' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-brand-text font-medium hover:bg-gray-50'">
                                     <span class="whitespace-nowrap">Más viejo al más nuevo</span>
                                     @if (tempOrdenActual() === 'viejo') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
                                 </button>
@@ -54,8 +54,8 @@
                                 <!-- Precio Alto -->
                                 <button type="button"
                                         (click)="cambiarOrden('precio_alto'); toggleAcordeonOrden()"
-                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
-                                        [class]="tempOrdenActual() === 'precio_alto' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-sm group"
+                                        [class]="tempOrdenActual() === 'precio_alto' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-brand-text font-medium hover:bg-gray-50'">
                                     <span class="whitespace-nowrap">Precio: Mayor a Menor</span>
                                     @if (tempOrdenActual() === 'precio_alto') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
                                 </button>
@@ -63,8 +63,8 @@
                                 <!-- Precio Bajo -->
                                 <button type="button"
                                         (click)="cambiarOrden('precio_bajo'); toggleAcordeonOrden()"
-                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
-                                        [class]="tempOrdenActual() === 'precio_bajo' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-sm group"
+                                        [class]="tempOrdenActual() === 'precio_bajo' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-brand-text font-medium hover:bg-gray-50'">
                                     <span class="whitespace-nowrap">Precio: Menor a Mayor</span>
                                     @if (tempOrdenActual() === 'precio_bajo') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
                                 </button>
@@ -72,8 +72,8 @@
                                 <!-- A-Z -->
                                 <button type="button"
                                         (click)="cambiarOrden('az'); toggleAcordeonOrden()"
-                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
-                                        [class]="tempOrdenActual() === 'az' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-sm group"
+                                        [class]="tempOrdenActual() === 'az' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-brand-text font-medium hover:bg-gray-50'">
                                     <span class="whitespace-nowrap">Nombre: A - Z</span>
                                     @if (tempOrdenActual() === 'az') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
                                 </button>
@@ -81,8 +81,8 @@
                                 <!-- Z-A -->
                                 <button type="button"
                                         (click)="cambiarOrden('za'); toggleAcordeonOrden()"
-                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-lg group"
-                                        [class]="tempOrdenActual() === 'za' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-gray-600 font-medium hover:bg-gray-50'">
+                                        class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors rounded-sm group"
+                                        [class]="tempOrdenActual() === 'za' ? 'bg-brand-accent/10 text-brand-accent font-bold' : 'text-brand-text font-medium hover:bg-gray-50'">
                                     <span class="whitespace-nowrap">Nombre: Z - A</span>
                                     @if (tempOrdenActual() === 'za') { <app-icon name="check" classes="size-4 fill-current shrink-0" /> }
                                 </button>
@@ -93,7 +93,7 @@
 
                     <!-- Botón FILTRAR (Este sigue abriendo el panel lateral) -->
                     <button (click)="toggleFiltros()" 
-                            class="flex items-center gap-1.5 text-gray-600 md:hover:text-brand-text transition-colors">
+                            class="flex items-center gap-1.5 text-brand-text md:hover:text-brand-text/80 transition-colors">
                         <app-icon name="filter" classes="size-4 md:size-5 fill-current" />
                         <span class="text-[11px] md:text-xs font-medium uppercase tracking-wider">Filtrar</span>
                     </button>
@@ -105,13 +105,13 @@
                 <!-- Botones de Layout -->
                 <div class="flex items-center gap-1">
                     <button (click)="layoutColumnas.set(1)"
-                            class="text-gray-600 hover:text-gray-700 p-1">
+                            class="text-brand-text hover:text-brand-text/80 p-1">
                         <app-icon [name]="layoutColumnas() === 1 ? 'square-filled' : 'square'" 
                                   classes="size-5 md:size-6 fill-current" />
                     </button>
                     
                     <button (click)="layoutColumnas.set(2)"
-                            class="text-gray-600 hover:text-gray-700 p-1">
+                            class="text-brand-text hover:text-brand-text/80 p-1">
                         <app-icon [name]="layoutColumnas() !== 1 ? 'grid-filled' : 'grid'" 
                                   classes="size-5 md:size-6 fill-current" />
                     </button>
@@ -121,10 +121,10 @@
     </div>
 
     <!-- Contenido Principal (Grilla y Títulos) -->
-    <div class="max-w-7xl mx-auto p-3 md:p-5">
+    <div class="max-w-7xl mx-auto p-3 md:px-0">
         
         <!-- Encabezado Inferior (Título y Chips) -->
-        <div class="flex flex-col gap-2 mb-4 md:mb-6 border-b border-gray-100 pb-3">
+        <div class="flex flex-col gap-2 mb-3">
             
             <!-- 2. SECCIÓN MEDIA: Título -->
             <div>

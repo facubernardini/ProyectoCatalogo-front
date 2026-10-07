@@ -25,7 +25,7 @@ export class CartService {
   isOpen = signal(false);
   umbralMontoFaltanteEnvioGratis = 80;
 
-  catalogConfig = signal<{ costoEnvio: number; envioGratisDesde: number; descuentoEfectivo: number } | null>(null);
+  catalogConfig = signal<{ costoEnvio: number; envioGratisDesde: number; descuentoEfectivo: number, envioACoordinar: boolean } | null>(null);
 
   items = computed(() => this.cartItems());
 
@@ -116,7 +116,7 @@ export class CartService {
     const base = this.priceAfterAllDiscounts();
     const config = this.catalogConfig();
 
-    if (this.deliveryMethod() === 'Envio' && !this.esEnvioGratis() && config) {
+    if (this.deliveryMethod() === 'Envio' && !this.esEnvioGratis() && config && !config.envioACoordinar) {
       return base + config.costoEnvio;
     }
     return base;
@@ -183,8 +183,8 @@ export class CartService {
 
   }
 
-  setCatalogConfig(costoEnvio: number, envioGratisDesde: number, descuentoEfectivo: number = 0) {
-    this.catalogConfig.set({ costoEnvio, envioGratisDesde, descuentoEfectivo });
+  setCatalogConfig(costoEnvio: number, envioGratisDesde: number, descuentoEfectivo: number = 0, envioACoordinar: boolean = false) {
+    this.catalogConfig.set({ costoEnvio, envioGratisDesde, descuentoEfectivo, envioACoordinar });
   }
 
   getCantidadEnCarrito(presentacionId: number): number {

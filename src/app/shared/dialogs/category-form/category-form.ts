@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CategoryFormService } from '@shared/services/category-form.service';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-category-form',
@@ -14,6 +15,7 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 export class CategoryForm {
   public categoryFormService = inject(CategoryFormService);
   public adminStore = inject(AdminStoreService);
+  private toastService = inject(ToastService);
 
   public categoria = {
     nombre: '',
@@ -82,8 +84,16 @@ export class CategoryForm {
   }
 
   onFileChange(event: any) {
-    const file = event.target.files[0];
+    const inputEl = event.target;
+    const file = inputEl.files[0];
+    
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        this.toastService.show('Formato no soportado. Por favor subí un archivo de imagen válido.', 'error');
+        inputEl.value = '';
+        return;
+      }
+
       this.imagenArchivo.set(file);
       
       const reader = new FileReader();

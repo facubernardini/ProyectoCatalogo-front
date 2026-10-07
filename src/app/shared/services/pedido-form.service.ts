@@ -8,6 +8,7 @@ const estadoInicial: PedidoFormData = {
   comprador_direccion: '',
   comprador_telefono: '',
   metodo_entrega: MetodoEntrega.RETIRO, 
+  envio_a_coordinar: false,
   metodo_pago: MedioPago.EFECTIVO, 
   cupon_codigo: '',
 

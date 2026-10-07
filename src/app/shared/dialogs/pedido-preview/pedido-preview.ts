@@ -194,7 +194,9 @@ export class PedidoPreview implements OnInit, OnDestroy {
 
     // Costo de Envío
     if (p.metodo_entrega === 'Envio') {
-      if (Number(p.costo_envio) === 0) {
+      if (p.envio_a_coordinar) {
+        mensaje += `🛵 Costo de envío: *A coordinar*\n`;
+      } else if (Number(p.costo_envio) === 0) {
         mensaje += `🛵 Costo de envío: *Bonificado*\n`;
       } else {
         mensaje += `🛵 Costo de envío: *$${Number(p.costo_envio).toLocaleString('es-AR')}*\n`;
@@ -374,6 +376,7 @@ export class PedidoPreview implements OnInit, OnDestroy {
   descuentoEfectivoCatalogo(): number { return Number(this.adminStore.catalogo()?.descuento_en_efectivo) || 0; }
   costoEnvioCatalogo(): number { return Number(this.adminStore.catalogo()?.costo_envio) || 0; }
   envioGratisDesdeCatalogo(): number { return Number(this.adminStore.catalogo()?.envio_gratis_desde) || 0; }
+  envioACoordinarCatalogo(): boolean { return !!this.adminStore.catalogo()?.envio_a_coordinar; }
 
   // Se ejecuta cuando cambian los Selects de Pago o Entrega en el HTML
   onMetodoCambio() {
@@ -389,6 +392,7 @@ export class PedidoPreview implements OnInit, OnDestroy {
         p.descuento_cupon = 0;
         p.descuento_pago_efectivo = 0;
         p.costo_envio = 0;
+        p.envio_a_coordinar = false;
         p.total_final = 0;
         return { ...p };
       }
@@ -419,18 +423,21 @@ export class PedidoPreview implements OnInit, OnDestroy {
         p.descuento_pago_efectivo = 0;
       }
 
-      // 4. Calcular Envío (Evalúa si llega al gratis)
+      // 4. Calcular Envío
       if (p.metodo_entrega === 'Envio') {
         const subtotalConDescuentos = p.subtotal - p.descuento_cupon - p.descuento_pago_efectivo;
         const minimoEnvioGratis = this.envioGratisDesdeCatalogo();
 
         if (minimoEnvioGratis > 0 && subtotalConDescuentos >= minimoEnvioGratis) {
           p.costo_envio = 0;
+          p.envio_a_coordinar = false;
         } else {
-          p.costo_envio = this.costoEnvioCatalogo();
+          p.envio_a_coordinar = this.envioACoordinarCatalogo();
+          p.costo_envio = p.envio_a_coordinar ? 0 : this.costoEnvioCatalogo();
         }
       } else {
         p.costo_envio = 0;
+        p.envio_a_coordinar = false;
       }
 
       // 5. Total Final

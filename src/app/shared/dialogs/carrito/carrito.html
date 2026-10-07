@@ -155,6 +155,7 @@
 
                     @if (catalogo()?.ofrece_envio) {
                         <div class="grid grid-cols-2 gap-2 mb-5">
+                            
                             <button (click)="seleccionarMetodo('Retiro')"
                                 [class.border-brand-accent]="cartService.deliveryMethod() === 'Retiro'"
                                 [class.border-gray-100]="cartService.deliveryMethod() !== 'Retiro'"
@@ -166,6 +167,7 @@
                                     <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
                                 </div>
                             </button>
+
                             <button (click)="seleccionarMetodo('Envio')"
                                 [class.border-brand-accent]="cartService.deliveryMethod() === 'Envio'"
                                 [class.border-gray-100]="cartService.deliveryMethod() !== 'Envio'"
@@ -174,11 +176,15 @@
                                 <app-icon name="delivery" [class.text-brand-accent]="cartService.deliveryMethod() === 'Envio'" classes="size-7 fill-current text-gray-400" />
                                 <div class="text-center">
                                     <span class="block font-bold text-sm text-brand-text">Envío a domicilio</span>
+                                    
                                     @if (cartService.esEnvioGratis()) {
                                         <span class="text-[10px] text-green-500 uppercase font-bold">¡Bonificado!</span>
+                                    } @else if (catalogo()?.envio_a_coordinar) {
+                                        <span class="text-[10px] text-brand-accent uppercase font-bold">A coordinar</span>
                                     } @else {
-                                        <span class="text-[10px] text-brand-accent uppercase font-bold">+${{ catalogo()?.costo_envio | number:'1.0-0' }} </span>
+                                        <span class="text-[10px] text-brand-accent uppercase font-bold">+${{ catalogo()?.costo_envio | number:'1.0-0' }}</span>
                                     }
+                                    
                                 </div>
                             </button>
                         </div>
@@ -404,11 +410,16 @@
                         <div class="flex items-center gap-2 text-sm animate-in fade-in duration-300">
                             <span class="text-gray-500 font-semibold whitespace-nowrap">Costo de envío</span>
                             <div class="flex-1 border-b-2 border-dotted border-gray-200"></div>
+                            
                             @if (cartService.esEnvioGratis()) {
                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                    <span class="text-gray-400 line-through text-xs tracking-tight">${{ catalogo()?.costo_envio | number:'1.0-0' }}</span>
+                                    @if (!catalogo()?.envio_a_coordinar) {
+                                        <span class="text-gray-400 line-through text-xs tracking-tight">${{ catalogo()?.costo_envio | number:'1.0-0' }}</span>
+                                    }
                                     <span class="font-bold text-green-500">Gratis</span>
                                 </div>
+                            } @else if (catalogo()?.envio_a_coordinar) {
+                                <span class="font-bold text-brand-text whitespace-nowrap tracking-tight">A coordinar</span>
                             } @else {
                                 <span class="font-bold text-brand-accent whitespace-nowrap tracking-tight">+${{ catalogo()?.costo_envio | number:'1.0-0' }}</span>
                             }

@@ -67,7 +67,7 @@ export class PedidosManagerService {
   }
 
   // --- CANCELAR PEDIDO ---
-  async cancelarPedido(pedido: PedidoDTO) {
+  async cancelarPedido(pedido: PedidoDTO, customAction?: (updateStore: () => void) => void) {
     const confirmacion = await this.confirmService.ask({
       title: '¿Cancelar Pedido?',
       message: `El pedido #${pedido.numero_pedido} será cancelado y el stock regresará a tu inventario.`,
@@ -86,9 +86,13 @@ export class PedidosManagerService {
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (pedidoActualizado) => {
-        this.adminStore.actualizarUnPedidoEnLista(pedidoActualizado);
-        
-        this.adminStore.refrescarProductos(); 
+        const updateStore = () => {
+          this.adminStore.actualizarUnPedidoEnLista(pedidoActualizado);
+          this.adminStore.refrescarProductos(); 
+        };
+
+        if (customAction) customAction(updateStore);
+        else updateStore();
         
         proceso.success('Pedido cancelado');
       },
@@ -100,7 +104,7 @@ export class PedidosManagerService {
   }
 
   // --- MARCAR COMO ENTREGADO / FINALIZADO ---
-  async finalizarPedido(pedido: PedidoDTO) {
+  async finalizarPedido(pedido: PedidoDTO, customAction?: (updateStore: () => void) => void) {
     const confirmacion = await this.confirmService.ask({
       title: '¿Marcar como Entregado?',
       message: `El pedido #${pedido.numero_pedido}${pedido.comprador_nombre ? ` de ${pedido.comprador_nombre}` : ''} pasará a estar finalizado.`,
@@ -119,7 +123,13 @@ export class PedidosManagerService {
       finalize(() => this.isLoading.set(false))
     ).subscribe({
       next: (pedidoActualizado) => {
-        this.adminStore.actualizarUnPedidoEnLista(pedidoActualizado);
+        const updateStore = () => {
+          this.adminStore.actualizarUnPedidoEnLista(pedidoActualizado);
+        };
+
+        if (customAction) customAction(updateStore);
+        else updateStore();
+        
         proceso.success('¡Pedido entregado con éxito!');
       },
       error: (err) => {

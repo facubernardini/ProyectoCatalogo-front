@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, signal, inject, input, output } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import { ProductoImagen } from 'src/app/core/models/producto.model';
 import { Icon } from 'src/app/shared/components/icon';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 export interface ImagenPreview {
   id_temporal: string;
@@ -19,23 +20,25 @@ export interface ImagenPreview {
   templateUrl: './galeria-imagenes.html'
 })
 export class GaleriaImagenes implements OnInit {
-  @Input() imagenesIniciales: ProductoImagen[] = [];
-  @Input() coloresDisponibles: { nombre: string, hex: string }[] = [];
+  private toastService = inject(ToastService);
   
-  @Output() imagenesActualizadas = new EventEmitter<ImagenPreview[]>();
+  imagenesIniciales = input<ProductoImagen[]>([]);
+  coloresDisponibles = input<{ nombre: string, hex: string }[]>([]);
 
+  imagenesActualizadas = output<ImagenPreview[]>();
+  
   imagenesSignal = signal<ImagenPreview[]>([]);
+
+  limiteFotos = 15;
 
   get imagenes(): ImagenPreview[] {
     return this.imagenesSignal();
   }
-  set imagenes(val: ImagenPreview[]) {
-    this.imagenesSignal.set(val);
-  }
 
   ngOnInit() {
-    if (this.imagenesIniciales && this.imagenesIniciales.length > 0) {
-      const imagenesMapeadas = this.imagenesIniciales.map(img => ({
+    const iniciales = this.imagenesIniciales();
+    if (iniciales && iniciales.length > 0) {
+      const imagenesMapeadas = iniciales.map(img => ({
         id_temporal: img.id.toString(),
         url_preview: img.url,
         file: undefined,
@@ -51,15 +54,16 @@ export class GaleriaImagenes implements OnInit {
   imagenesAgrupadasPorColor = computed(() => {
     const listaActual = this.imagenesSignal();
     const grupos: { color: string | null; hex: string | null; imagenes: ImagenPreview[] }[] = [];
+    const colores = this.coloresDisponibles();
 
-    // 1. Grupo General (sin color asignado o null)
+    // 1. Grupo General
     const generalImages = listaActual.filter(img => !img.color_asociado);
-    if (generalImages.length > 0 || this.coloresDisponibles.length === 0) {
+    if (generalImages.length > 0 || colores.length === 0) {
       grupos.push({ color: null, hex: null, imagenes: generalImages });
     }
 
-    // 2. Grupos por cada color disponible
-    this.coloresDisponibles.forEach(c => {
+    // 2. Grupos por cada color
+    colores.forEach(c => {
       const imgsColor = listaActual.filter(img => img.color_asociado === c.nombre);
       if (imgsColor.length > 0) {
         grupos.push({ color: c.nombre, hex: c.hex, imagenes: imgsColor });
@@ -70,12 +74,38 @@ export class GaleriaImagenes implements OnInit {
   });
 
   onFilesSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
+    const inputEl = event.target as HTMLInputElement;
+    if (!inputEl.files?.length) return;
+
+    const todosLosArchivos = Array.from(inputEl.files);
+    
+    const archivosValidos = todosLosArchivos.filter(file => file.type.startsWith('image/'));
+    
+    if (archivosValidos.length < todosLosArchivos.length) {
+      this.toastService.show('Formato no soportado. Por favor subí un archivo de imagen válido.', 'error');
+    }
+
+    if (archivosValidos.length === 0) {
+      inputEl.value = '';
+      return;
+    }
 
     const nuevasImagenes = [...this.imagenesSignal()];
+    const slotsDisponibles = this.limiteFotos - nuevasImagenes.length;
 
-    Array.from(input.files).forEach((file) => {
+    if (slotsDisponibles <= 0) {
+      this.toastService.show(`Has alcanzado el límite máximo de ${this.limiteFotos} fotos.`, 'error');
+      inputEl.value = '';
+      return;
+    }
+
+    const archivosPermitidos = archivosValidos.slice(0, slotsDisponibles);
+
+    if (archivosValidos.length > slotsDisponibles) {
+      this.toastService.show(`Solo se cargaron ${slotsDisponibles} fotos para no superar el límite.`, 'info');
+    }
+
+    archivosPermitidos.forEach((file) => {
       const previewUrl = URL.createObjectURL(file);
       
       nuevasImagenes.push({
@@ -89,7 +119,7 @@ export class GaleriaImagenes implements OnInit {
 
     this.imagenesSignal.set(nuevasImagenes);
     this.actualizarOrdenesGlobales();
-    input.value = ''; 
+    inputEl.value = ''; 
   }
 
   eliminarImagenGlobal(imagenAEliminar: ImagenPreview) {
@@ -98,29 +128,22 @@ export class GaleriaImagenes implements OnInit {
     this.actualizarOrdenesGlobales();
   }
 
-  // Evento que dispara Angular CDK al soltar una tarjeta dentro de su respectivo grupo
   onDropGrupo(colorAsociado: string | null, event: CdkDragDrop<ImagenPreview[]>) {
-    // Obtenemos el grupo actual
     const grupoActual = this.imagenesSignal().filter(img => img.color_asociado === colorAsociado);
     
-    // Movemos el elemento en el array local del grupo
     moveItemInArray(grupoActual, event.previousIndex, event.currentIndex);
 
-    // Reconstruimos la lista completa fusionando los cambios
     const otrasImagenes = this.imagenesSignal().filter(img => img.color_asociado !== colorAsociado);
     
-    // Si el grupo era el general (null)
     if (colorAsociado === null) {
       this.imagenesSignal.set([...grupoActual, ...otrasImagenes]);
     } else {
-      // Mantenemos el orden de los grupos y actualizamos el modificado
       this.imagenesSignal.set([...otrasImagenes, ...grupoActual]);
     }
 
     this.actualizarOrdenesGlobales();
   }
 
-  // Asignamos el color y recalculamos la posición en los grupos
   asignarColor(imagen: ImagenPreview, color: string | null) {
     const lista = this.imagenesSignal().map(img => {
       if (img.id_temporal === imagen.id_temporal) {
@@ -137,7 +160,6 @@ export class GaleriaImagenes implements OnInit {
     let contadorOrden = 1;
     const nuevoOrdenGlobal: ImagenPreview[] = [];
 
-    // Recorremos los grupos estructurados para asignar el 'orden' secuencial
     this.imagenesAgrupadasPorColor().forEach(grupo => {
       grupo.imagenes.forEach(img => {
         img.orden = contadorOrden++;
@@ -147,6 +169,14 @@ export class GaleriaImagenes implements OnInit {
 
     this.imagenesSignal.set(nuevoOrdenGlobal);
     this.notificarCambios();
+  }
+
+  verificarLimite(event: Event) {
+    if (this.imagenes.length >= this.limiteFotos) {
+      event.preventDefault(); 
+      
+      this.toastService.show(`Alcanzaste el límite de imágenes (${this.limiteFotos})`, 'info');
+    }
   }
 
   private notificarCambios() {

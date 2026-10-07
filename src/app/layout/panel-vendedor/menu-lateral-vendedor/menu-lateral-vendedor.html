@@ -150,7 +150,7 @@
                 Configurar Tienda
             </button>
 
-            @if (adminStore.productos().length === 0){
+            @if (adminStore.productos().length === 0 && !adminStore.esIndumentaria()){
                 <button (click)="navegar('/panel-vendedor/carga-inicial')"
                 [class.bg-brand-accent/10]="esRutaActiva('/panel-vendedor/carga-inicial')"
                 [class.text-brand-accent]="esRutaActiva('/panel-vendedor/carga-inicial')"
