@@ -226,7 +226,7 @@
                     </div>
 
                     <!-- CARRUSEL DE PRODUCTOS -->
-                    <div class="flex overflow-x-auto gap-3 md:gap-4 pb-4 px-4 scroll-pl-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+                    <div #carousel class="flex overflow-x-auto gap-3 md:gap-4 pb-2 px-4 scroll-pl-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
                         
                         @for (simil of productosSimilares().productos; track simil.id) {
                             <div class="w-[45%] md:w-[30%] lg:w-[22%] shrink-0 snap-start flex">
@@ -252,6 +252,20 @@
                             </div>
                         }
                     </div>
+
+                    @if (productosSimilares().productos.length > 3) {
+                    <!-- CONTROLES DEL CARRUSEL (Solo Desktop, Abajo a la derecha) -->
+                    <div class="hidden md:flex justify-end gap-1">
+                        <button (click)="scrollCarousel(carousel, -1)" 
+                                class="p-2 flex items-center justify-center text-gray-300 hover:text-brand-accent transition-colors active:scale-90">
+                            <app-icon name="chevron-left" classes="size-5 fill-current" />
+                        </button>
+                        <button (click)="scrollCarousel(carousel, 1)" 
+                                class="p-2 flex items-center justify-center text-gray-300 hover:text-brand-accent transition-colors active:scale-90">
+                            <app-icon name="chevron-right" classes="size-5 fill-current" />
+                        </button>
+                    </div>
+                }
                 </div>
             }
         </main>

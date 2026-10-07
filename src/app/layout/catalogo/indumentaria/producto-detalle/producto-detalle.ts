@@ -136,8 +136,8 @@ export class ProductoDetalle implements OnInit {
 
     return {
       categoriaPrincipal: { id: categoriaId, nombre: categoriaNombre },
-      productos: relacionados.slice(0, 4),
-      tieneMas: relacionados.length > 4
+      productos: relacionados.slice(0, 10),
+      tieneMas: relacionados.length > 10
     };
   });
 
@@ -313,6 +313,11 @@ export class ProductoDetalle implements OnInit {
   cerrarVisualizador() {
     this.visualizadorAbierto.set(false);
     document.body.style.overflow = '';
+  }
+
+  scrollCarousel(carousel: HTMLElement, direccion: number) {
+    const scrollAmount = 600; 
+    carousel.scrollBy({ left: scrollAmount * direccion, behavior: 'smooth' });
   }
 
   scrollThumbnails(element: HTMLElement, distance: number) {

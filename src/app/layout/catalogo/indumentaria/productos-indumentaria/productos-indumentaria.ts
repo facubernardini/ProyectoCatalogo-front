@@ -36,8 +36,8 @@ export class ProductosIndumentaria {
         id_grupo: 'destacados',
         nombre: 'Destacados',
         ruta: 'destacados',
-        productos: prodsDestacados.slice(0, 4),
-        tieneMas: prodsDestacados.length > 4,
+        productos: prodsDestacados.slice(0, 10),
+        tieneMas: prodsDestacados.length > 10,
         totalProductos: prodsDestacados.length
       });
     }
@@ -55,8 +55,8 @@ export class ProductosIndumentaria {
         id_grupo: 'ofertas',
         nombre: 'Ofertas Especiales',
         ruta: 'ofertas',
-        productos: prodsOfertas.slice(0, 4),
-        tieneMas: prodsOfertas.length > 4,
+        productos: prodsOfertas.slice(0, 10),
+        tieneMas: prodsOfertas.length > 10,
         totalProductos: prodsOfertas.length
       });
     }
@@ -71,8 +71,8 @@ export class ProductosIndumentaria {
         id_grupo: cat.id,
         nombre: cat.nombre,
         ruta: this.crearSlug(cat.nombre),
-        productos: prodsDeCategoria.slice(0, 4), 
-        tieneMas: prodsDeCategoria.length > 4,
+        productos: prodsDeCategoria.slice(0, 10), 
+        tieneMas: prodsDeCategoria.length > 10,
         totalProductos: prodsDeCategoria.length
       };
     };
@@ -98,6 +98,11 @@ export class ProductosIndumentaria {
 
   verMas(rutaDestino: string) {
     this.router.navigate(['/', rutaDestino]);
+  }
+
+  scrollCarousel(carousel: HTMLElement, direccion: number) {
+    const scrollAmount = 600; 
+    carousel.scrollBy({ left: scrollAmount * direccion, behavior: 'smooth' });
   }
 
   private crearSlug(texto: string): string {

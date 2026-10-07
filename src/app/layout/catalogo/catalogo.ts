@@ -114,7 +114,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
       if (catalogo?.nombre_tienda) {
         this.titleService.setTitle(`${catalogo.nombre_tienda}`);
       } else {
-        this.titleService.setTitle(`${BRAND_DATA.name}`);
+        this.titleService.setTitle('Listalo - Creá tu tienda online');
       }
 
       if (catalogo?.logo_tienda && faviconElement) {
