@@ -64,6 +64,7 @@ export class Carrito {
           Number(cat.costo_envio ?? 0),
           Number(cat.envio_gratis_desde ?? 0),
           Number(cat.descuento_en_efectivo),
+          Boolean(cat.envio_a_coordinar)
         );
 
         if (!cat.ofrece_envio) {
@@ -246,7 +247,7 @@ export class Carrito {
     let costoEnvioFinal = 0;
     
     if (envio && this.catalogo()) {
-      if (this.cartService.esEnvioGratis()) {
+      if (this.cartService.esEnvioGratis() || this.catalogo()?.envio_a_coordinar) {
         costoEnvioFinal = 0;
       } else {
         costoEnvioFinal = Number(this.catalogo()?.costo_envio) || 0;
@@ -262,12 +263,17 @@ export class Carrito {
       this.isSubmitting.set(false);
     }
     else{
+      const quedoACoordinar = envio 
+        ? (!!this.catalogo()?.envio_a_coordinar && !this.cartService.esEnvioGratis()) 
+        : false;
+
       const payload: CrearPedidoRequest = {
         catalogo_id: Number(catalogoId),
         comprador_nombre: this.nombreCliente().trim(),
         comprador_direccion: envio ? this.direccionEnvio().trim() : null,
         comprador_telefono: this.telefonoCliente() ? this.telefonoCliente() : null,
         metodo_entrega: deliveryMethod,
+        envio_a_coordinar: quedoACoordinar,
         costo_envio: costoEnvioFinal,
         metodo_pago: String(metodoPago),
         cupon_codigo: cupon ? cupon.codigo : null,
@@ -340,6 +346,8 @@ export class Carrito {
     if (envio) {
       if (this.cartService.esEnvioGratis()) {
         mensaje += `🛵 Costo de envío: *Bonificado*\n`;
+      } else if (this.catalogo()?.envio_a_coordinar) {
+        mensaje += `🛵 Costo de envío: *A coordinar*\n`;
       } else {
         const costoEnvioSeguro = Number(this.catalogo()?.costo_envio || 0);
         mensaje += `🛵 Costo de envío: *$${costoEnvioSeguro.toLocaleString('es-AR')}*\n`;

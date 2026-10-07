@@ -35,6 +35,8 @@ export class MiTienda implements OnInit, OnDestroy {
   public validandoSlug = signal(false);
   private slugSubject = new Subject<string>();
 
+  isDescuentoFocused = false;
+
   logoPreview: string | null = null;
   imagenLogoPendiente: File | null = null;
 

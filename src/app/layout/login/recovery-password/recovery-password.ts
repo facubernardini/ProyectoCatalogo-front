@@ -55,7 +55,8 @@ export class RecoveryPassword {
     }
 
     this.loading.set(true);
-    const email = this.emailForm.getRawValue().correo;
+    
+    const email = this.emailForm.getRawValue().correo?.toLowerCase().trim();
 
     this.authService.solicitarCodigoRecuperacion(email).subscribe({
       next: (res) => {
@@ -93,7 +94,7 @@ export class RecoveryPassword {
     this.loading.set(true);
 
     const payload = {
-      email: this.emailEnviado,
+      email: this.emailEnviado?.toLowerCase().trim(),
       codigoOTP: codigoOTP,
       nuevaPassword: password
     };

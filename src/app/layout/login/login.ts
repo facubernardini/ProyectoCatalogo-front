@@ -83,7 +83,14 @@ export class Login implements OnInit {
 
     this.isLoading.set(true);
 
-    this.authService.login(this.loginForm.value).subscribe({
+    const rawValue = this.loginForm.value;
+
+    const credencialesNormalizadas = {
+      ...rawValue,
+      correo: rawValue.correo?.toLowerCase().trim()
+    };
+
+    this.authService.login(credencialesNormalizadas).subscribe({
       next: (res) => {
         this.isLoading.set(false);
         const returnUrl = this.route.snapshot.queryParams['returnUrl'];

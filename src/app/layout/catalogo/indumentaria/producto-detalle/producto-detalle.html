@@ -110,16 +110,16 @@
                             <div class="flex flex-wrap gap-3">
                                 @for (color of coloresUnicos(); track color.nombre) {
                                     <button (click)="seleccionarColor(color.hex, color.nombre)"
-                                            [disabled]="!color.activo"
+                                            [disabled]="!color.disponible"
                                             class="relative size-10 rounded-full border-2 transition-all p-0.5 overflow-hidden disabled:cursor-not-allowed"
                                             [class.border-brand-accent]="colorSeleccionado() === color.nombre"
                                             [class.border-gray-200]="colorSeleccionado() !== color.nombre"
-                                            [class.opacity-40]="!color.activo"
-                                            [class.grayscale]="!color.activo">
+                                            [class.opacity-40]="!color.disponible"
+                                            [class.grayscale]="!color.disponible">
                                         
                                         <div class="w-full h-full rounded-full shadow-inner border border-black/10" [style.backgroundColor]="color.hex"></div>
                                         
-                                        @if (!color.activo) {
+                                        @if (!color.disponible) {
                                             <div class="absolute top-1/2 left-1/2 w-8 h-0.5 bg-red-500/80 -translate-x-1/2 -translate-y-1/2 -rotate-45"></div>
                                         }
                                     </button>
@@ -138,22 +138,22 @@
                             <div class="flex flex-wrap gap-2">
                                 @for (talle of tallesUnicos(); track talle.nombre) {
                                     <button (click)="talleSeleccionado.set(talle.nombre)"
-                                            [disabled]="!talle.activo"
+                                            [disabled]="!talle.disponible"
                                             class="px-3 py-1 rounded-sm text-sm font-bold border transition-all disabled:cursor-not-allowed"
                                             
-                                            [class.border-brand-accent]="talleSeleccionado() === talle.nombre && talle.activo"
-                                            [class.bg-brand-accent]="talleSeleccionado() === talle.nombre && talle.activo"
-                                            [class.text-white]="talleSeleccionado() === talle.nombre && talle.activo"
+                                            [class.border-brand-accent]="talleSeleccionado() === talle.nombre && talle.disponible"
+                                            [class.bg-brand-accent]="talleSeleccionado() === talle.nombre && talle.disponible"
+                                            [class.text-white]="talleSeleccionado() === talle.nombre && talle.disponible"
                                             
-                                            [class.border-gray-200]="talleSeleccionado() !== talle.nombre && talle.activo"
-                                            [class.bg-white]="talleSeleccionado() !== talle.nombre && talle.activo"
-                                            [class.text-gray-600]="talleSeleccionado() !== talle.nombre && talle.activo"
+                                            [class.border-gray-200]="talleSeleccionado() !== talle.nombre && talle.disponible"
+                                            [class.bg-white]="talleSeleccionado() !== talle.nombre && talle.disponible"
+                                            [class.text-gray-600]="talleSeleccionado() !== talle.nombre && talle.disponible"
                                             
-                                            [class.border-gray-300]="!talle.activo"
-                                            [class.bg-gray-100]="!talle.activo"
-                                            [class.text-gray-400]="!talle.activo"
-                                            [class.opacity-60]="!talle.activo"
-                                            [class.line-through]="!talle.activo">
+                                            [class.border-gray-300]="!talle.disponible"
+                                            [class.bg-gray-100]="!talle.disponible"
+                                            [class.text-gray-400]="!talle.disponible"
+                                            [class.opacity-60]="!talle.disponible"
+                                            [class.line-through]="!talle.disponible">
                                         {{ talle.nombre }}
                                     </button>
                                 }

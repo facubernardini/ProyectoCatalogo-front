@@ -398,6 +398,7 @@ export class Register implements OnInit, OnDestroy {
 
   private ejecutarRegistroDefinitivo() {
     this.vendedorReq.nombre_apellido = `${this.nombre.trim()} ${this.apellido.trim()}`;
+    this.vendedorReq.correo = this.vendedorReq.correo.toLowerCase().trim();
     this.catalogo.slug = this.catalogo.slug?.toLowerCase().replace(/\s+/g, '-');
 
     const payloadFinal = {

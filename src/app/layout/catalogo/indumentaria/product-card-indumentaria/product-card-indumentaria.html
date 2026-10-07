@@ -8,7 +8,7 @@
         @if (mejorOferta(); as oferta) {
             @if (oferta.precio_descuento) {
                 <div class="absolute -top-0.5 left-1.5 z-20 pointer-events-none">
-                    <span class="text-[9px] md:text-[10px] bg-brand-accent text-white font-semibold uppercase tracking-wider px-1 py-0.5 rounded-sm">
+                    <span class="text-[9px] md:text-[10px] bg-brand-accent text-white font-semibold uppercase tracking-wider px-1 py-0.5 rounded-xs">
                         {{ calcularPorcentajeOff(oferta.precio, oferta.precio_descuento) }}% OFF
                     </span>
                 </div>
@@ -43,10 +43,10 @@
             }
         }
         
-        @if (estaAgotado()) {
-            <div class="absolute inset-0 bg-black/5 backdrop-blur-[1px] flex items-center justify-center z-10">
-                <span class="bg-white/90 text-gray-800 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
-                    Agotado
+        @if (estaAgotado()) {            
+            <div class="absolute top-0 left-1.5 z-20 pointer-events-none">
+                <span class="bg-white/90 text-gray-800 text-[9px] md:text-[10px] font-black uppercase tracking-wider px-1 py-0.5 rounded-xs shadow-sm">
+                    Sin stock
                 </span>
             </div>
         }

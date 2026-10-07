@@ -84,7 +84,14 @@
                                 [class.px-1]="!isEditing()"
                                 [class.opacity-70]="!isEditing()">
                             
-                            <span>{{ pedidoEditable()!.metodo_entrega || 'Seleccionar' }}</span>
+                            <div class="flex items-center gap-2">
+                                <span>{{ pedidoEditable()!.metodo_entrega || 'Seleccionar' }}</span>
+                                
+                                <!-- NUEVO: Badge de "A coordinar" -->
+                                @if (pedidoEditable()!.metodo_entrega === 'Envio' && pedidoEditable()!.envio_a_coordinar) {
+                                    <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-600 font-bold uppercase tracking-wider">A coordinar</span>
+                                }
+                            </div>
                             
                             @if (isEditing()) {
                                 <span class="flex items-center justify-center shrink-0 transition-transform duration-300 ease-in-out" 
@@ -387,7 +394,7 @@
                         <!-- Envío -->
                         @if (pedidoEditable()!.metodo_entrega === 'Envio') {
                             <div class="flex justify-between items-center text-[11px] font-medium" 
-                                [class]="pedidoEditable()!.costo_envio > 0 ? 'text-gray-400' : 'text-emerald-400'">
+                                [class]="pedidoEditable()!.envio_a_coordinar || pedidoEditable()!.costo_envio > 0 ? 'text-gray-400' : 'text-emerald-400'">
                                 
                                 <div class="flex flex-wrap items-baseline gap-x-1.5 flex-1 pr-2">
                                     <span class="whitespace-nowrap">Envío a domicilio</span>
@@ -400,9 +407,11 @@
                                 </div>
 
                                 <!-- Precio -->
-                                <span class="shrink-0">
+                                <span class="shrink-0 font-semibold">
                                     @if (pedidoEditable()!.costo_envio > 0) {
                                         +${{ pedidoEditable()!.costo_envio | number:'1.0-0' }}
+                                    } @else if (pedidoEditable()!.envio_a_coordinar) {
+                                        <span class="text-amber-500 uppercase tracking-tight text-[10px]">A coordinar</span>
                                     } @else {
                                         Gratis
                                     }

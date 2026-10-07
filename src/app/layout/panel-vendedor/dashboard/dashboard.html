@@ -292,7 +292,7 @@
                 </button>
 
                 <!-- Botón Carga Inicial -->
-                @if (adminStore.productos().length === 0){
+                @if (adminStore.productos().length === 0 && !adminStore.esIndumentaria()){
                     <button routerLink="../carga-inicial"
                             class="flex items-center gap-3 bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all text-left group">
                         

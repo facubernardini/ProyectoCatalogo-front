@@ -45,41 +45,20 @@ export class ProductCardIndumentaria {
 
   estaAgotado = computed(() => this.presentacionesDisponibles().length === 0);
 
+  mejorOferta = computed(() => this.getMejorOferta(this.presentacionesDisponibles()));
+
   presentacionesDisponibles = computed(() => {
     const prod = this.producto();
     const permiteVentaSinStock = this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
     
-    if (permiteVentaSinStock) {
-      return prod.presentaciones;
-    }
+    return prod.presentaciones.filter(p => {
+      const estaActiva = p.activo !== false;
+      
+      const tieneStock = permiteVentaSinStock || (p.stock === null || p.stock > 0);
 
-    return prod.presentaciones.filter(p => p.stock === null || p.stock > 0);
-  });
-
-  tallesDisponibles = computed(() => {
-    const presentaciones = this.presentacionesDisponibles();
-    const talles = presentaciones
-      .map(p => p.talle)
-      .filter((t): t is string => t !== null && t !== undefined);
-    
-    return [...new Set(talles)];
-  });
-
-  // Extraemos los colores únicos disponibles
-  coloresDisponibles = computed(() => {
-    const presentaciones = this.presentacionesDisponibles();
-    const colores = new Map<string, { nombre: string, hex: string }>();
-    
-    presentaciones.forEach(p => {
-      if (p.color_nombre && p.color_hex && !colores.has(p.color_nombre)) {
-        colores.set(p.color_nombre, { nombre: p.color_nombre, hex: p.color_hex });
-      }
+      return estaActiva && tieneStock;
     });
-    
-    return Array.from(colores.values());
   });
-
-  mejorOferta = computed(() => this.getMejorOferta(this.presentacionesDisponibles()));
 
   navegarAlDetalle() {
     const prod = this.producto();
