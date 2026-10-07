@@ -57,17 +57,17 @@ export class ProductoDetalle implements OnInit {
     const prod = this.productoActual();
     if (!prod) return [];
     
-    const mapa = new Map<string, { nombre: string, hex: string, activo: boolean }>();
+    const mapa = new Map<string, { nombre: string, hex: string, disponible: boolean }>();
     
     prod.presentaciones.forEach(p => {
       if (p.color_nombre && p.color_hex) {
-        const esActiva = p.activo !== false;
+        const estaDisponible = p.activo !== false && (p.stock === null || p.stock > 0);
         
         if (mapa.has(p.color_nombre)) {
           const existente = mapa.get(p.color_nombre)!;
-          existente.activo = existente.activo || esActiva;
+          existente.disponible = existente.disponible || estaDisponible;
         } else {
-          mapa.set(p.color_nombre, { nombre: p.color_nombre, hex: p.color_hex, activo: esActiva });
+          mapa.set(p.color_nombre, { nombre: p.color_nombre, hex: p.color_hex, disponible: estaDisponible });
         }
       }
     });
@@ -81,23 +81,21 @@ export class ProductoDetalle implements OnInit {
 
     const colorActual = this.colorSeleccionado();
 
-    // 1. Extraemos los talles únicos
     const tallesCrudos = [...new Set(prod.presentaciones.map(p => p.talle).filter((t): t is string => !!t))];
-    
-    // 2. LOS ORDENAMOS usando nuestra nueva función
     const todosLosTalles = this.ordenarTalles(tallesCrudos);
 
-    // 3. Mapeamos la disponibilidad dependiente del color
     return todosLosTalles.map(nombreTalle => {
       const presentacionCombinada = prod.presentaciones.find(
         p => p.color_nombre === colorActual && p.talle === nombreTalle
       );
 
-      const esActivo = presentacionCombinada ? presentacionCombinada.activo !== false : false;
+      const estaDisponible = presentacionCombinada 
+        ? presentacionCombinada.activo !== false && (presentacionCombinada.stock === null || presentacionCombinada.stock > 0)
+        : false;
 
       return {
         nombre: nombreTalle,
-        activo: esActivo
+        disponible: estaDisponible
       };
     });
   });
@@ -115,7 +113,8 @@ export class ProductoDetalle implements OnInit {
     const prod = this.productoActual();
     if (!prod || !prod.presentaciones || prod.presentaciones.length === 0) return true;
 
-    return !prod.presentaciones.some(p => p.activo !== false);
+    // Evaluamos si ABSOLUTAMENTE TODAS las presentaciones están inactivas o sin stock
+    return !prod.presentaciones.some(p => p.activo !== false && (p.stock === null || p.stock > 0));
   });
 
   productosSimilares = computed(() => {
@@ -136,8 +135,8 @@ export class ProductoDetalle implements OnInit {
 
     return {
       categoriaPrincipal: { id: categoriaId, nombre: categoriaNombre },
-      productos: relacionados.slice(0, 4),
-      tieneMas: relacionados.length > 4
+      productos: relacionados.slice(0, 20),
+      tieneMas: relacionados.length > 20
     };
   });
 
@@ -159,7 +158,7 @@ export class ProductoDetalle implements OnInit {
         }
         
         if (!this.colorSeleccionado() && this.coloresUnicos().length > 0) {
-          const colorPorDefecto = this.coloresUnicos().find(c => c.activo) || this.coloresUnicos()[0];
+          const colorPorDefecto = this.coloresUnicos().find(c => c.disponible) || this.coloresUnicos()[0];
           this.colorSeleccionado.set(colorPorDefecto.nombre);
         }
       }
@@ -313,6 +312,11 @@ export class ProductoDetalle implements OnInit {
   cerrarVisualizador() {
     this.visualizadorAbierto.set(false);
     document.body.style.overflow = '';
+  }
+
+  scrollCarousel(carousel: HTMLElement, direccion: number) {
+    const scrollAmount = 600; 
+    carousel.scrollBy({ left: scrollAmount * direccion, behavior: 'smooth' });
   }
 
   scrollThumbnails(element: HTMLElement, distance: number) {

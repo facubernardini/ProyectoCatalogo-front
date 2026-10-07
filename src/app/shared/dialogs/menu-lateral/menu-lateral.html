@@ -6,7 +6,7 @@
         [class.opacity-100]="menuService.isOpen()"
         (click)="menuService.close()">
         
-        <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[18%] flex justify-center pointer-events-none">
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[18%] flex justify-center pointer-events-none md:hidden">
             <div class="p-2 rounded-full bg-gray-300 text-gray-600 border border-white/10 opacity-80">
                 <app-icon name="close" classes="size-6 fill-current" />
             </div>

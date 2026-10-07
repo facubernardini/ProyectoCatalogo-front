@@ -360,6 +360,7 @@ export class PedidoForm implements OnInit, OnDestroy {
       comprador_direccion: formData.metodo_entrega === 'Envio' ? formData.comprador_direccion : null,
       comprador_telefono: null,
       metodo_entrega: formData.metodo_entrega,
+      envio_a_coordinar: formData.envio_a_coordinar,
       costo_envio: this.calcularCostoEnvioFinal(),
       
       metodo_pago: formData.metodo_pago,

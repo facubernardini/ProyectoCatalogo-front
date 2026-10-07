@@ -46,6 +46,7 @@ export interface PedidoDTO {
     comprador_direccion: string | null;
     comprador_telefono: string | null;
     metodo_entrega: string;
+    envio_a_coordinar: boolean;
     metodo_pago: string;
     costo_envio: number;
     
@@ -82,6 +83,7 @@ export interface CrearPedidoRequest {
     comprador_direccion?: string | null;
     comprador_telefono?: string | null;
     metodo_entrega: string;
+    envio_a_coordinar: boolean;
     metodo_pago: string;
     costo_envio?: number;
     cupon_codigo?: string | null;

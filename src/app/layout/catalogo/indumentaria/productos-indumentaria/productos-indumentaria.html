@@ -1,8 +1,8 @@
 <section class="w-full py-8 md:py-12">
-    <div class="max-w-7xl mx-auto md:px-4">
+    <div class="max-w-7xl mx-auto">
         
         @for (grupo of categoriasConProductos(); track grupo.id_grupo) {
-            <div class="mb-5 last:mb-0">
+            <div class="mb-6 last:mb-0">
                 
                 <!-- ENCABEZADO DE LA CATEGORÍA -->
                 <div class="flex items-center justify-between mb-3 px-4 md:px-0">
@@ -16,8 +16,8 @@
                     </button>
                 </div>
 
-                <!-- CARRUSEL DE PRODUCTOS -->
-                <div class="flex overflow-x-auto gap-3 md:gap-4 pb-4 px-4 scroll-pl-8 md:scroll-pl-12 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+                <!-- CARRUSEL DE PRODUCTOS (Agregamos #carousel y scroll-smooth) -->
+                <div #carousel class="flex overflow-x-auto gap-3 md:gap-4 pb-2 px-4 scroll-pl-8 md:scroll-pl-12 snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
                     
                     @for (prod of grupo.productos; track prod.id) {
                         <div class="w-[45%] md:w-[30%] lg:w-[22%] shrink-0 snap-start flex">
@@ -42,6 +42,20 @@
                         </div>
                     }
                 </div>
+                
+                @if (grupo.totalProductos > 4) {
+                    <!-- CONTROLES DEL CARRUSEL (Solo Desktop, Abajo a la derecha) -->
+                    <div class="hidden md:flex justify-end gap-1">
+                        <button (click)="scrollCarousel(carousel, -1)" 
+                                class="p-2 flex items-center justify-center text-gray-300 hover:text-brand-accent transition-colors active:scale-90">
+                            <app-icon name="chevron-left" classes="size-5 fill-current" />
+                        </button>
+                        <button (click)="scrollCarousel(carousel, 1)" 
+                                class="p-2 flex items-center justify-center text-gray-300 hover:text-brand-accent transition-colors active:scale-90">
+                            <app-icon name="chevron-right" classes="size-5 fill-current" />
+                        </button>
+                    </div>
+                }
                 
             </div>
         }

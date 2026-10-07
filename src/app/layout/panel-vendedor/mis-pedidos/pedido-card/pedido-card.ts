@@ -2,10 +2,8 @@ import { trigger, transition, style, animate, state } from '@angular/animations'
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { EstadoPedido, PedidoDTO } from 'src/app/core/models/pedido.model';
-import { PedidosServiceBackend } from 'src/app/core/services-backend/pedidos.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { ConfirmService } from 'src/app/core/services/confirm.service';
-import { ToastService } from 'src/app/core/services/toast.service';
+import { PedidosManagerService } from 'src/app/core/services/pedidos-manager.service';
 import { Icon } from 'src/app/shared/components/icon';
 import { MEDIO_PAGO_ICONS, MedioPago } from 'src/app/shared/enums/medio-pago.enum';
 import { METODO_ENTREGA_ICONS, MetodoEntrega } from 'src/app/shared/enums/metodo-entrega.enum';
@@ -38,9 +36,7 @@ import { PedidoPreviewService } from 'src/app/shared/services/pedido-preview.ser
 })
 export class PedidoCard {
   private adminStore = inject(AdminStoreService);
-  private pedidoServiceBackend = inject(PedidosServiceBackend);
-  private toastService = inject(ToastService);
-  private confirmService = inject(ConfirmService);
+  private pedidosManager = inject(PedidosManagerService);
   public pedidoPreviewService = inject(PedidoPreviewService);
 
   pedido = input.required<PedidoDTO>();
@@ -99,58 +95,16 @@ export class PedidoCard {
     this.pedidoPreviewService.open(this.pedido(), true);
   }
 
-  async finalizarPedido() {
-    const confirmacion = await this.confirmService.ask({
-      title: '¿Marcar como entregado?',
-      message: `El pedido #${this.pedido().numero_pedido} de ${this.pedido().comprador_nombre} pasará a estar finalizado.`,
-      confirmText: 'Entregado',
-      cancelText: 'Volver',
-      icon: 'check',
-      type: 'info'
+  finalizarPedido() {
+    this.pedidosManager.finalizarPedido(this.pedido(), (updateStore) => {
+      this.animarYRemover(updateStore);
     });
-
-    if (confirmacion) {
-      const proceso = this.toastService.loading('Actualizando...');
-      this.pedidoServiceBackend.cambiarEstadoPedido(this.pedido().id, EstadoPedido.ENTREGADO).subscribe({
-        next: (pedidoActualizado) => {
-          this.animarYRemover(() => {
-            this.adminStore.actualizarUnPedidoEnLista(pedidoActualizado);
-          });
-          proceso.success('Pedido entregado con éxito');
-        },
-        error: (err) => {
-          console.error('Error al entregar pedido', err);
-          proceso.error('Hubo un error al actualizar el pedido');
-        }
-      });
-    }
   }
 
-  async cancelarPedido() {
-    const confirmacion = await this.confirmService.ask({
-      title: '¿Cancelar pedido?',
-      message: `El pedido de ${this.pedido().comprador_nombre} será cancelado definitivamente.`,
-      confirmText: 'Sí, cancelar',
-      cancelText: 'Volver',
-      icon: 'close',
-      type: 'danger'
+  cancelarPedido() {
+    this.pedidosManager.cancelarPedido(this.pedido(), (updateStore) => {
+      this.animarYRemover(updateStore);
     });
-
-    if (confirmacion) {
-      const proceso = this.toastService.loading('Cancelando pedido...');
-      this.pedidoServiceBackend.cambiarEstadoPedido(this.pedido().id, EstadoPedido.CANCELADO).subscribe({
-        next: () => {
-          this.animarYRemover(() => {
-            this.adminStore.removerPedidoDeLista(this.pedido().id);
-          });
-          proceso.success('Pedido cancelado');
-        },
-        error: (err) => {
-          console.error('Error al cancelar pedido:', err);
-          proceso.error('Error al cancelar el pedido');
-        }
-      });
-    }
   }
 
   // Se ejecuta la animación de colapso, y una vez finalizada se actualiza la Store

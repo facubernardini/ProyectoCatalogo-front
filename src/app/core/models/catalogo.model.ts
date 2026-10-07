@@ -56,7 +56,9 @@ export interface Catalogo {
   ciudad: string | null;
 
   minimo_compra: number;
+
   ofrece_envio: boolean;
+  envio_a_coordinar: boolean;
   costo_envio: number | null;
   envio_gratis_desde: number | null;
   

@@ -283,11 +283,12 @@
                     description="Indica si ofreces envíos y su costo"
                     icon="delivery" 
                     [loading]="loading()"
-                    [deshabilitarGuardar]="cat.ofrece_envio && ((cat.costo_envio ?? 0) <= 0)"
+                    [deshabilitarGuardar]="cat.ofrece_envio && !cat.envio_a_coordinar && ((cat.costo_envio ?? 0) <= 0)"
                     (onSave)="guardarCambios(sectionEnvios)"
                     (onCancel)="resetearValores()">
                     
-                    <section class="pt-3 border-t border-brand-bg space-y-3">               
+                    <section class="pt-3 border-t border-brand-bg space-y-4">               
+                        
                         <div class="relative grid grid-cols-2 p-1 bg-gray-100 rounded-2xl isolate overflow-hidden">
                             <div class="absolute inset-y-1 w-[calc(50%-4px)] rounded-xl transition-all duration-300 ease-out z-[-1]"
                                 [class]="cat.ofrece_envio 
@@ -311,53 +312,86 @@
                         </div>
 
                         @if (cat.ofrece_envio) {
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                                <div>
-                                    <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1"
-                                        [class.text-red-500]="(cat.costo_envio ?? 0) <= 0">
-                                        Costo de Envío
-                                    </label>
-                                    
-                                    <div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden"
-                                        [class.!border-red-500]="(cat.costo_envio ?? 0) <= 0"
-                                        [class.bg-red-50]="(cat.costo_envio ?? 0) <= 0">
-                                        
-                                        <span class="pl-4 py-2 text-sm font-bold select-none" 
-                                            [class.text-red-400]="(cat.costo_envio ?? 0) <= 0"
-                                            [class.text-gray-400]="(cat.costo_envio ?? 0) > 0">$</span>
-                                        
-                                        <input type="number"
-                                            (wheel)="$event.preventDefault()"
-                                            [(ngModel)]="cat.costo_envio"
-                                            class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0 no-spinners">
-                                    </div>
-                                    
-                                    @if ((cat.costo_envio ?? 0) <= 0) {
-                                        <p class="text-xs font-bold text-red-500 mt-1.5 ml-1 animate-in slide-in-from-top-1">
-                                            Debe ingresar un monto mayor a $0.
-                                        </p>
-                                    }
-                                </div>
+                            <div class="animate-in fade-in slide-in-from-top-2 duration-300 space-y-4">
+                                
+                                <!-- NUEVO: Toggle de Envío Variable -->
+                                <label class="relative flex items-center cursor-pointer group w-max mb-2">
+                                    <input type="checkbox" 
+                                        [(ngModel)]="cat.envio_a_coordinar" 
+                                        class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
+                                    <span class="ml-3 text-xs md:text-sm font-bold text-gray-600 group-hover:text-brand-text transition-colors">
+                                        Costo variable según la zona (A coordinar)
+                                    </span>
+                                </label>
 
-                                <div>
-                                    <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Envío gratis desde</label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     
-                                    <div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
-                                        
-                                        <span class="pl-4 py-2 text-sm font-bold text-gray-400 select-none">$</span>
-                                        
-                                        <input type="number"
-                                            (wheel)="$event.preventDefault()"
-                                            [(ngModel)]="cat.envio_gratis_desde"
-                                            class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0 no-spinners">
+                                    <!-- COLUMNA 1: Costo -->
+                                    <div>
+                                        @if (!cat.envio_a_coordinar) {
+                                            <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1"
+                                                [class.text-red-500]="(cat.costo_envio ?? 0) <= 0">
+                                                Costo de Envío Fijo
+                                            </label>
+                                            
+                                            <div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden"
+                                                [class.!border-red-500]="(cat.costo_envio ?? 0) <= 0"
+                                                [class.bg-red-50]="(cat.costo_envio ?? 0) <= 0">
+                                                
+                                                <span class="pl-4 py-2 text-sm font-bold select-none" 
+                                                    [class.text-red-400]="(cat.costo_envio ?? 0) <= 0"
+                                                    [class.text-gray-400]="(cat.costo_envio ?? 0) > 0">$</span>
+                                                
+                                                <input type="number"
+                                                    (wheel)="$event.preventDefault()"
+                                                    [(ngModel)]="cat.costo_envio"
+                                                    class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0 no-spinners">
+                                            </div>
+                                            
+                                            @if ((cat.costo_envio ?? 0) <= 0) {
+                                                <p class="text-xs font-bold text-red-500 mt-1.5 ml-1 animate-in slide-in-from-top-1">
+                                                    Debe ingresar un monto mayor a $0.
+                                                </p>
+                                            }
+                                        } @else {
+                                            <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">
+                                                Costo de Envío Variable
+                                            </label>
+                                            <div class="flex items-center gap-2 p-2.5 mt-1 bg-blue-50 text-blue-700 rounded-2xl animate-in fade-in">
+                                                <app-icon name="info" classes="size-5 fill-current shrink-0" />
+                                                <p class="text-xs font-medium">Se mostrará como "A coordinar" en el resumen del cliente.</p>
+                                            </div>
+                                        }
                                     </div>
-                                    
-                                    <p class="text-xs text-gray-400 mt-1 ml-1">Dejalo en cero si no ofrecés envío gratis.</p>
+
+                                    <!-- COLUMNA 2: Envío Gratis Desde -->
+                                    <div>
+                                        <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Envío gratis desde</label>
+                                        
+                                        <div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
+                                            
+                                            <span class="pl-4 py-2 text-sm font-bold text-gray-400 select-none">$</span>
+                                            
+                                            <input type="number"
+                                                (wheel)="$event.preventDefault()"
+                                                [(ngModel)]="cat.envio_gratis_desde"
+                                                class="w-full bg-transparent border-none py-2 pr-4 pl-1 outline-none text-brand-text font-medium focus:ring-0 no-spinners">
+                                        </div>
+                                        
+                                        <p class="text-[11px] text-gray-400 mt-1.5 ml-1 leading-tight">
+                                            @if (cat.envio_a_coordinar) {
+                                                Aplica incluso si el costo es a coordinar. Dejalo en cero si no ofrecés envío gratis.
+                                            } @else {
+                                                Dejalo en cero si no ofrecés envío gratis.
+                                            }
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         } @else {
-                            <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-2xl text-blue-700">
-                                <app-icon name="info" classes="size-5 fill-current" />
+                            <div class="flex items-center gap-2 p-2.5 bg-blue-50 rounded-2xl text-blue-700 animate-in fade-in">
+                                <app-icon name="info" classes="size-5 fill-current shrink-0" />
                                 <p class="text-xs font-medium">Los clientes verán que solo pueden retirar por tu local.</p>
                             </div>
                         }
@@ -422,30 +456,29 @@
                                 </div>
                                 
                                 <div class="flex items-center gap-3">
-                                    <!-- Contenedor del Input (Siempre visible) -->
+                                    <!-- Contenedor del Input -->
                                     <div class="relative w-20 shrink-0">
                                         <input type="number" 
-                                            #inputDesc
                                             [(ngModel)]="cat.descuento_en_efectivo"
-                                            [disabled]="!toggleDescuento.checked"
-                                            (focus)="inputDesc.setAttribute('data-focus', 'true')"
-                                            (blur)="inputDesc.setAttribute('data-focus', 'false')"
+                                            [disabled]="cat.descuento_en_efectivo === 0 && !isDescuentoFocused"
+                                            (focus)="isDescuentoFocused = true"
+                                            (blur)="isDescuentoFocused = false; cat.descuento_en_efectivo = cat.descuento_en_efectivo || 0"
                                             (wheel)="$event.preventDefault()"
                                             min="0" max="80"
                                             class="w-full py-1.5 pl-1 pr-6 bg-gray-50 border border-brand-accent/30 rounded-lg outline-none focus:border-brand-accent focus:bg-white transition-all text-sm font-black text-brand-accent text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:bg-gray-100 disabled:border-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed" 
                                             placeholder="10">
-                                            
+                                        
                                         <!-- Ícono de Porcentaje -->
                                         <span class="absolute right-2 top-1/2 -translate-y-1/2 text-sm font-black pointer-events-none transition-colors"
-                                            [class.text-brand-accent/50]="toggleDescuento.checked"
-                                            [class.text-gray-400]="!toggleDescuento.checked">%</span>
+                                            [class.text-brand-accent/50]="cat.descuento_en_efectivo !== 0 || isDescuentoFocused"
+                                            [class.text-gray-400]="cat.descuento_en_efectivo === 0 && !isDescuentoFocused">%</span>
                                     </div>
 
                                     <!-- Toggle Switch -->
                                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
                                         <input type="checkbox" 
                                             #toggleDescuento
-                                            [checked]="cat.descuento_en_efectivo !== 0 || inputDesc.getAttribute('data-focus') === 'true'"
+                                            [checked]="cat.descuento_en_efectivo !== 0 || isDescuentoFocused"
                                             (change)="cat.descuento_en_efectivo = toggleDescuento.checked ? 10 : 0"
                                             class="sr-only peer">
                                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
