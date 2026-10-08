@@ -33,10 +33,10 @@
   }
 
   :root[data-theme="sunset" i] {
-    --theme-bg: #FFF7ED;
-    --theme-accent: #F97316;
-    --theme-text: #431407;
-    --theme-text-sec: #9A3412;
+    --theme-bg: #FAF5F6;
+    --theme-accent: #832B47;
+    --theme-text: #2B0F17;
+    --theme-text-sec: #5C4049;
   }
 
   :root[data-theme="zafiro" i] {

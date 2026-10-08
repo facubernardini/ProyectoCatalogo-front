@@ -9,7 +9,7 @@
     <div class="max-w-7xl mx-auto px-4 xl:px-0 relative z-10">
         
         <!-- Título de la sección -->
-        <div class="text-center max-w-2xl mx-auto mb-16">
+        <div class="text-center max-w-2xl mx-auto mb-14">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-brand-text mb-4">
                 Diseñado para <span class="text-brand-accent">tu rubro</span>
             </h2>
@@ -19,16 +19,16 @@
         </div>
 
         <!-- GRID DE TIENDAS -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             
             @for (tienda of tiendas; track tienda.id) {
                 <!-- Tarjeta -->
-                <article class="bg-white rounded-3xl border border-gray-100 shadow-sm md:hover:shadow-lg md:hover:shadow-brand-accent/10 md:hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden">
+                <article class="bg-white rounded-2xl border border-gray-100 shadow-sm md:hover:shadow-lg md:hover:shadow-brand-accent/10 md:hover:-translate-y-0.5 transition-all duration-300 flex flex-col overflow-hidden">
                     
                     <!-- Contenedor de la Imagen Superior -->
                     <div class="h-44 w-full relative overflow-hidden bg-gray-100">
                         <img [src]="tienda.imagen" 
-                            [alt]="'Ejemplo de tienda online para el rubro ' + tienda.rubro + ': ' + tienda.nombre" 
+                            [alt]="'Ejemplo de tienda online: ' + tienda.nombre" 
                             loading="lazy"
                             class="w-full h-full object-cover object-center" />
                             
@@ -36,18 +36,13 @@
                     </div>
 
                     <!-- Contenido Textual -->
-                    <div class="p-5 flex-1 flex flex-col">
+                    <div class="p-4 pt-3 flex-1 flex flex-col">
                         
-                        <!-- Etiqueta del Rubro -->
-                        <span class="relative z-10 inline-block px-3 py-1 bg-white text-brand-accent border border-gray-100 shadow-sm text-[10px] font-black uppercase tracking-widest rounded-full w-fit mb-2 -mt-7">
-                            {{ tienda.rubro }}
-                        </span>
-                        
-                        <h3 class="text-lg font-bold text-brand-text mb-1.5">
+                        <h3 class="text-lg font-bold text-brand-text mb-1">
                             {{ tienda.nombre }}
                         </h3>
                         
-                        <p class="text-sm text-brand-text-sec leading-relaxed mb-6 flex-1">
+                        <p class="text-sm text-brand-text-sec leading-relaxed mb-4 flex-1">
                             {{ tienda.descripcion }}
                         </p>
 

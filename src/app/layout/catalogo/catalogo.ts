@@ -20,7 +20,6 @@ import { ProductosOfertas } from "@shared/dialogs/productos-ofertas/productos-of
 import { Skeleton } from "./skeleton/skeleton";
 import { PedidoRealizado } from "@shared/dialogs/pedido-realizado/pedido-realizado";
 import { Title } from '@angular/platform-browser';
-import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { NavbarDesktop } from "./navbar-desktop/navbar-desktop";
 import { MenuLateralDesktop } from "./menu-lateral-desktop/menu-lateral-desktop";
 import { CarouselDestacadosDesktop } from "./carousel-destacados-desktop/carousel-destacados-desktop";
