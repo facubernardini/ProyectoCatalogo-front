@@ -43,16 +43,16 @@ export class MiTienda implements OnInit, OnDestroy {
   MAX_SIZE_MB = 10;
 
   temasDisponibles = [
-    { id: TemaCatalogo.MIDNIGHT, nombre: 'Midnight', bg: '#D1E9F6', accent: '#2E5A88' },
-    { id: TemaCatalogo.LAVANDA, nombre: 'Lavanda', bg: '#F8F7FF', accent: '#BDB2FF' },
+    { id: TemaCatalogo.MINIMAL, nombre: 'Minimal', bg: '#FFFFFF', accent: '#0A0A0A' },
     { id: TemaCatalogo.MATCHA, nombre: 'Matcha', bg: '#F9FBF7', accent: '#A3B18A' },
     { id: TemaCatalogo.AQUA, nombre: 'Oliva', bg: '#F8FAF0', accent: '#8C9A4D' },
     { id: TemaCatalogo.FOREST, nombre: 'Forest', bg: '#F7F9F6', accent: '#3F6253' },
     { id: TemaCatalogo.TERRACOTA, nombre: 'Terracota', bg: '#F6E8E0', accent: '#C68F5E' },
     { id: TemaCatalogo.SAKURA, nombre: 'Sakura', bg: '#FFF5F8', accent: '#F2A0AC' },
-    { id: TemaCatalogo.MINIMAL, nombre: 'Minimal', bg: '#FFFFFF', accent: '#0A0A0A' },
-    { id: TemaCatalogo.SUNSET, nombre: 'Sunset', bg: '#FFF7ED', accent: '#F97316' },
+    { id: TemaCatalogo.LAVANDA, nombre: 'Lavanda', bg: '#F8F7FF', accent: '#BDB2FF' },
     { id: TemaCatalogo.ZAFIRO, nombre: 'Zafiro', bg: '#F4F8FA', accent: '#0284C7' },
+    { id: TemaCatalogo.MIDNIGHT, nombre: 'Midnight', bg: '#D1E9F6', accent: '#2E5A88' },
+    { id: TemaCatalogo.SUNSET, nombre: 'Berry', bg: '#FAF5F6', accent: '#832B47' },
   ];
 
   ngOnInit() {
