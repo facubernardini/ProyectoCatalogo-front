@@ -536,14 +536,56 @@
                     <section class="pt-2 border-t border-brand-bg w-full">
                         <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Paletas Disponibles</label>
                         
-                        <div class="flex overflow-x-auto md:flex-wrap md:overflow-visible gap-3 md:gap-y-8 pb-5 pt-3 px-1 snap-x md:snap-none scroll-smooth no-scrollbar w-full mt-1">
+                        <div class="flex overflow-x-auto overflow-y-hidden md:flex-wrap md:overflow-visible gap-3 md:gap-y-8 pb-6 pt-4 px-2 snap-x md:snap-none scroll-smooth no-scrollbar w-full mt-1">
                             
+                            <div class="relative snap-center shrink-0 w-16 h-16 flex flex-col items-center justify-center">
+                                
+                                <label for="colorPersonalizadoInput" 
+                                    class="relative w-full h-full rounded-full border-4 transition-all duration-300 cursor-pointer flex items-center justify-center shadow-inner overflow-hidden group"
+                                    [class]="cat.color_personalizado ? 'border-brand-text scale-110 shadow-lg' : 'border-transparent scale-100 opacity-70 md:hover:opacity-100 bg-gray-100'">
+                                    
+                                    <div class="absolute inset-0 z-0" 
+                                        [style.background]="cat.color_personalizado || 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)'">
+                                    </div>
+
+                                    @if (!cat.color_personalizado) {
+                                        <div class="absolute inset-0 bg-white/40 z-10"></div>
+                                    }
+
+                                    <div class="relative z-20 bg-white/90 p-1.5 rounded-full shadow-sm text-brand-text group-hover:scale-110 transition-transform">
+                                        <app-icon name="palette" classes="size-4 fill-current" />
+                                    </div>
+
+                                    <input type="color" 
+                                        id="colorPersonalizadoInput"
+                                        class="absolute opacity-0 w-0 h-0 pointer-events-none"
+                                        [ngModel]="cat.color_personalizado || '#4F46E5'" 
+                                        (ngModelChange)="onColorPersonalizadoChange($event)">
+                                </label>
+
+                                <span class="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-black uppercase tracking-wider transition-colors whitespace-nowrap"
+                                    [class]="cat.color_personalizado ? 'text-brand-text' : 'text-brand-text-sec'">
+                                    Custom
+                                </span>
+
+                                @if (cat.color_personalizado) {
+                                    <div class="absolute -top-1 -right-1 bg-brand-text text-white rounded-full p-1 shadow-md z-30 animate-in zoom-in duration-200">
+                                        <app-icon name="check" classes="size-3 fill-current" />
+                                    </div>
+                                    
+                                    <!-- Botón pequeño para borrar el color personalizado y volver al tema -->
+                                    <button (click)="quitarColorPersonalizado($event)" class="absolute -bottom-1 -right-1 bg-red-50 text-red-500 rounded-full p-1 shadow-sm z-30 md:hover:bg-red-500 md:hover:text-white transition-colors border border-red-100" title="Quitar color personalizado">
+                                        <app-icon name="close" classes="size-3 fill-current" />
+                                    </button>
+                                }
+                            </div>
+
                             @for (tema of temasDisponibles; track tema.id) {
                                 <button 
                                     type="button"
                                     (click)="cambiarTema(tema.id)"
                                     class="relative snap-center shrink-0 w-16 h-16 rounded-full border-4 transition-all duration-300 focus:outline-none"
-                                    [class]="cat.tema === tema.id ? 'border-brand-text scale-110 shadow-lg' : 'border-transparent scale-100 opacity-70 md:hover:opacity-100'">
+                                    [class]="(!cat.color_personalizado && cat.tema === tema.id) ? 'border-brand-text scale-110 shadow-lg' : 'border-transparent scale-100 opacity-70 md:hover:opacity-100'">
                                     
                                     <div class="w-full h-full rounded-full overflow-hidden flex flex-col shadow-inner" 
                                         [style.background]="tema.bg">
@@ -555,7 +597,7 @@
                                         {{ tema.nombre }}
                                     </span>
 
-                                    @if (cat.tema === tema.id) {
+                                    @if (!cat.color_personalizado && cat.tema === tema.id) {
                                         <div class="absolute -top-1 -right-1 bg-brand-text text-white rounded-full p-1 shadow-md z-10 animate-in zoom-in duration-200">
                                             <app-icon name="check" classes="size-3 fill-current" />
                                         </div>
@@ -574,13 +616,13 @@
                             Vista Previa
                         </label>
                         
-                        @let temaActual = getTemaInfo(cat.tema);
+                        @let prevVars = getPreviewVariables();
                         
                         <div class="w-full rounded-2xl overflow-hidden shadow-md border border-gray-100 transition-colors duration-500 ease-out flex flex-col pointer-events-none"
-                            [style.background]="temaActual?.bg || '#FFFFFF'">
+                            [style.background]="prevVars?.bg || '#FFFFFF'">
                             
                             <nav class="w-full border-b border-white/10 px-4 py-2 transition-colors duration-500 ease-out"
-                                [style.background]="temaActual?.accent || '#171717'">
+                                [style.background]="prevVars?.accent || '#171717'">
                                 
                                 <div class="flex items-center justify-between">
                                     
@@ -590,7 +632,7 @@
                                             class="size-10 rounded-full bg-white object-cover shadow-sm shrink-0">
                                     } @else {
                                         <div class="size-10 flex items-center justify-center rounded-full bg-white shadow-sm shrink-0">
-                                            <app-icon name="shop" classes="size-5 fill-current" [style.color]="temaActual?.accent" />
+                                            <app-icon name="shop" classes="size-5 fill-current" [style.color]="prevVars?.accent" />
                                         </div>
                                     }
 

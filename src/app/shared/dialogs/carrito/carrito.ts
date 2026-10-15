@@ -11,6 +11,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { PedidosServiceBackend } from 'src/app/core/services-backend/pedidos.ServiceBackend';
 import { CrearPedidoRequest } from 'src/app/core/models/pedido.model';
 import { TipoPlanEnum } from '../../enums/tipo-plan.enum';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 
 @Component({
   selector: 'app-carrito',
@@ -41,6 +42,7 @@ import { TipoPlanEnum } from '../../enums/tipo-plan.enum';
 export class Carrito {
   public adminStore = inject(AdminStoreService);
   public cartService = inject(CartService);
+  public authService = inject(AuthService);
   private pedidoRealizadoService = inject(PedidoRealizadoService);
   private toastService = inject(ToastService);
   private pedidosServiceBackend = inject(PedidosServiceBackend);

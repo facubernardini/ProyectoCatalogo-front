@@ -144,8 +144,55 @@ export class MiTienda implements OnInit, OnDestroy {
   cambiarTema(nuevoTema: TemaCatalogo) {
     this.catalogo.update(cat => {
       if (!cat) return cat;
-      return { ...cat, tema: nuevoTema };
+      return { 
+        ...cat, 
+        tema: nuevoTema, 
+        color_personalizado: null 
+      };
     });
+  }
+
+  onColorPersonalizadoChange(hex: string) {
+    this.catalogo.update(cat => {
+      if (!cat) return cat;
+      return { 
+        ...cat, 
+        color_personalizado: hex, 
+        tema: TemaCatalogo.MINIMAL 
+      };
+    });
+  }
+
+  quitarColorPersonalizado(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    
+    this.catalogo.update(cat => {
+      if (!cat) return cat;
+      return { 
+        ...cat, 
+        color_personalizado: null, 
+        tema: TemaCatalogo.MINIMAL 
+      };
+    });
+  }
+
+  getPreviewVariables(): { bg: string, accent: string } {
+    const cat = this.catalogo();
+    if (!cat) return { bg: '#FFFFFF', accent: '#0A0A0A' };
+
+    if (cat.color_personalizado) {
+      return {
+        accent: cat.color_personalizado,
+        bg: `color-mix(in srgb, ${cat.color_personalizado} 5%, #F8FAFC)`
+      };
+    }
+
+    const tema = this.temasDisponibles.find(t => t.id === cat.tema);
+    return {
+      bg: tema?.bg || '#FFFFFF',
+      accent: tema?.accent || '#0A0A0A'
+    };
   }
 
   async onLogoChange(event: any) {

@@ -4,20 +4,20 @@
         
         <div appSwipeDown
             (onSwipe)="productSelectorService.close()"
-            class="w-full md:max-w-125 bg-white rounded-t-[40px] md:rounded-3xl p-4 shadow-2xl animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:fade-in md:zoom-in-[0.98] duration-300 flex flex-col max-h-[90vh]
+            class="w-full md:max-w-130 bg-white rounded-t-[40px] md:rounded-3xl p-4 pb-5 animate-in slide-in-from-bottom md:slide-in-from-bottom-0 md:fade-in md:zoom-in-[0.98] duration-300 flex flex-col max-h-[90vh]
                 transform-gpu will-change-transform backface-hidden" 
             (click)="$event.stopPropagation()">
         
-            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 shrink-0 md:hidden"></div>
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-5 shrink-0 md:hidden"></div>
 
             @if (productSelectorService.selectedProduct(); as prod) {
                 <div class="flex gap-2.5 md:gap-4 mb-4 shrink-0">
-                    <div class="relative w-28 h-28 md:w-42 md:h-42 rounded-2xl overflow-hidden shrink-0 active:scale-95 transition-transform"
+                    <div class="relative w-28 h-28 md:w-46 md:h-46 rounded-xl overflow-hidden shrink-0 active:scale-95 transition-transform"
                         (click)="prod.imagen ? imageViewerService.open(prod.imagen) : null">
                         
                         @if (prod.imagen) {
                             <img [src]="prod.imagen" 
-                                class="w-full h-full object-cover active:opacity-70 md:hover:scale-105 duration-500 ease-out transition cursor-pointer">
+                                class="w-full h-full object-cover active:opacity-70 md:hover:scale-103 duration-500 ease-out transition cursor-pointer">
                         }
                         @else {
                             <div class="w-full h-full flex items-center justify-center text-brand-accent/30">
@@ -32,7 +32,7 @@
                         </h2>
                         
                         @if (prod.marca) {
-                            <p class="text-xs font-black text-brand-accent/80 uppercase tracking-wider mt-1">
+                            <p class="text-xs font-black text-brand-text/80 uppercase tracking-wider mt-1">
                                 {{ prod.marca }}
                             </p>
                         }
@@ -44,7 +44,7 @@
                         @if (prod.tags.length > 0) {
                             <div class="flex flex-wrap gap-1.5 mt-3">
                                 @for (tag of prod.tags; track tag.id) {
-                                    <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/5 px-1.5 py-0.5 rounded-lg border border-brand-accent/10">
+                                    <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-text bg-brand-accent/5 px-1.5 py-0.5 rounded-lg border border-brand-accent/10">
                                         
                                         @if (tag.icono) {
                                             <div [innerHTML]="tag.icono | safeHtml" class="size-5 flex items-center justify-center shrink-0"></div>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
 
-                <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 shrink-0">
+                <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-2 shrink-0">
                     Seleccioná una opción
                 </h3>
 
@@ -146,7 +146,7 @@
                 </div>
             }
 
-            <div class="flex items-center gap-3 pt-2 border-t border-gray-100 shrink-0">
+            <div class="flex items-center gap-3 shrink-0">
                 <button (click)="productSelectorService.close()" 
                         class="px-5 py-2 font-semibold text-gray-500 bg-gray-100 rounded-xl active:scale-95 transition-all md:hover:bg-gray-200">
                     Cerrar
@@ -155,7 +155,7 @@
                 @let totalItems = getTotalItemsSeleccionados();
                 <button (click)="agregarSeleccionadosAlCarrito()"
                         [disabled]="totalItems === 0"
-                        class="flex-1 flex items-center justify-center gap-2 p-2 bg-brand-accent text-white font-semibold rounded-xl md:hover:bg-brand-accent/90 shadow-md shadow-brand-accent/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none">
+                        class="flex-1 flex items-center justify-center gap-2 p-2 bg-brand-accent text-brand-contrast font-semibold rounded-xl md:hover:bg-brand-accent/90 shadow-md shadow-brand-accent/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none">
                     
                     <div class="grid relative overflow-hidden">
                         <div class="col-start-1 row-start-1 flex items-center justify-center transition-all duration-300 ease-out"
@@ -172,7 +172,7 @@
                             [class.opacity-100]="totalItems > 0"
                             [class.translate-y-0]="totalItems > 0">
                             
-                            <span class="bg-white/20 text-white px-2 py-0.5 rounded-md text-xs">
+                            <span class="bg-brand-contrast/10 text-brand-contrast px-2 py-0.5 rounded-md text-xs">
                                 {{ totalItems }}
                             </span>
                             <span>Agregar al carrito</span>

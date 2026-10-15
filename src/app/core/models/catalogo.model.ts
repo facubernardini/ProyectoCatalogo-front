@@ -49,6 +49,7 @@ export interface Catalogo {
   rubro_id: number;
   logo_tienda: string;
   tema: TemaCatalogo;
+  color_personalizado: string | null;
   wpp_numero: string | null;
   instagram_usuario: string | null;
   

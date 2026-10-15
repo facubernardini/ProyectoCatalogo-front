@@ -20,12 +20,12 @@
                 @else {
                     <div (click)="infoService.open()" 
                         class="size-14 flex items-center justify-center rounded-full bg-white shadow-sm shrink-0">
-                        <app-icon name="shop" classes="size-6 fill-current text-brand-accent" />
+                        <app-icon name="shop" classes="size-6 fill-current text-brand-text" />
                     </div>
                 }
 
                 <div class="flex flex-col min-w-0">
-                    <h2 class="text-2xl font-black text-brand-accent leading-tight line-clamp-2">
+                    <h2 class="text-2xl font-black text-brand-text leading-tight line-clamp-2">
                         {{ catalogo()?.nombre_tienda }}
                     </h2>
                     
@@ -37,7 +37,7 @@
                             
                             @if (catalogo()?.ciudad && catalogo()?.direccion) {
                                 <button (click)="infoService.close(); mapDialogService.open()" 
-                                        class="mt-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-accent bg-brand-accent/10 md:hover:bg-brand-accent/20 px-2.5 py-1.5 rounded-lg transition-all active:scale-95">
+                                        class="mt-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-text bg-brand-accent/10 md:hover:bg-brand-accent/20 px-2.5 py-1.5 rounded-lg transition-all active:scale-95">
                                     <app-icon name="location" classes="size-3.5 fill-current" />
                                     Ver mapa
                                 </button>
@@ -115,7 +115,7 @@
                         <p class="text-[10px] font-bold uppercase text-zinc-400 tracking-tighter">Mínimo compra</p>
                         
                         @if (catalogo()?.minimo_compra) {
-                            <p class="font-bold text-base text-brand-accent">${{ catalogo()?.minimo_compra | number:'1.0-0' }}</p>
+                            <p class="font-bold text-base text-brand-text">${{ catalogo()?.minimo_compra | number:'1.0-0' }}</p>
                         } @else {
                             <p class="font-bold text-sm text-zinc-500">Sin mínimo</p>
                         }
@@ -127,9 +127,9 @@
                         @if (catalogo()?.ofrece_envio) {
                             
                             @if (catalogo()?.envio_a_coordinar) {
-                                <p class="font-bold text-xs uppercase tracking-tight text-brand-accent">A coordinar</p>
+                                <p class="font-bold text-xs uppercase tracking-tight text-brand-text">A coordinar</p>
                             } @else {
-                                <p class="font-bold text-base text-brand-accent">${{ catalogo()?.costo_envio | number:'1.0-0' }}</p>
+                                <p class="font-bold text-base text-brand-text">${{ catalogo()?.costo_envio | number:'1.0-0' }}</p>
                             }
                             
                             @if (catalogo()?.envio_gratis_desde) {

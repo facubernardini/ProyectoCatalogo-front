@@ -69,10 +69,10 @@
                         <div class="flex flex-wrap gap-1.5 my-1.5 min-h-5.5">
                             @for (pres of disponibles.slice(0, 3); track pres.id) {
                                 <div class="relative">
-                                    <span class="block text-[9px] font-bold px-2 py-0.5 rounded-lg border uppercase transition-colors"
+                                    <span class="block text-[9px] font-bold px-2 py-0.5 rounded-sm border uppercase transition-colors"
                                         [class]="pres.precio_descuento && pres.precio_descuento > 0 
                                                 ? 'bg-green-50 text-green-700 border-green-200 shadow-sm' 
-                                                : 'text-gray-500 bg-gray-100 border-gray-200/50'">
+                                                : 'text-gray-600 bg-gray-100 border-gray-200/50'">
                                         {{ pres.unidad_venta }}
                                     </span>
                                     

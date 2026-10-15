@@ -7,6 +7,8 @@
   --color-brand-text: var(--theme-text);
   --color-brand-text-sec: var(--theme-text-sec);
 
+  --color-brand-contrast: var(--theme-accent-contrast);
+
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -20,6 +22,8 @@
     --theme-accent: #4F46E5;   /* Indigo 600 */
     --theme-text: #0F172A;     /* Slate 900 */
     --theme-text-sec: #475569; /* Slate 600 */
+
+    --theme-accent-contrast: #FFFFFF;
     
     background-color: var(--theme-bg);
     color: var(--theme-text);
@@ -30,6 +34,8 @@
     --theme-accent: #2E5A88;
     --theme-text: #0A1929;
     --theme-text-sec: #546E7A;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 
   :root[data-theme="sunset" i] {
@@ -37,6 +43,8 @@
     --theme-accent: #832B47;
     --theme-text: #2B0F17;
     --theme-text-sec: #5C4049;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 
   :root[data-theme="zafiro" i] {
@@ -44,6 +52,8 @@
     --theme-accent: #0284C7;
     --theme-text: #082F49;
     --theme-text-sec: #38576E;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 
   :root[data-theme="forest" i] {
@@ -51,6 +61,8 @@
     --theme-accent: #3F6253;
     --theme-text: #1C2E25;
     --theme-text-sec: #546E63;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 
   :root[data-theme="sakura" i] {
@@ -58,6 +70,8 @@
     --theme-accent: #F2A0AC;
     --theme-text: #4A4045;
     --theme-text-sec: #9D8189;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 
   :root[data-theme="matcha" i] {
@@ -65,6 +79,8 @@
     --theme-accent: #A3B18A;
     --theme-text: #344E41;
     --theme-text-sec: #588157;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 
   :root[data-theme="lavanda" i] {
@@ -72,6 +88,8 @@
     --theme-accent: #BDB2FF;
     --theme-text: #2B2D42;
     --theme-text-sec: #6C757D;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 
   :root[data-theme="minimal" i] {
@@ -79,6 +97,8 @@
     --theme-accent: #0A0A0A;
     --theme-text: #0A0A0A;
     --theme-text-sec: #737373;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 
   :root[data-theme="terracota" i] {
@@ -86,6 +106,8 @@
     --theme-accent: #C68F5E;
     --theme-text: #4A332F;
     --theme-text-sec: #9E746F;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 
   :root[data-theme="aqua" i] {
@@ -93,6 +115,8 @@
     --theme-accent: #8C9A4D;
     --theme-text: #2A3114;
     --theme-text-sec: #4F5A26;
+
+    --theme-accent-contrast: #FFFFFF;
   }
 }
 

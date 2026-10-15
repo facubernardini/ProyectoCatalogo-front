@@ -10,7 +10,6 @@ export const PRICES = [
     caracteristicas: [
       'Cargar productos con foto',
       'Recibir pedidos por WhatsApp',
-      'Cupones de descuento para tus clientes',
       'Soporte por WhatsApp'
     ]
   },
@@ -23,9 +22,9 @@ export const PRICES = [
     precioAnual: '198.000',
     destacado: true,
     caracteristicas: [
-      'Control de stock',
+      'Cupones de descuento para tus clientes',
       'Historial y gestión de pedidos',
-      'Estadísticas de tu negocio',
+      'Control de stock y estadísticas',
       'Soporte por WhatsApp'
     ]
   },
