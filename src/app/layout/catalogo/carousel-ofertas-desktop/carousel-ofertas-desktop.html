@@ -7,9 +7,9 @@
             </h2>
             
             <button (click)="verOfertasEnExplorador()"
-                    class="text-[13px] font-semibold text-brand-accent hover:text-white bg-brand-accent/15 hover:bg-brand-accent px-3 py-1 rounded-lg active:scale-95 transition-all duration-300 flex items-center gap-1 group/btn">
+                    class="text-[13px] font-semibold text-brand-text hover:text-white bg-brand-accent/15 hover:bg-brand-accent px-3 py-1 rounded-lg active:scale-95 transition-all duration-300 flex items-center gap-1 group/btn">
                 Ver todo
-                <app-icon name="chevron-right" classes="size-4 fill-current group-hover/btn:translate-x-1 transition-transform" />
+                <app-icon name="chevron-right" classes="size-4 fill-current group-hover/btn:translate-x-0.5 transition-transform" />
             </button>
         </div>
         
@@ -17,7 +17,7 @@
             
             @if (paginas().length > 1) {
                 <button (click)="prev()"
-                        class="absolute -left-3 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white shadow-[0_5px_15px_rgba(0,0,0,0.1)] border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
+                        class="absolute -left-2 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-103 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
                     <app-icon name="chevron-left" classes="size-6 fill-current" />
                 </button>
             }
@@ -36,17 +36,17 @@
                                 @if (obtenerEstado(producto); as estado) {
                                     
                                     <div (click)="productSelectorService.open(producto)"
-                                        class="bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_3px_10px_rgb(0,0,0,0.1)] hover:border-brand-accent/50 border border-gray-100 transition-all duration-300 cursor-pointer group/card flex h-full">
+                                        class="bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_3px_10px_rgb(0,0,0,0.1)] hover:border-brand-accent/50 border border-gray-100 transition-all duration-300 cursor-pointer flex h-full">
                                         
                                         <div class="p-3 pb-2 flex flex-col flex-1 min-w-0">
                                             
                                             <div class="mb-auto">
-                                                <h3 class="font-bold text-brand-text text-xs xl:text-sm line-clamp-2 leading-tight group-hover/card:text-brand-accent transition-colors">
+                                                <h3 class="font-bold text-brand-text text-xs xl:text-sm line-clamp-2 leading-tight transition-colors">
                                                     {{ producto.nombre }}
                                                 </h3>
 
                                                 @if (producto.marca) {
-                                                    <p class="text-[9px] xl:text-[10px] font-bold text-brand-accent/80 uppercase tracking-wider mt-0.5 mb-1 truncate">
+                                                    <p class="text-[9px] xl:text-[10px] font-bold text-brand-contrast/80 uppercase tracking-wider mt-0.5 mb-1 truncate">
                                                         {{ producto.marca }}
                                                     </p>
                                                 }
@@ -60,7 +60,7 @@
                                                 @if (producto.tags && producto.tags.length > 0) {
                                                     <div class="flex flex-wrap gap-1.5 mt-2">
                                                         @for (tag of producto.tags; track tag.id) {
-                                                            <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-accent bg-brand-accent/5 px-2 py-1 rounded-md border border-brand-accent/20">
+                                                            <span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-brand-text bg-brand-accent/5 px-2 py-1 rounded-md border border-brand-accent/20">
                                                                 
                                                                 @if (tag.icono) {
                                                                     <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0"></div>
@@ -136,7 +136,7 @@
 
             @if (paginas().length > 1) {
                 <button (click)="next()"
-                        class="absolute -right-3 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white shadow-[0_5px_15px_rgba(0,0,0,0.1)] border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
+                        class="absolute -right-2 top-1/2 -translate-y-1/2 z-20 size-10 rounded-full bg-white flex items-center justify-center text-gray-400 hover:text-brand-accent hover:scale-103 active:scale-95 transition-all opacity-0 group-hover/section:opacity-100">
                     <app-icon name="chevron-right" classes="size-6 fill-current" />
                 </button>
             }

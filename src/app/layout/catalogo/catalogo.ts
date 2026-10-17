@@ -106,20 +106,45 @@ export class CatalogoPublico implements OnInit, OnDestroy {
     effect(() => {
       const faviconElement = this.document.getElementById('app-favicon') as HTMLLinkElement;
       const catalogo = this.adminStore.catalogo();
-      
-      const tema = catalogo?.tema?.toLowerCase() ?? 'midnight';
-      this.renderer.setAttribute(this.document.documentElement, 'data-theme', tema);
+      const root = this.document.documentElement;
 
-      if (catalogo?.nombre_tienda) {
-        this.titleService.setTitle(`${catalogo.nombre_tienda}`);
-      } else {
-        this.titleService.setTitle('Listalo - Creá tu tienda online');
-      }
+      if (catalogo) {
+        if (catalogo.color_personalizado) {
+          const hex = catalogo.color_personalizado;
+          
+          root.removeAttribute('data-theme');
+          
+          root.style.setProperty('--theme-accent', hex);
+          
+          root.style.setProperty('--theme-accent-contrast', this.getContrastColor(hex));
 
-      if (catalogo?.logo_tienda && faviconElement) {
-        faviconElement.href = catalogo.logo_tienda;
+          root.style.setProperty('--theme-bg', `color-mix(in srgb, ${hex} 5%, #F8FAFC)`);
+
+          root.style.setProperty('--theme-text', `color-mix(in srgb, ${hex} 20%, #0F172A)`);
+          root.style.setProperty('--theme-text-sec', `color-mix(in srgb, ${hex} 15%, #475569)`);
+
+        } else {
+          const tema = catalogo.tema?.toLowerCase() ?? 'midnight';
+          root.setAttribute('data-theme', tema);
+          
+          root.style.removeProperty('--theme-accent');
+          root.style.removeProperty('--theme-accent-contrast');
+          root.style.removeProperty('--theme-bg');
+          root.style.removeProperty('--theme-text');
+          root.style.removeProperty('--theme-text-sec');
+        }
+
+        // Título y favicon
+        if (catalogo?.nombre_tienda) {
+          this.titleService.setTitle(`${catalogo.nombre_tienda}`);
+        } else {
+          this.titleService.setTitle('Listalo - Creá tu tienda online');
+        }
+
+        if (catalogo?.logo_tienda && faviconElement) {
+          faviconElement.href = catalogo.logo_tienda;
+        }
       }
-      
     });
 
     effect(() => {
@@ -253,5 +278,15 @@ export class CatalogoPublico implements OnInit, OnDestroy {
       .replace(/[^a-z0-9 -]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-');
+  }
+
+  private getContrastColor(hex: string): string {
+    const cleanHex = hex.replace('#', '');
+    const r = parseInt(cleanHex.substring(0, 2), 16);
+    const g = parseInt(cleanHex.substring(2, 4), 16);
+    const b = parseInt(cleanHex.substring(4, 6), 16);
+
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 128) ? '#0F172A' : '#FFFFFF';
   }
 }

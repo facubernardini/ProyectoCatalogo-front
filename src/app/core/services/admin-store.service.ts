@@ -24,6 +24,7 @@ import { ResumenDiarioGraficoDTO, ResumenMensualDTO, TopCategoriaDTO, TopProduct
 import { SuscripcionEstado } from "src/app/shared/enums/suscripcion.enum";
 import { AuthService } from "../services-backend/auth.ServiceBackend";
 import { RUBROS } from "src/app/shared/constants/rubros.constants";
+import { TipoPlanEnum } from "src/app/shared/enums/tipo-plan.enum";
 
 declare var gtag: Function;
 
@@ -74,6 +75,23 @@ export class AdminStoreService {
   catalogoId = computed(() => this.catalogo()?.id ?? 0);
   esIndumentaria = computed(() => this.catalogo()?.rubro_id === RUBROS.INDUMENTARIA);
 
+  // Obtener plan del vendedor dueño del catalogo publico
+  get esPrueba(): boolean {
+    return this.catalogo()?.plan_vendedor === TipoPlanEnum.PRUEBA;
+  }
+
+  get esBasico(): boolean {
+    return this.catalogo()?.plan_vendedor === TipoPlanEnum.BASICO;
+  }
+
+  get esPremium(): boolean {
+    return this.catalogo()?.plan_vendedor === TipoPlanEnum.PREMIUM;
+  }
+
+  get esUltra(): boolean {
+    return this.catalogo()?.plan_vendedor === TipoPlanEnum.ULTRA;
+  }
+
   cargarDatosPublicos(slug: string) {
     this.isLoading.set(true);
     
@@ -114,12 +132,12 @@ export class AdminStoreService {
       catalogo: this.catalogoService.getCatalogoById(catalogoId),
       productos: this.productoService.getProductosByCatalogo(catalogoId),
       categorias: this.categoriaService.getCategoriasByCatalogo(catalogoId),
-      cupones: this.cuponService.getCuponesByCatalogo(catalogoId),
       mediosPago: this.mediosPagoService.getMediosDePago(),
       tags: this.tagsService.getTagsByCatalogo(catalogoId),
+      cupones: esBasico ? of([]) : this.cuponService.getCuponesByCatalogo(catalogoId),
       pedidosActivos: esBasico ? of([]) : this.pedidosService.obtenerPedidosActivos(),
     }).subscribe({
-      next: ({ catalogo, productos, categorias, cupones, mediosPago, tags, pedidosActivos }) => {
+      next: ({ catalogo, productos, categorias, mediosPago, tags, cupones, pedidosActivos }) => {
         this.catalogo.set(catalogo);
         this.productos.set(productos);
         this.categorias.set(categorias);

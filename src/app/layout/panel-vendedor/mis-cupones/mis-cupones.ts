@@ -7,6 +7,8 @@ import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CuponFormService } from '@shared/services/cupon-form.service';
 import { CuponManagerService } from 'src/app/core/services/cupones-manager.service';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
+import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { BRAND_DATA } from 'src/app/core/data/brand.data';
 
 @Component({
   selector: 'app-mis-cupones',
@@ -17,6 +19,7 @@ import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs'
 })
 export class MisCupones {  
   public adminStore = inject(AdminStoreService);
+  public authService = inject(AuthService);
   public cuponFormService = inject(CuponFormService);
   public cuponManager = inject(CuponManagerService);
 
@@ -158,5 +161,15 @@ export class MisCupones {
 
   onDuplicar(cupon: Cupon) {
     this.cuponManager.duplicar(cupon);
+  }
+
+  abrirModalUpgrade() {
+    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+        
+    const mensaje = encodeURIComponent('Hola, quiero mejorar el plan de mi tienda a PREMIUM');
+    
+    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
+    
+    window.open(url, '_blank');
   }
 }

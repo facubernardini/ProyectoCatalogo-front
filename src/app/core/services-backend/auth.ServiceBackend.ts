@@ -15,7 +15,7 @@ export class AuthService {
 
   public vendedorActual = signal<Vendedor | null>(this.obtenerVendedorDeStorage());
 
-  public planActual = computed(() => {
+  private planActual = computed(() => {
     const vendedor = this.vendedorActual();
     
     if (!vendedor || !vendedor.suscripcion) {
@@ -26,9 +26,24 @@ export class AuthService {
     return planString ? (planString as TipoPlanEnum) : TipoPlanEnum.SIN_PLAN;
   });
 
+  public esPlanPrueba = computed(() => {
+    const plan = this.planActual();
+    return plan === TipoPlanEnum.PRUEBA;
+  });
+
   public esPlanBasico = computed(() => {
     const plan = this.planActual();
-    return plan === TipoPlanEnum.BASICO || plan === TipoPlanEnum.SIN_PLAN;
+    return plan === TipoPlanEnum.BASICO;
+  });
+
+  public esPlanPremium = computed(() => {
+    const plan = this.planActual();
+    return plan === TipoPlanEnum.PREMIUM;
+  });
+
+  public esPlanUltra = computed(() => {
+    const plan = this.planActual();
+    return plan === TipoPlanEnum.ULTRA;
   });
 
   constructor(private http: HttpClient) {}

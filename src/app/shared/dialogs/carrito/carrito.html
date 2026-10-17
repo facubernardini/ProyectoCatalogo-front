@@ -19,7 +19,7 @@
             <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4 md:hidden"></div>
             <div class="flex justify-between items-center">
                 <h2 class="flex items-center gap-3 text-2xl font-black text-brand-text">
-                    <div class="flex items-center justify-center size-10 bg-brand-accent/10 text-brand-accent rounded-xl shrink-0">
+                    <div class="flex items-center justify-center size-10 bg-brand-accent/10 text-brand-text rounded-lg shrink-0">
                         <app-icon name="receipt" classes="size-6 fill-current" />
                     </div>
                     <span class="text-lg">Mi Pedido</span>
@@ -71,17 +71,17 @@
                                     class="size-14 rounded-xl object-cover bg-brand-bg">
                                 @if (item.precio < item.precio_base) { 
                                     @let ahorro = getPorcentaje(item.precio_base, item.precio);
-                                    <span class="absolute -top-1.5 -left-1.5 bg-green-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg shadow-sm border border-white">
+                                    <span class="absolute -top-1.5 -left-1.5 bg-green-600 text-white text-[10px] font-medium px-1 py-0.5 rounded-md shadow-sm border border-white tracking-wide">
                                         {{ ahorro }}%
                                     </span>
                                 }
                             </div>
                             
                             <div class="flex-1 min-w-0">
-                                <h4 class="text-sm font-medium text-brand-text truncate leading-tight tracking-tight">
+                                <h4 class="text-sm font-medium text-brand-text line-clamp-2 leading-tight tracking-tight">
                                     {{ item.nombre }}
                                 </h4>
-                                <p class="text-[12px] text-gray-500">
+                                <p class="text-[12px] text-gray-500 font-medium">
                                     {{ item.unidad }}
                                 </p>
                                 
@@ -89,9 +89,9 @@
                                     <div class="flex items-end gap-1.5">
                                         @if (item.precio < item.precio_base) { 
                                             <span class="text-[12px] text-gray-400 line-through tracking-tighter">${{ item.precio_base * item.cantidad | number:'1.0-0' }}</span>
-                                            <span class="text-sm font-bold text-brand-accent tracking-tighter">${{ item.precio * item.cantidad | number:'1.0-0' }}</span>
+                                            <span class="text-sm font-bold text-brand-text tracking-tighter">${{ item.precio * item.cantidad | number:'1.0-0' }}</span>
                                         } @else {
-                                            <span class="text-sm font-bold text-brand-accent tracking-tighter">${{ item.precio * item.cantidad | number:'1.0-0' }}</span>
+                                            <span class="text-sm font-bold text-brand-text tracking-tighter">${{ item.precio * item.cantidad | number:'1.0-0' }}</span>
                                         }
                                     </div>
 
@@ -125,7 +125,7 @@
 
                                     <button (click)="manejarClickSumar(item)"
                                             [disabled]="!puedeIncrementar(item)"
-                                            class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-all text-white md:hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 disabled:md:hover:brightness-100 disabled:shadow-none">
+                                            class="size-8 flex items-center justify-center bg-brand-accent rounded-lg shadow-sm active:scale-90 transition-all text-brand-contrast md:hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 disabled:md:hover:brightness-100 disabled:shadow-none">
                                         <app-icon name="add-producto" classes="size-4 fill-current" />
                                     </button>
                                 </div>
@@ -164,7 +164,7 @@
                                 <app-icon name="shop" [class.text-brand-accent]="cartService.deliveryMethod() === 'Retiro'" classes="size-7 fill-current text-gray-400" />
                                 <div class="text-center">
                                     <span class="block font-bold text-sm text-brand-text">Retiro en local</span>
-                                    <span class="text-[10px] text-green-500 uppercase font-bold">Gratis</span>
+                                    <span class="text-[10px] text-green-500 uppercase font-bold tracking-wider">Gratis</span>
                                 </div>
                             </button>
 
@@ -180,9 +180,9 @@
                                     @if (cartService.esEnvioGratis()) {
                                         <span class="text-[10px] text-green-500 uppercase font-bold">¡Bonificado!</span>
                                     } @else if (catalogo()?.envio_a_coordinar) {
-                                        <span class="text-[10px] text-brand-accent uppercase font-bold">A coordinar</span>
+                                        <span class="text-[10px] text-brand-text uppercase font-bold">A coordinar</span>
                                     } @else {
-                                        <span class="text-[10px] text-brand-accent uppercase font-bold">+${{ catalogo()?.costo_envio | number:'1.0-0' }}</span>
+                                        <span class="text-[11px] text-brand-text uppercase font-bold">+${{ catalogo()?.costo_envio | number:'1.0-0' }}</span>
                                     }
                                     
                                 </div>
@@ -266,57 +266,59 @@
                     </div>
                 </div>
 
-                <div class="mt-4" #seccionCupon>
-                    <h3 class="text-[13px] font-bold uppercase tracking-wider text-gray-500 mb-2">¿Tenés un cupón?</h3>
-                    @if (!cartService.appliedCupon()) {
-                        <div class="flex gap-2">
-                            <input type="text" #cuponInput (input)="0"
-                                [disabled]="cartService.loadingCupon()"
-                                class="flex-1 min-w-0 p-2 bg-gray-50 border border-gray-100 rounded-xl focus:border-brand-accent/80 focus:bg-white outline-none transition-all text-brand-text font-bold uppercase disabled:opacity-50 disabled:bg-gray-100">
-                            
-                            <button (click)="cartService.aplicarCupon(cuponInput.value, catalogo()?.id || 0)"
-                                [disabled]="!cuponInput.value.trim() || cartService.loadingCupon()"
-                                class="shrink-0 min-w-20 flex items-center justify-center px-4 bg-brand-accent text-white font-bold rounded-xl active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 md:hover:brightness-110">
+                <div class="mt-4 mb-2" #seccionCupon>
+                    @if (!adminStore.esBasico){
+                        <h3 class="text-[13px] font-bold uppercase tracking-wider text-gray-500 mb-2">¿Tenés un cupón?</h3>
+                        @if (!cartService.appliedCupon()) {
+                            <div class="flex gap-2">
+                                <input type="text" #cuponInput (input)="0"
+                                    [disabled]="cartService.loadingCupon()"
+                                    class="flex-1 min-w-0 p-2 bg-gray-50 border border-gray-100 rounded-xl focus:border-brand-accent/80 focus:bg-white outline-none transition-all text-brand-text font-bold uppercase disabled:opacity-50 disabled:bg-gray-100">
                                 
-                                @if (cartService.loadingCupon()) {
-                                    <div class="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                } @else {
-                                    Aplicar
-                                }
-                                
-                            </button>
-                        </div>
-                    } 
-                    @else {
-                        <div class="p-2 bg-green-50 border-2 border-dashed border-green-200 rounded-2xl flex items-center justify-between animate-in zoom-in-95 duration-200">
-                            <div class="flex items-center gap-2">
-                                <div class="size-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-sm">
-                                    <app-icon name="check" classes="size-5 fill-current" />
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-bold text-green-600 uppercase tracking-tighter leading-none mb-1">
-                                        Cupón activo
-                                    </p>
-                                    <p class="text-xs font-bold text-brand-text uppercase flex items-center gap-1">
-                                        {{ cartService.appliedCupon()?.mensaje || 'Descuento aplicado' }}
-                                        @if (cartService.appliedCupon()?.es_porcentaje) {
-                                            <span class="bg-brand-accent/10 text-brand-accent text-center px-1 py-0.5 rounded-lg text-[10px]">
-                                                {{ cartService.appliedCupon()?.descuento }}% OFF
-                                            </span>
-                                        }
-
-                                        @if (!cartService.appliedCupon()?.es_porcentaje) {
-                                            <span class="bg-brand-accent/10 text-brand-accent text-center px-1 py-0.5 rounded-lg text-[10px]">
-                                                -${{ cartService.appliedCupon()?.descuento }}
-                                            </span>
-                                        }
-                                    </p>
-                                </div>
+                                <button (click)="cartService.aplicarCupon(cuponInput.value, catalogo()?.id || 0)"
+                                    [disabled]="!cuponInput.value.trim() || cartService.loadingCupon()"
+                                    class="shrink-0 min-w-20 flex items-center justify-center px-4 bg-brand-accent text-brand-contrast font-bold rounded-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 md:hover:brightness-110">
+                                    
+                                    @if (cartService.loadingCupon()) {
+                                        <div class="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                    } @else {
+                                        Aplicar
+                                    }
+                                    
+                                </button>
                             </div>
-                            <button (click)="cartService.removerCupon()" class="p-2 text-red-500 md:text-gray-400 md:hover:text-red-500 transition-colors">
-                                <app-icon name="trash" classes="size-5 fill-current" />
-                            </button>
-                        </div>
+                        } 
+                        @else {
+                            <div class="p-2 bg-green-50 border-2 border-dashed border-green-200 rounded-2xl flex items-center justify-between animate-in zoom-in-95 duration-200">
+                                <div class="flex items-center gap-2">
+                                    <div class="size-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-sm">
+                                        <app-icon name="check" classes="size-5 fill-current" />
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-green-600 uppercase tracking-tighter leading-none mb-1">
+                                            Cupón activo
+                                        </p>
+                                        <p class="text-xs font-bold text-brand-text uppercase flex items-center gap-1">
+                                            {{ cartService.appliedCupon()?.mensaje || 'Descuento aplicado' }}
+                                            @if (cartService.appliedCupon()?.es_porcentaje) {
+                                                <span class="bg-brand-accent/10 text-brand-accent text-center px-1 py-0.5 rounded-lg text-[10px]">
+                                                    {{ cartService.appliedCupon()?.descuento }}% OFF
+                                                </span>
+                                            }
+    
+                                            @if (!cartService.appliedCupon()?.es_porcentaje) {
+                                                <span class="bg-brand-accent/10 text-brand-accent text-center px-1 py-0.5 rounded-lg text-[10px]">
+                                                    -${{ cartService.appliedCupon()?.descuento }}
+                                                </span>
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+                                <button (click)="cartService.removerCupon()" class="p-2 text-red-500 md:text-gray-400 md:hover:text-red-500 transition-colors">
+                                    <app-icon name="trash" classes="size-5 fill-current" />
+                                </button>
+                            </div>
+                        }
                     }
                 </div>
             </div>
@@ -431,14 +433,14 @@
                             'pt-1.5 border-t-2 border-gray-100 mt-1.5': cartService.hasExtraCharges()
                         }">
                         <span class="text-lg font-bold text-brand-text">Total</span>
-                        <span [@popAnimationSimple]="cartService.totalFinal()" class="text-xl font-black text-brand-accent tracking-tight">${{ cartService.totalFinal() | number:'1.0-0' }}</span>
+                        <span [@popAnimationSimple]="cartService.totalFinal()" class="text-xl font-black text-brand-text tracking-tight">${{ cartService.totalFinal() | number:'1.0-0' }}</span>
                     </div>
                 </div>
 
                 <button (click)="finalizarPedido()"
                     type="button"
                     [disabled]="isSubmitting()"
-                    class="relative overflow-hidden w-full py-2 text-white font-bold text-base rounded-xl shadow-lg transition-all duration-300 ease-in-out group disabled:opacity-75 disabled:cursor-not-allowed md:hover:brightness-110"
+                    class="relative overflow-hidden w-full py-2 text-brand-contrast font-bold text-base rounded-xl shadow-lg transition-all duration-300 ease-in-out group disabled:opacity-75 disabled:cursor-not-allowed md:hover:brightness-110"
                     [class.bg-brand-accent]="puedeFinalizar()"
                     [class.bg-brand-accent/70]="!puedeFinalizar()"
                     [class.active:scale-[0.98]]="!isSubmitting()">

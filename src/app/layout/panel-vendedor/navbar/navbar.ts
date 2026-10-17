@@ -16,7 +16,16 @@ export class PanelNavbar {
   public authService = inject(AuthService);
   private router = inject(Router);
 
-  rutasNav = [
+  // 1. Arreglo estricto para el plan básico (4 elementos)
+  private rutasBasico = [
+    '/panel-vendedor/inicio',
+    '/panel-vendedor/mis-productos',
+    '/panel-vendedor/mis-categorias',
+    '/panel-vendedor/mi-tienda'
+  ];
+
+  // 2. Arreglo estricto para planes superiores (5 elementos)
+  private rutasPremium = [
     '/panel-vendedor/inicio',
     '/panel-vendedor/mis-productos',
     '/panel-vendedor/mis-pedidos',
@@ -29,10 +38,15 @@ export class PanelNavbar {
   );
 
   indiceActivo = computed(() => {
-    this.rutaActualEvent(); 
+    this.rutaActualEvent(); // Dispara la reactividad en cada cambio de ruta
     const urlActual = this.router.url;
     
-    return this.rutasNav.findIndex(ruta => urlActual.includes(ruta));
+    // 3. Elegimos el arreglo correcto según el plan
+    const rutasActuales = this.authService.esPlanBasico() 
+      ? this.rutasBasico 
+      : this.rutasPremium;
+    
+    return rutasActuales.findIndex(ruta => urlActual.includes(ruta));
   });
 
   navegar(ruta: string) {

@@ -1,11 +1,11 @@
 <aside class="w-full bg-white border border-gray-200/80 rounded-xl overflow-hidden flex flex-col h-[calc(100vh-8rem)]">
     
     @if (tieneDestacados() || tieneOfertas()) {
-        <div class="p-3 border-b border-gray-100 bg-white">            
-            <div class="flex flex-col gap-1.5">
+        <div class="p-1.5 border-b border-gray-100 bg-white">            
+            <div class="flex flex-col gap-1">
                 @if (tieneDestacados()) {
                     <button (click)="abrirDestacados()" 
-                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm font-bold text-amber-600 bg-amber-50/50 hover:bg-amber-100 hover:text-amber-800 transition-colors group">
+                            class="w-full flex items-center gap-3 py-2 px-3 rounded-lg text-sm font-bold text-amber-600 bg-amber-50/50 hover:bg-amber-100 hover:text-amber-800 transition-colors group">
                         <app-icon name="star" classes="size-4 fill-current group-hover:scale-110 transition-transform" />
                         Destacados
                     </button>
@@ -13,7 +13,7 @@
 
                 @if (tieneOfertas()) {
                     <button (click)="abrirOfertas()" 
-                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm font-bold text-green-700 bg-green-50/50 hover:bg-green-100 hover:text-green-900 transition-colors group">
+                            class="w-full flex items-center gap-3 py-2 px-3 rounded-lg text-sm font-bold text-green-700 bg-green-50/50 hover:bg-green-100 hover:text-green-900 transition-colors group">
                         <app-icon name="discount" classes="size-4 fill-current group-hover:scale-110 transition-transform" />
                         Ofertas
                     </button>
@@ -22,7 +22,7 @@
         </div>
     }
 
-    <div class="flex-1 overflow-y-auto p-3 bg-white custom-scrollbar">
+    <div class="flex-1 overflow-y-auto px-2 py-3 bg-white custom-scrollbar">
         <h3 class="text-xs font-black uppercase tracking-widest text-brand-text-sec mb-2 px-2">
             Categorías
         </h3>
@@ -30,7 +30,7 @@
         <div class="flex flex-col gap-1">
             @for (cat of categoriasOrdenadas(); track cat.id) {
                 <button (click)="seleccionarYFechar(cat.nombre)"
-                        class="w-full flex items-center justify-between text-gray-600 hover:bg-gray-100 hover:text-brand-text py-2 pl-2.5 pr-1.5 rounded-xl text-sm font-semibold transition-all duration-200 group">
+                        class="w-full flex items-center justify-between text-gray-600 hover:bg-gray-100 hover:text-brand-text py-2 pl-2.5 pr-1.5 rounded-lg text-sm font-semibold transition-all duration-200 group">
                     
                     <div class="flex items-center gap-2 min-w-0">
                         <div class="size-1.5 shrink-0 rounded-full"
@@ -44,19 +44,19 @@
                         </span>
                     </div>
 
-                    <app-icon name="chevron-right" classes="size-4 opacity-0 group-hover:opacity-40 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                    <app-icon name="chevron-right" classes="size-4 opacity-0 group-hover:opacity-40 -translate-x-0.5 group-hover:translate-x-0 transition-all" />
                 </button>
             }
         </div>
     </div>
 
-    <div class="p-3 pt-2 border-t border-gray-100 bg-gray-50/50 shrink-0 flex flex-col gap-2">
+    <div class="p-2 pt-2 border-t border-gray-100 bg-gray-50/50 shrink-0 flex flex-col gap-2">
         
         <div class="flex flex-col">
             
             @if (adminStore.catalogo()?.direccion && adminStore.catalogo()?.ciudad) {
                 <button (click)="mapDialogService.open()"
-                        class="w-full flex items-start gap-3 px-2 py-1.5 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 transition-all text-left group">
+                        class="w-full flex items-start gap-3 p-1 mb-0.5 rounded-lg hover:bg-white hover:shadow-xs border border-transparent hover:border-gray-200 transition-all text-left group">
                     <div class="mt-0.5 text-gray-400 group-hover:text-brand-accent transition-colors shrink-0">
                         <app-icon name="location" classes="size-5 fill-current" />
                     </div>
@@ -68,7 +68,7 @@
             }
 
             <button (click)="infoService.open()"
-                    class="w-full flex items-start gap-3 px-2 py-1.5 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 transition-all text-left group">
+                    class="w-full flex items-start gap-3 p-1 rounded-lg hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 transition-all text-left group">
                 <div class="mt-0.5 text-gray-400 group-hover:text-brand-accent transition-colors shrink-0">
                     <app-icon name="time" classes="size-5 fill-current" />
                 </div>
@@ -80,7 +80,7 @@
             
         </div>
 
-        <div class="flex items-center gap-3 pt-2.5 border-t border-gray-200/60">
+        <div class="flex items-center gap-2 pt-0.5">
             @if (adminStore.catalogo()?.wpp_numero) {
                 <a (click)="abrirWhatsapp()"
                     role="button" rel="noopener noreferrer"
