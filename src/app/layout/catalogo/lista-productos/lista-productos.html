@@ -6,7 +6,7 @@
         
         <button 
             (click)="abrirFiltros()"
-            class="shrink-0 p-2 bg-white border border-gray-200 rounded-lg text-brand-accent shadow-xs active:scale-90 transition-transform">
+            class="shrink-0 p-2 bg-white border border-gray-200 rounded-lg text-brand-text shadow-xs active:scale-90 transition-transform">
             <app-icon name="filter" classes="size-5 fill-current" />
         </button>
     </div>
@@ -17,7 +17,7 @@
                 <button 
                     (click)="seleccionarCategoria(cat.nombre)"
                     [class]="categoriaSeleccionada() === cat.nombre 
-                        ? 'bg-brand-accent text-white' 
+                        ? 'bg-brand-accent text-brand-contrast border-white' 
                         : (cat.especial 
                             ? 'bg-white/80 backdrop-blur-md border border-brand-accent' 
                             : 'bg-white text-brand-text border border-gray-200')"
@@ -80,7 +80,7 @@
                         Por defecto
                     </span>
                     @if (ordenSeleccionado() === 'default') {
-                        <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                        <app-icon name="check" classes="size-5 text-brand-text fill-current" />
                     }
                 </button>
 
@@ -92,7 +92,7 @@
                         Menor precio
                     </span>
                     @if (ordenSeleccionado() === 'menor-precio') {
-                        <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                        <app-icon name="check" classes="size-5 text-brand-text fill-current" />
                     }
                 </button>
 
@@ -104,7 +104,7 @@
                         Mayor precio
                     </span>
                     @if (ordenSeleccionado() === 'mayor-precio') {
-                        <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                        <app-icon name="check" classes="size-5 text-brand-text fill-current" />
                     }
                 </button>
 
@@ -116,13 +116,13 @@
                         Alfabéticamente
                     </span>
                     @if (ordenSeleccionado() === 'alfa') {
-                        <app-icon name="check" classes="size-5 text-brand-accent fill-current" />
+                        <app-icon name="check" classes="size-5 text-brand-text fill-current" />
                     }
                 </button>
             </div>
 
             <button (click)="cerrarFiltros()" 
-                    class="w-full mt-5 py-2 bg-brand-accent text-white font-semibold rounded-xl active:scale-95 transition-transform">
+                    class="w-full mt-5 py-2 bg-brand-accent text-brand-contrast font-semibold rounded-xl active:scale-95 transition-transform">
                 Listo
             </button>
         </div>

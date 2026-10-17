@@ -2,7 +2,9 @@
     <div class="max-w-lg mx-auto relative">
         
         <!-- LA BARRA DESLIZANTE -->
-        <div class="absolute top-0 left-0 w-1/5 h-0.5 transition-all duration-300 ease-out z-50 flex justify-center"
+        <div class="absolute top-0 left-0 h-0.5 transition-all duration-300 ease-out z-50 flex justify-center"
+            [class.w-1/4]="authService.esPlanBasico()"
+            [class.w-1/5]="!authService.esPlanBasico()"
             [class.opacity-0]="indiceActivo() === -1"
             [style.transform]="'translateX(' + (indiceActivo() === -1 ? 0 : indiceActivo() * 100) + '%)'">
             
@@ -35,17 +37,6 @@
             </button>
 
             @if (authService.esPlanBasico()){
-                <!-- CUPONES -->
-                <button (click)="navegar('/panel-vendedor/mis-cupones')"
-                [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-cupones')"
-                [class.text-gray-400]="!esRutaActiva('/panel-vendedor/mis-cupones')"
-                class="flex flex-col items-center justify-center gap-1 p-1.5 flex-1 transition-colors duration-300">
-                    <app-icon [name]="esRutaActiva('/panel-vendedor/mis-cupones') ? 'ticket-fill' : 'ticket'" classes="size-6 fill-current"/>
-                    <span class="text-[11px] font-semibold tracking-wide transition-all" [class.font-bold]="esRutaActiva('/panel-vendedor/mis-cupones')">
-                        Cupones
-                    </span>
-                </button>
-
                 <!-- CATEGORÍAS -->
                 <button (click)="navegar('/panel-vendedor/mis-categorias')"
                 [class.text-brand-accent]="esRutaActiva('/panel-vendedor/mis-categorias')"

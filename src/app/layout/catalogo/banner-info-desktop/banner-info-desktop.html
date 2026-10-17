@@ -1,6 +1,6 @@
 @if (anunciosBanner().length > 0) {
     <div class="w-full bg-brand-bg">
-        <div class="w-full bg-brand-accent/20 text-brand-accent overflow-hidden py-1.5 text-xs font-bold uppercase tracking-widest">
+        <div class="w-full bg-brand-accent/20 text-brand-accent overflow-hidden py-[min(0.375rem,1vh)] text-[min(0.75rem,1.5vh)] font-bold uppercase tracking-widest">
             
             <div class="animate-marquee flex w-max">
                 
@@ -9,12 +9,12 @@
                     <div class="flex items-center" [attr.aria-hidden]="bloque === 2 ? 'true' : null">
                         
                         @for (msg of anunciosRepetidos(); track $index) {
-                            <span class="flex items-center gap-2 whitespace-nowrap">
-                                <app-icon [name]="msg.icono" classes="size-4 fill-current"></app-icon>
+                            <span class="flex items-center gap-[min(0.5rem,1vh)] whitespace-nowrap">
+                                <app-icon [name]="msg.icono" classes="size-[min(1rem,2vh)] fill-current"></app-icon>
                                 {{ msg.texto }}
                             </span>
                             
-                            <div class="size-1.5 rounded-full bg-brand-accent/40 shrink-0 mx-10"></div>
+                            <div class="size-[min(0.375rem,0.8vh)] rounded-full bg-brand-accent/40 shrink-0 mx-[min(2.5rem,5vh)]"></div>
                         }
                         
                     </div>

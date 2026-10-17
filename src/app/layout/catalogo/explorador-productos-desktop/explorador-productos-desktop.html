@@ -8,18 +8,18 @@
         </button>
 
         <div class="flex-1 min-w-0">
-            <h2 class="text-lg font-bold text-brand-text">
+            <h2 class="text-lg font-semibold text-brand-text">
                 @if (explorador.vistaActual() === 'busqueda') {
-                    Resultados para: <span class="text-brand-accent">"{{ explorador.terminoBusqueda() }}"</span>
+                    Resultados para: <span class="font-extrabold">"{{ explorador.terminoBusqueda() }}"</span>
                 } @else if (explorador.vistaActual() === 'categoria') {
-                    Categoría: <span class="text-brand-accent">{{ explorador.categoriaSeleccionada() | titlecase}}</span>
+                    Categoría: <span class="font-extrabold">{{ explorador.categoriaSeleccionada() | titlecase}}</span>
                 } @else if (explorador.vistaActual() === 'destacados') {
                     Destacados <span class="animate-pulse">🔥</span>
                 } @else if (explorador.vistaActual() === 'ofertas') {
                     Ofertas <span class="animate-pulse">🏷️</span>
                 }
             </h2>
-            <p class="text-sm text-brand-text-sec font-medium">
+            <p class="text-sm text-brand-text font-medium">
                 {{ explorador.productosFiltrados().length }} productos encontrados
             </p>
         </div>

@@ -40,7 +40,7 @@
                                 <button type="button" (click)="aplicarOrden('default')"
                                         class="w-full text-left px-3 py-2 text-sm font-bold transition-colors"
                                         [class.bg-brand-accent]="ordenSeleccionado() === 'default'" 
-                                        [class.text-white]="ordenSeleccionado() === 'default'"
+                                        [class.text-brand-contrast]="ordenSeleccionado() === 'default'"
                                         [class.text-brand-text-sec]="ordenSeleccionado() !== 'default'" 
                                         [class.hover:bg-brand-accent/10]="ordenSeleccionado() !== 'default'">
                                     Por defecto
@@ -51,7 +51,7 @@
                                 <button type="button" (click)="aplicarOrden('menor-precio')"
                                         class="w-full text-left px-3 py-2 text-sm font-bold transition-colors"
                                         [class.bg-brand-accent]="ordenSeleccionado() === 'menor-precio'" 
-                                        [class.text-white]="ordenSeleccionado() === 'menor-precio'"
+                                        [class.text-brand-contrast]="ordenSeleccionado() === 'menor-precio'"
                                         [class.text-brand-text-sec]="ordenSeleccionado() !== 'menor-precio'" 
                                         [class.hover:bg-brand-accent/10]="ordenSeleccionado() !== 'menor-precio'">
                                     Menor precio
@@ -62,7 +62,7 @@
                                 <button type="button" (click)="aplicarOrden('mayor-precio')"
                                         class="w-full text-left px-3 py-2 text-sm font-bold transition-colors"
                                         [class.bg-brand-accent]="ordenSeleccionado() === 'mayor-precio'" 
-                                        [class.text-white]="ordenSeleccionado() === 'mayor-precio'"
+                                        [class.text-brand-contrast]="ordenSeleccionado() === 'mayor-precio'"
                                         [class.text-brand-text-sec]="ordenSeleccionado() !== 'mayor-precio'" 
                                         [class.hover:bg-brand-accent/10]="ordenSeleccionado() !== 'mayor-precio'">
                                     Mayor precio
@@ -73,7 +73,7 @@
                                 <button type="button" (click)="aplicarOrden('alfa')"
                                         class="w-full text-left px-3 py-2 text-sm font-bold transition-colors"
                                         [class.bg-brand-accent]="ordenSeleccionado() === 'alfa'" 
-                                        [class.text-white]="ordenSeleccionado() === 'alfa'"
+                                        [class.text-brand-contrast]="ordenSeleccionado() === 'alfa'"
                                         [class.text-brand-text-sec]="ordenSeleccionado() !== 'alfa'" 
                                         [class.hover:bg-brand-accent/10]="ordenSeleccionado() !== 'alfa'">
                                     Alfabéticamente (A-Z)
@@ -104,7 +104,7 @@
                 @for (cat of categoriasOrdenadas(); track cat.id) {
                     <button (click)="seleccionarCategoria(cat.nombre)"
                             [class]="categoriaSeleccionada() === cat.nombre 
-                                ? 'bg-brand-accent text-white' 
+                                ? 'bg-brand-accent text-brand-contrast border-white' 
                                 : (cat.especial 
                                     ? 'bg-amber-50/50 text-amber-700 border border-amber-200 hover:bg-amber-100' 
                                     : 'bg-white text-brand-text border border-gray-200 hover:border-gray-300 hover:bg-gray-50')"
