@@ -92,7 +92,7 @@
                 [class.opacity-0]="!canScrollLeft()"
                 [class.pointer-events-none]="!canScrollLeft()">
                 <button (click)="scrollCategorias('left')" 
-                        class="size-8 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-100 text-gray-500 hover:text-brand-accent transition-all active:scale-95 ml-1">
+                        class="size-8 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-100 text-gray-500 hover:text-brand-accent transition-all active:scale-95">
                     <app-icon name="chevron-left" classes="size-5 fill-current" />
                 </button>
             </div>
@@ -100,15 +100,27 @@
             <div #scrollTrack 
                 (scroll)="checkScroll()"
                 class="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth w-full px-1">
+
+                <button (click)="seleccionarCategoria('Todos')"
+                        [class]="categoriaSeleccionada() === 'Todos' 
+                            ? 'bg-brand-accent text-brand-contrast border-brand-accent' 
+                            : 'bg-white text-brand-text border-gray-200 hover:border-gray-300 hover:bg-gray-50'"
+                        class="relative overflow-hidden border px-2.5 py-1 rounded-full text-sm font-semibold transition-all duration-300 shrink-0 group">
+                    <div class="relative z-10 flex items-center justify-center">                           
+                        <span class="text-start">
+                            Todos
+                        </span>
+                    </div>
+                </button>
                 
                 @for (cat of categoriasOrdenadas(); track cat.id) {
                     <button (click)="seleccionarCategoria(cat.nombre)"
                             [class]="categoriaSeleccionada() === cat.nombre 
                                 ? 'bg-brand-accent text-brand-contrast border-white' 
                                 : (cat.especial 
-                                    ? 'bg-amber-50/50 text-amber-700 border border-amber-200 hover:bg-amber-100' 
-                                    : 'bg-white text-brand-text border border-gray-200 hover:border-gray-300 hover:bg-gray-50')"
-                            class="relative overflow-hidden px-2.5 py-1 rounded-full text-sm font-semibold transition-all duration-300 shrink-0 group">
+                                    ? 'bg-amber-50/50 text-amber-700 border-amber-200 hover:bg-amber-100' 
+                                    : 'bg-white text-brand-text border-gray-200 hover:border-gray-300 hover:bg-gray-50')"
+                            class="relative overflow-hidden border px-2.5 py-1 rounded-full text-sm font-semibold transition-all duration-300 shrink-0 group">
                     
                         @if (cat.especial && categoriaSeleccionada() !== cat.nombre) {
                             <div class="absolute inset-0 h-full w-full bg-linear-to-r from-transparent via-amber-400/20 to-transparent animate-shimmer"></div>
@@ -128,7 +140,7 @@
                 [class.opacity-0]="!canScrollRight()"
                 [class.pointer-events-none]="!canScrollRight()">
                 <button (click)="scrollCategorias('right')" 
-                        class="size-8 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-100 text-gray-500 hover:text-brand-accent transition-all active:scale-95 mr-1">
+                        class="size-8 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-100 text-gray-500 hover:text-brand-accent transition-all active:scale-95">
                     <app-icon name="chevron-right" classes="size-5 fill-current" />
                 </button>
             </div>

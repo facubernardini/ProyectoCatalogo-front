@@ -176,6 +176,17 @@ export class CategoryProductsView implements OnDestroy {
     return listaFiltrada.slice(0, limite);
   });
 
+  yaCargaronTodos = computed(() => {
+    const totalProductos = this.productosDeCategoria().length;
+    const productosMostrados = this.resultadosVisibles().length;
+
+    if (totalProductos === 0) {
+      return false; 
+    }
+
+    return productosMostrados >= totalProductos;
+  });
+
   constructor() {
     this.searchSubject.pipe(
       debounceTime(400),
