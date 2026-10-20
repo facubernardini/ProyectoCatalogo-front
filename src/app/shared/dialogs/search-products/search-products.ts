@@ -1,8 +1,6 @@
-import { Component, computed, effect, ElementRef, inject, ViewChild } from '@angular/core';
-import { Producto } from 'src/app/core/models/producto.model';
+import { Component, computed, effect, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { Icon } from "@shared/components/icon";
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
-import { ProductSelectorService } from '@shared/services/product-selector.service';
 import { SearchService } from '@shared/services/search.service';
 import { ProductCard } from "src/app/layout/catalogo/lista-productos/product-card/product-card";
 import { Router } from '@angular/router';
@@ -16,13 +14,16 @@ import { ProductCardIndumentaria } from 'src/app/layout/catalogo/indumentaria/pr
 })
 export class SearchProducts {
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLElement>;
   
   public adminStore = inject(AdminStoreService);
   public searchService = inject(SearchService);
-  private selectorService = inject(ProductSelectorService);
   private router = inject(Router);
   
   productos = this.adminStore.productos;
+
+  paginaActual = signal<number>(1);
+  itemsPorPagina = 10;
 
   constructor() {
     effect(() => {
@@ -121,9 +122,60 @@ export class SearchProducts {
     .map(item => item.producto);
   });
 
+  resultadosVisibles = computed(() => {
+    const todos = this.resultados();
+    const limite = this.paginaActual() * this.itemsPorPagina;
+    return todos.slice(0, limite);
+  });
+
+  yaCargaronTodos = computed(() => {
+    const totalProductos = this.resultados().length;
+    const productosMostrados = this.resultadosVisibles().length;
+    
+    if (totalProductos === 0) return false;
+    return productosMostrados >= totalProductos;
+  });
+
+  onScroll(event: Event) {
+    const target = event.target as HTMLElement;
+    
+    const scrollPosition = target.offsetHeight + target.scrollTop;
+    const scrollThreshold = target.scrollHeight - 200;
+
+    if (scrollPosition >= scrollThreshold) {
+      this.cargarMas();
+    }
+  }
+
+  cargarMas() {
+    const totalMostrados = this.paginaActual() * this.itemsPorPagina;
+    const totalDisponibles = this.resultados().length;
+
+    if (totalMostrados < totalDisponibles) {
+      this.paginaActual.update(p => p + 1);
+    }
+  }
+
+  scrollToTop() {
+    if (this.scrollContainer?.nativeElement) {
+      this.scrollContainer.nativeElement.scrollTo({ 
+        top: 0, 
+        behavior: 'smooth'
+      });
+    }
+  }
+
   onInputChange(event: Event) {
     const val = (event.target as HTMLInputElement).value;
     this.searchService.query.set(val);
+    this.paginaActual.set(1);
+    this.scrollToTop();
+  }
+
+  limpiarBusqueda() {
+    this.searchService.query.set('');
+    this.paginaActual.set(1);
+    this.scrollToTop();
   }
 
   irAGrilla() {
