@@ -39,20 +39,20 @@ export class ListaProductos {
 
   categoriaSeleccionada = computed(() => {
     const seleccion = this.categoriaManual();
-    if (seleccion) return seleccion;
 
-    const listaOrdenadas = this.categoriasOrdenadas();
-    return listaOrdenadas.length > 0 ? listaOrdenadas[0].nombre : '';
+    return seleccion ? seleccion : 'Todos';
   });
 
   productos = computed(() => {
     const cat = this.categoriaSeleccionada();
     
-    if (!cat) return []; 
+    let listaFiltrada = this.productosRaw();
 
-    let listaFiltrada = this.productosRaw().filter(p => 
+    if (cat !== 'Todos') {
+      listaFiltrada = listaFiltrada.filter(p => 
         p.categorias.some(c => c.nombre === cat)
-    );
+      );
+    }
 
     const criterio = this.ordenSeleccionado();
     if (criterio === 'default') return listaFiltrada;
