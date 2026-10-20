@@ -116,7 +116,7 @@
                 @for (cat of categoriasOrdenadas(); track cat.id) {
                     <button (click)="seleccionarCategoria(cat.nombre)"
                             [class]="categoriaSeleccionada() === cat.nombre 
-                                ? 'bg-brand-accent text-brand-contrast border-white' 
+                                ? 'bg-brand-accent text-brand-contrast border-brand-accent' 
                                 : (cat.especial 
                                     ? 'bg-amber-50/50 text-amber-700 border-amber-200 hover:bg-amber-100' 
                                     : 'bg-white text-brand-text border-gray-200 hover:border-gray-300 hover:bg-gray-50')"
