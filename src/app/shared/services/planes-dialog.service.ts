@@ -4,9 +4,11 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class PlanesDialogService {
-  isOpen = signal(false);
+  public isOpen = signal(false);
+  public isFromPanel = signal(false);
 
-  open() {
+  open(fromPanel: boolean = false) {
+    this.isFromPanel.set(fromPanel);
     this.isOpen.set(true);
     document.body.style.overflow = 'hidden';
   }
@@ -14,5 +16,7 @@ export class PlanesDialogService {
   close() {
     this.isOpen.set(false);
     document.body.style.overflow = 'auto';
+    
+    setTimeout(() => this.isFromPanel.set(false), 300);
   }
 }

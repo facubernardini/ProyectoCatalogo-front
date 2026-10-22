@@ -128,7 +128,7 @@
                                     (focus)="abrirDropdownYScroll(containerElement)"
                                     (click)="abrirDropdownYScroll(containerElement)"
                                     placeholder="Buscar categorías..."
-                                    class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 text-sm font-bold text-brand-text placeholder:text-gray-300 transition-all"
+                                    class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 text-sm font-bold text-brand-text placeholder:text-gray-300 transition-all"
                                 >
 
                                 @if (isCategoriaDropdownOpen()) {
@@ -184,7 +184,7 @@
                                     @if (producto.categorias_ids.length > 0) {
                                         @for (cat of adminStore.categorias(); track cat.id) {
                                             @if (isCategoriaSelected(cat.id)) {
-                                                <span class="flex items-center gap-1 px-2 py-1.5 bg-gray-100 text-gray-500 text-[11px] font-semibold rounded-lg select-none animate-in zoom-in-95 duration-200">
+                                                <span class="flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-500 text-[11px] font-semibold rounded-md select-none animate-in zoom-in-95 duration-200">
                                                     <app-icon name="category" classes="size-3 fill-current opacity-50" />
                                                     <span class="truncate max-w-37.5">{{ cat.nombre }}</span>
                                                 </span>
@@ -198,7 +198,7 @@
                                 <!-- Botón Crear (derecha) -->
                                 <button type="button" (click)="abrirFormularioNuevaCategoria()" 
                                         title="Crear nueva categoría"
-                                        class="flex items-center justify-center gap-1 shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1.5 rounded-lg md:hover:bg-brand-accent/20 active:scale-90 transition-all">
+                                        class="flex items-center justify-center gap-1 shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-md md:hover:bg-brand-accent/20 active:scale-90 transition-all">
                                     
                                     <app-icon name="add-categoria" classes="size-3.5 fill-current" />
                                     <span class="text-xs font-semibold">Crear</span>
@@ -222,8 +222,7 @@
                                 <button type="button" 
                                         (click)="toggleTagsDropdown($event)"
                                         [disabled]="adminStore.tags().length === 0"
-                                        class="w-full p-3 flex justify-between items-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:ring-2 focus:ring-brand-accent/20 transition-all md:hover:bg-gray-100/50 disabled:opacity-60 disabled:cursor-not-allowed"
-                                        [class.ring-2]="isTagsDropdownOpen()" [class.ring-brand-accent]="isTagsDropdownOpen()" [class.border-brand-accent]="isTagsDropdownOpen()">
+                                        class="w-full p-3 flex justify-between items-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 transition-all md:hover:bg-gray-100/50 disabled:opacity-60 disabled:cursor-not-allowed">
                                     
                                     <span class="text-sm font-bold truncate mr-2"
                                         [class.text-gray-500]="producto.tags_ids.length > 0"
@@ -290,7 +289,7 @@
                                 <div class="flex flex-wrap gap-1 mt-2">
                                     @for (tag of adminStore.tags(); track tag.id) {
                                         @if (isTagSelected(tag.id)) {
-                                            <span class="flex items-center gap-1.5 px-2 py-1 bg-gray-100 text-gray-500 text-[10px] font-semibold rounded-lg select-none animate-in zoom-in-95 duration-200">
+                                            <span class="flex items-center gap-1.5 px-2 py-1 bg-gray-100 text-gray-500 text-[10px] font-semibold rounded-md select-none animate-in zoom-in-95 duration-200">
                                                 @if (tag.icono) {
                                                     <div [innerHTML]="tag.icono | safeHtml" class="size-3.5 flex items-center justify-center shrink-0 opacity-60"></div>
                                                 }

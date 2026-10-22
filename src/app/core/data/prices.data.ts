@@ -3,9 +3,9 @@ export const PRICES = [
     id: 'basico',
     plan: 'Básico',
     descripcion: 'Perfecto para tiendas que solo buscan exponer productos a sus clientes y recibir pedidos.',
-    precioMensual: '14.900',
-    precioMesAnual: '12.500',
-    precioAnual: '150.000',
+    precioMensual: '11.900',
+    precioMesAnual: '9900',
+    precioAnual: '118.800',
     destacado: false,
     caracteristicas: [
       'Cargar productos con foto',
@@ -16,7 +16,7 @@ export const PRICES = [
   {
     id: 'premium',
     plan: 'Premium',
-    descripcion: 'Ideal si querés mantener un control de stock, pedidos y ganancias mensuales de tu negocio.',
+    descripcion: 'Ideal si querés mantener el control de tus pedidos, stock y ganancias mensuales de tu negocio.',
     precioMensual: '19.900',
     precioMesAnual: '16.500',
     precioAnual: '198.000',

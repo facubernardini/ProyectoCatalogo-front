@@ -13,6 +13,7 @@ import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
 import { SuscripcionEstado } from 'src/app/shared/enums/suscripcion.enum';
 import { PedidoFormService } from 'src/app/shared/services/pedido-form.service';
 import { PedidoPreviewService } from 'src/app/shared/services/pedido-preview.service';
+import { PlanesDialogService } from 'src/app/shared/services/planes-dialog.service';
 import { ProductPreviewService } from 'src/app/shared/services/product-preview.service';
 
 @Component({
@@ -29,6 +30,7 @@ export class Dashboard {
   private pedidoPreviewService = inject(PedidoPreviewService);
   private productoPreviewService = inject(ProductPreviewService);
   private toastService = inject(ToastService);
+  private planesDialogService = inject(PlanesDialogService);
 
   estadoPedido = EstadoPedido;
   estadoSuscripcion = SuscripcionEstado;
@@ -115,14 +117,8 @@ export class Dashboard {
     return dias;
   });
 
-  renovarSuscripcion() {
-    const numeroLimpio = BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
-        
-    const mensaje = encodeURIComponent('Hola, quiero renovar la suscripción de mi tienda.');
-    
-    const url = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
-    
-    window.open(url, '_blank');
+  verPlanes() {
+    this.planesDialogService.open(true);
   }
 
   async finalizarPedido(pedido: PedidoDTO) {

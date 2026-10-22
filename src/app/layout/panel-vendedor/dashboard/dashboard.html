@@ -38,7 +38,7 @@
                         </div>
                     </div>
 
-                    <button (click)="renovarSuscripcion()"
+                    <button (click)="verPlanes()"
                             class="shrink-0 text-white text-[10px] font-semibold uppercase tracking-wide px-2 py-1.5 rounded-md transition-colors active:scale-95"
                             [class.bg-amber-500]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
                             [class.md:hover:bg-amber-600]="adminStore.vendedor()?.suscripcion?.estado === estadoSuscripcion.PENDIENTE_PAGO"
@@ -256,7 +256,7 @@
                     <button routerLink="../mis-cupones"
                             class="flex items-center gap-3 bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all text-left">
                         
-                        <div class="shrink-0 p-2 bg-amber-100 rounded-xl text-amber-500">
+                        <div class="shrink-0 p-2 bg-amber-100 rounded-lg text-amber-500">
                             <app-icon name="ticket" classes="size-4.5 fill-current" />
                         </div>
                         
@@ -277,7 +277,7 @@
                 <button routerLink="../mis-categorias"
                         class="flex items-center gap-3 bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all text-left">
                     
-                    <div class="shrink-0 p-2 bg-brand-accent/10 rounded-xl text-brand-accent">
+                    <div class="shrink-0 p-2 bg-brand-accent/10 rounded-lg text-brand-accent">
                         <app-icon name="category" classes="size-4.5 fill-current" />
                     </div>
                     
@@ -298,7 +298,7 @@
                     <button routerLink="../carga-inicial"
                             class="flex items-center gap-3 bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all text-left group">
                         
-                        <div class="shrink-0 p-2 bg-brand-accent/10 rounded-xl text-brand-accent">
+                        <div class="shrink-0 p-2 bg-brand-accent/10 rounded-lg text-brand-accent">
                             <app-icon name="cloud-upload" classes="size-4.5 fill-current" />
                         </div>
                         
@@ -321,9 +321,9 @@
             <div class="flex items-stretch gap-2 w-full pb-2 mt-1 pt-3.5 border-t border-gray-200">
     
                 <button (click)="verCatalogoPublico()"
-                        class="flex-1 flex items-center justify-between bg-white border border-gray-200 p-2 rounded-2xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all group">
+                        class="flex-1 flex items-center justify-between bg-white border border-gray-200 p-2 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 md:hover:bg-gray-100 transition-all group">
                     <div class="flex items-center gap-3">
-                        <div class="shrink-0 p-2 bg-brand-accent/10 rounded-xl text-brand-accent">
+                        <div class="shrink-0 p-2 bg-brand-accent/10 rounded-lg text-brand-accent">
                             <app-icon name="web" classes="size-5 fill-current" />
                         </div>
                         
@@ -340,7 +340,7 @@
 
                 <button (click)="copiarLinkCatalogo()"
                         title="Copiar enlace para clientes"
-                        class="shrink-0 flex items-center justify-center bg-white border border-gray-200 px-4 rounded-2xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 transition-all text-gray-600 md:hover:bg-gray-100">
+                        class="shrink-0 flex items-center justify-center bg-white border border-gray-200 px-4 rounded-xl shadow-sm active:scale-[0.98] md:hover:border-gray-200 transition-all text-gray-600 md:hover:bg-gray-100">
                     <app-icon name="copy" classes="size-5 fill-current" />
                 </button>
 

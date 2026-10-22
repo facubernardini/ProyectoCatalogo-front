@@ -24,11 +24,11 @@
 
         <!-- TOGGLE MENSUAL / ANUAL -->
         <div class="max-w-xs mx-auto mb-3" aria-label="Selector de facturación">
-            <div class="p-1 bg-zinc-200 rounded-2xl">
+            <div class="p-0.5 bg-zinc-200 rounded-xl">
                 <div class="relative grid grid-cols-2">
                     
                     <!-- EL FONDO DESLIZABLE (La pastilla) -->
-                    <div class="absolute top-0 bottom-0 left-0 w-1/2 rounded-xl transition-all duration-300 ease-out pointer-events-none" aria-hidden="true"
+                    <div class="absolute top-0 bottom-0 left-0 w-1/2 rounded-lg transition-all duration-300 ease-out pointer-events-none" aria-hidden="true"
                         [class.translate-x-0]="!isAnual"
                         [class.bg-white]="!isAnual"
                         [class.shadow-sm]="!isAnual"
@@ -42,7 +42,7 @@
                     <button (click)="isAnual = false"
                         [attr.aria-pressed]="!isAnual"
                         [class]="!isAnual ? 'text-zinc-900' : 'text-zinc-500 md:hover:text-zinc-700'"
-                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors duration-300 focus:outline-none">
+                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-colors duration-300 focus:outline-none">
                         Mensual
                     </button>
                     
@@ -50,7 +50,7 @@
                     <button (click)="isAnual = true"
                         [attr.aria-pressed]="isAnual"
                         [class]="isAnual ? 'text-white' : 'text-zinc-500 md:hover:text-zinc-700'"
-                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-colors duration-300 focus:outline-none">
+                        class="relative z-10 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-colors duration-300 focus:outline-none">
                         Anual
                     </button>
 
