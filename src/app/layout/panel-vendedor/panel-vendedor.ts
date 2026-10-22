@@ -21,10 +21,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { Icon } from "src/app/shared/components/icon";
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { PlanesDialog } from 'src/app/shared/dialogs/planes-dialog/planes-dialog';
 
 @Component({
   selector: 'app-panel-vendedor',
-  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner, ProductImportPreview, PanelNavbar, Header, MenuPrincipal, PedidoPreview, PedidoForm, MenuLateralVendedor, Icon],
+  imports: [RouterOutlet, ProductForm, Toast, CategoryForm, ConfirmDialog, ProductPreview, CategoryDelete, CuponForm, CategoryPreview, LoadingSpinner, ProductImportPreview, PanelNavbar, Header, MenuPrincipal, PedidoPreview, PedidoForm, MenuLateralVendedor, Icon, PlanesDialog],
   templateUrl: './panel-vendedor.html',
   styleUrl: './panel-vendedor.css',
 })

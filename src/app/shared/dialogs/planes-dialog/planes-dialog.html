@@ -22,11 +22,11 @@
 
         <!-- SELECTOR MENSUAL / ANUAL -->
         <div class="shrink-0 flex justify-center pt-3 md:pt-4 bg-zinc-50">
-            <div class="w-60 p-1 bg-zinc-200 rounded-2xl" aria-label="Selector de facturación">
+            <div class="w-60 p-0.5 bg-zinc-200 rounded-xl" aria-label="Selector de facturación">
                 <div class="relative grid grid-cols-2">
                     
                     <!-- EL FONDO DESLIZABLE (La pastilla) -->
-                    <div class="absolute top-0 bottom-0 left-0 w-1/2 rounded-xl transition-all duration-300 ease-out pointer-events-none" aria-hidden="true"
+                    <div class="absolute top-0 bottom-0 left-0 w-1/2 rounded-lg transition-all duration-300 ease-out pointer-events-none" aria-hidden="true"
                         [class.translate-x-0]="!isAnual()"
                         [class.bg-white]="!isAnual()"
                         [class.shadow-sm]="!isAnual()"
@@ -40,7 +40,7 @@
                     <button (click)="isAnual.set(false)"
                         [attr.aria-pressed]="!isAnual()"
                         [class]="!isAnual() ? 'text-zinc-900' : 'text-zinc-500 md:hover:text-zinc-700'"
-                        class="relative z-10 flex items-center justify-center gap-2 py-1.5 rounded-xl text-sm font-bold transition-colors duration-300 focus:outline-none">
+                        class="relative z-10 flex items-center justify-center gap-2 py-1.5 rounded-lg text-sm font-bold transition-colors duration-300 focus:outline-none">
                         Mensual
                     </button>
                     
@@ -48,7 +48,7 @@
                     <button (click)="isAnual.set(true)"
                         [attr.aria-pressed]="isAnual()"
                         [class]="isAnual() ? 'text-white' : 'text-zinc-500 md:hover:text-zinc-700'"
-                        class="relative z-10 flex items-center justify-center gap-2 py-1.5 rounded-xl text-sm font-bold transition-colors duration-300 focus:outline-none">
+                        class="relative z-10 flex items-center justify-center gap-2 py-1.5 rounded-lg text-sm font-bold transition-colors duration-300 focus:outline-none">
                         Anual
                     </button>
 
@@ -123,7 +123,15 @@
                                 }
                             </ul>
 
-                            @if (plan.id === 'ultra') {
+                            @if (planesDialogService.isFromPanel()) {
+                                <button (click)="suscribirse(plan)"
+                                        class="w-full flex items-center justify-center gap-2 py-2.5 px-4 mt-3 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-95 focus:outline-none border"
+                                        [class]="plan.destacado 
+                                            ? 'bg-white text-brand-accent md:hover:bg-gray-50 border-transparent' 
+                                            : 'bg-brand-accent text-white md:hover:bg-brand-accent/90 border-transparent'">
+                                    Suscribirse
+                                </button>
+                            } @else if (plan.id === 'ultra') {
                                 <button (click)="contactar()"
                                     title="Consultar por el plan personalizado"
                                     class="w-full flex items-center justify-center gap-2 py-2.5 px-4 mt-3 bg-brand-accent text-white md:hover:bg-brand-accent/90 rounded-xl text-sm font-semibold transition-all duration-300 active:scale-95 focus:outline-none border border-white/20">
@@ -141,9 +149,9 @@
         <!-- FOOTER: Botón de Comparativa -->
         <div class="shrink-0 p-4 bg-white border-t border-zinc-200 z-10">
             <button routerLink="/planes" (click)="planesDialogService.close()"
-                    class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 rounded-xl text-sm font-bold transition-all duration-300 active:scale-95">
+                    class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 rounded-lg text-sm font-bold transition-all duration-300 active:scale-95">
                 Ver comparativa detallada
-                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <svg class="size-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
             </button>
