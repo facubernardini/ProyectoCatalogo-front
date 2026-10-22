@@ -5,6 +5,7 @@ import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { PRICES } from 'src/app/core/data/prices.data';
 import { Icon } from "src/app/shared/components/icon";
 import { PlanesDialogService } from '../../services/planes-dialog.service';
+import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
 @Component({
   selector: 'app-planes-dialog',
@@ -13,6 +14,7 @@ import { PlanesDialogService } from '../../services/planes-dialog.service';
   templateUrl: './planes-dialog.html'
 })
 export class PlanesDialog {
+  private adminStore = inject(AdminStoreService);
   public planesDialogService = inject(PlanesDialogService);
 
   public planes = PRICES;
@@ -49,6 +51,17 @@ export class PlanesDialog {
   contactar() {
     const numeroLimpio = this.BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
     const msg = 'Hola, me gustaría contratar el plan Ultra para mi tienda!';
+    
+    const url = `https://wa.me/${numeroLimpio}?text=${encodeURIComponent(msg)}`;
+    
+    this.planesDialogService.close();
+    window.open(url, '_blank');
+  }
+
+  suscribirse(plan: any) {
+    const numeroLimpio = this.BRAND_DATA.contact.whatsapp.replace(/\D/g, '');
+    const modalidad = this.isAnual() ? 'Anual' : 'Mensual';
+    const msg = `Hola, me gustaría suscribirme al plan ${plan.plan} (${modalidad}) para mi tienda *${this.adminStore.catalogo()?.nombre_tienda}*`;
     
     const url = `https://wa.me/${numeroLimpio}?text=${encodeURIComponent(msg)}`;
     
