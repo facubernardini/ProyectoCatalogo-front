@@ -38,7 +38,7 @@ export function subdominioMatcher(url: UrlSegment[]): UrlMatchResult | null {
 
 export const routes: Routes = [
     { path: 'not-found', component: NotFound },
-    { path: '404', component: ErrorView },
+    { path: 'server-error', component: ErrorView },
 
     { matcher: subdominioMatcher, component: CatalogoPublico },
 

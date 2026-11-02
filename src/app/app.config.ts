@@ -4,6 +4,7 @@ import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from 'src/app/core/interceptors/auth.interceptor';
+import { serverErrorInterceptor } from './core/interceptors/server-error.interceptor';
 
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
@@ -23,7 +24,7 @@ export const appConfig: ApplicationConfig = {
       })
     ),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, serverErrorInterceptor])),
     { provide: LOCALE_ID, useValue: 'es-AR' }
   ]
 };

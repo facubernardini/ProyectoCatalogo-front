@@ -1,26 +1,21 @@
-<main class="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
-    
-    <div class="max-w-md w-full bg-white rounded-3xl p-8 border border-gray-100 shadow-sm text-center relative overflow-hidden animate-in zoom-in-95 duration-300">
+<main class="min-h-screen bg-brand-bg flex flex-col items-center justify-center px-4 relative overflow-hidden">
+
+    <div class="max-w-md w-full text-center relative z-10 animate-in zoom-in-95 fade-in duration-500">
         
-        <div class="absolute top-0 right-0 w-40 h-40 bg-brand-accent/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-32 h-32 bg-brand-accent/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-xl pointer-events-none"></div>
+        <img src="assets/server-error.svg" alt="Error del servidor" class="w-56 h-auto mx-auto mb-8 drop-shadow-sm">
         
-        <div class="relative">
-           
-            <h1 class="text-6xl font-black text-brand-text tracking-tighter mb-2">
-                404
-            </h1>
-            
-            <p class="text-base font-bold text-brand-text-sec leading-relaxed px-2 mb-6">
-                Error interno del servidor
-            </p>
-            
-            <button (click)="volverAlInicio()" 
-               class="inline-flex items-center justify-center w-full px-5 py-3 bg-brand-accent text-white font-bold rounded-xl shadow-lg shadow-brand-accent/20 active:scale-95 md:hover:bg-brand-accent/90 transition-all duration-200 focus:outline-none">
-                Volver a un lugar seguro
-            </button>
-            
-        </div>
+        <h1 class="text-3xl font-black text-brand-text tracking-tight mb-3">
+            ¡Ups!
+        </h1>
+        
+        <p class="text-base font-medium text-gray-500 leading-relaxed px-4 mb-6">
+            Parece que algo salió mal. Prueba recargando la página o intenta de nuevo más tarde.
+        </p>
+        
+        <button (click)="volverAlInicio()" 
+            class="inline-flex items-center justify-center w-full px-5 py-3 bg-brand-accent text-white font-bold rounded-xl shadow-lg shadow-brand-accent/20 active:scale-95 md:hover:bg-brand-accent/90 transition-all duration-200 focus:outline-none">
+            Volver a un lugar seguro
+        </button>
         
     </div>
 

@@ -117,9 +117,6 @@ export class AdminStoreService {
         } else if (err.status === 404) {
           // La tienda no existe
           this.router.navigate(['/not-found']); 
-        } else {
-          // Error de servidor (500) o sin conexión
-          this.router.navigate(['/404']);
         }
       }
     });
