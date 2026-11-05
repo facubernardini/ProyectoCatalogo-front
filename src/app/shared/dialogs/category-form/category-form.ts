@@ -21,7 +21,9 @@ export class CategoryForm {
     nombre: '',
     activo: true,
     especial: false,
-    imagen: '' as string | null
+    imagen: '' as string | null,
+    es_agrupadora: false,
+    parent_id: null as number | null
   };
 
   imagenArchivo = signal<File | null>(null);
@@ -40,7 +42,9 @@ export class CategoryForm {
               nombre: editing.nombre, 
               activo: editing.activo,
               especial: editing.especial ?? false,
-              imagen: editing.imagen ?? null
+              imagen: editing.imagen ?? null,
+              es_agrupadora: editing.es_agrupadora ?? false,
+              parent_id: editing.parent_id ?? null
             };
             this.categoryFormService.nombre.set(editing.nombre);
           } else {
@@ -53,13 +57,48 @@ export class CategoryForm {
     });
   }
 
+  // --- NUEVA LÓGICA DE JERARQUÍA ---
+
+  // Obtiene solo las categorías agrupadoras para el dropdown (excluyendo la que estamos editando para evitar bucles)
+  get categoriasPadrePosibles() {
+    const editingId = this.categoryFormService.editingCategory()?.id;
+    return this.adminStore.categorias().filter(c => 
+      c.es_agrupadora && c.id !== editingId
+    );
+  }
+
+  // Define si el usuario tiene permitido tocar el switch de "Es Agrupadora"
+  get canToggleAgrupadora(): boolean {
+    const editing = this.categoryFormService.editingCategory();
+    if (!editing) return true; // Si es nueva, puede hacer lo que quiera
+    
+    // Edge case 1: Tiene productos
+    if (editing.productos_count > 0) return false;
+    
+    // Edge case 2: Tiene subcategorías
+    if ((editing.subcategorias?.length ?? 0) > 0) return false;
+
+    return true;
+  }
+
+  toggleAgrupadora() {
+    if (!this.canToggleAgrupadora) return;
+    
+    this.categoria.es_agrupadora = !this.categoria.es_agrupadora;
+    
+    // Limpiamos el padre si la convertimos en agrupadora
+    if (this.categoria.es_agrupadora) {
+      this.categoria.parent_id = null;
+    }
+  }
+
+  // --- FIN LÓGICA DE JERARQUÍA ---
+
   isNameDuplicate(): boolean {
     const currentName = this.categoryFormService.nombre().trim().toLowerCase();
-    
     if (!currentName) return false;
     
     const editingCategory = this.categoryFormService.editingCategory();
-    
     if (editingCategory && currentName === editingCategory.nombre.trim().toLowerCase()) {
         return false;
     }
@@ -75,8 +114,10 @@ export class CategoryForm {
     this.categoria = { 
       nombre: nombrePrecargado, 
       activo: true, 
-      especial: false ,
-      imagen: null
+      especial: false,
+      imagen: null,
+      es_agrupadora: false,
+      parent_id: this.categoryFormService.parentId()
     };
     
     this.imagenArchivo.set(null);
@@ -93,9 +134,7 @@ export class CategoryForm {
         inputEl.value = '';
         return;
       }
-
       this.imagenArchivo.set(file);
-      
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.imagenPreviewTemporal.set(e.target.result);

@@ -51,19 +51,36 @@ export class MisCategorias {
     
     let lista = this.adminStore.categorias();
 
-    if (term) {
-      lista = lista.filter(c => c.nombre.toLowerCase().includes(term));
-    }
+    return lista.reduce((acc: CategoriaVendedor[], cat) => {
+        // 1. Evaluar si el PADRE cumple los filtros directamente
+        let parentMatches = true;
+        if (term && !cat.nombre.toLowerCase().includes(term)) parentMatches = false;
+        if (destacadas && !cat.especial) parentMatches = false;
+        if (pausadas && cat.activo) parentMatches = false;
 
-    if (destacadas) {
-      lista = lista.filter(c => c.especial);
-    }
+        // 2. Evaluar qué HIJAS cumplen los filtros
+        let subcategoriasFiltradas = (cat.subcategorias || []).filter(sub => {
+            let subMatches = true;
+            if (term && !sub.nombre.toLowerCase().includes(term)) subMatches = false;
+            if (destacadas && !sub.especial) subMatches = false;
+            if (pausadas && sub.activo) subMatches = false;
+            return subMatches;
+        });
 
-    if (pausadas) {
-      lista = lista.filter(c => !c.activo);
-    }
+        // 3. Lógica de renderizado UX:
+        if (parentMatches) {
+            // Si buscaron al padre y coincide, lo mostramos completo con TODAS sus hijas (si no hay otros filtros activos)
+            acc.push({ 
+              ...cat, 
+              subcategorias: (destacadas || pausadas) ? subcategoriasFiltradas : cat.subcategorias 
+            });
+        } else if (subcategoriasFiltradas.length > 0) {
+            // Si el padre no coincide, pero una hija SÍ, mostramos el padre como contenedor y SOLO las hijas filtradas
+            acc.push({ ...cat, subcategorias: subcategoriasFiltradas });
+        }
 
-    return lista;
+        return acc;
+    }, []);
   });
 
   ngOnInit() {
