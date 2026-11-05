@@ -1,15 +1,19 @@
 @if (categoryFormService.isOpen()) {
     <div class="fixed inset-0 z-50 flex justify-end overflow-hidden">
         
-        <div class="absolute inset-0 bg-black/60 animate-backdrop" (click)="categoryFormService.close()"></div>
+        <div class="absolute inset-0 bg-black/60 animate-backdrop"
+            (click)="categoryFormService.close()">
+        </div>
 
-        <div (click)="$event.stopPropagation()" class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col animate-side-panel">
+        <div (click)="$event.stopPropagation()"
+            class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col animate-side-panel">
             
-            <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 border-b border-gray-100 backdrop-blur-sm">
+            <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 border-b border-gray-100">
                 <div class="flex items-center gap-3">
                     <button (click)="categoryFormService.close()" 
                             class="group p-2 bg-gray-50 md:hover:bg-gray-100 rounded-full transition-all duration-300 active:scale-90 border border-gray-200/50">
-                        <app-icon name="back" classes="size-5 text-gray-500 group-hover:text-brand-accent transition-colors fill-current" />
+                        <app-icon name="back" 
+                                classes="size-5 text-gray-500 group-hover:text-brand-accent transition-colors fill-current" />
                     </button>
         
                     <h2 class="text-base font-black text-brand-text leading-tight">
@@ -20,8 +24,11 @@
                 <button (click)="guardar()" 
                         [disabled]="!categoryFormService.nombre().trim() || isNameDuplicate() || isUploading()"
                         class="relative px-4 py-2 bg-brand-accent text-white text-sm font-bold rounded-2xl shadow-lg shadow-brand-accent/20 md:hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
+                    
                     <div class="flex items-center gap-2">
-                        <span>{{ isUploading() ? 'Guardando...' : (categoryFormService.editingCategory() ? 'Guardar' : 'Crear categoría') }}</span>
+                        <span>
+                            {{ isUploading() ? 'Guardando...' : (categoryFormService.editingCategory() ? 'Guardar' : 'Crear categoría') }}
+                        </span>
                     </div>
                 </button>
             </div>
@@ -30,8 +37,32 @@
                 
                 @if (adminStore.esIndumentaria()) {
                     <section>
-                        <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest mb-3">Imagen</p>
-                        <!-- ... (Tu código de imagen original se mantiene igual) ... -->
+                        <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest mb-3">
+                            Imagen
+                        </p>
+                
+                        <div class="flex items-center gap-4">
+                            <div class="w-24 aspect-4/5 bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center relative group">
+                                @if (categoria.imagen || imagenPreviewTemporal()) {
+                                    <img [src]="imagenPreviewTemporal() || categoria.imagen" class="w-full h-full object-cover">
+                                    
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <app-icon name="edit" classes="size-6 text-white fill-current" />
+                                    </div>
+                                } @else {
+                                    <app-icon name="image-add" classes="size-6 text-gray-300 fill-current" />
+                                }
+                                <input 
+                                    type="file"
+                                    accept="image/*"
+                                    (change)="onFileChange($event)" 
+                                    class="absolute inset-0 opacity-0 cursor-pointer">
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-brand-text">Foto de la categoría</p>
+                                <p class="pt-1 text-xs font-base text-brand-text">Recomendado: Foto vertical, producto centrado.</p>
+                            </div>
+                        </div>
                     </section>
                 }
 
@@ -39,6 +70,7 @@
                     <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">General</p>
                     <div class="flex flex-col gap-1.5 relative">
                         <label class="text-xs font-bold text-gray-600 ml-1">Nombre de la categoría</label>
+                        
                         <input type="text" 
                             [ngModel]="categoryFormService.nombre()" 
                             (ngModelChange)="categoryFormService.nombre.set($event)" 
@@ -52,72 +84,6 @@
                             </div>
                         }
                     </div>
-                </section>
-
-                <!-- NUEVA SECCIÓN: ORGANIZACIÓN -->
-                <section class="space-y-4">
-                    <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Organización</p>
-                    
-                    <div class="flex flex-col gap-2">
-                        <!-- Toggle de Agrupadora -->
-                        <button (click)="toggleAgrupadora()" type="button"
-                            [class.opacity-60]="!canToggleAgrupadora"
-                            [class.cursor-not-allowed]="!canToggleAgrupadora"
-                            [class]="categoria.es_agrupadora ? 'bg-brand-accent/5 border-brand-accent/30' : 'bg-gray-50 border-gray-100'"
-                            class="relative p-3 rounded-2xl border text-left transition-all active:scale-[0.98]">
-                            
-                            <div class="flex items-start justify-between gap-4">
-                                <div>
-                                    <p class="text-sm font-bold text-brand-text mb-0.5">Es categoría agrupadora</p>
-                                    <p class="text-[11px] text-gray-400 leading-relaxed font-medium">
-                                        Sirve para organizar otras categorías adentro. No podrá contener productos directamente.
-                                    </p>
-                                </div>
-                                
-                                <!-- Custom Tailwind Switch -->
-                                <div class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none mt-1"
-                                     [class]="categoria.es_agrupadora ? 'bg-brand-accent' : 'bg-gray-200'">
-                                    <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                                          [class]="categoria.es_agrupadora ? 'translate-x-5' : 'translate-x-0'"></span>
-                                </div>
-                            </div>
-                        </button>
-
-                        <!-- Mensajes de Alerta (Edge cases) -->
-                        @if (!canToggleAgrupadora && categoryFormService.editingCategory()) {
-                            <div class="flex items-start gap-1.5 px-1 animate-in slide-in-from-top-1 fade-in">
-                                <app-icon name="info" classes="size-4 text-amber-500 shrink-0 mt-0.5 fill-current" />
-                                <p class="text-[11px] font-bold text-amber-600 leading-tight">
-                                    @if (categoryFormService.editingCategory()?.productos_count) {
-                                        No podés convertirla en agrupadora porque ya tiene productos asignados.
-                                    } @else if ((categoryFormService.editingCategory()?.subcategorias?.length ?? 0) > 0) {
-                                        No podés quitarle esta propiedad porque contiene subcategorías.
-                                    }
-                                </p>
-                            </div>
-                        }
-                    </div>
-
-                    <!-- Selector de Padre (Solo visible si NO es agrupadora) -->
-                    @if (!categoria.es_agrupadora) {
-                        <div class="flex flex-col gap-1.5 relative animate-in slide-in-from-top-2 fade-in duration-300">
-                            <label class="text-xs font-bold text-gray-600 ml-1">Pertenece a (Opcional)</label>
-                            
-                            <div class="relative">
-                                <select [(ngModel)]="categoria.parent_id"
-                                    class="w-full p-3 pr-10 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 focus:bg-white transition-all text-sm font-medium text-brand-text cursor-pointer appearance-none">
-                                    <option [ngValue]="null">Ninguna (Será categoría principal)</option>
-                                    @for (padre of categoriasPadrePosibles; track padre.id) {
-                                        <option [ngValue]="padre.id">{{ padre.nombre }}</option>
-                                    }
-                                </select>
-                                
-                                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                    <app-icon name="expand-more" classes="size-5 text-gray-400 fill-current" />
-                                </div>
-                            </div>
-                        </div>
-                    }
                 </section>
 
                 <section>

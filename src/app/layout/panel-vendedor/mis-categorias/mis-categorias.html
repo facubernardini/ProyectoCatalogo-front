@@ -169,159 +169,117 @@
                 }
 
                 <!-- LISTADO DE CATEGORÍAS -->
-                <div class="w-full space-y-3 pb-22">
+                <div class="w-full space-y-2 pb-22">
                     @for (cat of categoriasFiltradas(); track cat.id) {
-                        
-                        <!-- CONTENEDOR DE GRUPO JERÁRQUICO -->
-                        <div class="flex flex-col">
+                        <div (click)="categoryPreview.open(cat)"
+                            class="flex items-center gap-4 bg-white p-2 rounded-2xl border border-gray-100 md:hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] transition-all group shadow-xs cursor-pointer"
+                            [class.border-l-4]="cat.especial"
+                            [class.border-l-amber-400]="cat.especial">
                             
-                            <!-- TARJETA PADRE (Principal o Agrupadora) -->
-                            <div (click)="categoryPreview.open(cat)"
-                                class="flex items-center gap-4 bg-white p-2 rounded-2xl border border-gray-100 md:hover:shadow-[0_6px_12px_rgb(0,0,0,0.06)] transition-all group shadow-xs cursor-pointer relative z-10"
-                                [class.border-l-4]="cat.especial"
-                                [class.border-l-amber-400]="cat.especial">
+                            <div class="flex flex-1 items-center gap-2.5 min-w-0"
+                                [class.opacity-50]="!cat.activo">
                                 
-                                <div class="flex flex-1 items-center gap-2.5 min-w-0" [class.opacity-50]="!cat.activo">
-                                    
-                                    <!-- IMAGEN O ÍCONO PADRE -->
-                                    @if (adminStore.esIndumentaria() && cat.imagen) {
-                                        <div class="relative shrink-0 size-12 md:size-14 rounded-xl overflow-hidden border border-gray-100">
-                                            <div class="relative w-full h-full bg-brand-bg shrink-0 overflow-hidden" [class.animate-pulse]="!imageLoaded()" [class.grayscale]="!cat.activo">
-                                                <div class="absolute inset-0 w-full h-full flex items-center justify-center text-gray-300 transition-opacity duration-300" [class.opacity-0]="imageLoaded()">
-                                                    <app-icon name="photo" classes="size-5 fill-current" />
-                                                </div>
-                                                <img [src]="cat.imagen" [alt]="cat.nombre" (load)="onImageLoad()" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out" [class.opacity-0]="!imageLoaded()" [class.opacity-100]="imageLoaded()">
+                                @if (adminStore.esIndumentaria() && cat.imagen) {
+                                    <div class="relative shrink-0 size-12 md:size-14 rounded-xl overflow-hidden border border-gray-100">
+                                        <div class="relative w-full h-full bg-brand-bg shrink-0 overflow-hidden"
+                                            [class.animate-pulse]="!imageLoaded()"
+                                            [class.grayscale]="!cat.activo">
+                                            
+                                            <!-- Placeholder (Ícono que desaparece al cargar) -->
+                                            <div class="absolute inset-0 w-full h-full flex items-center justify-center text-gray-300 transition-opacity duration-300"
+                                                [class.opacity-0]="imageLoaded()">
+                                                <app-icon name="photo" classes="size-5 fill-current" />
                                             </div>
-                                        </div>
-                                    } @else {
-                                        <div class="shrink-0 size-12 md:size-14 rounded-lg flex items-center justify-center transition-colors"
-                                            [class]="!cat.activo ? 'bg-gray-100 text-gray-400' : (cat.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/20 text-brand-accent')">
-                                            <app-icon [name]="!cat.activo ? 'hidden' : (cat.es_agrupadora ? 'folder' : (cat.especial ? 'star' : 'category'))" 
-                                                classes="size-5 fill-current" />
-                                        </div>
-                                    }
-                                    
-                                    <!-- TEXTOS PADRE -->
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2">
-                                            <h3 class="font-semibold text-[13px] tracking-tight truncate" [class]="!cat.activo ? 'text-gray-400' : 'text-brand-text'">
-                                                {{ cat.nombre }}
-                                            </h3>
-                                            @if (!cat.activo) {
-                                                <span class="text-[9px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-md font-medium uppercase tracking-widest border border-gray-200 shrink-0">Pausada</span>
-                                            }
-                                        </div>
 
-                                        <div class="flex items-center gap-1.5 mt-1 flex-wrap">
-                                            @if (cat.es_agrupadora) {
-                                                <span class="text-[9px] px-1.5 py-0.5 bg-brand-bg/30 text-brand-accent rounded-md font-bold uppercase tracking-widest border border-brand-accent/10">
-                                                    Agrupadora
-                                                </span>
-                                            }
-                                            <span class="text-[10px] px-2 py-0.5 rounded-lg font-semibold transition-colors"
-                                                [class]="!cat.activo ? 'bg-gray-50 text-gray-300' : (cat.especial ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-500')">
-                                                {{ cat.productos_count }} {{ (cat.productos_count === 1) ? 'Producto' : 'Productos' }}
-                                            </span>
+                                            <!-- Imagen Real -->
+                                            <img [src]="cat.imagen" 
+                                                [alt]="cat.nombre"
+                                                (load)="onImageLoad()"
+                                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out"
+                                                [class.opacity-0]="!imageLoaded()"
+                                                [class.opacity-100]="imageLoaded()">
                                         </div>
                                     </div>
-                                </div>
+                                        
+                                } @else {
+                                    <div class="shrink-0 size-12 md:size-14 rounded-lg flex items-center justify-center transition-colors"
+                                        [class]="!cat.activo 
+                                            ? 'bg-gray-100 text-gray-400' 
+                                            : (cat.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/30 text-brand-accent')">
+                                        <app-icon [name]="!cat.activo ? 'hidden' : (cat.especial ? 'star' : 'category')" 
+                                            classes="size-5 fill-current" />
+                                    </div>
+                                }
+                                
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="font-semibold text-[13px] tracking-tight"
+                                            [class]="!cat.activo ? 'text-gray-400' : 'text-brand-text'">
+                                            {{ cat.nombre }}
+                                        </h3>
 
-                                <!-- BOTONES PADRE -->
-                                <div class="flex items-center gap-2">
-                                    <button (click)="onEditCategory(cat); $event.stopPropagation()" class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
-                                        <app-icon name="edit" classes="size-4.5 fill-current" />
-                                    </button>
-                                    <div class="relative">
-                                        <button (click)="toggleMenu(cat.id, $event); $event.stopPropagation()" class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
-                                            <app-icon name="options" classes="size-4.5 fill-current" />
-                                        </button>
-
-                                        <!-- DROPDOWN PADRE (Omitido para brevedad, es idéntico a tu código original referenciando a `cat`) -->
-                                        @if (activeMenuId() === cat.id) {
-                                            <div class="absolute right-0 z-50 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 animate-in fade-in zoom-in duration-200" [class.top-full]="!isMenuUpward()" [class.mt-2]="!isMenuUpward()" [class.bottom-full]="isMenuUpward()" [class.mb-2]="isMenuUpward()" (click)="$event.stopPropagation()">
-                                                <button (click)="onToggleEspecial(cat); activeMenuId.set(null)" class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text md:hover:bg-gray-50 rounded-xl transition-colors">
-                                                    <app-icon [name]="cat.especial ? 'star-filled' : 'star'" [classes]="'size-4 fill-current ' + (cat.especial ? 'text-yellow-400' : 'text-gray-400')" />
-                                                    {{ cat.especial ? 'Quitar destacada' : 'Destacar categoría' }}
-                                                </button>
-                                                <button (click)="onToggleActiva(cat); activeMenuId.set(null)" class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text md:hover:bg-gray-50 rounded-xl transition-colors">
-                                                    <app-icon [name]="cat.activo ? 'pause' : 'play'" classes="size-4 fill-current text-gray-400" />
-                                                    {{ cat.activo ? 'Pausar categoría' : 'Reanudar categoría' }}
-                                                </button>
-                                                <div class="h-px bg-gray-100 my-1 mx-2"></div>
-                                                <button (click)="onEliminar(cat); activeMenuId.set(null)" class="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 md:hover:bg-red-50 rounded-xl transition-colors">
-                                                    <app-icon name="trash" classes="size-4 fill-current" /> Eliminar categoría
-                                                </button>
-                                            </div>
+                                        @if (!cat.activo) {
+                                            <span class="text-[9px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-md font-medium uppercase tracking-widest border border-gray-200">
+                                                Pausada
+                                            </span>
                                         }
+                                    </div>
+
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <span class="text-[10px] px-2 py-0.5 rounded-lg font-semibold transition-colors"
+                                            [class]="!cat.activo 
+                                                ? 'bg-gray-50 text-gray-300' 
+                                                : (cat.especial ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-500')">
+                                            {{ cat.productos_count }} {{ (cat.productos_count === 1) ? 'Producto' : 'Productos' }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- HIJAS / SUBCATEGORÍAS -->
-                            @if (cat.es_agrupadora && cat.subcategorias?.length) {
-                                <div class="ml-4 md:ml-5 pl-3 md:pl-4 mt-2 border-l-2 border-gray-200/60 flex flex-col gap-2 relative">
-                                    
-                                    @for (sub of cat.subcategorias; track sub.id) {
-                                        <div (click)="categoryPreview.open(sub)"
-                                            class="flex items-center gap-3 bg-white/70 hover:bg-white p-1.5 pr-2 rounded-[14px] border border-gray-100/80 transition-all cursor-pointer group"
-                                            [class.border-l-4]="sub.especial"
-                                            [class.border-l-amber-400]="sub.especial">
+                            <div class="flex items-center gap-2">
+                                <button (click)="onEditCategory(cat); $event.stopPropagation()" 
+                                        class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
+                                    <app-icon name="edit" classes="size-4.5 fill-current" />
+                                </button>
+
+                                <div class="relative">
+                                    <button (click)="toggleMenu(cat.id, $event); $event.stopPropagation()" 
+                                            class="p-2 bg-gray-50 text-brand-accent md:hover:bg-brand-accent md:hover:text-white rounded-xl transition-all active:scale-95 border border-gray-100">
+                                        <app-icon name="options" classes="size-4.5 fill-current" />
+                                    </button>
+
+                                    @if (activeMenuId() === cat.id) {
+                                        <div class="absolute right-0 z-50 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 animate-in fade-in zoom-in duration-200"
+                                            [class.top-full]="!isMenuUpward()" 
+                                            [class.mt-2]="!isMenuUpward()"
+                                            [class.bottom-full]="isMenuUpward()" 
+                                            [class.mb-2]="isMenuUpward()"
+                                            (click)="$event.stopPropagation()">
                                             
-                                            <div class="flex flex-1 items-center gap-2 min-w-0" [class.opacity-50]="!sub.activo">
-                                                
-                                                <div class="shrink-0 size-9 rounded-lg flex items-center justify-center transition-colors"
-                                                    [class]="!sub.activo ? 'bg-gray-100 text-gray-400' : (sub.especial ? 'bg-amber-50 text-amber-500' : 'bg-brand-bg/10 text-brand-accent')">
-                                                    <app-icon [name]="!sub.activo ? 'hidden' : 'category'" classes="size-4 fill-current" />
-                                                </div>
-                                                
-                                                <div class="flex-1 min-w-0 flex items-center justify-between">
-                                                    <div class="flex items-center gap-2">
-                                                        <h4 class="font-semibold text-xs tracking-tight truncate" [class]="!sub.activo ? 'text-gray-400' : 'text-brand-text'">
-                                                            {{ sub.nombre }}
-                                                        </h4>
-                                                        @if (!sub.activo) {
-                                                            <span class="text-[8px] px-1 bg-gray-100 text-gray-400 rounded-sm font-medium uppercase tracking-widest shrink-0">Pausada</span>
-                                                        }
-                                                    </div>
-                                                    <span class="text-[9px] font-semibold text-gray-400 ml-2">
-                                                        {{ sub.productos_count }} prod
-                                                    </span>
-                                                </div>
-                                            </div>
+                                            <button (click)="onToggleEspecial(cat); activeMenuId.set(null)"
+                                                    class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text md:hover:bg-gray-50 rounded-xl transition-colors">
+                                                <app-icon [name]="cat.especial ? 'star-filled' : 'star'" 
+                                                        [classes]="'size-4 fill-current ' + (cat.especial ? 'text-yellow-400' : 'text-gray-400')" />
+                                                {{ cat.especial ? 'Quitar destacada' : 'Destacar categoría' }}
+                                            </button>
 
-                                            <!-- BOTONES HIJA -->
-                                            <div class="flex items-center gap-1">
-                                                <button (click)="onEditCategory(sub); $event.stopPropagation()" class="p-1.5 text-gray-400 hover:bg-gray-50 hover:text-brand-accent rounded-lg transition-all active:scale-95">
-                                                    <app-icon name="edit" classes="size-4 fill-current" />
-                                                </button>
-                                                <div class="relative">
-                                                    <button (click)="toggleMenu(sub.id, $event); $event.stopPropagation()" class="p-1.5 text-gray-400 hover:bg-gray-50 hover:text-brand-accent rounded-lg transition-all active:scale-95">
-                                                        <app-icon name="options" classes="size-4 fill-current" />
-                                                    </button>
+                                            <button (click)="onToggleActiva(cat); activeMenuId.set(null)"
+                                                    class="w-full flex items-center gap-3 p-3 text-xs font-bold text-brand-text md:hover:bg-gray-50 rounded-xl transition-colors">
+                                                <app-icon [name]="cat.activo ? 'pause' : 'play'" classes="size-4 fill-current text-gray-400" />
+                                                {{ cat.activo ? 'Pausar categoría' : 'Reanudar categoría' }}
+                                            </button>
 
-                                                    <!-- DROPDOWN HIJA -->
-                                                    @if (activeMenuId() === sub.id) {
-                                                        <div class="absolute right-0 z-50 w-44 bg-white rounded-xl shadow-lg border border-gray-100 p-1.5 animate-in fade-in zoom-in duration-200" [class.top-full]="!isMenuUpward()" [class.mt-1]="!isMenuUpward()" [class.bottom-full]="isMenuUpward()" [class.mb-1]="isMenuUpward()" (click)="$event.stopPropagation()">
-                                                            <button (click)="onToggleEspecial(sub); activeMenuId.set(null)" class="w-full flex items-center gap-2.5 p-2.5 text-[11px] font-bold text-brand-text md:hover:bg-gray-50 rounded-lg transition-colors">
-                                                                <app-icon [name]="sub.especial ? 'star-filled' : 'star'" [classes]="'size-3.5 fill-current ' + (sub.especial ? 'text-yellow-400' : 'text-gray-400')" />
-                                                                {{ sub.especial ? 'Quitar destacada' : 'Destacar' }}
-                                                            </button>
-                                                            <button (click)="onToggleActiva(sub); activeMenuId.set(null)" class="w-full flex items-center gap-2.5 p-2.5 text-[11px] font-bold text-brand-text md:hover:bg-gray-50 rounded-lg transition-colors">
-                                                                <app-icon [name]="sub.activo ? 'pause' : 'play'" classes="size-3.5 fill-current text-gray-400" />
-                                                                {{ sub.activo ? 'Pausar' : 'Reanudar' }}
-                                                            </button>
-                                                            <div class="h-px bg-gray-50 my-1 mx-1"></div>
-                                                            <button (click)="onEliminar(sub); activeMenuId.set(null)" class="w-full flex items-center gap-2.5 p-2.5 text-[11px] font-bold text-red-500 md:hover:bg-red-50 rounded-lg transition-colors">
-                                                                <app-icon name="trash" classes="size-3.5 fill-current" /> Eliminar
-                                                            </button>
-                                                        </div>
-                                                    }
-                                                </div>
-                                            </div>
+                                            <div class="h-px bg-gray-100 my-1 mx-2"></div>
+
+                                            <button (click)="onEliminar(cat); activeMenuId.set(null)"
+                                                    class="w-full flex items-center gap-3 p-3 text-xs font-bold text-red-500 md:hover:bg-red-50 rounded-xl transition-colors">
+                                                <app-icon name="trash" classes="size-4 fill-current" />
+                                                Eliminar categoría
+                                            </button>
                                         </div>
                                     }
                                 </div>
-                            }
+                            </div>
                         </div>
                     } @empty {
                         <div class="text-center py-10 opacity-40">
