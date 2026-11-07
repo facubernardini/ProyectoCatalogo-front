@@ -174,7 +174,21 @@ export class MisProductos {
 
   categoriasOrdenadas = computed(() => {
     const lista = this.adminStore.categorias();
-    return [...lista].sort((a, b) => Number(b.especial) - Number(a.especial));
+    let categoriasFiltradas: any[] = [];
+    
+    lista.forEach(cat => {
+      if (!cat.es_agrupadora) {
+        categoriasFiltradas.push(cat);
+      }
+      
+      if (cat.subcategorias && cat.subcategorias.length > 0) {
+        cat.subcategorias.forEach((sub: any) => {
+          categoriasFiltradas.push(sub);
+        });
+      }
+    });
+
+    return categoriasFiltradas.sort((a, b) => Number(b.especial) - Number(a.especial));
   });
 
   conteosPorCategoria = computed(() => {
