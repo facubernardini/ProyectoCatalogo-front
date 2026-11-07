@@ -345,23 +345,78 @@ export class AdminStoreService {
   // --- MÉTODOS PARA CATEGORÍAS ---
 
   agregarCategoriaALista(nueva: CategoriaVendedor) {
-    const nuevaConConteo = { ...nueva, productos_count: 0 };
+    const nuevaConConteo = { 
+      ...nueva, 
+      productos_count: nueva.productos_count ?? 0,
+      subcategorias: nueva.subcategorias ?? [] 
+    };
     
     this.categorias.update(list => {
-      const listaActualizada = [...list, nuevaConConteo];
+      let currentList = [...list];
+
+      if (nuevaConConteo.parent_id) {
+        currentList = currentList.map(parent => {
+          if (parent.id === nuevaConConteo.parent_id) {
+            const nuevasSub = [...(parent.subcategorias || []), nuevaConConteo].sort((a, b) => a.nombre.localeCompare(b.nombre));
+            return { ...parent, subcategorias: nuevasSub };
+          }
+          return parent;
+        });
+      } else {
+        currentList.push(nuevaConConteo);
+      }
       
-      return listaActualizada.sort((a, b) => a.nombre.localeCompare(b.nombre));
+      return currentList.sort((a, b) => a.nombre.localeCompare(b.nombre));
     });
   }
 
   updateCategoriaEnLista(editada: CategoriaVendedor) {
-    this.categorias.update(list => 
-      list.map(c => c.id === editada.id ? { ...c, ...editada } : c)
-    );
+    this.categorias.update(list => {
+      let listaLimpia: CategoriaVendedor[] = list
+        .filter(c => c.id !== editada.id)
+        .map(parent => ({
+          ...parent,
+          subcategorias: (parent.subcategorias || []).filter(sub => sub.id !== editada.id)
+        }));
+
+      if (editada.parent_id) {
+        listaLimpia = listaLimpia.map(parent => {
+          if (parent.id === editada.parent_id) {
+            const nuevasSub = [...(parent.subcategorias || []), editada].sort((a, b) => a.nombre.localeCompare(b.nombre));
+            return { ...parent, subcategorias: nuevasSub };
+          }
+          return parent;
+        });
+      } else {
+        listaLimpia.push(editada);
+      }
+
+      return listaLimpia.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    });
   }
 
   eliminarCategoriaDeLista(id: number) {
-    this.categorias.update(list => list.filter(c => c.id !== id));
+    this.categorias.update(list => {
+      const categoriaAEliminar = list.find(c => c.id === id);
+      let hijasHuerfanas: CategoriaVendedor[] = [];
+      
+      if (categoriaAEliminar && categoriaAEliminar.es_agrupadora && categoriaAEliminar.subcategorias) {
+        hijasHuerfanas = categoriaAEliminar.subcategorias.map(sub => ({ ...sub, parent_id: null }));
+      }
+
+      let nuevaLista: CategoriaVendedor[] = list
+        .filter(c => c.id !== id)
+        .map(parent => ({
+          ...parent,
+          subcategorias: (parent.subcategorias || []).filter(sub => sub.id !== id)
+        }));
+
+      if (hijasHuerfanas.length > 0) {
+        nuevaLista = [...nuevaLista, ...hijasHuerfanas];
+      }
+
+      return nuevaLista.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    });
   }
 
   // --- MÉTODOS PARA GESTIÓN DE CUPONES ---

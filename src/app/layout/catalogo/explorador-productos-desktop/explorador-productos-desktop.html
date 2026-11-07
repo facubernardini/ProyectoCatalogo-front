@@ -12,7 +12,11 @@
                 @if (explorador.vistaActual() === 'busqueda') {
                     Resultados para: <span class="font-extrabold">"{{ explorador.terminoBusqueda() }}"</span>
                 } @else if (explorador.vistaActual() === 'categoria') {
-                    Categoría: <span class="font-extrabold">{{ explorador.categoriaSeleccionada() | titlecase}}</span>
+                    Categoría: <span class="font-extrabold">
+                        {{ explorador.categoriaSeleccionada()?.nombre === 'Ver todos los productos' 
+                            ? explorador.categoriaSeleccionada()?.nombre 
+                            : (explorador.categoriaSeleccionada()?.nombre | titlecase) }}
+                    </span>
                 } @else if (explorador.vistaActual() === 'destacados') {
                     Destacados <span class="animate-pulse">🔥</span>
                 } @else if (explorador.vistaActual() === 'ofertas') {

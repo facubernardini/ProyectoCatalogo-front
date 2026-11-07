@@ -3,159 +3,184 @@
 
     <div class="absolute inset-0 bg-black/60 transition-opacity duration-300 opacity-0 transform-gpu will-change-opacity"
         [class.opacity-0]="!menuService.isOpen()"
-        [class.opacity-100]="menuService.isOpen()"
-        (click)="menuService.close()">
-        
-        <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[18%] flex justify-center pointer-events-none md:hidden">
-            <div class="p-2 rounded-full bg-gray-300 text-gray-600 border border-white/10 opacity-80">
-                <app-icon name="close" classes="size-6 fill-current" />
-            </div>
-        </div>
-    </div>
+        [class.opacity-100]="menuService.isOpen()">
 
-    <aside class="absolute top-0 left-0 h-full w-[82%] md:w-[25%] md:min-w-80 bg-white shadow-2xl transition-transform duration-300 ease-in-out flex flex-col -translate-x-full transform-gpu will-change-transform backface-hidden"
+    <!-- Menú Lateral Principal -->
+    <aside class="absolute top-0 left-0 h-full w-full md:w-[25%] md:min-w-80 bg-white shadow-2xl transition-transform duration-300 ease-in-out flex overflow-hidden transform-gpu will-change-transform backface-hidden"
            [class.-translate-x-full]="!menuService.isOpen()"
            [class.translate-x-0]="menuService.isOpen()">
         
-        <div class="px-4 py-2.5 border-b border-gray-100 flex items-center gap-3 shrink-0 z-10 bg-white">
-            @if (adminStore.catalogo()?.logo_tienda) {
-                <img [src]="adminStore.catalogo()?.logo_tienda"
-                    alt="Logo de la tienda"
-                    class="size-12 rounded-full object-cover shadow-sm shrink-0">
-            }
-            @else {
-                <div (click)="infoService.open()" 
-                    class="size-12 flex items-center justify-center rounded-full bg-white shadow-sm shrink-0">
-                    <app-icon name="shop" classes="size-6 fill-current text-brand-accent" />
-                </div>
-            }
-                
-            <div class="flex-1 px-1">
-                <h2 class="text-sm font-bold text-brand-text leading-tight wrap-break-word">
-                    {{ adminStore.catalogo()?.nombre_tienda }}
-                </h2>
-            </div>
-
-            <button (click)="menuService.close()" class="p-2 text-gray-400 shrink-0 self-start mt-1.5">
-                <app-icon name="close" classes="size-6 fill-current" />
-            </button>
-        </div>
-
-        <div class="px-3 pt-1.5 flex flex-col shrink-0 bg-white z-10 relative">
-            <div class="flex flex-col gap-1 mb-4.5">
-                @if (adminStore.esIndumentaria()) {
-                    <button (click)="irAlInicio()" 
-                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm text-brand-accent bg-brand-accent/3">
-                        <app-icon name="home" classes="size-4 fill-current" />
-                        <span class="font-bold">Inicio</span>
-                    </button>
-                }
-
-                @if (tieneDestacados()) {
-                    <button (click)="abrirDestacados()" 
-                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm text-amber-600 bg-amber-50/50">
-                        <app-icon name="star" classes="size-4 fill-current" />
-                        <span class="font-bold">Destacados</span>
-                    </button>
-                }
-
-                @if (tieneOfertas()) {
-                    <button (click)="abrirOfertas()" 
-                            class="w-full flex items-center gap-3 py-2 px-3 rounded-xl text-sm text-green-700 bg-green-50/50">
-                        <app-icon name="discount" classes="size-4 fill-current" />
-                        <span class="font-bold">Ofertas</span>
-                    </button>
-                }
-            </div>
-
-            <h3 class="text-xs font-black uppercase tracking-widest text-brand-text-sec px-2 mb-2.5">
-                Categorías
-            </h3>
-        </div>
-
-        <div class="flex-1 overflow-y-auto px-3 pb-3 no-scrollbar flex flex-col relative">
-            <div class="space-y-1 flex flex-col gap-1">
-                @for (cat of categoriasOrdenadas(); track cat.id) {
-                    <button (click)="seleccionarYFechar(cat.nombre)"
-                            class="w-full flex items-center justify-between py-2.5 pl-2.5 pr-1 rounded-xl text-sm font-semibold transition-all duration-300 group overflow-hidden shrink-0"
-                            [class]="selected() === cat.nombre ? 'bg-brand-accent/10 text-brand-accent shadow-sm' : 'text-gray-600'">
-                        
-                        <div class="flex items-center gap-2 min-w-0">
-                            <div class="size-1.5 shrink-0 rounded-full transition-colors duration-300"
-                                [class.bg-brand-accent]="cat.especial"
-                                [class.bg-gray-300]="!cat.especial">
-                            </div>
-                            
-                            <span class="text-start" 
-                                [class.font-black]="cat.especial"
-                                [class.text-brand-accent]="cat.especial">
-                                {{ cat.nombre | titlecase }}
-                            </span>
-                        </div>
-
-                        <app-icon name="chevron-right" classes="size-4 text-gray-400 fill-current" />
-                    </button>
-                }
-            </div>
-        </div>
-
-        <div class="px-3 py-2.5 border-t border-gray-100 bg-white flex flex-col gap-2 shrink-0 z-10 relative shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.02)]">    
-
-            @if (adminStore.catalogo()?.direccion && adminStore.catalogo()?.ciudad) {
-                <button (click)="menuService.close(); mapDialogService.open()"
-                        class="w-full flex items-center justify-between p-1 pr-2 rounded-xl bg-gray-50 border border-gray-100 transition-all group">
-                    
-                    <div class="flex items-center p-1 gap-3 overflow-hidden">
-                        <div class="size-7 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-accent shrink-0 transition-transform">
-                            <app-icon name="location" classes="size-5 fill-current" />
-                        </div>
-                        <div class="text-left min-w-0">
-                            <p class="text-sm font-medium text-brand-text truncate">Ubicación del local</p>
-                        </div>
+        <!-- VISTA 1: MENÚ PRINCIPAL -->
+        <div class="w-full h-full shrink-0 flex flex-col transition-transform duration-300 ease-in-out"
+             [class.-translate-x-full]="categoriaActiva() !== null">
+            
+            <!-- HEADER PRINCIPAL -->
+            <div class="px-4 py-2.5 border-b border-gray-100 flex items-center gap-3 shrink-0 z-10 bg-white">
+                @if (adminStore.catalogo()?.logo_tienda) {
+                    <img [src]="adminStore.catalogo()?.logo_tienda" alt="Logo" class="size-12 rounded-full object-cover shadow-sm shrink-0">
+                } @else {
+                    <div (click)="infoService.open()" class="size-12 flex items-center justify-center rounded-full bg-white shadow-sm shrink-0 cursor-pointer">
+                        <app-icon name="shop" classes="size-6 fill-current text-brand-accent" />
                     </div>
+                }
                     
-                    <app-icon name="chevron-right" classes="size-4 text-gray-400 fill-current" />
+                <div class="flex-1 px-1">
+                    <h2 class="text-[15px] font-semibold text-brand-text leading-tight wrap-break-word">
+                        {{ adminStore.catalogo()?.nombre_tienda }}
+                    </h2>
+                </div>
+
+                <button (click)="cerrarMenuCompletamente()" class="p-2 text-gray-600 shrink-0 hover:text-gray-800 transition-colors active:scale-95">
+                    <app-icon name="close" classes="size-6 fill-current" />
                 </button>
-            }
+            </div>
 
-            <button (click)="infoService.open()"
-                    class="w-full flex items-center justify-between p-1 pr-2 rounded-xl bg-gray-50 border border-gray-100 transition-all group">
-                
-                <div class="flex items-center p-1 gap-3 overflow-hidden">
-                    <div class="size-7 rounded-lg bg-white shadow-sm flex items-center justify-center text-brand-accent shrink-0 transition-transform">
-                        <app-icon name="time" classes="size-5 fill-current" />
-                    </div>
-                    <div class="text-left min-w-0">
-                        <p class="text-sm font-medium text-brand-text truncate">Horarios de atención</p>
-                    </div>
+            <!-- BOTONES SUPERIORES (Inicio, Destacados, Ofertas) -->
+            <div class="px-3 pt-3 flex flex-col shrink-0 bg-white z-10 relative">
+                <div class="flex flex-col gap-1.5 mb-4">
+                    @if (adminStore.esIndumentaria()) {
+                        <button (click)="irAlInicio()" class="w-full flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-brand-accent bg-brand-accent/5 active:scale-[0.98] transition-all">
+                            <app-icon name="home" classes="size-4.5 fill-current" />
+                            <span class="font-semibold">Inicio</span>
+                        </button>
+                    }
+
+                    @if (tieneDestacados()) {
+                        <button (click)="abrirDestacados()" class="w-full flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-amber-600 bg-amber-50 active:scale-[0.98] transition-all">
+                            <app-icon name="star-filled" classes="size-4.5 fill-current" />
+                            <span class="font-medium">Destacados</span>
+                        </button>
+                    }
+
+                    @if (tieneOfertas()) {
+                        <button (click)="abrirOfertas()" class="w-full flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm text-green-600 bg-green-50 active:scale-[0.98] transition-all">
+                            <app-icon name="discount" classes="size-4.5 fill-current" />
+                            <span class="font-medium">Ofertas</span>
+                        </button>
+                    }
                 </div>
-                
-                <app-icon name="chevron-right" classes="size-4 text-gray-400 fill-current" />
-            </button>
+
+                <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-700 px-2 mb-3">Categorías</h3>
+            </div>
+
+            <!-- LISTA DE CATEGORÍAS PRINCIPALES -->
+            <div class="flex-1 overflow-y-auto px-3 pb-3 custom-scrollbar flex flex-col relative">
+                <div class="flex flex-col gap-1.5">
+                    @for (cat of categoriasOrdenadas(); track cat.id) {
+                        
+                        <button (click)="abrirSubmenu(cat)"
+                                class="w-full flex items-center justify-between text-gray-800 py-2.5 px-2 rounded-xl text-sm font-normal transition-all duration-200 active:scale-[0.98] group">
+                            
+                            <div class="flex items-center gap-2 min-w-0">
+                                @if (cat.id != -1){
+                                    <div class="size-1 shrink-0 rounded-full transition-colors duration-300"
+                                        [class.bg-brand-accent]="cat.especial"
+                                        [class.bg-gray-400]="!cat.especial">
+                                    </div>
+                                }
+                                
+                                <span class="text-start line-clamp-2" 
+                                    [class.font-black]="cat.especial"
+                                    [class.text-brand-accent]="cat.especial">
+                                    {{ cat.id === -1 ? cat.nombre : (cat.nombre | titlecase) }}
+                                </span>
+                            </div>
+
+                            @if (cat.es_agrupadora) {
+                                <app-icon name="right-arrow" [classes]="'size-4.5 fill-current text-gray-600'" />
+                            }
+                        </button>
+                        
+                    }
+                </div>
+            </div>
+
+            <!-- FOOTER INFO / REDES (Se mantiene igual a tu código) -->
+            <div class="px-3 py-2.5 border-t border-gray-100 bg-white flex gap-2 shrink-0 z-10 relative">
+                <button (click)="cerrarMenuCompletamente(); infoService.open()" class="flex-1 flex items-center justify-between p-1 pr-2 rounded-lg bg-gray-50 border border-gray-100 transition-all active:scale-[0.98]">
+                    <div class="flex items-center gap-1 overflow-hidden">
+                        <div class="size-8 rounded-lg flex items-center justify-center text-brand-accent shrink-0">
+                            <app-icon name="time" classes="size-5 fill-current" />
+                        </div>
+                        <p class="text-[13px] font-medium text-brand-text truncate">
+                            {{ (adminStore.catalogo()?.direccion && adminStore.catalogo()?.ciudad) ? 'Horarios' : 'Horarios de atención' }}
+                        </p>
+                    </div>
+                </button>
+
+                @if (adminStore.catalogo()?.direccion && adminStore.catalogo()?.ciudad) {
+                    <button (click)="cerrarMenuCompletamente(); mapDialogService.open()" class="flex-1 flex items-center justify-between p-1 pr-2 rounded-lg bg-gray-50 border border-gray-100 transition-all active:scale-[0.98]">
+                        <div class="flex items-center gap-1 overflow-hidden">
+                            <div class="size-8 rounded-lg flex items-center justify-center text-brand-accent shrink-0">
+                                <app-icon name="location" classes="size-5 fill-current" />
+                            </div>
+                            <p class="text-[13px] font-medium text-brand-text truncate">Ubicación</p>
+                        </div>
+                    </button>
+                }
+            </div>
+
+            <div class="px-4 py-2.5 border-t border-gray-100 bg-gray-50/50 flex items-center justify-center gap-8 shrink-0 z-10">
+                @if (adminStore.catalogo()?.wpp_numero) {
+                    <a (click)="abrirWhatsapp()" role="button" rel="noopener noreferrer" class="p-3 rounded-full text-green-600 bg-green-100 active:scale-95 transition-all shadow-sm">
+                        <app-icon name="whatsapp" classes="size-5.5 fill-current" />
+                    </a>
+                }
+                @if (adminStore.catalogo()?.instagram_usuario) {
+                    <a (click)="abrirInstagram()" role="button" rel="noopener noreferrer" class="p-3 rounded-full text-pink-600 bg-pink-100 active:scale-95 transition-all shadow-sm">
+                        <app-icon name="instagram" classes="size-5.5 fill-current" />
+                    </a>
+                }
+            </div>
         </div>
 
-        <div class="px-4 py-2 border-t border-gray-100 bg-gray-50/50 flex items-center justify-center gap-4 shrink-0 z-10">
-            
-            @if (adminStore.catalogo()?.wpp_numero) {
-                <a (click)="abrirWhatsapp()"
-                    role="button" 
-                    rel="noopener noreferrer"
-                    aria-label="Contactar por WhatsApp"
-                    class="p-2.5 rounded-full text-green-600 bg-green-100 active:scale-95 transition-all duration-200 shadow-sm">
-                    <app-icon name="whatsapp" classes="size-6 fill-current" />
-                </a>
-            }
+        <!-- VISTA 2: SUBMENÚ (Categorías Hijas) -->
+        <div class="w-full h-full shrink-0 flex flex-col transition-transform duration-300 ease-in-out absolute top-0 left-full"
+             [class.-translate-x-full]="categoriaActiva() !== null">
+             
+            <!-- HEADER SUBMENÚ -->
+            <div class="px-4 py-2.5 border-b border-gray-100 flex items-center justify-between shrink-0 z-10 bg-white">
+                <button (click)="cerrarSubmenu()" class="flex items-center gap-2 p-2 text-gray-600 hover:text-gray-800 transition-colors active:scale-95">
+                    <app-icon name="back" classes="size-5 fill-current" />
+                    <span class="text-sm font-semibold">Volver</span>
+                </button>
 
-            @if (adminStore.catalogo()?.instagram_usuario) {
-                <a (click)="abrirInstagram()"
-                    role="button"
-                    rel="noopener noreferrer"
-                    aria-label="Ir a Instagram"
-                    class="p-2.5 rounded-full text-pink-600 bg-pink-100 active:scale-95 transition-all duration-200 shadow-sm">
-                    <app-icon name="instagram" classes="size-6 fill-current" />
-                </a>
-            }
+                <button (click)="cerrarMenuCompletamente()" class="py-3 px-2 text-gray-600 hover:text-gray-800 transition-colors active:scale-95">
+                    <app-icon name="close" classes="size-6 fill-current" />
+                </button>
+            </div>
             
+            @if (categoriaActiva()) {
+                <!-- LISTA DE SUBCATEGORÍAS -->
+                <div class="flex-1 overflow-y-auto px-3 py-3 custom-scrollbar flex flex-col">
+                    <div class="flex flex-col gap-1.5">
+                        
+                        <!-- BOTÓN: VER TODO -->
+                        <button (click)="seleccionarYFechar(categoriaActiva()!.nombre)"
+                                class="w-full flex items-center py-2 px-2 text-sm font-normal transition-all active:scale-[0.98] text-gray-800 bg-white">
+                            Ver todo en {{ categoriaActiva()?.nombre | titlecase }}
+                        </button>
+                        
+                        <!-- HIJAS -->
+                        @for (sub of categoriaActiva()?.subcategorias; track sub.id) {
+                            <button (click)="seleccionarYFechar(sub.nombre)"
+                                class="w-full flex items-center gap-2 py-2.5 px-2 rounded-xl text-gray-800 hover:bg-gray-50 text-sm font-normal transition-all duration-200 active:scale-[0.98]">
+                                
+                                <div class="size-1 shrink-0 rounded-full transition-colors duration-300"
+                                    [class.bg-brand-accent]="sub.especial"
+                                    [class.bg-gray-400]="!sub.especial">
+                                </div>
+                                
+                                <span class="truncate" 
+                                    [class.font-black]="sub.especial"
+                                    [class.text-brand-accent]="sub.especial">
+                                    {{ sub.nombre | titlecase }}
+                                </span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </aside>
 </div>

@@ -1,19 +1,15 @@
 @if (categoryFormService.isOpen()) {
     <div class="fixed inset-0 z-50 flex justify-end overflow-hidden">
         
-        <div class="absolute inset-0 bg-black/60 animate-backdrop"
-            (click)="categoryFormService.close()">
-        </div>
+        <div class="absolute inset-0 bg-black/60 animate-backdrop" (click)="categoryFormService.close()"></div>
 
-        <div (click)="$event.stopPropagation()"
-            class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col animate-side-panel">
+        <div (click)="$event.stopPropagation()" class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col animate-side-panel">
             
-            <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 border-b border-gray-100">
+            <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 border-b border-gray-100 backdrop-blur-sm">
                 <div class="flex items-center gap-3">
                     <button (click)="categoryFormService.close()" 
                             class="group p-2 bg-gray-50 md:hover:bg-gray-100 rounded-full transition-all duration-300 active:scale-90 border border-gray-200/50">
-                        <app-icon name="back" 
-                                classes="size-5 text-gray-500 group-hover:text-brand-accent transition-colors fill-current" />
+                        <app-icon name="back" classes="size-5 text-gray-500 group-hover:text-brand-accent transition-colors fill-current" />
                     </button>
         
                     <h2 class="text-base font-black text-brand-text leading-tight">
@@ -24,53 +20,18 @@
                 <button (click)="guardar()" 
                         [disabled]="!categoryFormService.nombre().trim() || isNameDuplicate() || isUploading()"
                         class="relative px-4 py-2 bg-brand-accent text-white text-sm font-bold rounded-2xl shadow-lg shadow-brand-accent/20 md:hover:shadow-brand-accent/40 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
-                    
                     <div class="flex items-center gap-2">
-                        <span>
-                            {{ isUploading() ? 'Guardando...' : (categoryFormService.editingCategory() ? 'Guardar' : 'Crear categoría') }}
-                        </span>
+                        <span>{{ isUploading() ? 'Guardando...' : (categoryFormService.editingCategory() ? 'Guardar' : 'Crear categoría') }}</span>
                     </div>
                 </button>
             </div>
 
             <div class="flex-1 overflow-y-auto px-5 py-4 space-y-7">
-                
-                @if (adminStore.esIndumentaria()) {
-                    <section>
-                        <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest mb-3">
-                            Imagen
-                        </p>
-                
-                        <div class="flex items-center gap-4">
-                            <div class="w-24 aspect-4/5 bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center relative group">
-                                @if (categoria.imagen || imagenPreviewTemporal()) {
-                                    <img [src]="imagenPreviewTemporal() || categoria.imagen" class="w-full h-full object-cover">
-                                    
-                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <app-icon name="edit" classes="size-6 text-white fill-current" />
-                                    </div>
-                                } @else {
-                                    <app-icon name="image-add" classes="size-6 text-gray-300 fill-current" />
-                                }
-                                <input 
-                                    type="file"
-                                    accept="image/*"
-                                    (change)="onFileChange($event)" 
-                                    class="absolute inset-0 opacity-0 cursor-pointer">
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-bold text-brand-text">Foto de la categoría</p>
-                                <p class="pt-1 text-xs font-base text-brand-text">Recomendado: Foto vertical, producto centrado.</p>
-                            </div>
-                        </div>
-                    </section>
-                }
 
                 <section class="space-y-4">
                     <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">General</p>
                     <div class="flex flex-col gap-1.5 relative">
                         <label class="text-xs font-bold text-gray-600 ml-1">Nombre de la categoría</label>
-                        
                         <input type="text" 
                             [ngModel]="categoryFormService.nombre()" 
                             (ngModelChange)="categoryFormService.nombre.set($event)" 
@@ -86,20 +47,166 @@
                     </div>
                 </section>
 
-                <section>
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad especial</label>
-                        <button (click)="categoria.especial = !categoria.especial" 
-                                [class]="categoria.especial ? 'bg-brand-accent text-white border-brand-accent shadow-md' : 'bg-gray-50 text-gray-400 border-gray-100'"
-                                class="flex items-center justify-center gap-2 h-10 rounded-xl border font-bold text-sm transition-all active:scale-95 w-full">
-                            <app-icon name="star" [classes]="'size-4 ' + (categoria.especial ? 'fill-white' : 'fill-gray-400')" />
-                            {{ categoria.especial ? 'Categoría Especial' : 'Marcar como Especial' }}
+                <!-- NUEVA SECCIÓN: ORGANIZACIÓN -->
+                <section class="space-y-4">
+                    <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Organización</p>
+                    
+                    <div class="flex flex-col gap-2">
+                        <!-- Toggle de Agrupadora -->
+                        <button (click)="toggleAgrupadora()" type="button"
+                            [class.opacity-60]="!canToggleAgrupadora"
+                            [class.cursor-not-allowed]="!canToggleAgrupadora"
+                            [class]="categoria.es_agrupadora ? 'bg-brand-accent/5 border-brand-accent/30' : 'bg-gray-50 border-gray-100'"
+                            class="relative p-3 rounded-2xl border text-left transition-all active:scale-[0.98]">
+                            
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <p class="text-sm font-bold text-brand-text mb-0.5">Es categoría agrupadora</p>
+                                    <p class="text-[11px] text-gray-400 leading-relaxed font-medium">
+                                        Sirve para organizar otras categorías adentro. No podrá contener productos directamente.
+                                    </p>
+                                </div>
+                                
+                                <!-- Custom Tailwind Switch -->
+                                <div class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none mt-1"
+                                     [class]="categoria.es_agrupadora ? 'bg-brand-accent' : 'bg-gray-200'">
+                                    <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                                          [class]="categoria.es_agrupadora ? 'translate-x-5' : 'translate-x-0'"></span>
+                                </div>
+                            </div>
                         </button>
-                        <p class="text-[10px] text-gray-400 ml-1 mt-1 italic">
-                            * Aparecerá al principio de la lista.
-                        </p>
+
+                        <!-- Mensajes de Alerta (Edge cases) -->
+                        @if (!canToggleAgrupadora && categoryFormService.editingCategory()) {
+                            <div class="flex items-start gap-1.5 px-1 animate-in slide-in-from-top-1 fade-in">
+                                <app-icon name="info" classes="size-4 text-amber-500 shrink-0 mt-0.5 fill-current" />
+                                <p class="text-[11px] font-bold text-amber-600 leading-tight">
+                                    @if (categoryFormService.editingCategory()?.productos_count) {
+                                        No podés convertirla en agrupadora porque ya tiene productos asignados.
+                                    } @else if ((categoryFormService.editingCategory()?.subcategorias?.length ?? 0) > 0) {
+                                        No podés quitarle esta propiedad porque contiene subcategorías.
+                                    }
+                                </p>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Selector de Padre (Opcional) -->
+                    <div class="flex flex-col gap-1.5 relative transition-all duration-300"
+                         [class.opacity-50]="categoria.es_agrupadora"
+                         [class.pointer-events-none]="categoria.es_agrupadora">
+                         
+                        <label class="text-xs font-bold text-gray-600 ml-1">Pertenece a (Opcional)</label>
+                        
+                        <div class="relative">
+                            <button type="button"
+                                    [disabled]="categoria.es_agrupadora"
+                                    (click)="toggleDropdownPadre()"
+                                    class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl outline-none transition-all text-sm font-medium flex justify-between items-center"
+                                    [class.cursor-pointer]="!categoria.es_agrupadora"
+                                    [class.text-brand-text]="!categoria.es_agrupadora"
+                                    [class.text-gray-400]="categoria.es_agrupadora"
+                                    [class.focus:border-brand-accent/30]="!categoria.es_agrupadora"
+                                    [class.focus:bg-white]="!categoria.es_agrupadora"
+                                    [class.border-brand-accent]="isDropdownPadreOpen()"
+                                    [class.ring]="isDropdownPadreOpen()" 
+                                    [class.ring-brand-accent/30]="isDropdownPadreOpen()">
+                                
+                                <span>{{ getNombrePadreSeleccionado() }}</span>
+                                
+                                <app-icon name="expand-more" 
+                                          classes="size-5 fill-current transition-transform duration-200"
+                                          [class.text-gray-400]="!categoria.es_agrupadora"
+                                          [class.text-gray-300]="categoria.es_agrupadora" 
+                                          [class.rotate-180]="isDropdownPadreOpen()"/>
+                            </button>
+                            
+                            @if (isDropdownPadreOpen()) {
+                                <div class="fixed inset-0 z-40" (click)="isDropdownPadreOpen.set(false)"></div>
+
+                                <div class="absolute top-full left-0 w-full mt-1 z-50 bg-white border border-gray-100 rounded-xl shadow-lg p-1 animate-in fade-in zoom-in-95 duration-100 max-h-60 overflow-y-auto custom-scrollbar">
+                                    
+                                    <!-- Opción por Defecto: Ninguna -->
+                                    <button type="button"
+                                            (click)="categoria.parent_id = null; isDropdownPadreOpen.set(false)"
+                                            class="w-full flex items-center justify-between px-2.5 py-2 text-sm transition-colors rounded-lg"
+                                            [class.bg-brand-accent/10]="categoria.parent_id === null"
+                                            [class.text-brand-accent]="categoria.parent_id === null"
+                                            [class.font-bold]="categoria.parent_id === null"
+                                            [class.text-gray-600]="categoria.parent_id !== null"
+                                            [class.font-medium]="categoria.parent_id !== null"
+                                            [class.md:hover:bg-gray-50]="categoria.parent_id !== null">
+                                        <span>Ninguna</span>
+                                        @if (categoria.parent_id === null) {
+                                            <app-icon name="check" classes="size-4 fill-current" />
+                                        }
+                                    </button>
+
+                                    <!-- Lista de Categorías Padre Posibles -->
+                                    @for (padre of categoriasPadrePosibles; track padre.id) {
+                                        <button type="button"
+                                                (click)="categoria.parent_id = padre.id; isDropdownPadreOpen.set(false)"
+                                                class="w-full flex items-center justify-between px-2.5 py-2 text-sm transition-colors rounded-lg"
+                                                [class.bg-brand-accent/10]="categoria.parent_id === padre.id"
+                                                [class.text-brand-accent]="categoria.parent_id === padre.id"
+                                                [class.font-bold]="categoria.parent_id === padre.id"
+                                                [class.text-gray-600]="categoria.parent_id !== padre.id"
+                                                [class.font-medium]="categoria.parent_id !== padre.id"
+                                                [class.md:hover:bg-gray-50]="categoria.parent_id !== padre.id">
+                                            
+                                            <span>{{ padre.nombre }}</span>
+                                            
+                                            @if (categoria.parent_id === padre.id) {
+                                                <app-icon name="check" classes="size-4 fill-current" />
+                                            }
+                                        </button>
+                                    }
+                                </div>
+                            }
+                        </div>
                     </div>
                 </section>
+
+                @if (adminStore.esIndumentaria()) {
+                    <section class="transition-all duration-300"
+                             [class.opacity-50]="categoria.es_agrupadora"
+                             [class.grayscale]="categoria.es_agrupadora"
+                             [class.pointer-events-none]="categoria.es_agrupadora">
+                             
+                        <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest mb-3">
+                            Imagen
+                        </p>
+                
+                        <div class="flex items-center gap-4">
+                            <div class="w-24 aspect-4/5 bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed flex items-center justify-center relative group transition-colors"
+                                 [class.border-gray-200]="!categoria.es_agrupadora"
+                                 [class.border-gray-100]="categoria.es_agrupadora">
+                                 
+                                @if (categoria.imagen || imagenPreviewTemporal()) {
+                                    <img [src]="imagenPreviewTemporal() || categoria.imagen" class="w-full h-full object-cover">
+                                    
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <app-icon name="edit" classes="size-6 text-white fill-current" />
+                                    </div>
+                                } @else {
+                                    <app-icon name="image-add" classes="size-6 text-gray-300 fill-current" />
+                                }
+                                <input 
+                                    type="file"
+                                    accept="image/*"
+                                    [disabled]="categoria.es_agrupadora"
+                                    (change)="onFileChange($event)" 
+                                    class="absolute inset-0 opacity-0"
+                                    [class.cursor-pointer]="!categoria.es_agrupadora"
+                                    [class.cursor-not-allowed]="categoria.es_agrupadora">
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-brand-text">Foto de la categoría</p>
+                                <p class="pt-1 text-xs font-base text-brand-text">Recomendado: Foto vertical, producto centrado.</p>
+                            </div>
+                        </div>
+                    </section>
+                }
 
                 @if (categoryFormService.editingCategory()) {
                     <section class="space-y-4">

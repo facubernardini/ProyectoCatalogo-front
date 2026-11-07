@@ -64,25 +64,30 @@ export class CategoryProductsView implements OnDestroy {
   private searchSubject = new Subject<string>();
 
   productosDeCategoria = computed(() => {
-    const catSeleccionada = this.categoryViewService.categoria();
-    if (!catSeleccionada) return [];
+    const catData = this.categoryViewService.categoria();
+    if (!catData) return [];
     
     const todosLosProductos = this.adminStore.productos();
 
-    if (catSeleccionada === 'Ver todos los productos') {
+    if (catData.nombre === 'Productos') {
       return todosLosProductos.filter(p => p.activo);
     }
     
-    return todosLosProductos.filter(p => 
-      p.categorias?.some(c => c.nombre === catSeleccionada) && p.activo
-    );
+    return todosLosProductos.filter(p => {
+      if (!p.activo) return false;
+
+      if (catData.es_agrupadora && catData.nombres_hijas) {
+        return p.categorias?.some(c => catData.nombres_hijas!.includes(c.nombre));
+      }
+      
+      return p.categorias?.some(c => c.nombre === catData.nombre);
+    });
   });
 
   resultados = computed(() => {
     const termOriginal = this.filtro().trim();
     const listaBase = this.productosDeCategoria();
 
-    // Si no hay búsqueda o es muy corta, devolvemos la lista de la categoría tal cual
     if (termOriginal.length < 2) {
       return listaBase; 
     }

@@ -9,7 +9,7 @@ export interface ModalEliminarOptions {
 }
 
 export interface ModalEliminarResult {
-  accion: 'mover' | 'eliminar';
+  accion: 'mover' | 'eliminar'; 
   categoriaDestinoId?: number;
 }
 
@@ -26,7 +26,36 @@ export class CategoryDeleteService {
 
   categoriasParaMover = computed(() => {
     const catActual = this.opciones()?.categoria;
-    return this.adminStore.categorias().filter(c => c.id !== catActual?.id);
+    const categorias = this.adminStore.categorias();
+    
+    const aplanarCategorias = (lista: any[]) => {
+      let resultado: any[] = [];
+      
+      lista.forEach(cat => {
+        if (catActual && cat.id === catActual.id) return;
+        
+        const subcategoriasValidas = (cat.subcategorias || []).filter((sub: any) => {
+          return !(catActual && sub.id === catActual.id);
+        });
+
+        if (cat.es_agrupadora && subcategoriasValidas.length === 0) {
+          return;
+        }
+          
+        resultado.push({ ...cat, _nivel: 0 });
+        
+        if (subcategoriasValidas.length > 0) {
+          subcategoriasValidas.forEach((sub: any, index: number) => {
+            const esUltima = index === subcategoriasValidas.length - 1;
+            resultado.push({ ...sub, _nivel: 1, _isLastSub: esUltima });
+          });
+        }
+      });
+      
+      return resultado;
+    };
+
+    return aplanarCategorias(categorias);
   });
 
   private resolveFn: ((value: ModalEliminarResult | null) => void) | null = null;

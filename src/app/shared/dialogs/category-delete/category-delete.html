@@ -53,8 +53,14 @@
                                     (ngModelChange)="categoryDeleteService.categoriaDestinoId.set($event)"
                                     class="w-full bg-white border border-brand-accent/20 rounded-xl p-2.5 text-sm font-bold text-brand-text focus:ring-2 focus:ring-brand-accent/30 outline-none">
                                 <option [ngValue]="null" disabled>Seleccionar destino...</option>
+                                
                                 @for (cat of categoryDeleteService.categoriasParaMover(); track cat.id) {
-                                    <option [ngValue]="cat.id">{{ cat.nombre }}</option>
+                                    <option [ngValue]="cat.id" 
+                                            [disabled]="cat.es_agrupadora"
+                                            [class.font-black]="cat.es_agrupadora"
+                                            [class.text-gray-400]="cat.es_agrupadora">
+                                        {{ cat._nivel === 1 ? '\u00A0\u00A0\u00A0\u00A0 ' : '' }}{{ cat.nombre }}
+                                    </option>
                                 }
                             </select>
                         }

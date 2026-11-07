@@ -6,9 +6,15 @@ export interface CategoriaVendedor {
   imagen: string | null;
   activo: boolean;
   especial: boolean;
+
+  parent_id: number | null;
+  es_agrupadora: boolean;
+  subcategorias?: CategoriaVendedor[];
 }
 
-export interface CategoriaMinimal {
-  id: number;
+// Interfaz para catalogo publico
+export interface CategoriaViewData {
   nombre: string;
+  es_agrupadora: boolean;
+  nombres_hijas?: string[];
 }
