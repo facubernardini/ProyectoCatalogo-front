@@ -28,6 +28,8 @@ export class MisCategorias {
 
   public imageLoaded = signal(false);
 
+  expandedCategories = signal<Set<number>>(new Set());
+
   hasCategorias = computed(() => this.adminStore.categorias().length > 0);
 
   busquedaRaw = signal('');
@@ -51,19 +53,36 @@ export class MisCategorias {
     
     let lista = this.adminStore.categorias();
 
-    if (term) {
-      lista = lista.filter(c => c.nombre.toLowerCase().includes(term));
-    }
+    return lista.reduce((acc: CategoriaVendedor[], cat) => {
+        // 1. Evaluar si el PADRE cumple los filtros directamente
+        let parentMatches = true;
+        if (term && !cat.nombre.toLowerCase().includes(term)) parentMatches = false;
+        if (destacadas && !cat.especial) parentMatches = false;
+        if (pausadas && cat.activo) parentMatches = false;
 
-    if (destacadas) {
-      lista = lista.filter(c => c.especial);
-    }
+        // 2. Evaluar qué HIJAS cumplen los filtros
+        let subcategoriasFiltradas = (cat.subcategorias || []).filter(sub => {
+            let subMatches = true;
+            if (term && !sub.nombre.toLowerCase().includes(term)) subMatches = false;
+            if (destacadas && !sub.especial) subMatches = false;
+            if (pausadas && sub.activo) subMatches = false;
+            return subMatches;
+        });
 
-    if (pausadas) {
-      lista = lista.filter(c => !c.activo);
-    }
+        // 3. Lógica de renderizado UX:
+        if (parentMatches) {
+            // Si buscaron al padre y coincide, lo mostramos completo con TODAS sus hijas (si no hay otros filtros activos)
+            acc.push({ 
+              ...cat, 
+              subcategorias: (destacadas || pausadas) ? subcategoriasFiltradas : cat.subcategorias 
+            });
+        } else if (subcategoriasFiltradas.length > 0) {
+            // Si el padre no coincide, pero una hija SÍ, mostramos el padre como contenedor y SOLO las hijas filtradas
+            acc.push({ ...cat, subcategorias: subcategoriasFiltradas });
+        }
 
-    return lista;
+        return acc;
+    }, []);
   });
 
   ngOnInit() {
@@ -128,12 +147,34 @@ export class MisCategorias {
     this.isFiltrosOpen.set(false);
   }
 
+  isExpanded(catId: number): boolean {
+    if (this.filtro().trim().length > 0) return true;
+    
+    return this.expandedCategories().has(catId);
+  }
+
   onAddCategory() {
     this.categoryFormService.openCreate();
   }
 
   onEditCategory(categoria: CategoriaVendedor) {
     this.categoryFormService.openEdit(categoria);
+  }
+
+  onCategoryClick(cat: CategoriaVendedor) {
+    if (cat.es_agrupadora) {
+      this.expandedCategories.update(set => {
+        const newSet = new Set(set);
+        if (newSet.has(cat.id)) {
+          newSet.delete(cat.id);
+        } else {
+          newSet.add(cat.id);
+        }
+        return newSet;
+      });
+    } else {
+      this.categoryPreview.open(cat);
+    }
   }
 
   toggleMenu(id: number, event: Event) {
@@ -162,6 +203,15 @@ export class MisCategorias {
     }
   }
 
+  isMenuOpen(cat: CategoriaVendedor): boolean {
+    const currentActiveId = this.activeMenuId();
+    if (!currentActiveId) return false;
+    
+    if (cat.id === currentActiveId) return true;
+    
+    return cat.subcategorias?.some(sub => sub.id === currentActiveId) ?? false;
+}
+
   onToggleEspecial(categoria: CategoriaVendedor) {
     this.categoriaManager.toggleEspecial(categoria);
   }
@@ -171,6 +221,27 @@ export class MisCategorias {
   }
 
   async onEliminar(categoria: CategoriaVendedor) {
+    
+    if (categoria.es_agrupadora) {
+      const cantidadHijas = categoria.subcategorias?.length || 0;
+      
+      let mensaje = `¿Estás seguro de eliminar la categoría agrupadora "${categoria.nombre}"?`;
+      if (cantidadHijas > 0) {
+        mensaje += ` Las ${cantidadHijas} subcategorías que contiene no se borrarán, pasarán a ser categorías principales.`;
+      }
+
+      const confirm = await this.confirmService.ask({
+        title: 'Eliminar agrupadora',
+        message: mensaje,
+        icon: 'trash',
+        type: 'danger'
+      });
+
+      if (!confirm) return;
+      this.categoriaManager.eliminar(categoria.id, 'eliminar');
+      return;
+    }
+
     const productosAfectados = this.adminStore.productos().filter(p => 
       p.categorias?.length === 1 && p.categorias[0].id === categoria.id
     );
@@ -184,17 +255,15 @@ export class MisCategorias {
       });
 
       if (!confirm) return;
-
       this.categoriaManager.eliminar(categoria.id, 'eliminar');
-    }
-    else{
+      
+    } else {
       const resultado = await this.categoryDeleteService.ask({
         categoria,
         productosAfectados: productosAfectados
       });
 
       if (!resultado) return;
-
       this.categoriaManager.eliminar(categoria.id, resultado.accion, resultado.categoriaDestinoId);
     }
   }

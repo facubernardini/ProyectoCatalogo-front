@@ -20,11 +20,26 @@ export class HeroIndumentaria implements AfterViewInit {
   paginaActual = signal<number>(0);
 
   paginasDeCategorias = computed(() => {
-    const categorias = this.adminStore.categorias();
+    const listaCompleta = this.adminStore.categorias();
+    let categoriasFiltradas: CategoriaVendedor[] = [];
+    
+    listaCompleta.forEach(cat => {
+      if (!cat.es_agrupadora) {
+        categoriasFiltradas.push(cat);
+      }
+      
+      if (cat.subcategorias && cat.subcategorias.length > 0) {
+        cat.subcategorias.forEach((sub: any) => {
+          categoriasFiltradas.push(sub);
+        });
+      }
+    });
+
     const paginas = [];
-    for (let i = 0; i < categorias.length; i += 4) {
-      paginas.push(categorias.slice(i, i + 4));
+    for (let i = 0; i < categoriasFiltradas.length; i += 4) {
+      paginas.push(categoriasFiltradas.slice(i, i + 4));
     }
+    
     return paginas;
   });
 

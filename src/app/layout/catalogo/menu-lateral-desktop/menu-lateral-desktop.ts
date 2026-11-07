@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "src/app/shared/components/icon";
 import { ExploradorProductosService } from 'src/app/shared/services/explorador-productos.service';
@@ -20,6 +21,9 @@ export class MenuLateralDesktop {
 
   catalogo = this.adminStore.catalogo;
   categorias = this.adminStore.categorias;
+
+  categoriaActiva = signal<CategoriaVendedor | null>(null);
+  selected = computed(() => this.exploradorProductosService.categoriaSeleccionada()?.nombre);
 
   categoriasOrdenadas = computed(() => {
     const lista = this.categorias();
@@ -49,8 +53,52 @@ export class MenuLateralDesktop {
     );
   });
 
+  abrirSubmenu(categoria: CategoriaVendedor) {
+    if (categoria.es_agrupadora) {
+      this.categoriaActiva.set(categoria);
+    } else {
+      this.seleccionarYFechar(categoria.nombre);
+    }
+  }
+
+  cerrarSubmenu() {
+    this.categoriaActiva.set(null);
+  }
+
   seleccionarYFechar(nombre: string) {
-    this.exploradorProductosService.verCategoria(nombre);
+    if (nombre === 'Ver todos los productos') {
+      this.exploradorProductosService.verCategoria({ nombre: 'Ver todos los productos', es_agrupadora: false });
+      return;
+    }
+
+    // Buscamos la categoría completa
+    let catEncontrada: any = null;
+    for (const cat of this.adminStore.categorias()) {
+      if (cat.nombre === nombre) {
+        catEncontrada = cat;
+        break;
+      }
+      if (cat.subcategorias) {
+        const hija = cat.subcategorias.find(s => s.nombre === nombre);
+        if (hija) {
+          catEncontrada = hija;
+          break;
+        }
+      }
+    }
+
+    if (catEncontrada) {
+      const data: any = {
+        nombre: catEncontrada.nombre,
+        es_agrupadora: catEncontrada.es_agrupadora || false
+      };
+
+      if (catEncontrada.es_agrupadora && catEncontrada.subcategorias) {
+        data.nombres_hijas = catEncontrada.subcategorias.map((s: any) => s.nombre);
+      }
+
+      this.exploradorProductosService.verCategoria(data);
+    }
   }
 
   abrirDestacados(){

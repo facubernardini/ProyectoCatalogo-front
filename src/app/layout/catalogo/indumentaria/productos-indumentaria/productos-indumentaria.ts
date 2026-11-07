@@ -24,7 +24,7 @@ export class ProductosIndumentaria {
   private router = inject(Router);
 
   categoriasConProductos = computed<GrupoProductos[]>(() => {
-    const categorias = this.adminStore.categorias();
+    const categoriasBase = this.adminStore.categorias();
     const todosProductos = this.adminStore.productos();
     const permiteVentaSinStock = this.adminStore.catalogo()?.permitir_ventas_sin_stock ?? false;
 
@@ -32,7 +32,7 @@ export class ProductosIndumentaria {
 
     // --- 1. GRUPO DESTACADOS ---
     let prodsDestacados = todosProductos.filter(p => p.destacado);
-    prodsDestacados = this.ordenarPorDisponibilidad(prodsDestacados, permiteVentaSinStock); // Ordenamos
+    prodsDestacados = this.ordenarPorDisponibilidad(prodsDestacados, permiteVentaSinStock);
 
     if (prodsDestacados.length > 0) {
       grupos.push({
@@ -52,7 +52,7 @@ export class ProductosIndumentaria {
       }
       return false;
     });
-    prodsOfertas = this.ordenarPorDisponibilidad(prodsOfertas, permiteVentaSinStock); // Ordenamos
+    prodsOfertas = this.ordenarPorDisponibilidad(prodsOfertas, permiteVentaSinStock);
 
     if (prodsOfertas.length > 0) {
       grupos.push({
@@ -65,7 +65,30 @@ export class ProductosIndumentaria {
       });
     }
 
-    const mapearCategoria = (cat: any) => {
+    // --- APLANADO DE CATEGORÍAS ---
+    const categoriasPlanas: { cat: any, rutaCompleta: string }[] = [];
+
+    categoriasBase.forEach(cat => {
+      if (!cat.es_agrupadora) {
+        categoriasPlanas.push({ 
+          cat: cat, 
+          rutaCompleta: this.crearSlug(cat.nombre) 
+        });
+      }
+      
+      if (cat.subcategorias && cat.subcategorias.length > 0) {
+        cat.subcategorias.forEach((sub: any) => {
+          categoriasPlanas.push({ 
+            cat: sub, 
+            rutaCompleta: `${this.crearSlug(cat.nombre)}/${this.crearSlug(sub.nombre)}` 
+          });
+        });
+      }
+    });
+
+    const mapearCategoria = (item: { cat: any, rutaCompleta: string }) => {
+      const { cat, rutaCompleta } = item;
+      
       let prodsDeCategoria = todosProductos.filter(p => 
         p.categorias?.some((c: any) => c.id === cat.id)
       );
@@ -75,7 +98,7 @@ export class ProductosIndumentaria {
       return {
         id_grupo: cat.id,
         nombre: cat.nombre,
-        ruta: this.crearSlug(cat.nombre),
+        ruta: rutaCompleta,
         productos: prodsDeCategoria.slice(0, 20), 
         tieneMas: prodsDeCategoria.length > 20,
         totalProductos: prodsDeCategoria.length
@@ -83,14 +106,14 @@ export class ProductosIndumentaria {
     };
 
     // --- 3. CATEGORÍAS DESTACADAS
-    const gruposCategoriasDestacadas = categorias
-      .filter(cat => cat.especial)
+    const gruposCategoriasDestacadas = categoriasPlanas
+      .filter(item => item.cat.especial)
       .map(mapearCategoria)
       .filter(grupo => grupo.productos.length > 0);
 
     // --- 4. CATEGORÍAS NORMALES
-    const gruposCategoriasNormales = categorias
-      .filter(cat => !cat.especial)
+    const gruposCategoriasNormales = categoriasPlanas
+      .filter(item => !item.cat.especial)
       .map(mapearCategoria)
       .filter(grupo => grupo.productos.length > 0);
 
@@ -102,7 +125,7 @@ export class ProductosIndumentaria {
   });
 
   verMas(rutaDestino: string) {
-    this.router.navigate(['/', rutaDestino]);
+    this.router.navigateByUrl(`/${rutaDestino}`);
   }
 
   scrollCarousel(carousel: HTMLElement, direccion: number) {
