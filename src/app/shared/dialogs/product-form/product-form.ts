@@ -63,9 +63,27 @@ export class ProductForm {
     const query = this.searchQuery().toLowerCase().trim();
     const categorias = this.adminStore.categorias();
     
-    if (!query) return categorias;
+    const aplanarCategorias = (lista: any[]) => {
+      let resultado: any[] = [];
+      lista.forEach(cat => {
+        resultado.push({ ...cat, _nivel: 0 });
+        
+        if (cat.subcategorias && cat.subcategorias.length > 0) {
+          cat.subcategorias.forEach((sub: any, index: number) => {
+            const esUltima = index === cat.subcategorias.length - 1;
+            
+            resultado.push({ ...sub, _nivel: 1, _isLastSub: esUltima });
+          });
+        }
+      });
+      return resultado;
+    };
+
+    const categoriasAplanadas = aplanarCategorias(categorias);
+
+    if (!query) return categoriasAplanadas;
     
-    return categorias.filter(c => c.nombre.toLowerCase().includes(query));
+    return categoriasAplanadas.filter(c => c.nombre.toLowerCase().includes(query));
   });
 
   constructor() {

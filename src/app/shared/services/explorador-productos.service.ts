@@ -1,4 +1,5 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
+import { CategoriaViewData } from 'src/app/core/models/categoriaVendedor.model';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 
 type VistaCatalogo = 'home' | 'busqueda' | 'categoria' | 'destacados' | 'ofertas';
@@ -9,7 +10,7 @@ export class ExploradorProductosService {
 
   vistaActual = signal<VistaCatalogo>('home');
   terminoBusqueda = signal<string>('');
-  categoriaSeleccionada = signal<string>('');
+  categoriaSeleccionada = signal<CategoriaViewData | null>(null);
 
   productosFiltrados = computed(() => {
     const todosLosProductos = this.adminStore.productos();
@@ -95,15 +96,22 @@ export class ExploradorProductosService {
     }
 
     if (vista === 'categoria') {
-      const categoria = this.categoriaSeleccionada();
+      const catData = this.categoriaSeleccionada();
+      if (!catData) return [];
 
-      if (categoria === 'Ver todos los productos') {
+      if (catData.nombre === 'Ver todos los productos') {
         return todosLosProductos.filter(p => p.activo);
       }
 
-      return todosLosProductos.filter(p => 
-        p.categorias?.some(c => c.nombre === categoria) && p.activo
-      );
+      return todosLosProductos.filter(p => {
+        if (!p.activo) return false;
+
+        if (catData.es_agrupadora && catData.nombres_hijas) {
+            return p.categorias?.some(c => catData.nombres_hijas!.includes(c.nombre));
+        }
+        
+        return p.categorias?.some(c => c.nombre === catData.nombre);
+      });
     }
 
     if (vista === 'destacados') {
@@ -128,26 +136,26 @@ export class ExploradorProductosService {
     this.vistaActual.set('busqueda');
   }
 
-  verCategoria(categoria: string) {
-    this.categoriaSeleccionada.set(categoria);
+  verCategoria(data: CategoriaViewData) {
+    this.categoriaSeleccionada.set(data);
     this.vistaActual.set('categoria');
   }
 
   verDestacados() {
     this.terminoBusqueda.set('');
-    this.categoriaSeleccionada.set(''); 
+    this.categoriaSeleccionada.set(null); 
     this.vistaActual.set('destacados');
   }
 
   verTodasLasOfertas() {
     this.terminoBusqueda.set('');
-    this.categoriaSeleccionada.set(''); 
+    this.categoriaSeleccionada.set(null); 
     this.vistaActual.set('ofertas');
   }
 
   limpiarVista() {
     this.terminoBusqueda.set('');
-    this.categoriaSeleccionada.set('');
+    this.categoriaSeleccionada.set(null);
     this.vistaActual.set('home');
   }
 }

@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { Icon } from "@shared/components/icon";
 import { MenuLateralService } from '@shared/services/menu-lateral.service';
@@ -9,6 +9,7 @@ import { ProductosDestacadosService } from '@shared/services/productos-destacado
 import { ProductosOfertasService } from '@shared/services/productos-ofertas.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { CategoriaVendedor } from 'src/app/core/models/categoriaVendedor.model';
 
 @Component({
   selector: 'app-menu-lateral',
@@ -30,6 +31,8 @@ export class MenuLateral {
   catalogo = this.adminStore.catalogo;
   categorias = this.adminStore.categorias;
 
+  categoriaActiva = signal<CategoriaVendedor | null>(null);
+
   categoriasOrdenadas = computed(() => {
     const lista = this.categorias();
     
@@ -48,8 +51,6 @@ export class MenuLateral {
     return [opcionTodos, ...ordenadas];
   });
 
-  selected = computed(() => this.menuService.categoriaSeleccionada());
-
   tieneDestacados = computed(() => {
     return this.adminStore.productos().some(producto => producto.destacado);
   });
@@ -60,23 +61,99 @@ export class MenuLateral {
     );
   });
 
+  abrirSubmenu(categoria: CategoriaVendedor) {
+    if (categoria.es_agrupadora) {
+      this.categoriaActiva.set(categoria);
+    } else {
+      this.seleccionarYFechar(categoria.nombre);
+    }
+  }
+
+  cerrarSubmenu() {
+    this.categoriaActiva.set(null);
+  }
+
+  cerrarMenuCompletamente() {
+    this.menuService.close();
+    setTimeout(() => this.cerrarSubmenu(), 300); 
+  }
+
   seleccionarYFechar(nombre: string) {
-    this.menuService.close(); 
+    this.cerrarMenuCompletamente(); 
 
     if (this.adminStore.esIndumentaria()) {
       if (nombre === 'Ver todos los productos') {
         this.router.navigate(['/productos']);
-      } else {
-        const slug = this.crearSlug(nombre);
-        this.router.navigate(['/', slug]);
+        return;
       }
+
+      // Buscar la categoría completa para saber si es padre o hija
+      let catPadre: any = null;
+      let esSubcategoria = false;
+
+      for (const cat of this.adminStore.categorias()) {
+        if (cat.nombre === nombre) {
+          catPadre = cat;
+          break;
+        }
+        if (cat.subcategorias) {
+          const hija = cat.subcategorias.find((s: any) => s.nombre === nombre);
+          if (hija) {
+            catPadre = cat;
+            esSubcategoria = true;
+            break;
+          }
+        }
+      }
+
+      if (catPadre) {
+        if (esSubcategoria) {
+          this.router.navigate(['/', this.crearSlug(catPadre.nombre), this.crearSlug(nombre)]);
+        } else {
+          this.router.navigate(['/', this.crearSlug(catPadre.nombre)]);
+        }
+      } else {
+        this.router.navigate(['/', this.crearSlug(nombre)]);
+      }
+
     } else {
-      this.categoryViewService.open(nombre);
+      if (nombre === 'Ver todos los productos') {
+        this.categoryViewService.open({ nombre: 'Productos', es_agrupadora: false });
+        return;
+      }
+
+      let catEncontrada: any = null;
+      for (const cat of this.adminStore.categorias()) {
+        if (cat.nombre === nombre) {
+          catEncontrada = cat;
+          break;
+        }
+        if (cat.subcategorias) {
+          const hija = cat.subcategorias.find(s => s.nombre === nombre);
+          if (hija) {
+            catEncontrada = hija;
+            break;
+          }
+        }
+      }
+
+      if (catEncontrada) {
+        const data: any = {
+          nombre: catEncontrada.nombre,
+          es_agrupadora: catEncontrada.es_agrupadora || false
+        };
+
+        if (catEncontrada.es_agrupadora && catEncontrada.subcategorias) {
+          data.nombres_hijas = catEncontrada.subcategorias.map((s: any) => s.nombre);
+        }
+
+        this.categoryViewService.open(data);
+      }
     }
   }
 
   abrirDestacados(){
-    this.menuService.close();
+    this.cerrarMenuCompletamente();
     if (this.adminStore.esIndumentaria()) {
       this.router.navigate(['/destacados']);
     } else {
@@ -85,7 +162,7 @@ export class MenuLateral {
   }
 
   abrirOfertas(){
-    this.menuService.close();
+    this.cerrarMenuCompletamente();
     if (this.adminStore.esIndumentaria()) {
       this.router.navigate(['/ofertas']);
     } else {
@@ -118,7 +195,7 @@ export class MenuLateral {
   }
 
   irAlInicio() {
-    this.menuService.close();
+    this.cerrarMenuCompletamente();
     this.router.navigate(['/']);
   }
 

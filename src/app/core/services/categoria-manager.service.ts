@@ -83,12 +83,23 @@ export class CategoriaManagerService {
   // --- PAUSAR / REANUDAR ---
   async toggleActivo(categoria: CategoriaVendedor) {
     const estaActiva = categoria.activo;
+    const esAgrupadora = categoria.es_agrupadora;
+
+    let mensajeConfirmacion = '';
+    
+    if (estaActiva) {
+      mensajeConfirmacion = esAgrupadora 
+        ? 'Al pausar esta categoría agrupadora, también se ocultarán todas sus subcategorías internas y productos del catálogo público.'
+        : 'La categoría y sus productos dejarán de estar visibles en el catálogo público hasta que la actives de nuevo.';
+    } else {
+      mensajeConfirmacion = esAgrupadora
+        ? 'La categoría agrupadora y todas sus subcategorías internas volverán a mostrarse normalmente en el menú de tus clientes.'
+        : 'La categoría volverá a mostrarse normalmente en el menú de tus clientes.';
+    }
 
     const confirmacion = await this.confirmService.ask({
       title: estaActiva ? '¿Pausar categoría?' : '¿Activar categoría?',
-      message: estaActiva 
-        ? 'La categoría y sus productos dejarán de estar visibles en el catálogo público hasta que la actives de nuevo.' 
-        : 'La categoría volverá a mostrarse normalmente en el menú de tus clientes.',
+      message: mensajeConfirmacion,
       confirmText: estaActiva ? 'Pausar' : 'Activar',
       cancelText: 'Volver',
       icon: estaActiva ? 'pause' : 'play',

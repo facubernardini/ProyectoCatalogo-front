@@ -206,18 +206,43 @@ export class CatalogoPublico implements OnInit, OnDestroy {
         this.productosFiltrados.set(filtrados);
       }
       
-      else if (segmentos.length === 1 && segmentos[0].path !== 'search') {
+      else if (segmentos.length > 0 && !['search', 'productos', 'destacados', 'ofertas'].includes(segmentos[0].path)) {
         const catSlug = segmentos[0].path;
+        const subcatSlug = segmentos.length === 2 ? segmentos[1].path : null;
         
         const catEncontrada = categorias.find(c => this.crearSlug(c.nombre) === catSlug);
         
         if (catEncontrada) {
-          this.tituloGrilla.set(catEncontrada.nombre);
           
-          const filtrados = productos.filter(p => 
-            p.categorias?.some(c => this.crearSlug(c.nombre) === catSlug)
-          );
-          this.productosFiltrados.set(filtrados);
+          if (subcatSlug && catEncontrada.subcategorias) {
+            const subcatEncontrada = catEncontrada.subcategorias.find(s => this.crearSlug(s.nombre) === subcatSlug);
+            
+            if (subcatEncontrada) {
+              this.tituloGrilla.set(subcatEncontrada.nombre);
+              const filtrados = productos.filter(p => 
+                p.categorias?.some(c => this.crearSlug(c.nombre) === subcatSlug)
+              );
+              this.productosFiltrados.set(filtrados);
+            }
+            
+          } else {
+            this.tituloGrilla.set(catEncontrada.nombre);
+            
+            if (catEncontrada.es_agrupadora && catEncontrada.subcategorias) {
+              const slugsHijas = catEncontrada.subcategorias.map(s => this.crearSlug(s.nombre));
+              
+              const filtrados = productos.filter(p => 
+                p.categorias?.some(c => slugsHijas.includes(this.crearSlug(c.nombre)))
+              );
+              this.productosFiltrados.set(filtrados);
+              
+            } else {
+              const filtrados = productos.filter(p => 
+                p.categorias?.some(c => this.crearSlug(c.nombre) === catSlug)
+              );
+              this.productosFiltrados.set(filtrados);
+            }
+          }
         }
       }
     });
@@ -239,13 +264,19 @@ export class CatalogoPublico implements OnInit, OnDestroy {
         this.vistaActual.set('home');
       } 
       else if (segments.length === 2 && segments[0].path === 'productos') {
+        // Detalle de producto: /productos/nombre-producto
         this.vistaActual.set('detalle');
         this.productoSlugActivo.set(segments[1].path); 
       } 
+      else if (segments.length === 2) {
+        // Subcategoría: /agrupadora/subcategoria
+        this.vistaActual.set('grilla');
+      }
       else if (segments.length > 0 && (segments[0].path === 'search' || segments[0].path === 'destacados' || segments[0].path === 'ofertas' || segments[0].path === 'productos')) { 
         this.vistaActual.set('grilla');
       }
       else if (segments.length === 1) {
+        // Categoría principal o agrupadora: /categoria
         this.vistaActual.set('grilla');
       }
       else {

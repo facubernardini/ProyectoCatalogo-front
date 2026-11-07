@@ -33,7 +33,21 @@ export class ListaProductosDesktop {
 
   categoriasOrdenadas = computed(() => {
     const lista = this.categorias();
-    return [...lista].sort((a, b) => {
+    let categoriasPlanas: any[] = [];
+    
+    lista.forEach(cat => {
+      if (!cat.es_agrupadora) {
+        categoriasPlanas.push(cat);
+      }
+      
+      if (cat.subcategorias && cat.subcategorias.length > 0) {
+        cat.subcategorias.forEach(sub => {
+          categoriasPlanas.push(sub);
+        });
+      }
+    });
+    
+    return categoriasPlanas.sort((a, b) => {
       if (a.especial && !b.especial) return -1;
       if (!a.especial && b.especial) return 1;
       return a.nombre.localeCompare(b.nombre);
