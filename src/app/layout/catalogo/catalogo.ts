@@ -41,6 +41,7 @@ import { Producto } from 'src/app/core/models/producto.model';
 import { GrillaProductos } from './indumentaria/grilla-productos/grilla-productos';
 import { combineLatest } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { EmptyShop } from './empty-shop/empty-shop';
 
 @Component({
   selector: 'app-catalogo',
@@ -70,7 +71,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
     HeroIndumentaria,
     ProductosIndumentaria,
     ProductoDetalle,
-    GrillaProductos
+    GrillaProductos,
+    EmptyShop
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
