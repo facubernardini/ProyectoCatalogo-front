@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { ToastService } from 'src/app/core/services/toast.service';
 import * as XLSX from 'xlsx';
-import { ProductoImportado } from 'src/app/core/models/carga-inicial.model';
+import { ProductoImportado, PresentacionImportada } from 'src/app/core/models/carga-inicial.model';
 import { BulkImportService } from 'src/app/core/services-backend/bulk-import.ServiceBackend';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { finalize } from 'rxjs';
@@ -75,6 +75,7 @@ export class CargaInicialService {
           
           if (unidadVenta === '') unidadVenta = 'Unidad';
 
+          // --- Procesamiento de Precio ---
           let precioRaw = row['Precio'];
           if (typeof precioRaw === 'string') {
             precioRaw = precioRaw.replace('$', '').replace(',', '.').trim();
@@ -90,6 +91,29 @@ export class CargaInicialService {
           if (isNaN(precio) || precio < 0) {
             filasConErrores.push(`Fila ${filaExcel}: El precio de "${nombre}" no es válido.`);
             return;
+          }
+
+          let precio_descuento: number | undefined = undefined;
+          if (row['Precio_Oferta'] !== undefined && row['Precio_Oferta'] !== "") {
+            let precioOfertaRaw = row['Precio_Oferta'];
+            if (typeof precioOfertaRaw === 'string') {
+              precioOfertaRaw = precioOfertaRaw.replace('$', '').replace(',', '.').trim();
+            }
+            precio_descuento = parseFloat(precioOfertaRaw);
+            if (isNaN(precio_descuento) || precio_descuento < 0) {
+              filasConErrores.push(`Fila ${filaExcel}: El precio de oferta de "${nombre}" no es válido.`);
+              return;
+            }
+          }
+
+          let stock: number | undefined = undefined;
+          if (row['Stock'] !== undefined && row['Stock'] !== "") {
+            let stockRaw = row['Stock'];
+            stock = parseInt(String(stockRaw), 10);
+            if (isNaN(stock) || stock < 0) {
+              filasConErrores.push(`Fila ${filaExcel}: El stock de "${nombre}" no es válido.`);
+              return;
+            }
           }
 
           const productoKey = nombre.toLowerCase();
@@ -111,10 +135,16 @@ export class CargaInicialService {
           }
 
           const productoGuardado = productosMap.get(productoKey)!;
-          productoGuardado.presentaciones.push({
+          
+          const nuevaPresentacion: PresentacionImportada = {
             unidad_venta: unidadVenta,
             precio: precio
-          });
+          };
+
+          if (precio_descuento !== undefined) nuevaPresentacion.precio_descuento = precio_descuento;
+          if (stock !== undefined) nuevaPresentacion.stock = stock;
+
+          productoGuardado.presentaciones.push(nuevaPresentacion);
         });
 
         if (filasConErrores.length > 0) {

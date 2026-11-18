@@ -3,14 +3,14 @@
         (click)="previewService.close()">
         
         <div appSwipeDown
-            class="fixed bottom-0 w-full bg-white rounded-t-[40px] px-5 py-6 shadow-2xl animate-in slide-in-from-bottom duration-300 max-w-lg left-1/2 -translate-x-1/2" 
+            class="fixed bottom-0 w-full bg-white rounded-t-[40px] px-5 py-6 shadow-2xl animate-in slide-in-from-bottom duration-300 max-w-lg left-1/2 -translate-x-1/2 flex flex-col max-h-[90vh]" 
             (click)="$event.stopPropagation()">
              
-            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <div class="shrink-0 w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
 
             @if (previewService.productDuplicate(); as producto) {
                 
-                <div class="flex gap-3 mb-3">
+                <div class="flex gap-3 mb-3 shrink-0">
                     
                     <div class="relative w-24 h-24 rounded-2xl bg-gray-50 overflow-hidden shrink-0 mt-1 flex flex-col items-center justify-center text-gray-300">
                         @if (producto.foto_url) {
@@ -53,7 +53,7 @@
                     </div>
                 </div>
 
-                <div class="mb-2">
+                <div class="mb-2 shrink-0">
                     <textarea 
                         [(ngModel)]="producto.descripcion"
                         rows="2"
@@ -61,7 +61,7 @@
                         placeholder="Descripción del producto (Opcional)"></textarea>
                 </div>
 
-                <div class="flex items-center justify-between mb-3 border-t border-gray-100 pt-3">
+                <div class="flex items-center justify-between mb-2 border-t border-gray-100 pt-3 shrink-0">
                     <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-400">
                         Presentaciones y Precios
                     </h3>
@@ -70,53 +70,72 @@
                     </button>
                 </div>
 
-                <div class="flex items-center justify-between px-2 mb-1">
-                    <div class="shrink-0 mr-2 flex-1">
-                        <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Unidad</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-32">
-                            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-wider pl-1">Precio</span>
-                        </div>
-                        <div class="w-8 ml-1"></div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-2 max-h-[30vh] overflow-y-auto custom-scrollbar pb-2">
+                <!-- CONTENEDOR SCROLLEABLE DE PRESENTACIONES -->
+                <div class="flex flex-col gap-3 overflow-y-auto custom-scrollbar pr-1 flex-1 min-h-0">
                     @for (pres of producto.presentaciones; track $index) {
                         
-                        <div class="flex items-center justify-between px-2 py-2 rounded-xl bg-gray-50 border border-gray-100 transition-all">
+                        <div class="flex items-start gap-2 p-3 rounded-xl bg-gray-50 border border-gray-100 relative">
                             
-                            <div class="shrink-0 mr-2 flex-1">
-                                <input type="text" 
-                                    [(ngModel)]="pres.unidad_venta"
-                                    class="w-full bg-white rounded-lg py-1.5 px-2 text-xs font-bold text-brand-text outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg transition-all placeholder:text-gray-300"
-                                    [class.border-red-500]="!pres.unidad_venta"
-                                    placeholder="Ej: 1 kg, Pack x6, 1 lt">
-                            </div>
-
-                            <div class="flex items-center gap-2">
+                            <div class="flex-1 grid grid-cols-2 gap-3">
                                 
-                                <div class="relative w-32">
-                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 font-bold text-xs text-gray-500">$</span>
-                                    <input type="number"
-                                        [(ngModel)]="pres.precio"
-                                        class="no-spinners w-full bg-white rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold text-brand-text outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg transition-all"
-                                        [class.border-red-500]="!pres.precio">
+                                <!-- FILA 1: Unidad y Stock -->
+                                <div class="col-span-2 flex gap-3">
+                                    <!-- Unidad -->
+                                    <div class="flex-1">
+                                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1 pl-1">Unidad</label>
+                                        <input type="text" 
+                                            [(ngModel)]="pres.unidad_venta"
+                                            class="w-full bg-white rounded-lg py-1.5 px-2 text-xs font-bold text-brand-text outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg transition-all placeholder:text-gray-300"
+                                            [class.border-red-500]="!pres.unidad_venta"
+                                            placeholder="Ej: 1 kg">
+                                    </div>
+                                    
+                                    <!-- Stock -->
+                                    <div class="w-24 shrink-0">
+                                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1 pl-1">Stock</label>
+                                        <input type="number" 
+                                            [(ngModel)]="pres.stock"
+                                            class="no-spinners w-full bg-white rounded-lg py-1.5 px-2 text-xs font-bold text-brand-text outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg transition-all placeholder:text-gray-300"
+                                            placeholder="Ilimitado">
+                                    </div>
                                 </div>
 
-                                <button (click)="eliminarPresentacion(producto, $index)" 
-                                        [disabled]="producto.presentaciones.length === 1"
-                                        class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent focus:outline-none"
-                                        title="Eliminar presentación">
-                                    <app-icon name="trash" classes="size-4 fill-current" />
-                                </button>
+                                <!-- FILA 2: Precio y Oferta -->
+                                <div class="col-span-2 flex gap-3">
+                                    <!-- Precio Base -->
+                                    <div class="flex-1 relative">
+                                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1 pl-1">Precio Normal</label>
+                                        <span class="absolute left-2.5 top-6.5 font-bold text-xs text-gray-400">$</span>
+                                        <input type="number"
+                                            [(ngModel)]="pres.precio"
+                                            class="no-spinners w-full bg-white rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold text-brand-text outline-none border border-gray-200 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg transition-all"
+                                            [class.border-red-500]="!pres.precio">
+                                    </div>
+
+                                    <!-- Precio Oferta -->
+                                    <div class="flex-1 relative">
+                                        <label class="block text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1 pl-1">Precio Oferta</label>
+                                        <span class="absolute left-2.5 top-6.5 font-bold text-xs text-gray-400">$</span>
+                                        <input type="number"
+                                            [(ngModel)]="pres.precio_descuento"
+                                            class="no-spinners w-full bg-white rounded-lg py-1.5 pl-5 pr-2 text-xs font-bold text-brand-accent outline-none border border-brand-accent/20 focus:border-brand-accent/40 focus:ring-1 focus:ring-brand-bg transition-all placeholder:text-gray-300"
+                                            placeholder="Opcional">
+                                    </div>
+                                </div>
+
                             </div>
+
+                            <button (click)="eliminarPresentacion(producto, $index)" 
+                                    [disabled]="producto.presentaciones.length === 1"
+                                    class="shrink-0 mt-5 p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent focus:outline-none"
+                                    title="Eliminar presentación">
+                                <app-icon name="trash" classes="size-4 fill-current" />
+                            </button>
                         </div>
                     }
                 </div>
 
-                <div class="flex gap-3 mt-4 pt-2">
+                <div class="flex gap-3 mt-4 pt-3 border-t border-gray-100 shrink-0">
                     <button (click)="previewService.close()" 
                             class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-all">
                         Cancelar

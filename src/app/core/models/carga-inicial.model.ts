@@ -1,6 +1,8 @@
 export interface PresentacionImportada {
   unidad_venta: string;
   precio: number;
+  precio_descuento?: number;
+  stock?: number;
 }
 
 export interface ProductoImportado {
