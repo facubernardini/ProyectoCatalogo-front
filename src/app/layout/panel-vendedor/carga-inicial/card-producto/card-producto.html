@@ -44,8 +44,37 @@
         <div class="mt-1 flex flex-col gap-1 border-t border-gray-100 pt-1.5">
             @for (pres of producto().presentaciones; track pres.unidad_venta) {
                 <div class="flex items-center justify-between bg-gray-100 px-2 py-1.5 rounded-lg">
-                    <span class="text-xs font-semibold text-brand-text-sec">{{ pres.unidad_venta }}</span>
-                    <span class="text-xs font-bold text-brand-text">${{ pres.precio }}</span>
+                    
+                    <!-- Unidad y Stock -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-brand-text-sec">{{ pres.unidad_venta }}</span>
+                        
+                        @if (pres.stock !== undefined) {
+                            <span class="text-[10px] font-medium px-1.5 py-0.5 bg-gray-200 text-gray-500 rounded-md">
+                                Stock: {{ pres.stock }}
+                            </span>
+                        }
+                    </div>
+
+                    <!-- Precios (Oferta vs Normal) -->
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        @if (pres.precio_descuento !== undefined) {
+                            <!-- Precio viejo tachado -->
+                            <span class="text-[10px] font-medium text-gray-400 line-through">
+                                ${{ pres.precio }}
+                            </span>
+                            <!-- Precio de oferta -->
+                            <span class="text-xs font-bold text-green-600">
+                                ${{ pres.precio_descuento }}
+                            </span>
+                        } @else {
+                            <!-- Precio normal -->
+                            <span class="text-xs font-bold text-brand-text">
+                                ${{ pres.precio }}
+                            </span>
+                        }
+                    </div>
+
                 </div>
             }
         </div>

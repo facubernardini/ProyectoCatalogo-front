@@ -34,10 +34,15 @@ export class ProductImportPreview {
     
     if (producto.presentaciones.length === 0) return true;
     
-    return producto.presentaciones.some(p => 
-      !p.unidad_venta?.trim() || 
-      p.precio === null || p.precio === undefined || p.precio <= 0
-    );
+    return producto.presentaciones.some(p => {
+      const noUnidad = !p.unidad_venta?.trim();
+      const sinPrecio = p.precio === null || p.precio === undefined || p.precio <= 0;
+      
+      const ofertaInvalida = p.precio_descuento !== undefined && p.precio_descuento !== null && p.precio_descuento < 0;
+      const stockInvalido = p.stock !== undefined && p.stock !== null && p.stock < 0;
+
+      return noUnidad || sinPrecio || ofertaInvalida || stockInvalido;
+    });
   }
 
   onGuardar() {
