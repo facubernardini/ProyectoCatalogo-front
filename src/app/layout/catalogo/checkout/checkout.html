@@ -219,26 +219,81 @@
                             }
                             <!-- MODO RESUMEN DE TARIFA ELEGIDA (BADGE) -->
                             @else {
-                                <div class="mt-4 p-3 border border-gray-200 bg-gray-50 flex items-center justify-between animate-in fade-in duration-300">
-                                    <div class="flex flex-col gap-1">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-black">
-                                            Correo Argentino {{ tarifaSeleccionada()!.productType === 'CP' ? 'Clásico' : 'Expreso' }} {{ tarifaSeleccionada()!.deliveredType === 'D' ? 'a domicilio' : 'a sucursal' }}
-                                        </span>
+                                <div class="mt-4 flex flex-col gap-3 animate-in fade-in duration-300">
+                                    <div class="p-3 border border-gray-200 bg-gray-50 flex items-center justify-between">
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-xs font-semibold uppercase tracking-wider text-black">
+                                                Correo Argentino {{ tarifaSeleccionada()!.productType === 'CP' ? 'Clásico' : 'Expreso' }} {{ tarifaSeleccionada()!.deliveredType === DeliveredType.D ? 'a domicilio' : 'a sucursal' }}
+                                            </span>
+                                            
+                                            <span class="text-xs text-gray-600 font-light">
+                                                Llega entre {{ tarifaSeleccionada()!.deliveryTimeMin }} y {{ tarifaSeleccionada()!.deliveryTimeMax }} días hábiles
+                                            </span>
+                                        </div>
                                         
-                                        <span class="text-xs text-gray-600 font-light">
-                                            Llega entre {{ tarifaSeleccionada()!.deliveryTimeMin }} y {{ tarifaSeleccionada()!.deliveryTimeMax }} días hábiles
-                                        </span>
+                                        <div class="flex flex-col items-end gap-2">
+                                            <span class="text-sm font-medium text-black">
+                                                ${{ tarifaSeleccionada()!.price | number:'1.0-0' }}
+                                            </span>
+                                            <button type="button"
+                                                    (click)="limpiarTarifaSeleccionada()" 
+                                                    class="text-xs font-semibold uppercase tracking-wider text-brand-text hover:text-black transition-colors outline-none bg-transparent border-none cursor-pointer">
+                                                Cambiar
+                                            </button>
+                                        </div>
                                     </div>
-                                    
-                                    <div class="flex flex-col items-end gap-2">
-                                        <span class="text-sm font-medium text-black">
-                                            ${{ tarifaSeleccionada()!.price | number:'1.0-0' }}
-                                        </span>
-                                        <button (click)="tarifaSeleccionada.set(null)" 
-                                                class="text-xs font-semibold uppercase tracking-wider text-brand-text hover:text-black transition-colors outline-none bg-transparent border-none cursor-pointer">
-                                            Cambiar
-                                        </button>
-                                    </div>
+
+                                    <!-- SELECTOR DE SUCURSAL (solo si eligió Retiro por sucursal) -->
+                                    @if (tarifaSeleccionada()!.deliveredType === DeliveredType.S) {
+                                        <div class="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            <label for="sucursalSelect" class="text-[10px] font-medium text-black uppercase tracking-wider">
+                                                Elegí la sucursal de retiro
+                                            </label>
+
+                                            @if (cargandoSucursales()) {
+                                                <div class="p-3 border border-gray-200 bg-white text-xs text-gray-500">
+                                                    Buscando sucursales disponibles...
+                                                </div>
+                                            } @else if (errorSucursales()) {
+                                                <div class="p-3 border border-red-200 bg-red-50 flex items-center justify-between gap-2">
+                                                    <span class="text-xs text-red-700">{{ errorSucursales() }}</span>
+                                                    <button type="button"
+                                                            (click)="cargarSucursales(datosComprador.provincia)"
+                                                            class="text-[10px] font-semibold uppercase tracking-wider text-red-800 underline bg-transparent border-none cursor-pointer shrink-0">
+                                                        Reintentar
+                                                    </button>
+                                                </div>
+                                            } @else if (!datosComprador.provincia) {
+                                                <div class="p-3 border border-gray-200 bg-gray-50 text-xs text-gray-500">
+                                                    Seleccioná tu provincia en los datos de envío para ver las sucursales disponibles.
+                                                </div>
+                                            } @else if (sucursalesCercanas().length === 0) {
+                                                <div class="p-3 border border-gray-200 bg-gray-50 text-xs text-gray-600">
+                                                    No se encontraron sucursales de Correo Argentino en tu localidad.
+                                                </div>
+                                            } @else {
+                                                <select id="sucursalSelect"
+                                                        name="sucursalSelect"
+                                                        [ngModel]="sucursalSeleccionadaId() ?? ''"
+                                                        (ngModelChange)="onSucursalChange($event)"
+                                                        class="w-full p-3 border border-gray-300 bg-white text-xs text-gray-800 outline-none focus:border-brand-accent transition-colors">
+                                                    <option value="" disabled>Seleccioná una sucursal...</option>
+
+                                                    @for (sucursal of sucursalesCercanas(); track sucursal.code) {
+                                                        <option [value]="sucursal.code">
+                                                            {{ sucursal.name }} — {{ sucursal.streetName }} {{ sucursal.streetNumber }}
+                                                        </option>
+                                                    }
+                                                </select>
+
+                                                @if (sucursalSeleccionada(); as suc) {
+                                                    <span class="text-[11px] text-gray-500 font-light">
+                                                        Dirección: {{ suc.streetName }} {{ suc.streetNumber }}, {{ suc.locality || suc.city }}
+                                                    </span>
+                                                }
+                                            }
+                                        </div>
+                                    }
                                 </div>
                             }
                         }
@@ -400,13 +455,13 @@
                                 <div class="relative w-full">
                                     <input 
                                         type="text" 
-                                        id="departamento"
+                                        id="depto"
                                         placeholder=" " 
-                                        [(ngModel)]="datosComprador.departamento" 
+                                        [(ngModel)]="datosComprador.depto" 
                                         class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
                                     >
                                     <label 
-                                        for="departamento" 
+                                        for="depto" 
                                         class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
                                             peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
                                             peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">

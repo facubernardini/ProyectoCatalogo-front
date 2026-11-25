@@ -1,4 +1,4 @@
-import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { Injectable, signal, computed, effect, inject, untracked } from '@angular/core';
 import { CartItem } from 'src/app/core/models/cartItem.model';
 import { MedioPago as MedioPagoModel } from 'src/app/core/models/catalogo.model';
 import { CuponVerificado } from 'src/app/core/models/cupon.model';
@@ -144,6 +144,22 @@ export class CartService {
         sessionStorage.setItem('cart_delivery_method', method);
       } else {
         sessionStorage.removeItem('cart_delivery_method');
+      }
+    });
+
+    effect(() => {
+      const metodo = this.deliveryMethod();
+      const mediosPago = this.adminStore.catalogo()?.medios_pago ?? [];
+
+      if (metodo === MetodoEntrega.ENVIO_CORREO_ARG && mediosPago.length > 0) {
+        const transferencia = mediosPago.find(
+          mp => mp.nombre.toLowerCase() === MedioPago.TRANSFERENCIA.toLowerCase()
+        );
+        const actual = untracked(() => this.selectedPaymentMethod());
+
+        if (transferencia && actual?.id !== transferencia.id) {
+          this.selectPaymentMethod(transferencia);
+        }
       }
     });
   }
@@ -324,8 +340,8 @@ export class CartService {
   }
 
   selectPaymentMethod(method: MedioPagoModel | null) {
-  this.selectedPaymentMethod.set(method);
-}
+    this.selectedPaymentMethod.set(method);
+  }
 
   setDeliveryMethod(metodo: MetodoEntrega | null) {
   this.deliveryMethod.set(metodo);

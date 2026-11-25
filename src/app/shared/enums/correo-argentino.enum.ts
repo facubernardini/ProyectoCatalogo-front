@@ -8,6 +8,11 @@ export enum ProductType {
   EP = 'EP', // Paq.ar Expreso
 }
 
+export enum AgencyServiceType {
+  PACKAGE_RECEPTION = 'package_reception',
+  PICKUP_AVAILABILITY = 'pickup_availability',
+}
+
 export enum CodigoProvincia {
   SALTA = 'A',
   BUENOS_AIRES = 'B',

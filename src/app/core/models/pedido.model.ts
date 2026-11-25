@@ -16,6 +16,7 @@ export enum EstadoPago {
     REEMBOLSADO = 'REEMBOLSADO',
 }
 
+// --- MOSTRAR PEDIDOS EN EL PANEL DEL VENDEDOR
 export interface ProductoPedidoDTO {
     id: string;
 
@@ -74,25 +75,29 @@ export interface PedidoDTO {
 
 export interface DetalleEnvioDTO {
     id: string;
-    proveedor: string;
     envio_a: DeliveredType;
     tipo_envio: ProductType;
-    sucursal_id?: string | null;
-    tracking_number?: string | null;
-    importado_el?: string | null;
+    sucursal_id: string | null;
+    sucursal_nombre: string | null;
+    tracking_number: string | null;
+    importado_el: string | null;
 
     destinatario_email: string;
-    calle?: string | null;
-    numero?: string | null;
-    piso?: string | null;
-    departamento?: string | null;
+    calle: string | null;
+    numero: string | null;
+    piso: string | null;
+    depto: string | null;
     ciudad: string;
-    provincia_codigo: string;
+    provincia_codigo: CodigoProvincia;
     codigo_postal: string;
+
+    peso_total_gr: number | null;
+    alto_total_cm: number | null;
+    ancho_total_cm: number | null;
+    largo_total_cm: number | null;
 }
 
-// --- REGISTRAR PEDIDO ---
-
+// --- REGISTRAR PEDIDO DESDE TIENDA PÚBLICA ---
 export interface ProductoPedidoRequest {
     producto_id: number;
     presentacion_id: number;
@@ -125,48 +130,94 @@ export interface DetalleEnvioRequest {
     calle?: string | null;
     numero?: string | null;
     piso?: string | null;
-    departamento?: string | null;
-    ciudad: string;
+    depto?: string | null;
+    ciudad?: string | null;
     provincia_codigo: CodigoProvincia;
     codigo_postal: string;
     
     tipo_envio: ProductType; // Clásico o Expreso
     envio_a: DeliveredType;  // Domicilio o Sucursal
-    sucursal_id?: string | null;     // Si eligió 'S', el ID de la sucursal
+    sucursal_id?: string | null;
+    sucursal_nombre?: string | null;
+
+    peso_total_gr: number;
+    alto_total_cm: number;
+    ancho_total_cm: number;
+    largo_total_cm: number;
 }
 
-export interface CrearPedidoResponse {
+// --- RESPUESTA DEL BACK AL REGISTRAR EL PEDIDO PÚBLICO ---
+export interface PedidoResponse {
+    id: string;
     numero_pedido: number;
 }
 
 // --- REGISTRAR PEDIDO MANUAL ---
-
-// Extendemos tu DTO original para agregar lo que la UI necesita dibujar
 export interface ProductoPedidoForm extends ProductoPedidoRequest {
-  producto_nombre: string;
-  presentacion_unidad: string;
-  precio_unitario: number;
-  imagen: string | null;
+    producto_nombre: string;
+    presentacion_unidad: string;
+    precio_unitario: number;
+    imagen: string | null;
 }
 
-// Definimos el estado del Form usando una versión adaptada de CrearPedidoRequest
 export interface PedidoFormData extends Omit<CrearPedidoRequest, 'catalogo_id' | 'productos'> {
-  comprador_direccion: string;
-  comprador_telefono: string;
-  productos: ProductoPedidoForm[];
+    comprador_direccion: string;
+    comprador_telefono: string;
+    productos: ProductoPedidoForm[];
 
-  estado: EstadoPedido;
-  estado_pago: EstadoPago;
+    estado: EstadoPedido;
+    estado_pago: EstadoPago;
 }
 
-// --- CONSULTAR HISTORIAL
+// --- CONSULTAR HISTORIAL ---
 export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-    hasNextPage: boolean;
-  };
+    data: T[];
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+        hasNextPage: boolean;
+    };
+}
+
+// Interface para mostrar detalles del pedido al hacer la compra
+export interface PedidoDetalleDTO {
+    numero_pedido: number;
+    estado: string;
+    estado_pago: string;
+    
+    comprador_nombre: string | null;
+    metodo_entrega: string;
+    metodo_pago: string;
+    envio_a_coordinar: boolean;
+    costo_envio: number;
+    subtotal: number;
+    descuento_cupon: number;
+    descuento_pago_efectivo: number;
+    total_final: number;
+    creado_el: string;
+
+    productos: {
+        producto_nombre: string;
+        presentacion_unidad: string;
+        cantidad: number;
+        precio_unitario: number;
+        subtotal: number;
+    }[];
+
+    detalle_envio: {
+        destinatario_email: string;
+        envio_a: string;
+        tipo_envio: string | null;
+        sucursal_nombre: string | null;
+        tracking_number: string | null;
+        calle: string | null;
+        numero: string | null;
+        piso: string | null;
+        depto: string | null;
+        ciudad: string | null;
+        provincia_codigo: string | null;
+        codigo_postal: string | null;
+    } | null;
 }

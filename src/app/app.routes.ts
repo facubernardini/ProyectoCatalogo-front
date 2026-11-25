@@ -40,6 +40,10 @@ export const routes: Routes = [
     { path: 'not-found', component: NotFound },
     { path: 'server-error', component: ErrorView },
 
+    { path: 'compras/:id',
+        loadComponent: () => import('./layout/catalogo/pedido-detalle/pedido-detalle').then(m => m.PedidoDetalle)
+    },
+
     { matcher: subdominioMatcher, component: CatalogoPublico },
 
     { path: '', component: Home },

@@ -1,11 +1,15 @@
 import { DeliveredType, ProductType } from "src/app/shared/enums/correo-argentino.enum";
 
-// REQUESTS
-export interface ProductDimensionsDTO {
+// SHARED
+export interface DimensionsDTO {
   weight: number;
   height: number;
   width: number;
   length: number;
+}
+
+// REQUESTS
+export interface ProductDimensionsDTO extends DimensionsDTO {
   quantity?: number;
 }
 
@@ -27,5 +31,6 @@ export interface RateDTO {
 
 export interface ResponseRatesDTO {
   validTo: string;
+  dimensions: DimensionsDTO;
   rates: RateDTO[];
 }

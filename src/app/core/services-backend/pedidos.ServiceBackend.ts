@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment.dev';
 import { Observable } from 'rxjs';
-import { CrearPedidoRequest, CrearPedidoResponse, EstadoPago, EstadoPedido, PaginatedResponse, PedidoDTO } from '../models/pedido.model';
+import { CrearPedidoRequest, PedidoResponse, EstadoPago, EstadoPedido, PaginatedResponse, PedidoDTO, PedidoDetalleDTO } from '../models/pedido.model';
 
 @Injectable({
     providedIn: 'root'
@@ -11,12 +11,16 @@ export class PedidosServiceBackend {
     private http = inject(HttpClient);
     private API_URL = environment.apiUrl;
 
-    registrarPedido(pedidoData: CrearPedidoRequest): Observable<CrearPedidoResponse> {
-        return this.http.post<CrearPedidoResponse>(`${this.API_URL}/public/pedidos/registrar-pedido`, pedidoData);
+    registrarPedido(pedidoData: CrearPedidoRequest): Observable<PedidoResponse> {
+        return this.http.post<PedidoResponse>(`${this.API_URL}/public/pedidos/registrar-pedido`, pedidoData);
     }
 
     registrarPedidoManual(pedidoData: CrearPedidoRequest): Observable<PedidoDTO> {
         return this.http.post<PedidoDTO>(`${this.API_URL}/seller/pedidos/registrar-pedido-manual`, pedidoData);
+    }
+
+    obtenerPedidoPublico(id: string): Observable<PedidoDetalleDTO> {
+        return this.http.get<PedidoDetalleDTO>(`${this.API_URL}/public/pedidos/${id}`);
     }
 
     obtenerPedidosActivos(): Observable<PedidoDTO[]> {

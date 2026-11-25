@@ -161,11 +161,11 @@
                         </div>
                     }
 
-                    <div class="mt-2 mb-8 flex items-stretch gap-3 h-10">
+                    <div class="mt-2 mb-8 flex items-stretch gap-2 h-10">
 
                         <!-- CONTROL DE CANTIDAD (Oculto cuando no hay stock) -->
                         @if (!sinStockTotal()) {
-                            <div class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-1.5 w-30 shrink-0">
+                            <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-1.5 w-30 shrink-0">
                                 <button (click)="decrementar()"
                                         [disabled]="cantidad() <= 1"
                                         class="p-2 text-gray-500 md:hover:text-brand-accent disabled:opacity-30 disabled:pointer-events-none transition-colors rounded-lg active:scale-95">

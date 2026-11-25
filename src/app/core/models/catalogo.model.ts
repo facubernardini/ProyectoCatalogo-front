@@ -52,6 +52,8 @@ export interface Catalogo {
   color_personalizado: string | null;
   wpp_numero: string | null;
   instagram_usuario: string | null;
+
+  datos_transferencia: DatosTransferencia | null;
   
   direccion: string | null;
   ciudad: string | null;
@@ -76,4 +78,11 @@ export interface Catalogo {
   medios_pago: MedioPago[];
 
   plan_vendedor: TipoPlanEnum | null;
+}
+
+export interface DatosTransferencia {
+  alias: string | null;
+  cbu: string | null;
+  titular: string | null;
+  banco: string | null;
 }

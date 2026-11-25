@@ -4,6 +4,8 @@ import { CorreoArgentinoServiceBackend } from '../services-backend/correo-argent
 import { PublicShippingRequestDTO, RateDTO, ResponseRatesDTO } from '../models/correo-argentino/rates.model';
 import { Producto } from '../models/producto.model';
 import { CartItem } from '../models/cartItem.model';
+import { ResponseAgencyDTO, PublicAgenciesRequestDTO } from '../models/correo-argentino/agencies.model';
+import { AgencyServiceType } from 'src/app/shared/enums/correo-argentino.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -46,45 +48,43 @@ export class CorreoArgentinoService {
   cotizarCarrito(
     slugTienda: string,
     cpDestino: string,
-    itemsCarrito: CartItem[], // Asegurá el tipado según tu modelo
-    productosTotales: Producto[] // Pasamos el listado completo para buscar las plantillas
-  ): Observable<RateDTO[]> {
-    
-    // 1. Mapeamos cada ítem del carrito a un objeto de dimensiones
-    const dimensionesArray = itemsCarrito.map(item => {
-      // Buscamos el producto y la presentación en el store para sacar su plantilla
-      const producto = productosTotales.find(p => p.id === item.productoId);
-      const presentacion = producto?.presentaciones?.find((p: any) => p.id === item.presentacionId);
+    itemsCarrito: CartItem[],
+    productosTotales: Producto[]
+  ): Observable<ResponseRatesDTO> {
+    const dimensionesArray = itemsCarrito
+      .map(item => {
+        const producto = productosTotales.find(p => p.id === item.productoId);
+        const presentacion = producto?.presentaciones?.find((p: any) => p.id === item.presentacionId);
+        const dimensiones = presentacion?.plantilla || producto?.plantilla;
 
-      const dimensiones = presentacion?.plantilla || producto?.plantilla;
+        if (!dimensiones) return null;
 
-      // Si algún producto no tiene dimensiones, retornamos null para filtrarlo luego
-      if (!dimensiones) return null;
+        return {
+          weight: Number(dimensiones.peso_gr),
+          height: Number(dimensiones.alto_cm),
+          width: Number(dimensiones.ancho_cm),
+          length: Number(dimensiones.largo_cm),
+          quantity: Number(item.cantidad)
+        };
+      })
+      .filter((d): d is NonNullable<typeof d> => d !== null);
 
-      return {
-        weight: Number(dimensiones.peso_gr),
-        height: Number(dimensiones.alto_cm),
-        width: Number(dimensiones.ancho_cm),
-        length: Number(dimensiones.largo_cm),
-        quantity: Number(item.cantidad)
-      };
-    }).filter(d => d !== null) as any[]; // Eliminamos los nulos
-
-    // 2. Validación de seguridad
     if (dimensionesArray.length === 0) {
       return throwError(() => new Error('No hay productos válidos con dimensiones para cotizar.'));
     }
 
-    // 3. Armamos el payload final enviando el arreglo completo
     const payload: PublicShippingRequestDTO = {
       postalCodeDestination: String(cpDestino).trim(),
       dimensions: dimensionesArray
     };
 
     return this.correoArgentinoServiceBackend.cotizarEnvio(slugTienda, payload).pipe(
-      map((res: ResponseRatesDTO) => this.mapearOpciones(res.rates || []))
+      map((res: ResponseRatesDTO) => ({
+        ...res,
+        rates: this.mapearOpciones(res.rates || [])
+      }))
     );
-}
+  }
 
   private mapearOpciones(rates: any[]): RateDTO[] {
     return rates.map(rate => ({
@@ -96,4 +96,23 @@ export class CorreoArgentinoService {
 			deliveryTimeMax: String(rate.deliveryTimeMax ?? '')
     })).sort((a, b) => a.price - b.price);
 	}
+
+  obtenerSucursales(
+    slugTienda: string,
+    provinceCode: string,
+    services: AgencyServiceType = AgencyServiceType.PICKUP_AVAILABILITY
+  ): Observable<ResponseAgencyDTO[]> {
+    const codigoProvincia = String(provinceCode).trim().toUpperCase();
+
+    if (!codigoProvincia || codigoProvincia.length !== 1) {
+      return throwError(() => new Error('Seleccioná una provincia válida.'));
+    }
+
+    const payload: PublicAgenciesRequestDTO = {
+      provinceCode: codigoProvincia,
+      services
+    };
+
+    return this.correoArgentinoServiceBackend.obtenerSucursales(slugTienda, payload);
+  }
 }

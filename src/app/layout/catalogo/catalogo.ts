@@ -42,6 +42,8 @@ import { GrillaProductos } from './indumentaria/grilla-productos/grilla-producto
 import { combineLatest } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Checkout } from './checkout/checkout';
+import { obtenerSlugDesdeSubdominio } from 'src/app/shared/utils/obtener-subdominio.util';
+import { getContrastColor } from 'src/app/shared/utils/obtener-color-contraste.util';
 
 @Component({
   selector: 'app-catalogo',
@@ -118,7 +120,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
           
           root.style.setProperty('--theme-accent', hex);
           
-          root.style.setProperty('--theme-accent-contrast', this.getContrastColor(hex));
+          root.style.setProperty('--theme-accent-contrast', getContrastColor(hex));
 
           root.style.setProperty('--theme-bg', `color-mix(in srgb, ${hex} 5%, #F8FAFC)`);
 
@@ -251,7 +253,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const slug = this.obtenerSlugDesdeSubdominio();
+    const slug = obtenerSlugDesdeSubdominio();
 
     if (slug) {
       this.renderer.addClass(this.document.body, 'tema-catalogo');
@@ -295,16 +297,6 @@ export class CatalogoPublico implements OnInit, OnDestroy {
     this.renderer.removeAttribute(this.document.documentElement, 'data-theme');
   }
 
-  private obtenerSlugDesdeSubdominio(): string | null {
-    const host = window.location.hostname;
-
-    if (isDominioBase(host)) {
-      return null;
-    }
-
-    return host.split('.')[0];
-  }
-
   public crearSlug(texto: string): string {
     if (!texto) return '';
 
@@ -314,15 +306,5 @@ export class CatalogoPublico implements OnInit, OnDestroy {
       .replace(/[^a-z0-9 -]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-');
-  }
-
-  private getContrastColor(hex: string): string {
-    const cleanHex = hex.replace('#', '');
-    const r = parseInt(cleanHex.substring(0, 2), 16);
-    const g = parseInt(cleanHex.substring(2, 4), 16);
-    const b = parseInt(cleanHex.substring(4, 6), 16);
-
-    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-    return (yiq >= 128) ? '#0F172A' : '#FFFFFF';
   }
 }

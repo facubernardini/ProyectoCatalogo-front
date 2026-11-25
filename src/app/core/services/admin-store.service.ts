@@ -126,6 +126,21 @@ export class AdminStoreService {
     });
   }
 
+  cargarSoloCatalogo(slug: string) {
+    if (this.catalogo()?.slug === slug) return;
+
+    this.catalogoService.getCatalogoBySlug(slug).subscribe({
+      next: (catalogo) => {
+        this.catalogo.set(catalogo);
+      },
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 403 || err.status === 404) {
+          this.router.navigate(['/not-found']);
+        }
+      }
+    });
+  }
+
   cargarDatosPanelVendedor(catalogoId: number) {
     const esBasico = this.authService.esPlanBasico();
     
