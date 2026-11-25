@@ -25,6 +25,8 @@ import { SuscripcionEstado } from "src/app/shared/enums/suscripcion.enum";
 import { AuthService } from "../services-backend/auth.ServiceBackend";
 import { RUBROS } from "src/app/shared/constants/rubros.constants";
 import { TipoPlanEnum } from "src/app/shared/enums/tipo-plan.enum";
+import { PlantillasDimensionesServiceBackend } from "../services-backend/plantillas-dimensiones.ServiceBackend";
+import { PlantillaDimensionDTO } from "../models/plantilla-dimension.model";
 
 declare var gtag: Function;
 
@@ -42,6 +44,7 @@ export class AdminStoreService {
   private tagsService = inject(TagService);
   private pedidosService = inject(PedidosServiceBackend);
   private estadisticasService = inject(EstadisticasServiceBackend);
+  private plantillasDimensionesBackend = inject(PlantillasDimensionesServiceBackend);
 
   // PUBLIC & SELLER
   catalogo = signal<Catalogo | null>(null);
@@ -54,6 +57,7 @@ export class AdminStoreService {
   mediosPago = signal<MedioPago[]>([]);
   tags = signal<Tag[]>([]);
   pedidosActivos = signal<PedidoDTO[]>([]);
+  plantillasDimensiones = signal<PlantillaDimensionDTO[]>([]);
 
   resumenMensual = signal<ResumenMensualDTO | null>(null);
   evolucionDiaria = signal<ResumenDiarioGraficoDTO[]>([]);
@@ -133,8 +137,9 @@ export class AdminStoreService {
       tags: this.tagsService.getTagsByCatalogo(catalogoId),
       cupones: esBasico ? of([]) : this.cuponService.getCuponesByCatalogo(catalogoId),
       pedidosActivos: esBasico ? of([]) : this.pedidosService.obtenerPedidosActivos(),
+      plantillas: this.plantillasDimensionesBackend.getPlantillasByCatalogo(catalogoId),
     }).subscribe({
-      next: ({ catalogo, productos, categorias, mediosPago, tags, cupones, pedidosActivos }) => {
+      next: ({ catalogo, productos, categorias, mediosPago, tags, cupones, pedidosActivos, plantillas }) => {
         this.catalogo.set(catalogo);
         this.productos.set(productos);
         this.categorias.set(categorias);
@@ -142,6 +147,7 @@ export class AdminStoreService {
         this.mediosPago.set(mediosPago);
         this.tags.set(tags);
         this.pedidosActivos.set(pedidosActivos);
+        this.plantillasDimensiones.set(plantillas);
 
         this.isLoading.set(false);
       },
@@ -463,6 +469,24 @@ export class AdminStoreService {
   removerPedidoDeLista(idPedido: string) {
     this.pedidosActivos.update(pedidos => 
       pedidos.filter(p => p.id !== idPedido)
+    );
+  }
+
+  // --- MÉTODOS PARA PLANTILLAS DE DIMENSIONES ---
+
+  agregarPlantillaALista(plantilla: PlantillaDimensionDTO) {
+    this.plantillasDimensiones.update((lista) => [...lista, plantilla]);
+  }
+
+  updatePlantillaEnLista(plantillaActualizada: PlantillaDimensionDTO) {
+    this.plantillasDimensiones.update((lista) =>
+      lista.map((p) => p.id === plantillaActualizada.id ? plantillaActualizada : p)
+    );
+  }
+
+  eliminarPlantillaDeLista(id: number) {
+    this.plantillasDimensiones.update((lista) => 
+      lista.filter((p) => p.id !== id)
     );
   }
 

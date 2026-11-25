@@ -1,7 +1,11 @@
+import { CodigoProvincia, DeliveredType, ProductType } from "src/app/shared/enums/correo-argentino.enum";
+import { MetodoEntrega } from "src/app/shared/enums/metodo-entrega.enum";
+
 export enum EstadoPedido {
     PENDIENTE = 'PENDIENTE',
     EN_PREPARACION = 'EN_PREPARACION',
     LISTO_PARA_ENTREGAR = 'LISTO_PARA_ENTREGAR',
+    DESPACHADO = 'DESPACHADO',
     ENTREGADO = 'ENTREGADO',
     CANCELADO = 'CANCELADO'
 }
@@ -45,7 +49,7 @@ export interface PedidoDTO {
     comprador_nombre: string | null;
     comprador_direccion: string | null;
     comprador_telefono: string | null;
-    metodo_entrega: string;
+    metodo_entrega: MetodoEntrega;
     envio_a_coordinar: boolean;
     metodo_pago: string;
     costo_envio: number;
@@ -65,24 +69,44 @@ export interface PedidoDTO {
     actualizado_el: string;
     
     productos: ProductoPedidoDTO[];
+    detalle_envio: DetalleEnvioDTO | null;
+}
+
+export interface DetalleEnvioDTO {
+    id: string;
+    proveedor: string;
+    envio_a: DeliveredType;
+    tipo_envio: ProductType;
+    sucursal_id?: string | null;
+    tracking_number?: string | null;
+    importado_el?: string | null;
+
+    destinatario_email: string;
+    calle?: string | null;
+    numero?: string | null;
+    piso?: string | null;
+    departamento?: string | null;
+    ciudad: string;
+    provincia_codigo: string;
+    codigo_postal: string;
 }
 
 // --- REGISTRAR PEDIDO ---
 
-// DTO para los productos individuales que se envían en el pedido
 export interface ProductoPedidoRequest {
     producto_id: number;
     presentacion_id: number;
     cantidad: number;
 }
 
-// DTO con la estructura exacta que espera tu backend
 export interface CrearPedidoRequest {
     catalogo_id: number;
+
     comprador_nombre?: string | null;
     comprador_direccion?: string | null;
     comprador_telefono?: string | null;
-    metodo_entrega: string;
+
+    metodo_entrega: MetodoEntrega;
     envio_a_coordinar: boolean;
     metodo_pago: string;
     costo_envio?: number;
@@ -92,9 +116,25 @@ export interface CrearPedidoRequest {
     estado_pago?: EstadoPago;
 
     productos: ProductoPedidoRequest[];
+
+    detalle_envio?: DetalleEnvioRequest | null;
 }
 
-// DTO con la respuesta
+export interface DetalleEnvioRequest {
+    destinatario_email: string;
+    calle?: string | null;
+    numero?: string | null;
+    piso?: string | null;
+    departamento?: string | null;
+    ciudad: string;
+    provincia_codigo: CodigoProvincia;
+    codigo_postal: string;
+    
+    tipo_envio: ProductType; // Clásico o Expreso
+    envio_a: DeliveredType;  // Domicilio o Sucursal
+    sucursal_id?: string | null;     // Si eligió 'S', el ID de la sucursal
+}
+
 export interface CrearPedidoResponse {
     numero_pedido: number;
 }

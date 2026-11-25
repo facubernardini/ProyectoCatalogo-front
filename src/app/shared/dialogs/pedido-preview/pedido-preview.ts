@@ -82,6 +82,7 @@ export class PedidoPreview implements OnInit, OnDestroy {
 
   estadoPedido = EstadoPedido;
   mediosPago = MedioPago;
+  metodosEntrega = MetodoEntrega;
 
   cantidadArticulos = computed(() => {
     const p = this.pedidoEditable();
@@ -148,7 +149,7 @@ export class PedidoPreview implements OnInit, OnDestroy {
     let mensaje = `🛎️ Resumen de tu pedido #${p.numero_pedido}\n\n`;
 
     // 2. Método de Entrega
-    if (p.metodo_entrega === 'Envio') {
+    if (p.metodo_entrega === this.metodosEntrega.ENVIO_LOCAL) {
       if (p.comprador_direccion) {
         mensaje += `🛵 Envío a domicilio: *${p.comprador_direccion.trim()}*\n`;
       } else {
@@ -193,7 +194,7 @@ export class PedidoPreview implements OnInit, OnDestroy {
     }
 
     // Costo de Envío
-    if (p.metodo_entrega === 'Envio') {
+    if (p.metodo_entrega === this.metodosEntrega.ENVIO_LOCAL) {
       if (p.envio_a_coordinar) {
         mensaje += `🛵 Costo de envío: *A coordinar*\n`;
       } else if (Number(p.costo_envio) === 0) {
@@ -424,7 +425,7 @@ export class PedidoPreview implements OnInit, OnDestroy {
       }
 
       // 4. Calcular Envío
-      if (p.metodo_entrega === 'Envio') {
+      if (p.metodo_entrega === this.metodosEntrega.ENVIO_LOCAL) {
         const subtotalConDescuentos = p.subtotal - p.descuento_cupon - p.descuento_pago_efectivo;
         const minimoEnvioGratis = this.envioGratisDesdeCatalogo();
 

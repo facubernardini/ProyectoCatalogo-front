@@ -41,6 +41,7 @@ import { Producto } from 'src/app/core/models/producto.model';
 import { GrillaProductos } from './indumentaria/grilla-productos/grilla-productos';
 import { combineLatest } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Checkout } from './checkout/checkout';
 
 @Component({
   selector: 'app-catalogo',
@@ -70,7 +71,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
     HeroIndumentaria,
     ProductosIndumentaria,
     ProductoDetalle,
-    GrillaProductos
+    GrillaProductos,
+    Checkout
 ],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
@@ -89,7 +91,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
   isDesktop = signal(window.innerWidth >= 768);
 
   // Indumentaria
-  vistaActual = signal<'home' | 'detalle' | 'grilla'>('home');
+  vistaActual = signal<'home' | 'detalle' | 'grilla' | 'checkout'>('home');
   productoSlugActivo = signal<string | null>(null);
   tituloGrilla = signal<string>('');
   productosFiltrados = signal<Producto[]>([]);
@@ -263,6 +265,9 @@ export class CatalogoPublico implements OnInit, OnDestroy {
       if (segments.length === 0) {
         this.vistaActual.set('home');
       } 
+      else if (segments.length > 0 && segments[0].path === 'checkout') {
+        this.vistaActual.set('checkout');
+      }
       else if (segments.length === 2 && segments[0].path === 'productos') {
         // Detalle de producto: /productos/nombre-producto
         this.vistaActual.set('detalle');
@@ -272,7 +277,7 @@ export class CatalogoPublico implements OnInit, OnDestroy {
         // Subcategoría: /agrupadora/subcategoria
         this.vistaActual.set('grilla');
       }
-      else if (segments.length > 0 && (segments[0].path === 'search' || segments[0].path === 'destacados' || segments[0].path === 'ofertas' || segments[0].path === 'productos')) { 
+      else if (segments.length > 0 && (segments[0].path === 'search' || segments[0].path === 'destacados' || segments[0].path === 'ofertas' || segments[0].path === 'productos' || segments[0].path === 'checkout')) { 
         this.vistaActual.set('grilla');
       }
       else if (segments.length === 1) {

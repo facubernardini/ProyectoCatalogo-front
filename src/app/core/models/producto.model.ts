@@ -1,3 +1,4 @@
+import { PlantillaDimensionSoftDTO } from "./plantilla-dimension.model";
 import { Presentacion } from "./presentacion.model";
 
 export interface CategoriaSimplificada {
@@ -27,6 +28,9 @@ export interface Producto {
   imagen: string | null;
   destacado: boolean;
   activo: boolean;
+
+  plantilla_id?: number | null;
+  plantilla?: PlantillaDimensionSoftDTO | null;
   
   presentaciones: Presentacion[];
   

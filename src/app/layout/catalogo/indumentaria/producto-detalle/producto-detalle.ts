@@ -1,13 +1,17 @@
-import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { CartService } from '@shared/services/cart.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { isDominioBase } from 'src/app/core/data/domains.data';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { Icon } from 'src/app/shared/components/icon';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ProductCardIndumentaria } from '../product-card-indumentaria/product-card-indumentaria';
+import { CorreoArgentinoService } from 'src/app/core/services/correo-argentino.service';
+import { RateDTO } from 'src/app/core/models/correo-argentino/rates.model';
+import { DeliveredType } from 'src/app/shared/enums/correo-argentino.enum';
+import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
 
 @Component({
   selector: 'app-producto-detalle',
@@ -32,6 +36,10 @@ export class ProductoDetalle implements OnInit {
   public cartService = inject(CartService);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private correoArgentinoService = inject(CorreoArgentinoService);
+  private platformId = inject(PLATFORM_ID);
+
+  private readonly CONSTANTS = APP_CONFIG;
 
   slug = input.required<string>();
 
@@ -44,6 +52,20 @@ export class ProductoDetalle implements OnInit {
   colorSeleccionado = signal<string | null>(null);
   
   touchStartX = 0;
+
+  // SEÑALES PARA EL COTIZADOR
+  cpDestino = signal(this.obtenerCPGuardado());
+  cargandoEnvio = signal(false);
+  opcionesEnvio = signal<RateDTO[]>([]);
+  errorEnvio = signal<string | null>(null);
+
+  enviosDomicilio = computed(() => 
+    this.opcionesEnvio().filter(rate => rate.deliveredType === DeliveredType.D)
+  );
+
+  retirosSucursal = computed(() => 
+    this.opcionesEnvio().filter(rate => rate.deliveredType === DeliveredType.S)
+  );
 
   productoActual = computed(() => {
     const productos = this.adminStore.productos();
@@ -360,5 +382,67 @@ export class ProductoDetalle implements OnInit {
       // 4. Fallback: Si es texto raro (ej: "38/39", "A Medida"), ordenamiento alfabético estándar
       return a.localeCompare(b);
     });
+  }
+
+  // --- Cotizador---
+
+  actualizarCP(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.cpDestino.set(input.value);
+  }
+
+  calcularEnvio() {
+    const cp = this.cpDestino().trim();
+    
+    if (!cp || cp.length < 4) {
+      this.errorEnvio.set('Ingresá un código postal válido.');
+      return;
+    }
+
+    const prod = this.productoActual();
+    if (!prod) return;
+
+    this.guardarCPEnStorage(cp);
+
+    this.cargandoEnvio.set(true);
+    this.errorEnvio.set(null);
+    this.opcionesEnvio.set([]);
+
+    const slug = this.adminStore.catalogo()?.slug || '';
+
+    this.correoArgentinoService.cotizarEnvio(
+      slug, 
+      cp, 
+      this.cantidad(),
+      prod, 
+      this.presentacionActiva()
+    ).subscribe({
+      next: (tarifas: RateDTO[]) => {
+        this.cargandoEnvio.set(false);
+        
+        if (tarifas.length > 0) {
+          this.opcionesEnvio.set(tarifas);
+        } else {
+          this.errorEnvio.set('No hay opciones de envío disponibles para este destino.');
+        }
+      },
+      error: (err) => {
+        this.cargandoEnvio.set(false);
+        this.errorEnvio.set(err.error?.error);
+      }
+    });
+  }
+
+  private obtenerCPGuardado(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(this.CONSTANTS.CP_STORAGE_KEY) || '';
+    }
+    return '';
+  }
+
+  private guardarCPEnStorage(cp: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.CONSTANTS.CP_STORAGE_KEY, cp);
+    }
   }
 }

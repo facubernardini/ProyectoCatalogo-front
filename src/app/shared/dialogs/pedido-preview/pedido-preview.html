@@ -88,7 +88,7 @@
                                 <span>{{ pedidoEditable()!.metodo_entrega || 'Seleccionar' }}</span>
                                 
                                 <!-- NUEVO: Badge de "A coordinar" -->
-                                @if (pedidoEditable()!.metodo_entrega === 'Envio' && pedidoEditable()!.envio_a_coordinar) {
+                                @if (pedidoEditable()!.metodo_entrega === metodosEntrega.ENVIO_LOCAL && pedidoEditable()!.envio_a_coordinar) {
                                     <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-600 font-bold uppercase tracking-wider">A coordinar</span>
                                 }
                             </div>
@@ -366,7 +366,7 @@
                     <div class="mt-1 flex flex-col gap-1 px-3 py-2 bg-gray-900 rounded-xl shadow-sm shrink-0 animate-in fade-in">
                         
                         <!-- VERIFICAMOS SI HAY ALGÚN VALOR AGREGADO -->
-                        @if (pedidoEditable()!.descuento_cupon > 0 || pedidoEditable()!.descuento_pago_efectivo > 0 || pedidoEditable()!.metodo_entrega === 'Envio') {
+                        @if (pedidoEditable()!.descuento_cupon > 0 || pedidoEditable()!.descuento_pago_efectivo > 0 || pedidoEditable()!.metodo_entrega === metodosEntrega.ENVIO_LOCAL) {
                             
                             <!-- Subtotal (Solo visible si hay extras) -->
                             <div class="flex justify-between items-center text-[11px] text-gray-400 font-medium">
@@ -392,7 +392,7 @@
                         }
 
                         <!-- Envío -->
-                        @if (pedidoEditable()!.metodo_entrega === 'Envio') {
+                        @if (pedidoEditable()!.metodo_entrega === metodosEntrega.ENVIO_LOCAL) {
                             <div class="flex justify-between items-center text-[11px] font-medium" 
                                 [class]="pedidoEditable()!.envio_a_coordinar || pedidoEditable()!.costo_envio > 0 ? 'text-gray-400' : 'text-emerald-400'">
                                 
@@ -420,7 +420,7 @@
                         }
 
                         <!-- Línea divisoria (Solo visible si hay extras) -->
-                        @if (pedidoEditable()!.descuento_cupon > 0 || pedidoEditable()!.descuento_pago_efectivo > 0 || pedidoEditable()!.metodo_entrega === 'Envio') {
+                        @if (pedidoEditable()!.descuento_cupon > 0 || pedidoEditable()!.descuento_pago_efectivo > 0 || pedidoEditable()!.metodo_entrega === metodosEntrega.ENVIO_LOCAL) {
                             <div class="h-px w-full bg-gray-700/60 mt-0.5"></div>
                         }
 
@@ -428,7 +428,7 @@
                         <div class="flex items-center justify-between mt-0.5">
                             <span class="text-xs font-semibold text-gray-300 uppercase tracking-widest">
                                 <!-- Cambia dinámicamente el texto -->
-                                {{ (pedidoEditable()!.descuento_cupon > 0 || pedidoEditable()!.descuento_pago_efectivo > 0 || pedidoEditable()!.metodo_entrega === 'Envio') ? 'Total Final' : 'Total' }}
+                                {{ (pedidoEditable()!.descuento_cupon > 0 || pedidoEditable()!.descuento_pago_efectivo > 0 || pedidoEditable()!.metodo_entrega === metodosEntrega.ENVIO_LOCAL) ? 'Total Final' : 'Total' }}
                             </span>
                             <span [@popAnimationSimple]="pedidoEditable()!.total_final" class="text-base font-bold text-white">
                                 ${{ pedidoEditable()!.total_final | number:'1.0-0' }}

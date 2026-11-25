@@ -202,7 +202,7 @@
                         </div>
 
                         <!-- Dirección (Solo si es envío) -->
-                        @if (pedidoFormService.formData().metodo_entrega === 'Envio') {
+                        @if (pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO_LOCAL) {
                             <div class="animate-in slide-in-from-top-2">
                                 <label class="text-xs font-bold text-gray-600 ml-1 mb-1 block">
                                     Dirección de envío
@@ -348,7 +348,7 @@
                 <div class="flex flex-col gap-1.5 max-w-sm mx-auto">
                     
                     <!-- Subtotal Condicional: Solo aparece si hay Envío O (es Efectivo Y hay descuento en el catálogo) -->
-                    @if (pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO || (pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0)) {
+                    @if (pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO_LOCAL || (pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0)) {
                         <div class="flex justify-between items-center text-xs font-semibold text-gray-500 animate-in fade-in">
                             <span>Subtotal</span>
                             <span>${{ calcularSubtotal() | number:'1.0-0' }}</span>
@@ -364,7 +364,7 @@
                     }
 
                     <!-- Costo de Envío -->
-                    @if (pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO) {
+                    @if (pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO_LOCAL) {
                         <div class="flex justify-between items-center text-xs font-medium text-gray-500">
                             <span>Envío a domicilio</span>
                             <span [class.text-emerald-600]="esEnvioGratis()" [class.font-bold]="esEnvioGratis()">
@@ -378,7 +378,7 @@
                     }
                     
                     <!-- Muestra la línea divisoria únicamente si el subtotal, descuento o envío están visibles -->
-                    @if ((pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO && pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0) || (pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0) || pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO) {
+                    @if ((pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO_LOCAL && pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0) || (pedidoFormService.formData().metodo_pago === mediosPago.EFECTIVO && descuentoEfectivoCatalogo() > 0) || pedidoFormService.formData().metodo_entrega === metodosEntrega.ENVIO_LOCAL) {
                         <div class="h-px bg-gray-100 w-full my-0.5"></div>
                     }
 

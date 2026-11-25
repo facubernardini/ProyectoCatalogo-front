@@ -12,6 +12,8 @@ import { PedidosServiceBackend } from 'src/app/core/services-backend/pedidos.Ser
 import { CrearPedidoRequest } from 'src/app/core/models/pedido.model';
 import { TipoPlanEnum } from '../../enums/tipo-plan.enum';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { MetodoEntrega } from '../../enums/metodo-entrega.enum';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-carrito',
@@ -46,8 +48,11 @@ export class Carrito {
   private pedidoRealizadoService = inject(PedidoRealizadoService);
   private toastService = inject(ToastService);
   private pedidosServiceBackend = inject(PedidosServiceBackend);
+  private router = inject(Router);
 
   catalogo = this.adminStore.catalogo;
+
+  public metodoEntrega = MetodoEntrega;
 
   nombreCliente = signal<string>('');
   direccionEnvio = signal<string>('');
@@ -69,12 +74,21 @@ export class Carrito {
           Boolean(cat.envio_a_coordinar)
         );
 
-        if (!cat.ofrece_envio) {
-          this.cartService.setDeliveryMethod('Retiro');
+        if (!cat.ofrece_envio && !cat.ofrece_correo_arg) {
+          this.cartService.setDeliveryMethod(MetodoEntrega.RETIRO);
         }
       }
     });
   }
+
+  esCorreoArgentino = computed(() =>
+    this.cartService.deliveryMethod() === MetodoEntrega.ENVIO_CORREO_ARG
+  );
+
+  esFlujoLocal = computed(() => {
+    const metodo = this.cartService.deliveryMethod();
+    return metodo === MetodoEntrega.RETIRO || metodo === MetodoEntrega.ENVIO_LOCAL;
+  });
 
   montoFaltante = computed(() => {
     const minimo = Number(this.catalogo()?.minimo_compra ?? 0);
@@ -85,17 +99,22 @@ export class Carrito {
   puedeFinalizar = computed(() => {
     const tieneItems = this.cartService.totalItems() > 0;
     const cumpleMinimo = this.cartService.priceAfterAllDiscounts() >= (this.catalogo()?.minimo_compra ?? 0);
-    
-    const tieneEntrega = this.cartService.deliveryMethod() !== null;
+    const metodo = this.cartService.deliveryMethod();
+
+    if (!tieneItems || !cumpleMinimo || !metodo) return false;
+
+    if (metodo === MetodoEntrega.ENVIO_CORREO_ARG) {
+      return true;
+    }
+
     const tienePago = this.cartService.selectedPaymentMethod() !== null;
     const nombreValido = this.nombreCliente().trim().length > 3;
     const telefonoValido = this.telefonoCliente().length === 10;
-    
-    const direccionValida = this.cartService.deliveryMethod() === 'Envio' 
-        ? this.direccionEnvio().trim().length > 5 
-        : true;
-    
-    return tieneItems && cumpleMinimo && tieneEntrega && tienePago && nombreValido && telefonoValido && direccionValida;
+    const direccionValida = metodo === MetodoEntrega.ENVIO_LOCAL
+      ? this.direccionEnvio().trim().length > 5
+      : true;
+
+    return tienePago && nombreValido && telefonoValido && direccionValida;
   });
 
   manejarClickRestar(item: any) {
@@ -149,8 +168,12 @@ export class Carrito {
     return Math.round(((base - oferta) / base) * 100);
   }
 
-  seleccionarMetodo(metodo: 'Envio' | 'Retiro') {
+  seleccionarMetodo(metodo: MetodoEntrega) {
     this.cartService.setDeliveryMethod(metodo);
+
+    if (metodo === MetodoEntrega.ENVIO_CORREO_ARG) {
+      this.cartService.selectPaymentMethod(null);
+    }
   }
 
   seleccionarPago(mp: any, element: HTMLElement) {
@@ -186,8 +209,8 @@ export class Carrito {
     }
 
     const cat = this.catalogo();
-    if (cat && !cat.ofrece_envio) {
-      this.cartService.setDeliveryMethod('Retiro');
+    if (cat && !cat.ofrece_envio && !cat.ofrece_correo_arg) {
+      this.cartService.setDeliveryMethod(MetodoEntrega.RETIRO);
     }
 
     this.toastService.show('Se han limpiado tus datos', 'info');
@@ -210,6 +233,12 @@ export class Carrito {
       return;
     }
 
+    if (this.esCorreoArgentino()) {
+      this.cartService.close();
+      this.router.navigate(['/checkout']);
+      return;
+    }
+
     if (!this.cartService.selectedPaymentMethod()) {
       this.toastService.show('Seleccioná un método de pago', 'error');
       document.getElementById('seccion-pago')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -228,18 +257,18 @@ export class Carrito {
       return;
     }
 
-    if (this.cartService.deliveryMethod() === 'Envio' && this.direccionEnvio().trim().length <= 5) {
+    if (this.cartService.deliveryMethod() === MetodoEntrega.ENVIO_LOCAL && this.direccionEnvio().trim().length <= 5) {
       this.toastService.show('Ingresá la dirección de envío', 'error');
       document.getElementById('seccion-datos')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
     const items = this.cartService.items();
-    const envio = this.cartService.deliveryMethod() === 'Envio';
+    const envio = this.cartService.deliveryMethod() === MetodoEntrega.ENVIO_LOCAL;
     const cupon = this.cartService.appliedCupon();
     const catalogoId = this.catalogo()?.id;
     const metodoPago = this.cartService.selectedPaymentMethod()?.nombre;
-    const deliveryMethod = this.cartService.deliveryMethod() || 'Retiro';
+    const deliveryMethod = this.cartService.deliveryMethod() || this.metodoEntrega.RETIRO;
 
     if (!catalogoId) {
       this.toastService.show('Error al identificar el catálogo', 'error');

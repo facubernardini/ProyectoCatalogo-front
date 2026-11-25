@@ -224,11 +224,9 @@
                                 <!-- Botón Crear (derecha) -->
                                 <button type="button" (click)="abrirFormularioNuevaCategoria()" 
                                         title="Crear nueva categoría"
-                                        class="flex items-center justify-center gap-1 shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-md md:hover:bg-brand-accent/20 active:scale-90 transition-all">
-                                    
+                                        class="flex items-center justify-center gap-1 shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-md md:hover:bg-brand-accent/20 active:scale-98 transition-all">
                                     <app-icon name="add-categoria" classes="size-3.5 fill-current" />
-                                    <span class="text-xs font-semibold">Crear</span>
-                                    
+                                    <span class="text-xs font-medium">Crear</span>
                                 </button>
                             </div>
 
@@ -329,15 +327,131 @@
                     }
                 </section>
 
-                @if (!adminStore.esIndumentaria()) {
-                    <section>
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Visibilidad especial</label>
-                            <button (click)="producto.destacado = !producto.destacado" 
-                                    [class]="producto.destacado ? 'bg-brand-accent text-white border-brand-accent shadow-md' : 'bg-gray-50 text-gray-400 border-gray-100'"
-                                    class="flex items-center justify-center gap-2 h-10 rounded-xl border font-bold text-sm transition-all active:scale-95 w-full">
-                                <app-icon name="star" [classes]="'size-4 ' + (producto.destacado ? 'fill-white' : 'fill-gray-400')" />
-                                {{ producto.destacado ? 'Producto Destacado' : 'Destacar Producto' }}
+                @if (adminStore.catalogo()?.ofrece_correo_arg){
+
+                    <section class="space-y-2 mt-6">
+                        <div class="flex items-center justify-between">
+                            <p class="text-[12px] text-gray-400 uppercase font-black tracking-widest">Tamaño de Envío</p>
+                            <span class="text-[10px] px-2 py-0.5 rounded-md font-bold transition-colors"
+                                [class.bg-brand-accent]="producto.plantilla_id"
+                                [class.text-white]="producto.plantilla_id"
+                                [class.bg-gray-100]="!producto.plantilla_id"
+                                [class.text-gray-500]="!producto.plantilla_id">
+                                {{ producto.plantilla_id ? 'Asignado' : 'Falta asignar' }}
+                            </span>
+                        </div>
+    
+                        <div class="relative">
+                            <!-- BOTÓN PRINCIPAL DEL SELECTOR -->
+                            <button type="button" 
+                                    (click)="togglePlantillasDropdown($event)"
+                                    [disabled]="adminStore.plantillasDimensiones().length === 0"
+                                    class="w-full p-3 flex justify-between items-center bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-brand-accent/30 transition-all md:hover:bg-gray-100/50 disabled:opacity-60 disabled:cursor-not-allowed">
+                                
+                                <div class="flex items-center gap-2 truncate mr-2">
+                                    <app-icon name="box" classes="size-5 shrink-0" 
+                                            [class.text-brand-accent]="producto.plantilla_id"
+                                            [class.text-gray-400]="!producto.plantilla_id" />
+                                    <span class="text-sm font-semibold truncate"
+                                        [class.text-gray-700]="producto.plantilla_id"
+                                        [class.text-gray-400]="!producto.plantilla_id">
+                                        {{ obtenerNombrePlantillaSeleccionada() || 'Seleccionar tamaño de paquete...' }}
+                                    </span>
+                                </div>
+                                
+                                <div class="shrink-0 transition-transform duration-300" [class.rotate-180]="isPlantillasDropdownOpen()">
+                                    <app-icon name="chevron-down" classes="size-4 text-gray-400 fill-current" />
+                                </div>
+                            </button>
+    
+                            <!-- DROPDOWN -->
+                            @if (isPlantillasDropdownOpen()) {
+                                <div class="fixed inset-0 z-40" (click)="isPlantillasDropdownOpen.set(false)"></div>
+                                
+                                <div class="absolute left-0 z-50 w-full bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200 mt-2"
+                                    [class.bottom-full]="isPlantillasMenuUpward()"
+                                    [class.mb-2]="isPlantillasMenuUpward()"
+                                    [class.top-full]="!isPlantillasMenuUpward()"
+                                    [class.mt-2]="!isPlantillasMenuUpward()">
+                                    
+                                    <div class="flex flex-col py-1">
+                                        <button type="button" 
+                                            (click)="seleccionarPlantilla(null)"
+                                            class="w-full text-left px-4 py-3 text-sm transition-colors flex items-center gap-3 md:hover:bg-gray-50 border-b border-gray-50"
+                                            [class.text-brand-accent]="!producto.plantilla_id"
+                                            [class.font-bold]="!producto.plantilla_id"
+                                            [style.backgroundColor]="!producto.plantilla_id ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                            [class.text-gray-500]="producto.plantilla_id"
+                                            [class.font-medium]="producto.plantilla_id">
+                                        
+                                        <div class="shrink-0 size-5 rounded-full border flex items-center justify-center transition-all duration-200"
+                                            [class.border-brand-accent]="!producto.plantilla_id"
+                                            [class.bg-brand-accent]="!producto.plantilla_id"
+                                            [class.border-gray-300]="producto.plantilla_id"
+                                            [class.bg-white]="producto.plantilla_id">
+                                            
+                                            @if (!producto.plantilla_id) {
+                                                <div class="size-2 bg-white rounded-full"></div>
+                                            }
+                                        </div>
+                                        
+                                        <span class="flex-1">Ninguno (No calcula envío)</span>
+                                    </button>
+    
+                                        @for (plantilla of adminStore.plantillasDimensiones(); track plantilla.id) {
+                                            <button type="button"
+                                                    (click)="seleccionarPlantilla(plantilla.id)"
+                                                    class="w-full text-left px-4 py-3 text-sm transition-colors flex items-center gap-3 md:hover:bg-gray-50 border-b border-gray-50 last:border-0"
+                                                    [class.text-brand-accent]="producto.plantilla_id === plantilla.id"
+                                                    [class.font-bold]="producto.plantilla_id === plantilla.id"
+                                                    [class.bg-brand-accent]="producto.plantilla_id === plantilla.id"
+                                                    [style.backgroundColor]="producto.plantilla_id === plantilla.id ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                                    [class.text-brand-text-sec]="producto.plantilla_id !== plantilla.id"
+                                                    [class.font-medium]="producto.plantilla_id !== plantilla.id">
+                                                
+                                                <div class="shrink-0 size-5 rounded-full border flex items-center justify-center transition-all duration-200"
+                                                    [class.border-brand-accent]="producto.plantilla_id === plantilla.id"
+                                                    [class.bg-brand-accent]="producto.plantilla_id === plantilla.id"
+                                                    [class.border-gray-300]="producto.plantilla_id !== plantilla.id"
+                                                    [class.bg-white]="producto.plantilla_id !== plantilla.id">
+                                                    
+                                                    @if (producto.plantilla_id === plantilla.id) {
+                                                        <div class="size-2 bg-white rounded-full"></div>
+                                                    }
+                                                </div>
+                                                
+                                                <div class="flex flex-col overflow-hidden">
+                                                    <span class="truncate">{{ plantilla.nombre }}</span>
+                                                    <span class="text-[10px] font-medium text-gray-400 mt-0.5 tracking-wide truncate"
+                                                        [class.text-brand-accent]="producto.plantilla_id === plantilla.id"
+                                                        [class.opacity-70]="producto.plantilla_id === plantilla.id">
+                                                        {{ plantilla.alto_cm }}x{{ plantilla.ancho_cm }}x{{ plantilla.largo_cm }}cm • {{ plantilla.peso_gr }}g
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+    
+                        <!-- CONTENEDOR INFERIOR: MENSAJE (Izq) y BOTÓN CREAR (Der) -->
+                        <div class="flex items-start justify-between gap-3 mt-2">
+                            <div class="flex-1">
+                                <!-- MENSAJE SI NO HAY PLANTILLAS -->
+                                @if (adminStore.plantillasDimensiones().length === 0) {
+                                    <p class="text-xs font-medium text-amber-600 bg-amber-50 p-2.5 rounded-lg border border-amber-100 flex items-start gap-2">
+                                        <app-icon name="warning" classes="size-4 fill-current shrink-0 mt-0.5" />
+                                        Todavía no creaste ningún tamaño de paquete para envíos.
+                                    </p>
+                                }
+                            </div>
+    
+                            <button type="button" (click)="abrirFormularioNuevaPlantilla()" 
+                                    title="Crear nuevo tamaño de envío"
+                                    class="flex items-center justify-center gap-1 shrink-0 bg-brand-accent/10 text-brand-accent px-2 py-1 rounded-md md:hover:bg-brand-accent/20 active:scale-98 transition-all">
+                                <app-icon name="box-add" classes="size-3.5 fill-current" />
+                                <span class="text-xs font-medium">Crear</span>
                             </button>
                         </div>
                     </section>
@@ -355,11 +469,13 @@
                             (variantesActualizadas)="actualizarVariantes($event)">
                         </app-variantes-indumentaria>
                     } @else {
-                        <div class="flex justify-end -mt-9 mb-3">
-                            <button (click)="agregarPresentacion()" class="text-xs font-medium text-brand-accent md:hover:opacity-80 transition-opacity">+ Agregar variante</button>
+                        <div class="flex justify-end -mt-9 mb-2.5">
+                            <button (click)="agregarPresentacion()" class="text-xs font-medium text-brand-accent bg-brand-accent/10 px-2 py-1 rounded-md md:hover:bg-brand-accent/20 md:hover:opacity-80 transition-opacity">
+                                + Agregar variante
+                            </button>
                         </div>
                     
-                        @for (pres of producto.presentaciones; track $index) {
+                        @for (pres of producto.presentaciones; track $index; let presIndex = $index) {
                             <div [class]="!pres.activo ? 'opacity-60 grayscale-[0.5] bg-gray-100' : 'bg-gray-50'" 
                                 class="p-2 rounded-2xl border border-gray-100 relative group/item animate-in fade-in slide-in-from-bottom-2 duration-300 transition-all">
                                 
@@ -449,6 +565,99 @@
                                         </div>
                                     }
                                 </div>
+
+                                @if (adminStore.catalogo()?.ofrece_correo_arg && producto.presentaciones.length > 1) {
+                                    <div class="mt-1.5 pt-2">
+                                        <label class="text-[9px] font-bold text-gray-400 uppercase ml-1 flex items-center">
+                                            <span>Tamaño de Envío</span>
+                                        </label>
+                                        
+                                        <div class="relative mt-1">
+                                            <button type="button" 
+                                                    (click)="togglePlantillasDropdownPresentacion($event, presIndex)"
+                                                    [disabled]="adminStore.plantillasDimensiones().length === 0"
+                                                    class="w-full p-2 bg-white border border-gray-100 rounded-lg outline-none focus:border-brand-accent/30 transition-all text-sm font-bold flex justify-between items-center group/btn disabled:opacity-60 disabled:cursor-not-allowed">
+                                                
+                                                <div class="flex items-center gap-2 truncate text-brand-text">
+                                                    <app-icon name="box" classes="size-3.5 shrink-0" 
+                                                            [class.text-brand-accent]="pres.plantilla_id"
+                                                            [class.text-gray-400]="!pres.plantilla_id" />
+                                                    <span class="text-xs truncate"
+                                                        [class.text-gray-400]="!pres.plantilla_id">
+                                                        {{ obtenerNombrePlantillaPresentacion(presIndex) || 'Seleccionar caja diferente (opcional)' }}
+                                                    </span>
+                                                </div>
+                                                
+                                                <div class="shrink-0 transition-transform duration-300" [class.rotate-180]="dropdownPlantillaAbiertoIdx() === presIndex">
+                                                    <app-icon name="chevron-down" classes="size-3.5 text-gray-400 fill-current" />
+                                                </div>
+                                            </button>
+
+                                            <!-- DROPDOWN -->
+                                            @if (dropdownPlantillaAbiertoIdx() === presIndex) {
+                                                <div class="fixed inset-0 z-40" (click)="dropdownPlantillaAbiertoIdx.set(null)"></div>
+                                                
+                                                <div class="absolute left-0 z-50 w-full bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto no-scrollbar animate-in fade-in zoom-in-95 duration-200 mt-2"
+                                                    [class.bottom-full]="menuPlantillaHaciaArriba()"
+                                                    [class.mb-2]="menuPlantillaHaciaArriba()"
+                                                    [class.top-full]="!menuPlantillaHaciaArriba()"
+                                                    [class.mt-2]="!menuPlantillaHaciaArriba()">
+                                                    
+                                                    <div class="flex flex-col py-1">
+                                                        <button type="button" (click)="seleccionarPlantillaPresentacion(presIndex, null)"
+                                                            class="w-full text-left px-3 py-2 text-[11px] transition-colors flex items-center gap-2 md:hover:bg-gray-50 border-b border-gray-50"
+                                                            [class.text-brand-accent]="!pres.plantilla_id"
+                                                            [class.font-bold]="!pres.plantilla_id"
+                                                            [style.backgroundColor]="!pres.plantilla_id ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                                            [class.text-gray-500]="pres.plantilla_id"
+                                                            [class.font-medium]="pres.plantilla_id">
+                                                        
+                                                        <div class="shrink-0 size-4 rounded-full border flex items-center justify-center transition-all duration-200"
+                                                            [class.border-brand-accent]="!pres.plantilla_id"
+                                                            [class.bg-brand-accent]="!pres.plantilla_id"
+                                                            [class.border-gray-300]="pres.plantilla_id"
+                                                            [class.bg-white]="pres.plantilla_id">
+                                                            
+                                                            @if (!pres.plantilla_id) {
+                                                                <div class="size-1.5 bg-white rounded-full"></div>
+                                                            }
+                                                        </div>
+                                                        
+                                                        <span class="flex-1">Ninguno (Usa la caja general)</span>
+                                                    </button>
+
+                                                        @for (plantilla of adminStore.plantillasDimensiones(); track plantilla.id) {
+                                                            <button type="button" (click)="seleccionarPlantillaPresentacion(presIndex, plantilla.id)"
+                                                                    class="w-full text-left px-3 py-2 text-[11px] transition-colors flex items-center gap-2 md:hover:bg-gray-50 border-b border-gray-50 last:border-0"
+                                                                    [class.text-brand-accent]="pres.plantilla_id === plantilla.id"
+                                                                    [class.font-bold]="pres.plantilla_id === plantilla.id"
+                                                                    [class.bg-brand-accent]="pres.plantilla_id === plantilla.id"
+                                                                    [style.backgroundColor]="pres.plantilla_id === plantilla.id ? 'rgba(var(--brand-accent-rgb), 0.05)' : ''"
+                                                                    [class.text-brand-text]="pres.plantilla_id !== plantilla.id"
+                                                                    [class.font-medium]="pres.plantilla_id !== plantilla.id">
+                                                                
+                                                                <div class="shrink-0 size-4 rounded-full border flex items-center justify-center transition-all duration-200"
+                                                                    [class.border-brand-accent]="pres.plantilla_id === plantilla.id"
+                                                                    [class.bg-brand-accent]="pres.plantilla_id === plantilla.id"
+                                                                    [class.border-gray-300]="pres.plantilla_id !== plantilla.id"
+                                                                    [class.bg-white]="pres.plantilla_id !== plantilla.id">
+                                                                    
+                                                                    @if (pres.plantilla_id === plantilla.id) {
+                                                                        <div class="size-1.5 bg-white rounded-full"></div>
+                                                                    }
+                                                                </div>
+                                                                
+                                                                <div class="flex flex-col overflow-hidden">
+                                                                    <span class="truncate">{{ plantilla.nombre }}</span>
+                                                                </div>
+                                                            </button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
 
                                 @if (!pres.activo) {
                                     <p class="text-[9px] text-gray-500 font-bold mt-2 text-center uppercase">Esta variante no se mostrará en el catálogo</p>

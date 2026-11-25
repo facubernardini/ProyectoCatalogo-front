@@ -7,4 +7,6 @@ export const APP_CONFIG = {
 
   DIAS_PARA_PAGAR_SUSCRIPCION: 10,
 
+  CP_STORAGE_KEY: 'listalo_cp_destino',
+
 } as const;

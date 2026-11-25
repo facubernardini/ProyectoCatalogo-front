@@ -310,7 +310,7 @@ export class PedidoForm implements OnInit, OnDestroy {
 
   esEnvioGratis(): boolean {
     const formData = this.pedidoFormService.formData();
-    if (formData.metodo_entrega !== 'Envio') return false;
+    if (formData.metodo_entrega !== this.metodosEntrega.ENVIO_LOCAL) return false;
 
     const threshold = this.envioGratisDesdeCatalogo();
     if (threshold <= 0) return false;
@@ -320,7 +320,7 @@ export class PedidoForm implements OnInit, OnDestroy {
 
   calcularCostoEnvioFinal(): number {
     const formData = this.pedidoFormService.formData();
-    if (formData.metodo_entrega !== 'Envio') return 0;
+    if (formData.metodo_entrega !== this.metodosEntrega.ENVIO_LOCAL) return 0;
 
     if (this.esEnvioGratis()) {
       return 0;
@@ -345,7 +345,7 @@ export class PedidoForm implements OnInit, OnDestroy {
     }
 
     // Validación extra recomendada: Si es envío, la dirección debería ser obligatoria
-    if (formData.metodo_entrega === 'Envio' && (!formData.comprador_direccion || formData.comprador_direccion.trim() === '')) {
+    if (formData.metodo_entrega === this.metodosEntrega.ENVIO_LOCAL && (!formData.comprador_direccion || formData.comprador_direccion.trim() === '')) {
       this.toastService.show('La dirección de envío es obligatoria', 'error');
       return;
     }
@@ -357,7 +357,7 @@ export class PedidoForm implements OnInit, OnDestroy {
       // EL CAMBIO PRINCIPAL: Si está vacío, enviamos `null`
       comprador_nombre: formData.comprador_nombre?.trim() || null,
       
-      comprador_direccion: formData.metodo_entrega === 'Envio' ? formData.comprador_direccion : null,
+      comprador_direccion: formData.metodo_entrega === this.metodosEntrega.ENVIO_LOCAL ? formData.comprador_direccion : null,
       comprador_telefono: null,
       metodo_entrega: formData.metodo_entrega,
       envio_a_coordinar: formData.envio_a_coordinar,

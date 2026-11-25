@@ -12,6 +12,8 @@ import { CategoryFormService } from 'src/app/shared/services/category-form.servi
 import { APP_CONFIG } from 'src/app/shared/constants/app.constants';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { ContextMenuService } from 'src/app/shared/services/context-menu.service';
+import { PlantillasDimensionesService } from 'src/app/shared/services/plantillas-dimensiones.service';
 
 @Component({
   selector: 'app-mis-productos',
@@ -25,7 +27,8 @@ export class MisProductos {
   private categoryFormService = inject(CategoryFormService);
   private route = inject(ActivatedRoute);
   public authService = inject(AuthService);
-  //private contextMenu = inject(ContextMenuService);
+  private contextMenu = inject(ContextMenuService);
+  private plantillasDimensionesService = inject(PlantillasDimensionesService);
   
   public productManager = inject(ProductoManagerService); 
   public productPreviewService = inject(ProductPreviewService);
@@ -268,15 +271,15 @@ export class MisProductos {
 
     window.addEventListener('scroll', this.handleInfiniteScroll, true);
 
-    /*
-    this.contextMenu.setOpciones([
-      {
-        label: 'Descargar Catálogo',
-        icon: 'pdf-export',
-        action: () => this.exportarPDF()
-      }
-    ]);
-    */
+    if (this.adminStore.catalogo()?.ofrece_correo_arg){
+      this.contextMenu.setOpciones([
+        {
+          label: 'Pesos y medidas',
+          icon: 'box-edit',
+          action: () => this.plantillasDimensionesService.openManager()
+        }
+      ]);
+    }
   }
 
   ngOnDestroy() {
@@ -286,7 +289,7 @@ export class MisProductos {
 
     window.removeEventListener('scroll', this.handleInfiniteScroll, true);
 
-    //this.contextMenu.limpiar();
+    this.contextMenu.limpiar();
   }
 
   manejarClickProducto(producto: any) {

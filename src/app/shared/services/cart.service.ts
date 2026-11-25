@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { CartItem } from 'src/app/core/models/cartItem.model';
-import { MedioPago } from 'src/app/core/models/catalogo.model';
+import { MedioPago as MedioPagoModel } from 'src/app/core/models/catalogo.model';
 import { CuponVerificado } from 'src/app/core/models/cupon.model';
 import { Presentacion } from 'src/app/core/models/presentacion.model';
 import { Producto } from 'src/app/core/models/producto.model';
@@ -8,6 +8,8 @@ import { CuponServiceBackend } from 'src/app/core/services-backend/cupones.Servi
 import { AdminStoreService } from 'src/app/core/services/admin-store.service';
 import { ConfirmService } from 'src/app/core/services/confirm.service';
 import { ToastService } from 'src/app/core/services/toast.service';
+import { MetodoEntrega } from '../enums/metodo-entrega.enum';
+import { MedioPago } from 'src/app/shared/enums/medio-pago.enum';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
@@ -20,8 +22,8 @@ export class CartService {
   public loadingCupon = signal<boolean>(false);
 
   appliedCupon = signal<CuponVerificado | null>(null);
-  selectedPaymentMethod = signal<MedioPago | null>(null);
-  deliveryMethod = signal<'Envio' | 'Retiro' | null>(null);
+  selectedPaymentMethod = signal<MedioPagoModel | null>(null);
+  deliveryMethod = signal<MetodoEntrega | null>(this.loadDeliveryMethodFromStorage());
   isOpen = signal(false);
   umbralMontoFaltanteEnvioGratis = 80;
 
@@ -87,7 +89,7 @@ export class CartService {
   });
 
   hasExtraCharges = computed(() => 
-    this.deliveryMethod() === 'Envio' || 
+    this.deliveryMethod() === MetodoEntrega.ENVIO_LOCAL || 
     !!this.appliedCupon() || 
     this.cashDiscountAmount() > 0 || 
     this.discountAmount() > 0
@@ -116,7 +118,7 @@ export class CartService {
     const base = this.priceAfterAllDiscounts();
     const config = this.catalogConfig();
 
-    if (this.deliveryMethod() === 'Envio' && !this.esEnvioGratis() && config && !config.envioACoordinar) {
+    if (this.deliveryMethod() === MetodoEntrega.ENVIO_LOCAL && !this.esEnvioGratis() && config && !config.envioACoordinar) {
       return base + config.costoEnvio;
     }
     return base;
@@ -133,6 +135,15 @@ export class CartService {
       
       if (productos.length > 0 && catalogo && this.cartItems().length > 0) {
         this.sincronizarCarrito(productos, catalogo);
+      }
+    });
+
+    effect(() => {
+      const method = this.deliveryMethod();
+      if (method) {
+        sessionStorage.setItem('cart_delivery_method', method);
+      } else {
+        sessionStorage.removeItem('cart_delivery_method');
       }
     });
   }
@@ -185,6 +196,11 @@ export class CartService {
 
   setCatalogConfig(costoEnvio: number, envioGratisDesde: number, descuentoEfectivo: number = 0, envioACoordinar: boolean = false) {
     this.catalogConfig.set({ costoEnvio, envioGratisDesde, descuentoEfectivo, envioACoordinar });
+  }
+
+  private loadDeliveryMethodFromStorage(): MetodoEntrega | null {
+    const saved = sessionStorage.getItem('cart_delivery_method') as MetodoEntrega | null;
+    return saved && Object.values(MetodoEntrega).includes(saved) ? saved : null;
   }
 
   getCantidadEnCarrito(presentacionId: number): number {
@@ -307,13 +323,24 @@ export class CartService {
     return data ? JSON.parse(data) : [];
   }
 
-  selectPaymentMethod(method: MedioPago) {
-    this.selectedPaymentMethod.set(method);
-  }
+  selectPaymentMethod(method: MedioPagoModel | null) {
+  this.selectedPaymentMethod.set(method);
+}
 
-  setDeliveryMethod(method: 'Envio' | 'Retiro') {
-    this.deliveryMethod.set(method);
+  setDeliveryMethod(metodo: MetodoEntrega | null) {
+  this.deliveryMethod.set(metodo);
+
+  if (metodo === MetodoEntrega.ENVIO_CORREO_ARG) {
+    const mediosPago = this.adminStore.catalogo()?.medios_pago ?? [];
+    const transferencia = mediosPago.find(
+      mp => mp.nombre.toLowerCase() === MedioPago.TRANSFERENCIA.toLowerCase()
+    );
+
+    if (transferencia) {
+      this.selectPaymentMethod(transferencia);
+    }
   }
+}
 
   open() {
     if (this.isOpen()) return;

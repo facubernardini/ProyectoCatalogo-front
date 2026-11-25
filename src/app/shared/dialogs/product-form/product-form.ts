@@ -14,6 +14,7 @@ import { DisableNumberScrollDirective } from 'src/app/core/directives/disable-nu
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
 import { GaleriaImagenes, ImagenPreview } from './galeria-imagenes/galeria-imagenes';
 import { VariantesIndumentaria } from './variantes-indumentaria/variantes-indumentaria';
+import { PlantillasDimensionesService } from '../../services/plantillas-dimensiones.service';
 
 @Component({
   selector: 'app-product-form',
@@ -29,9 +30,16 @@ export class ProductForm {
   public categoriaManager = inject(CategoriaManagerService);
   public categoryFormService = inject(CategoryFormService);
   private toastService = inject(ToastService);
+  private plantillasDimensionesService = inject(PlantillasDimensionesService);
 
   isTagsDropdownOpen = signal<boolean>(false);
   isTagsMenuUpward = signal<boolean>(false);
+
+  isPlantillasDropdownOpen = signal(false);
+  isPlantillasMenuUpward = signal(false);
+
+  dropdownPlantillaAbiertoIdx = signal<number | null>(null);
+  menuPlantillaHaciaArriba = signal(false);
 
   // Indumentaria
   coloresCreados: { nombre: string, hex: string }[] = [];
@@ -44,11 +52,23 @@ export class ProductForm {
     descripcion: '' as string | null,
     imagen: '',
     destacado: false,
+    
+    plantilla_id: null as number | null,
+    
     categorias_ids: [] as number[],
     tags_ids: [] as number[],
+    
     presentaciones: this.adminStore.esIndumentaria()
       ? []
-      : [{ unidad_venta: '', precio: null, precio_descuento: null, precio_costo: null, stock: null, activo: true }] as PresentacionForm[]
+      : [{ 
+          unidad_venta: '', 
+          precio: null, 
+          precio_descuento: null, 
+          precio_costo: null, 
+          stock: null, 
+          activo: true,
+          plantilla_id: null
+        }] as PresentacionForm[]
   };
 
   private imagenPendiente: File | null = null;
@@ -229,6 +249,7 @@ export class ProductForm {
       descripcion: '',
       imagen: '',
       destacado: false,
+      plantilla_id: null,
       categorias_ids: [],
       tags_ids: [],
       presentaciones: this.adminStore.esIndumentaria()
@@ -268,6 +289,72 @@ export class ProductForm {
     this.imagenPreviewTemporal.set(URL.createObjectURL(file));
   }
 
+  togglePlantillasDropdown(event: MouseEvent) {
+    event.stopPropagation();
+    
+    this.isTagsDropdownOpen.set(false); 
+    
+    const isOpen = !this.isPlantillasDropdownOpen();
+    this.isPlantillasDropdownOpen.set(isOpen);
+
+    if (isOpen) {
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const menuHeight = 240;
+
+      this.isPlantillasMenuUpward.set(spaceBelow < menuHeight);
+    }
+  }
+
+  seleccionarPlantilla(id: number | null) {
+    this.producto.plantilla_id = id;
+    this.isPlantillasDropdownOpen.set(false);
+  }
+
+  obtenerNombrePlantillaSeleccionada(): string {
+    if (!this.producto.plantilla_id) return '';
+    
+    const plantilla = this.adminStore.plantillasDimensiones()
+      .find(p => p.id === this.producto.plantilla_id);
+        
+    return plantilla ? plantilla.nombre : 'Plantilla eliminada';
+  }
+
+  togglePlantillasDropdownPresentacion(event: MouseEvent, index: number) {
+    event.stopPropagation();
+    
+    if (this.dropdownPlantillaAbiertoIdx() === index) {
+      this.dropdownPlantillaAbiertoIdx.set(null);
+    } else {
+      this.dropdownPlantillaAbiertoIdx.set(index);
+      
+      const target = event.currentTarget as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const menuHeight = 240; 
+      
+      this.menuPlantillaHaciaArriba.set(spaceBelow < menuHeight);
+    }
+  }
+
+  seleccionarPlantillaPresentacion(index: number, idPlantilla: number | null) {
+    this.producto.presentaciones[index].plantilla_id = idPlantilla;
+    this.dropdownPlantillaAbiertoIdx.set(null); // Cierra el menú al elegir
+  }
+
+  obtenerNombrePlantillaPresentacion(index: number): string {
+    const id = this.producto.presentaciones[index].plantilla_id;
+    if (!id) return '';
+    
+    const plantilla = this.adminStore.plantillasDimensiones().find(p => p.id === id);
+    return plantilla ? plantilla.nombre : 'Plantilla eliminada';
+  }
+
+  abrirFormularioNuevaPlantilla() {
+    this.plantillasDimensionesService.openCreate();
+  }
+
   agregarPresentacion() {
     this.producto.presentaciones.push({ 
       unidad_venta: '', 
@@ -275,7 +362,8 @@ export class ProductForm {
       precio_descuento: null, 
       precio_costo: null, 
       stock: null, 
-      activo: true 
+      activo: true,
+      plantilla_id: null
     });
   }
 

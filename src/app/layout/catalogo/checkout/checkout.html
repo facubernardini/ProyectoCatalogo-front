@@ -1,0 +1,608 @@
+<div class="min-h-screen bg-white text-gray-900">
+    
+    <!-- NAVBAR MINIMALISTA -->
+    <header class="bg-brand-accent">
+        <div class="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
+            <button (click)="volver()" class="flex items-center gap-4 transition-opacity outline-none">
+                @if (catalogo()?.logo_tienda) {
+                    <img [src]="catalogo()?.logo_tienda" alt="Logo" class="size-12 rounded-full object-cover">
+                }
+                <h1 class="text-xl font-bold tracking-tighter text-brand-contrast leading-none">
+                    {{ catalogo()?.nombre_tienda || 'Mi Tienda' }}
+                </h1>
+            </button>
+            <button (click)="volver()" class="text-xs font-light uppercase tracking-wide text-brand-contrast md:hover:text-brand-contrast/60 transition-colors">
+                Volver
+            </button>
+        </div>
+    </header>
+
+    <!-- LAYOUT PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-5 py-6 lg:py-12 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+        
+        <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+
+            <!-- 1. SELECCIÓN DE MÉTODO DE ENTREGA -->
+            <section>
+                <section>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base uppercase tracking-widest font-normal text-black m-0">
+                            Método de Entrega
+                        </h2>
+                        
+                        <!-- Botón Cambiar (solo visible si ya se eligió una opción) -->
+                        @if (tipoEntrega()) {
+                            <button (click)="seleccionarEntrega(null)" 
+                                    class="text-xs font-semibold uppercase tracking-wider text-brand-text hover:text-black transition-colors outline-none bg-transparent border-none cursor-pointer">
+                                Cambiar
+                            </button>
+                        }
+                    </div>
+                    
+                    <!-- MODO SELECCIÓN: Se muestra solo si no hay método elegido -->
+                    @if (!tipoEntrega()) {
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-in fade-in duration-300">
+                            
+                            <button (click)="seleccionarEntrega(MetodoEntrega.RETIRO)" 
+                                    class="p-3 border border-gray-300 text-left transition-colors flex flex-col gap-0.5 md:hover:border-black outline-none bg-white md:hover:bg-gray-50">
+                                <span class="text-xs font-semibold uppercase tracking-wider text-black">Retiro</span>
+                                <span class="text-xs text-gray-500 font-light">En persona por la tienda</span>
+                                <span class="text-sm font-medium text-black mt-2">Gratis</span>
+                            </button>
+
+                            @if (catalogo()?.ofrece_envio) {
+                                <button (click)="seleccionarEntrega(MetodoEntrega.ENVIO_LOCAL)" 
+                                        class="p-3 border border-gray-300 text-left transition-colors flex flex-col gap-0.5 md:hover:border-black outline-none bg-white md:hover:bg-gray-50">
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-black">Envío Local</span>
+                                    <span class="text-xs text-gray-500 font-light">Cadetería de la tienda</span>
+                                    <span class="text-sm font-medium text-black mt-2">
+                                        @if (cartService.catalogConfig()?.envioACoordinar) {
+                                            A coordinar
+                                        } @else if (cartService.esEnvioGratis()) {
+                                            Gratis
+                                        } @else {
+                                            ${{ cartService.catalogConfig()?.costoEnvio | number:'1.0-0' }}
+                                        }
+                                    </span>
+                                </button>
+                            }
+
+                            @if (catalogo()?.ofrece_correo_arg) {
+                                <button (click)="seleccionarEntrega(MetodoEntrega.ENVIO_CORREO_ARG)" 
+                                        class="p-3 border border-gray-300 text-left transition-colors flex flex-col gap-0.5 md:hover:border-black outline-none bg-white relative md:hover:bg-gray-50">
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-black">Envío correo argentino</span>
+                                    <span class="text-xs text-gray-500 font-light">A domicilio a todo el país</span>
+                                    <span class="text-sm font-medium text-black mt-2">A cotizar</span>
+                                </button>
+                            }
+                        </div>
+                    } 
+                    <!-- MODO RESUMEN: Se muestra cuando ya se eligió una opción -->
+                    @else {
+                        <div class="p-3 border border-gray-200 bg-gray-50 flex items-center justify-between animate-in fade-in duration-300">
+                            <div class="flex flex-col gap-1">
+                                <span class="text-xs font-semibold uppercase tracking-wider text-black">
+                                    {{ tipoEntrega() }}
+                                </span>
+                                
+                                <span class="text-xs text-gray-600 font-light">
+                                    @if (tipoEntrega() === MetodoEntrega.RETIRO) {
+                                        Se retira por el local del vendedor
+                                    } @else if (tipoEntrega() === MetodoEntrega.ENVIO_LOCAL) {
+                                        Entrega a domicilio por cadetería
+                                    } @else if (tipoEntrega() === MetodoEntrega.ENVIO_CORREO_ARG) {
+                                        Envío a todo el país por Correo Argentino
+                                    }
+                                </span>
+                            </div>
+                            
+                            <div class="text-sm font-medium text-black">
+                                @if (tipoEntrega() === MetodoEntrega.RETIRO || (tipoEntrega() === MetodoEntrega.ENVIO_LOCAL && cartService.esEnvioGratis())) {
+                                    Gratis
+                                } @else if (tipoEntrega() === MetodoEntrega.ENVIO_LOCAL) {
+                                    @if (cartService.catalogConfig()?.envioACoordinar) {
+                                        A coordinar
+                                    } @else {
+                                        ${{ cartService.catalogConfig()?.costoEnvio | number:'1.0-0' }}
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
+                </section>
+
+                @if (tipoEntrega() === MetodoEntrega.ENVIO_CORREO_ARG) {
+                    <div class="sm:col-span-2 mt-4">
+                        
+                        <!-- SECCIÓN 1: INGRESO O MUESTRA DE CÓDIGO POSTAL -->
+                        @if (tarifasCorreo().length === 0) {
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-1">
+                                <div class="sm:col-span-3 flex gap-4">
+                                    <div class="relative w-full">
+                                        <input type="text" id="codigo_postal" placeholder=" " 
+                                            [(ngModel)]="datosComprador.codigo_postal" 
+                                            class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors">
+                                        <label for="codigo_postal" class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                            Código Postal
+                                        </label>
+                                    </div>
+                                    
+                                    <button (click)="cotizarCorreoArgentino()" 
+                                            [disabled]="cargandoTarifas()" 
+                                            class="relative flex items-center justify-center w-auto px-6 py-3.5 shrink-0 bg-black text-white text-xs font-normal uppercase tracking-widest md:hover:bg-gray-800 disabled:opacity-50 transition-colors rounded-none outline-none">
+                                        
+                                        <span [class.invisible]="cargandoTarifas()">Cotizar</span>
+
+                                        @if (cargandoTarifas()) {
+                                            <span class="absolute inset-0 flex items-center justify-center">
+                                                <app-icon name="loader-circle" classes="animate-spin size-4 text-white" />
+                                            </span>
+                                        }
+                                    </button>
+                                </div>
+
+                                @if (errorTarifas()) {
+                                    <div class="sm:col-span-3 text-red-600 text-xs mt-1">{{ errorTarifas() }}</div>
+                                }
+                            </div>
+                        } @else {
+                            <div class="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 w-full animate-in fade-in duration-300">
+                                <span class="text-sm font-medium text-black">
+                                    Código Postal: <span class="font-normal">{{ datosComprador.codigo_postal }}</span>
+                                </span>
+                                <button (click)="tarifasCorreo.set([]); tarifaSeleccionada.set(null)" 
+                                        class="text-gray-600 hover:text-black transition-colors flex items-center bg-transparent border-none cursor-pointer outline-none p-1"
+                                        title="Modificar Código Postal">
+                                    <app-icon name="edit" classes="size-5 fill-current"></app-icon>
+                                </button>
+                            </div>
+                        }
+
+                        <!-- SECCIÓN 2: SELECCIÓN O RESUMEN DE TARIFA -->
+                        @if (tarifasCorreo().length > 0) {
+                            
+                            <!-- MODO SELECCIÓN DE TARIFA -->
+                            @if (!tarifaSeleccionada()) {
+                                <div class="mt-4 flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    
+                                    <!-- GRUPO 1: ENVÍO A DOMICILIO -->
+                                    @if (enviosDomicilio().length > 0) {
+                                        <div class="flex flex-col gap-2">
+                                            <span class="text-[10px] font-medium text-black uppercase tracking-wider">
+                                                Envío a domicilio
+                                            </span>
+                                            @for (rate of enviosDomicilio(); track rate.productType) {
+                                                <button (click)="seleccionarTarifaCorreo(rate)"
+                                                        class="flex items-center justify-between p-3 border border-gray-300 text-left transition-colors md:hover:border-brand-accent outline-none w-full bg-white md:hover:bg-gray-50">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-[10px] font-medium text-gray-800 uppercase tracking-wide">
+                                                            Correo Argentino {{ rate.productType === 'CP' ? 'Clásico a domicilio' : 'Expreso a domicilio' }}
+                                                        </span>
+                                                        <span class="text-[11px] font-normal text-gray-500 mt-0.5">
+                                                            Llega entre {{ rate.deliveryTimeMin }} y {{ rate.deliveryTimeMax }} días hábiles
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-sm font-medium text-black shrink-0 ml-3">
+                                                        ${{ rate.price | number:'1.0-0' }}
+                                                    </span>
+                                                </button>
+                                            }
+                                        </div>
+                                    }
+
+                                    <!-- GRUPO 2: RETIRO POR SUCURSAL -->
+                                    @if (retirosSucursal().length > 0) {
+                                        <div class="flex flex-col gap-2">
+                                            <span class="text-[10px] font-medium text-black uppercase tracking-wider">
+                                                Retiro por sucursal
+                                            </span>
+                                            @for (rate of retirosSucursal(); track rate.productType) {
+                                                <button (click)="seleccionarTarifaCorreo(rate)"
+                                                        class="flex items-center justify-between p-3 border border-gray-300 text-left transition-colors md:hover:border-brand-accent outline-none w-full bg-white md:hover:bg-gray-50">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-[10px] font-medium text-gray-800 uppercase tracking-wide">
+                                                            Correo Argentino {{ rate.productType === 'CP' ? 'Clásico a sucursal' : 'Expreso a sucursal' }}
+                                                        </span>
+                                                        <span class="text-[11px] font-normal text-gray-500 mt-0.5">
+                                                            Llega entre {{ rate.deliveryTimeMin }} y {{ rate.deliveryTimeMax }} días hábiles
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-sm font-medium text-black shrink-0 ml-3">
+                                                        ${{ rate.price | number:'1.0-0' }}
+                                                    </span>
+                                                </button>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <!-- MODO RESUMEN DE TARIFA ELEGIDA (BADGE) -->
+                            @else {
+                                <div class="mt-4 p-3 border border-gray-200 bg-gray-50 flex items-center justify-between animate-in fade-in duration-300">
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-xs font-semibold uppercase tracking-wider text-black">
+                                            Correo Argentino {{ tarifaSeleccionada()!.productType === 'CP' ? 'Clásico' : 'Expreso' }} {{ tarifaSeleccionada()!.deliveredType === 'D' ? 'a domicilio' : 'a sucursal' }}
+                                        </span>
+                                        
+                                        <span class="text-xs text-gray-600 font-light">
+                                            Llega entre {{ tarifaSeleccionada()!.deliveryTimeMin }} y {{ tarifaSeleccionada()!.deliveryTimeMax }} días hábiles
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="flex flex-col items-end gap-2">
+                                        <span class="text-sm font-medium text-black">
+                                            ${{ tarifaSeleccionada()!.price | number:'1.0-0' }}
+                                        </span>
+                                        <button (click)="tarifaSeleccionada.set(null)" 
+                                                class="text-xs font-semibold uppercase tracking-wider text-brand-text hover:text-black transition-colors outline-none bg-transparent border-none cursor-pointer">
+                                            Cambiar
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            </section>
+
+            <!-- 2. DATOS SEGÚN SELECCIÓN -->
+            @if (tipoEntrega()) {
+                <section class="animate-in fade-in slide-in-from-top-4 duration-500">
+                    <h2 class="text-base uppercase tracking-widest font-normal text-black mb-4">
+                        Datos del Comprador
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="relative w-full">
+                            <input 
+                                type="text" 
+                                id="nombre"
+                                placeholder=" " 
+                                [(ngModel)]="datosComprador.nombre" 
+                                class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                            >
+                            <label 
+                                for="nombre" 
+                                class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                    peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                    peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                Nombre
+                            </label>
+                        </div>
+                        
+                        <div class="relative w-full">
+                            <input 
+                                type="text" 
+                                id="apellido"
+                                placeholder=" " 
+                                [(ngModel)]="datosComprador.apellido" 
+                                class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                            >
+                            <label 
+                                for="apellido" 
+                                class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                    peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                    peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                Apellido
+                            </label>
+                        </div>
+
+                        <div class="relative w-full sm:col-span-2">
+                            <input 
+                                type="tel" 
+                                id="telefono"
+                                placeholder=" " 
+                                [(ngModel)]="datosComprador.telefono" 
+                                class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                            >
+                            <label 
+                                for="telefono" 
+                                class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                    peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                    peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                Teléfono
+                            </label>
+                        </div>
+
+                        @if (tipoEntrega() === MetodoEntrega.ENVIO_LOCAL) {
+                            <div class="relative w-full sm:col-span-2">
+                                <input 
+                                    type="text" 
+                                    id="direccion_local"
+                                    placeholder=" " 
+                                    [(ngModel)]="datosComprador.direccion_local" 
+                                    class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                                >
+                                <label 
+                                    for="direccion_local" 
+                                    class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                        peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                        peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                    Dirección exacta de entrega
+                                </label>
+                            </div>
+                        }
+
+                        @if (tipoEntrega() === MetodoEntrega.ENVIO_CORREO_ARG) {                            
+                            <!-- Resto de campos de dirección obligatorios -->
+                            <div class="relative w-full sm:col-span-2">
+                                <input 
+                                    type="email" 
+                                    id="email"
+                                    placeholder=" " 
+                                    [(ngModel)]="datosComprador.email" 
+                                    class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                                >
+                                <label 
+                                    for="email" 
+                                    class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                        peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                        peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                    Correo
+                                </label>
+                            </div>
+                            
+                            <div class="sm:col-span-2 grid grid-cols-3 gap-4">
+                                <div class="relative w-full col-span-2">
+                                    <input 
+                                        type="text" 
+                                        id="calle"
+                                        placeholder=" " 
+                                        [(ngModel)]="datosComprador.calle" 
+                                        class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                                    >
+                                    <label 
+                                        for="calle" 
+                                        class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                            peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                            peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                        Calle
+                                    </label>
+                                </div>
+
+                                <div class="relative w-full">
+                                    <input 
+                                        type="text" 
+                                        id="numero"
+                                        placeholder=" " 
+                                        [(ngModel)]="datosComprador.numero" 
+                                        class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                                    >
+                                    <label 
+                                        for="numero" 
+                                        class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                            peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                            peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                        Número
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-2 grid grid-cols-2 gap-4">
+                                <div class="relative w-full">
+                                    <input 
+                                        type="text" 
+                                        id="piso"
+                                        placeholder=" " 
+                                        [(ngModel)]="datosComprador.piso" 
+                                        class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                                    >
+                                    <label 
+                                        for="piso" 
+                                        class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                            peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                            peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                        Piso (Opcional)
+                                    </label>
+                                </div>
+
+                                <div class="relative w-full">
+                                    <input 
+                                        type="text" 
+                                        id="departamento"
+                                        placeholder=" " 
+                                        [(ngModel)]="datosComprador.departamento" 
+                                        class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                                    >
+                                    <label 
+                                        for="departamento" 
+                                        class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                            peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                            peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                        Depto (Opcional)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="relative w-full sm:col-span-1">
+                                <input 
+                                    type="text" 
+                                    id="ciudad"
+                                    placeholder=" " 
+                                    [(ngModel)]="datosComprador.ciudad" 
+                                    class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                                >
+                                <label 
+                                    for="ciudad" 
+                                    class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                        peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                        peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                    Ciudad
+                                </label>
+                            </div>
+
+                            <div class="relative w-full sm:col-span-1">
+                                <input 
+                                    type="text" 
+                                    id="provincia"
+                                    placeholder=" " 
+                                    [(ngModel)]="datosComprador.provincia" 
+                                    class="peer w-full px-4 py-3.5 bg-transparent border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors"
+                                >
+                                <label 
+                                    for="provincia" 
+                                    class="absolute left-3 top-3.5 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                        peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black
+                                        peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs">
+                                    Provincia
+                                </label>
+                            </div>
+                        }
+
+                    </div>
+                </section>
+            }
+        </div>
+
+        <!-- COLUMNA DERECHA: RESUMEN DE COMPRA -->
+        <div class="lg:col-span-5 relative">
+            <div class="sticky top-10">
+                
+                <!-- Lista de Productos -->
+                <div class="flex flex-col gap-4 mb-8">
+                    @for (item of cartService.items(); track item.productoId) {
+                        <div class="flex items-center gap-4">
+                            <!-- Imagen y Badge -->
+                            <div class="relative size-18 shrink-0 bg-white">
+                                <span class="absolute -top-2 -right-2 size-5 flex items-center justify-center bg-gray-500 text-white text-[11px] rounded-none">
+                                    x{{ item.cantidad }}
+                                </span>
+                                <img [src]="item.imagen" alt="Producto" class="w-full h-full object-cover">
+                            </div>
+                            
+                            <!-- Nombre y Unidad -->
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-sm font-normal text-black truncate">{{ item.nombre }}</h3>
+                                @if (item.unidad) {
+                                    <p class="text-xs font-light text-gray-500">{{ item.unidad }}</p>
+                                }
+                            </div>
+                            
+                            <!-- Precios (Total y Unitario) -->
+                            <div class="flex flex-col items-end shrink-0">
+                                <span class="text-sm font-normal text-black">
+                                    ${{ (item.precio * item.cantidad) | number:'1.0-0' }}
+                                </span>
+                                
+                                @if (item.cantidad > 1) {
+                                    <span class="text-xs font-light text-gray-500 mt-0.5">
+                                        ${{ item.precio | number:'1.0-0' }} c/u
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Totales -->
+                <div class="flex flex-col gap-3 text-sm font-light text-gray-600 mb-5 pt-5 border-t border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <span>Subtotal</span>
+                        <span class="text-black">${{ cartService.subtotalPrice() | number:'1.0-0' }}</span>
+                    </div>
+                    
+                    <!-- Descuento Cupón de CartService -->
+                    @if (cartService.discountAmount() > 0) {
+                        <div class="flex justify-between items-center text-black">
+                            <span>Descuento</span>
+                            <span>-${{ cartService.discountAmount() | number:'1.0-0' }}</span>
+                        </div>
+                    }
+
+                    <div class="flex justify-between items-center">
+                        <span>Envío</span>
+                        @if (obtenerCostoEnvio() > 0) {
+                            <span class="text-black">${{ obtenerCostoEnvio() | number:'1.0-0' }}</span>
+                        } @else {
+                            <span class="text-xs uppercase tracking-wide">
+                                {{ tipoEntrega() ? 'A calcular' : 'Selecciona método' }}
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Sección de Descuento -->
+                <div class="mb-5">
+                    
+                    @if (cartService.appliedCupon()) {
+                        <div class="flex items-center justify-between p-3 border border-gray-200 bg-white">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-normal text-black uppercase tracking-wide">
+                                    {{ cartService.appliedCupon()?.codigo }}
+                                </span>
+                                <span class="text-sm font-light text-gray-500">
+                                    @if (cartService.appliedCupon()!.es_porcentaje) {
+                                        ({{ cartService.appliedCupon()!.descuento }}% OFF)
+                                    } @else {
+                                        (-${{ cartService.appliedCupon()!.descuento | number:'1.0-0' }})
+                                    }
+                                </span>
+                            </div>
+                            
+                            <button (click)="removerCupon()" class="text-gray-400 hover:text-black transition-colors outline-none" title="Quitar cupón">
+                                <app-icon name="close" classes="size-5 fill-current" />
+                            </button>
+                        </div>
+                    } 
+                    @else {
+                        
+                        @if (!mostrarInputCupon()) {
+                            <button (click)="mostrarInputCupon.set(true)" 
+                                    class="text-sm font-light text-gray-500 hover:text-black transition-colors flex items-center gap-2 outline-none">
+                                <app-icon name="ticket" classes="size-4 fill-current" />
+                                Agregar cupón de descuento
+                            </button>
+                        } @else {
+                            <div class="flex gap-3 animate-in fade-in duration-300">
+                                <div class="relative w-full">
+                                    <input 
+                                        type="text" 
+                                        id="codigo_descuento"
+                                        placeholder=" "
+                                        [ngModel]="codigoCuponInput()"
+                                        (ngModelChange)="codigoCuponInput.set($event)"
+                                        class="peer w-full p-3 bg-white border border-gray-300 rounded-none text-sm outline-none focus:border-black transition-colors uppercase"
+                                    >
+                                    <label 
+                                        for="codigo_descuento" 
+                                        class="absolute left-3 top-3 px-1 bg-white text-sm font-light text-gray-400 transition-all duration-200 pointer-events-none
+                                            peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-black peer-focus:normal-case
+                                            peer-not-placeholder-shown:-top-2.5 peer-not-placeholder-shown:text-xs peer-not-placeholder-shown:normal-case">
+                                        Código del cupón
+                                    </label>
+                                </div>
+                                
+                                <button (click)="aplicarCupon()"
+                                    [disabled]="cartService.loadingCupon() || !codigoCuponInput()"
+                                    class="relative flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-600 text-xs font-normal uppercase tracking-widest md:hover:bg-gray-300 transition-colors rounded-none outline-none disabled:opacity-50">
+                                
+                                    <span [class.invisible]="cartService.loadingCupon()">Aplicar</span>
+
+                                    @if (cartService.loadingCupon()) {
+                                        <span class="absolute inset-0 flex items-center justify-center">
+                                            <app-icon name="loader-circle" classes="animate-spin size-4 text-gray-800" />
+                                        </span>
+                                    }
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="flex justify-between items-end pt-4 border-t border-gray-200 mb-5">
+                    <span class="text-base uppercase tracking-widest font-normal text-black">Total</span>
+                    <span class="text-2xl font-normal text-black">
+                        ${{ obtenerTotalFinal() | number:'1.0-0' }}
+                    </span>
+                </div>
+
+                <button (click)="finalizarCompra()"
+                        [disabled]="!tipoEntrega() || (tipoEntrega() === MetodoEntrega.ENVIO_CORREO_ARG && !tarifaSeleccionada())"
+                        class="w-full py-4 bg-black text-white text-sm font-normal uppercase tracking-widest md:hover:bg-gray-800 transition-colors rounded-none outline-none flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Finalizar Pedido
+                </button>
+            </div>
+        </div>
+    </main>
+</div>

@@ -26,7 +26,7 @@
             <div class="flex items-center gap-2 shrink-0">
                 
                 <!-- Botón de Google Maps -->
-                @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO && pedido().comprador_direccion) {
+                @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO_LOCAL && pedido().comprador_direccion) {
                     <button (click)="abrirGoogleMaps()"
                         class="p-2 text-blue-500 bg-blue-50 md:hover:bg-blue-100 rounded-xl active:scale-95 transition-all"
                         title="Ver en Google Maps">
@@ -68,7 +68,7 @@
                         </span>
                     </div>
                     
-                    @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO && pedido().comprador_direccion) {
+                    @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO_LOCAL && pedido().comprador_direccion) {
                         <span class="text-[10px] pr-1 font-semibold text-gray-400 leading-tight mt-0.5">
                             {{ pedido().comprador_direccion }}
                         </span>
@@ -90,7 +90,7 @@
         <div class="flex flex-col gap-2 mt-1">
             
             <!-- Desglose Financiero -->
-            @if (pedido().subtotal !== pedido().total_final || (pedido().metodo_entrega === metodoEntregaEnum.ENVIO && pedido().costo_envio > 0)) {
+            @if (pedido().subtotal !== pedido().total_final || (pedido().metodo_entrega === metodoEntregaEnum.ENVIO_LOCAL && pedido().costo_envio > 0)) {
                 <div class="flex flex-col gap-1 text-xs text-gray-500 bg-gray-50 p-2 rounded-xl border border-gray-100" [class.opacity-60]="pedido().estado === 'CANCELADO'">
                     
                     <div class="flex items-center gap-1">
@@ -126,7 +126,7 @@
                         </div>
                     }
 
-                    @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO) {
+                    @if (pedido().metodo_entrega === metodoEntregaEnum.ENVIO_LOCAL) {
                         <div class="flex items-center gap-1">
                             <span class="text-xs pr-1">Envío a domicilio</span>
                             <div class="flex-1 flex items-center">

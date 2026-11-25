@@ -11,6 +11,7 @@ import { SafeHtmlPipe } from 'src/app/core/pipes/safe-html.pipe';
 import { catchError, debounceTime, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { BRAND_DATA } from 'src/app/core/data/brand.data';
 import { AuthService } from 'src/app/core/services-backend/auth.ServiceBackend';
+import { CorreoArgentinoServiceBackend } from 'src/app/core/services-backend/correo-argentino.ServiceBackend';
 
 @Component({
   selector: 'app-mi-tienda',
@@ -23,6 +24,7 @@ export class MiTienda implements OnInit, OnDestroy {
   public authService = inject(AuthService);
   private catalogoService = inject(CatalogoService);
   private toastService = inject(ToastService);
+  private correoArgentinoServiceBackend = inject(CorreoArgentinoServiceBackend);
 
   private cdr = inject(ChangeDetectorRef);
 
@@ -39,6 +41,11 @@ export class MiTienda implements OnInit, OnDestroy {
 
   logoPreview: string | null = null;
   imagenLogoPendiente: File | null = null;
+
+  mostrarLoginCa = false;
+  cargandoCa = false;
+  caEmail = '';
+  caPassword = '';
 
   MAX_SIZE_MB = 10;
 
@@ -369,6 +376,32 @@ export class MiTienda implements OnInit, OnDestroy {
     if (!patron.test(event.key)) {
       event.preventDefault();
     }
+  }
+
+  obtenerIdCorreoArgentino() {
+    if (!this.caEmail || !this.caPassword) return;
+    
+    this.cargandoCa = true;
+    
+    this.correoArgentinoServiceBackend.validarUsuario(this.caEmail, this.caPassword)
+      .subscribe({
+        next: (response) => {
+          this.catalogo()!.ca_customer_id = response.customerId; 
+          
+          // Limpias los datos sensibles y cierras la ventana
+          this.caEmail = '';
+          this.caPassword = '';
+          this.mostrarLoginCa = false;
+          this.cargandoCa = false;
+          
+          // Opcional: Mostrar un toast de éxito
+          this.toastService.show('Cuenta vinculada con éxito');
+        },
+        error: (err) => {
+          this.cargandoCa = false;
+          this.toastService.show('Credenciales incorrectas o cuenta inexistente', err);
+        }
+      });
   }
 
   async guardarCambios(section: ConfigSection) {

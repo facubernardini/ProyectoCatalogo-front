@@ -1,0 +1,153 @@
+@if (formService.isOpen()) {
+    <div class="fixed inset-0 z-50 flex justify-end overflow-hidden">
+        
+        <!-- Backdrop oscuro (click para salir completamente) -->
+        <div class="absolute inset-0 bg-black/60 animate-backdrop" (click)="formService.close()"></div>
+
+        <!-- Panel lateral -->
+        <div (click)="$event.stopPropagation()" class="relative w-full sm:w-112.5 bg-white shadow-2xl flex flex-col animate-side-panel">
+            
+            <!-- HEADER ESTÁTICO UNIFICADO -->
+            <div class="sticky top-0 z-20 flex items-center justify-between px-5 py-4 bg-white/80 border-b border-gray-100 rounded-tl-4xl">
+                <h2 class="text-base font-black text-brand-text leading-tight">
+                    Pesos y medidas de los paquetes
+                </h2>
+                <button (click)="formService.close()" 
+                        class="p-2 bg-gray-50 md:hover:bg-gray-100 rounded-full transition-all active:scale-90 border border-gray-200/50">
+                    <app-icon name="close" classes="size-5 text-gray-500 fill-current" />
+                </button>
+            </div>
+
+            <!-- CONTENEDOR CON DESLIZAMIENTO ANIMADO -->
+            <div class="flex-1 overflow-hidden relative bg-white">
+                <div class="flex h-full w-[200%] transition-transform duration-500 ease-in-out"
+                     [class.-translate-x-1/2]="formService.vistaActual() === 'formulario'">
+                    
+                    <div class="w-1/2 h-full flex flex-col p-4 overflow-y-auto no-scrollbar">
+                        <div class="flex-1">
+                            @if (adminStore.plantillasDimensiones().length === 0) {
+                                <div class="text-center py-12 px-4 mt-10">
+                                    <div class="bg-gray-50 rounded-full size-16 flex items-center justify-center mx-auto mb-3">
+                                        <app-icon name="box" classes="size-8 text-gray-300 fill-current" />
+                                    </div>
+                                    <p class="text-sm font-bold text-brand-text mb-1">Sin empaques creados</p>
+                                    <p class="text-[11px] text-gray-500">Cargá tus primeras cajas o bolsas para habilitar los cálculos de envío.</p>
+                                </div>
+                            } @else {
+                                <div class="space-y-3">
+                                    @for (plantilla of adminStore.plantillasDimensiones(); track plantilla.id) {
+                                        <div (click)="formService.openEdit(plantilla)"
+                                            class="flex items-center justify-between p-3 bg-gray-100 border border-transparent rounded-lg md:hover:border-brand-accent/30 transition-all group cursor-pointer">
+                                            
+                                            <div class="flex flex-col">
+                                                <span class="text-sm font-semibold text-brand-text">{{ plantilla.nombre }}</span>
+                                                <span class="text-xs font-normal text-gray-600 mt-0.5 tracking-wide">
+                                                    {{ plantilla.alto_cm }}x{{ plantilla.ancho_cm }}x{{ plantilla.largo_cm }} cm • {{ plantilla.peso_gr }} g
+                                                </span>
+                                            </div>
+                                            
+                                            <button (click)="eliminar(plantilla); $event.stopPropagation()" 
+                                                    class="p-2 text-red-500 md:text-gray-400 md:hover:text-red-500 md:hover:bg-red-50 rounded-xl transition-all" title="Eliminar">
+                                                <app-icon name="trash" classes="size-[18px] fill-current" />
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Botón "Crear nueva" fijo abajo en la lista -->
+                        <button (click)="formService.openCreate()" 
+                                class="mt-6 flex items-center justify-center gap-2 w-full p-4 bg-brand-accent/10 border-2 border-brand-accent/20 rounded-xl md:hover:bg-brand-accent/20 transition-all text-brand-accent font-bold active:scale-98 shrink-0">
+                            <app-icon name="add-producto" classes="size-5 fill-current" />
+                            Crear nueva medida
+                        </button>
+                    </div>
+
+                    <div class="w-1/2 h-full flex flex-col p-4 overflow-y-auto no-scrollbar">
+                        
+                        <!-- Inputs y contenido del form -->
+                        <div class="flex-1 space-y-4 pb-6">
+                            
+                            <div class="flex items-start gap-2 p-2 bg-blue-50 border border-blue-100 rounded-lg">
+                                <app-icon name="info" classes="size-5 text-blue-600 fill-current shrink-0 mt-0.5" />
+                                <p class="text-xs font-medium text-blue-800 leading-snug">
+                                    Ingresá las medidas <strong>finales del paquete cerrado</strong> (incluyendo la caja o bolsa). Estas dimensiones se enviarán a Correo Argentino.
+                                </p>
+                            </div>
+
+                            <!-- Nombre -->
+                            <div>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Nombre del empaque</label>
+                                <input type="text" [(ngModel)]="formService.formData().nombre" placeholder="Ej: Caja Zapatillas, Bolsa chica..." maxlength="40"
+                                       class="w-full mt-1 p-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-brand-accent focus:bg-white outline-none font-bold text-brand-text transition-all">
+                                <div class="flex justify-end mt-1.5 mr-2">
+                                    <span class="text-[10px] font-bold transition-colors"
+                                          [class.text-red-500]="(formService.formData().nombre || '').length === 40"
+                                          [class.text-gray-400]="(formService.formData().nombre || '').length < 40">
+                                        {{ (formService.formData().nombre || '').length }}/40
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Peso -->
+                            <div class="p-3 pt-1 bg-gray-50 border-2 border-gray-100 rounded-xl focus-within:border-brand-accent focus-within:bg-white transition-all group">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-brand-text">Peso total del paquete</label>
+                                <div class="flex items-center mt-2">
+                                    <input type="number" min="1" [(ngModel)]="formService.formData().peso_gr" placeholder="0"
+                                           class="no-spinners w-full bg-transparent border-none outline-none font-black text-2xl text-brand-text focus:ring-0">
+                                    <span class="font-bold text-gray-400 select-none">gramos</span>
+                                </div>
+                            </div>
+
+                            <!-- Dimensiones -->
+                            <div class="pt-4">
+                                <h3 class="text-xs font-black uppercase tracking-widest text-brand-text mb-4 ml-1">Dimensiones en Centímetros</h3>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="flex flex-col bg-gray-50 border-2 border-gray-100 rounded-xl p-2 focus-within:border-brand-accent focus-within:bg-white transition-all">
+                                        <label class="text-[10px] font-bold text-gray-500 mb-1">Alto</label>
+                                        <div class="flex items-end gap-1">
+                                            <input type="number" min="1" [(ngModel)]="formService.formData().alto_cm" placeholder="0"
+                                                   class="no-spinners w-full bg-transparent border-none outline-none font-black text-xl text-brand-text focus:ring-0 p-0 text-center">
+                                            <span class="text-xs font-bold text-gray-400 mb-0.5">cm</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col bg-gray-50 border-2 border-gray-100 rounded-xl p-2 focus-within:border-brand-accent focus-within:bg-white transition-all">
+                                        <label class="text-[10px] font-bold text-gray-500 mb-1">Ancho</label>
+                                        <div class="flex items-end gap-1">
+                                            <input type="number" min="1" [(ngModel)]="formService.formData().ancho_cm" placeholder="0"
+                                                   class="no-spinners w-full bg-transparent border-none outline-none font-black text-xl text-brand-text focus:ring-0 p-0 text-center">
+                                            <span class="text-xs font-bold text-gray-400 mb-0.5">cm</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col bg-gray-50 border-2 border-gray-100 rounded-xl p-2 focus-within:border-brand-accent focus-within:bg-white transition-all">
+                                        <label class="text-[10px] font-bold text-gray-500 mb-1">Largo</label>
+                                        <div class="flex items-end gap-1">
+                                            <input type="number" min="1" [(ngModel)]="formService.formData().largo_cm" placeholder="0"
+                                                   class="no-spinners w-full bg-transparent border-none outline-none font-black text-xl text-brand-text focus:ring-0 p-0 text-center">
+                                            <span class="text-xs font-bold text-gray-400 mb-0.5">cm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción (Fijos al fondo) -->
+                        <div class="mt-auto pt-2 flex gap-3 shrink-0">
+                            <button (click)="formService.volverALista()" 
+                                    class="flex-1 py-3.5 bg-gray-100 md:hover:bg-gray-200 text-brand-text font-bold rounded-xl transition-colors active:scale-98 text-sm">
+                                Volver
+                            </button>
+                            <button (click)="formService.save()" 
+                                    [disabled]="!formService.esValido()"
+                                    class="flex-1 py-3.5 bg-brand-accent text-white font-bold rounded-xl shadow-lg shadow-brand-accent/20 md:hover:shadow-brand-accent/40 transition-all active:scale-98 disabled:opacity-40 disabled:pointer-events-none text-sm">
+                                Guardar
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}

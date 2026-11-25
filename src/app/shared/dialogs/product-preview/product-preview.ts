@@ -43,7 +43,8 @@ export class ProductPreview {
       precio_costo: null,
       precio_descuento: null,
       stock: null,
-      activo: true
+      activo: true,
+      plantilla_id: null
     });
 
     setTimeout(() => {

@@ -280,13 +280,19 @@
                 <app-config-section
                     #sectionEnvios
                     title="Entregas y Envíos"
-                    description="Indica si ofreces envíos y su costo"
+                    description="Configurá tus envíos locales y por Correo Argentino"
                     icon="delivery" 
                     [loading]="loading()"
-                    [deshabilitarGuardar]="cat.ofrece_envio && !cat.envio_a_coordinar && ((cat.costo_envio ?? 0) <= 0)"
+                    [deshabilitarGuardar]="
+                        (cat.ofrece_envio && !cat.envio_a_coordinar && ((cat.costo_envio ?? 0) <= 0)) ||
+                        (cat.ofrece_correo_arg && (!cat.cp_origen || !cat.ca_customer_id))
+                    "
                     (onSave)="guardarCambios(sectionEnvios)"
                     (onCancel)="resetearValores()">
                     
+                    <!-- ========================================== -->
+                    <!-- ENVÍOS LOCALES / RETIROS (TU CÓDIGO ACTUAL)-->
+                    <!-- ========================================== -->
                     <section class="pt-3 border-t border-brand-bg space-y-4">               
                         
                         <div class="relative grid grid-cols-2 p-1 bg-gray-100 rounded-2xl isolate overflow-hidden">
@@ -307,14 +313,13 @@
                                     class="flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-colors duration-300 relative z-10"
                                     [class]="cat.ofrece_envio ? 'text-white' : 'text-gray-500 hover:text-gray-700'">
                                 <app-icon name="delivery" classes="size-4 fill-current transition-colors duration-300" />
-                                Hago Envíos
+                                Hago Envíos Locales
                             </button>
                         </div>
 
                         @if (cat.ofrece_envio) {
                             <div class="animate-in fade-in slide-in-from-top-2 duration-300 space-y-4">
                                 
-                                <!-- NUEVO: Toggle de Envío Variable -->
                                 <label class="relative flex items-center cursor-pointer group w-max mb-2">
                                     <input type="checkbox" 
                                         [(ngModel)]="cat.envio_a_coordinar" 
@@ -326,7 +331,6 @@
                                 </label>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    
                                     <!-- COLUMNA 1: Costo -->
                                     <div>
                                         @if (!cat.envio_a_coordinar) {
@@ -370,9 +374,7 @@
                                         <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1">Envío gratis desde</label>
                                         
                                         <div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden">
-                                            
                                             <span class="pl-4 py-2 text-sm font-bold text-gray-400 select-none">$</span>
-                                            
                                             <input type="number"
                                                 (wheel)="$event.preventDefault()"
                                                 [(ngModel)]="cat.envio_gratis_desde"
@@ -393,6 +395,113 @@
                             <div class="flex items-center gap-2 p-2.5 bg-blue-50 rounded-2xl text-blue-700 animate-in fade-in">
                                 <app-icon name="info" classes="size-5 fill-current shrink-0" />
                                 <p class="text-xs font-medium">Los clientes verán que solo pueden retirar por tu local.</p>
+                            </div>
+                        }
+                    </section>
+
+                    <!-- ========================================== -->
+                    <!-- NUEVO: SECCIÓN CORREO ARGENTINO            -->
+                    <!-- ========================================== -->
+                    <section class="pt-6 mt-6 border-t border-gray-100 space-y-4">
+                        
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-brand-text flex items-center gap-2">
+                                    Envíos Nacionales
+                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-800 text-[10px] rounded-full uppercase tracking-wider">Correo Argentino</span>
+                                </h3>
+                                <p class="text-xs text-gray-500 mt-0.5">Calculá tarifas automáticas y despachá a todo el país.</p>
+                            </div>
+                            
+                            <label class="relative flex items-center cursor-pointer group shrink-0">
+                                <input type="checkbox" [(ngModel)]="cat.ofrece_correo_arg" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
+                                <span class="ml-3 text-xs font-bold text-gray-600 group-hover:text-brand-text transition-colors">
+                                    {{ cat.ofrece_correo_arg ? 'Activado' : 'Desactivado' }}
+                                </span>
+                            </label>
+                        </div>
+
+                        @if (cat.ofrece_correo_arg) {
+                            <div class="animate-in fade-in slide-in-from-top-2 duration-300">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    
+                                    <!-- CP Origen -->
+                                    <div>
+                                        <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1"
+                                            [class.text-red-500]="!cat.cp_origen">
+                                            Código Postal de Origen (Requerido)
+                                        </label>
+                                        <div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden"
+                                            [class.!border-red-500]="!cat.cp_origen">
+                                            <span class="pl-4 py-2 text-sm font-bold text-gray-400 select-none">📍</span>
+                                            <input type="text" 
+                                                [(ngModel)]="cat.cp_origen" 
+                                                placeholder="Ej: 8000" 
+                                                class="w-full bg-transparent border-none py-2 pr-4 pl-2 outline-none text-brand-text font-medium focus:ring-0">
+                                        </div>
+                                    </div>
+
+                                    <!-- Customer ID -->
+                                    <div>
+                                        <label class="text-[10px] font-black uppercase tracking-widest text-brand-text ml-1"
+                                            [class.text-red-500]="!cat.ca_customer_id">
+                                            ID de Cliente MiCorreo (Requerido)
+                                        </label>
+                                        <div class="flex items-center mt-1 w-full bg-gray-50 border-2 border-gray-100 rounded-2xl focus-within:border-brand-accent focus-within:bg-white transition-all overflow-hidden"
+                                            [class.!border-red-500]="!cat.ca_customer_id">
+                                            <span class="pl-4 py-2 text-sm font-bold text-gray-400 select-none">#</span>
+                                            <input type="text" 
+                                                [(ngModel)]="cat.ca_customer_id" 
+                                                placeholder="Ej: 0090000025" 
+                                                class="w-full bg-transparent border-none py-2 pr-4 pl-2 outline-none text-brand-text font-medium focus:ring-0">
+                                        </div>
+                                        
+                                        <!-- Toggle login -->
+                                        <button type="button" 
+                                                (click)="mostrarLoginCa = !mostrarLoginCa" 
+                                                class="text-[11px] font-bold text-brand-accent mt-1.5 ml-1 hover:underline text-left">
+                                            ¿No sabés tu ID? Conectá con email y clave
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Formulario expandible para API Validate -->
+                                @if (mostrarLoginCa) {
+                                    <div class="mt-4 p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl animate-in slide-in-from-top-2">
+                                        <p class="text-xs font-bold text-brand-text mb-1">Obtener ID desde tu cuenta</p>
+                                        <p class="text-[11px] text-gray-500 mb-3">Tus credenciales no se guardarán, solo se usan para consultar tu ID de cliente.</p>
+                                        
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <input type="email" 
+                                                [(ngModel)]="caEmail" 
+                                                placeholder="Email de MiCorreo" 
+                                                class="w-full bg-white border border-gray-200 rounded-xl py-2.5 px-3 outline-none text-sm font-medium text-brand-text focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all">
+                                            
+                                            <input type="password" 
+                                                [(ngModel)]="caPassword" 
+                                                placeholder="Contraseña" 
+                                                class="w-full bg-white border border-gray-200 rounded-xl py-2.5 px-3 outline-none text-sm font-medium text-brand-text focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all">
+                                        </div>
+                                        
+                                        <div class="flex justify-end mt-3 gap-2">
+                                            <button type="button" 
+                                                    (click)="mostrarLoginCa = false" 
+                                                    class="px-4 py-2 text-xs font-bold text-gray-500 hover:bg-gray-200 rounded-xl transition-colors">
+                                                Cancelar
+                                            </button>
+                                            <button type="button" 
+                                                    (click)="obtenerIdCorreoArgentino()" 
+                                                    [disabled]="!caEmail || !caPassword || cargandoCa"
+                                                    class="px-4 py-2 text-xs font-bold bg-brand-accent text-white rounded-xl hover:bg-brand-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2">
+                                                @if (cargandoCa) {
+                                                    <svg class="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                }
+                                                Obtener ID
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         }
                     </section>

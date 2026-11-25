@@ -62,6 +62,10 @@ export interface Catalogo {
   envio_a_coordinar: boolean;
   costo_envio: number | null;
   envio_gratis_desde: number | null;
+
+  ofrece_correo_arg: boolean;
+  cp_origen: string | null;
+  ca_customer_id: string | null;
   
   descuento_en_efectivo: number;
 

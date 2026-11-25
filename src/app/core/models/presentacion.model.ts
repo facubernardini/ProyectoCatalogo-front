@@ -1,3 +1,5 @@
+import { PlantillaDimensionSoftDTO } from "./plantilla-dimension.model";
+
 export interface Presentacion {
   id: number;
   producto_id: number;
@@ -13,6 +15,9 @@ export interface Presentacion {
   stock: number | null;
   precio_descuento: number | null;
   activo: boolean;
+
+  plantilla_id?: number | null;
+  plantilla?: PlantillaDimensionSoftDTO | null;
 }
 
 export interface PresentacionForm {
@@ -22,4 +27,6 @@ export interface PresentacionForm {
   precio_costo: number | null;
   stock: number | null;
   activo: boolean;
+
+  plantilla_id: number | null;
 }

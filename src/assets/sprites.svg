@@ -40,6 +40,18 @@
             <path d="M120-640v-200h280v200H120Zm80-80h120v-40H200v40Zm-5 485q-35-35-35-85H80v-120q0-66 47-113t113-47h160v200h140l140-174v-106H560v-80h120q33 0 56.5 23.5T760-680v134L580-320H400q0 50-35 85t-85 35q-50 0-85-35Zm113.5-56.5Q320-303 320-320h-80q0 17 11.5 28.5T280-280q17 0 28.5-11.5ZM675-235q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35Zm113.5-56.5Q800-303 800-320t-11.5-28.5Q777-360 760-360t-28.5 11.5Q720-337 720-320t11.5 28.5Q743-280 760-280t28.5-11.5ZM160-400h160v-120h-80q-33 0-56.5 23.5T160-440v40Zm160-320v-40 40Zm0 320Z"/>
         </symbol>
 
+		<symbol id="delivery-fill" viewBox="0 0 24 24">
+            <path d="M3,8V3h7V8H3ZM4.88,18.13Q4,17.25 4,16H2V13q0-1.65 1.18-2.83T6,9h4v5h3.5L17,9.65V7H14V5h3q0.82,0 1.41,0.59Q19,6.18 19,7v3.35L14.5,16H10q0,1.25-0.88,2.13T7,19T4.88,18.13Zm2.84-1.41Q8,16.43 8,16H6q0,0.43 0.29,0.71T7,17t0.71-0.29Zm9.16,1.41Q16,17.25 16,16t0.88-2.13T19,13t2.13,0.88T22,16t-0.88,2.13T19,19t-2.13-0.88Zm2.84-1.41Q20,16.43 20,16t-0.29-0.71T19,15t-0.71,0.29T18,16t0.29,0.71T19,17t0.71-0.29Z"/>
+        </symbol>
+
+		<symbol id="delivery-truck" viewBox="0 0 24 24">
+            <path d="M3.88,19.13Q3,18.25 3,17H1V6Q1,5.18 1.59,4.59T3,4H17V8h3l3,4v5H21q0,1.25-0.88,2.13T18,20t-2.13-0.88T15,17H9q0,1.25-0.88,2.13T6,20T3.88,19.13Zm2.84-1.41Q7,17.43 7,17T6.71,16.29T6,16q-0.42,0-0.71,0.29T5,17t0.29,0.71T6,18t0.71-0.29ZM3,15H3.8q0.43-0.45 0.98-0.73T6,14t1.23,0.27T8.2,15H15V6H3v9Zm15.71,2.71Q19,17.43 19,17t-0.29-0.71T18,16t-0.71,0.29T17,17t0.29,0.71T18,18t0.71-0.29ZM17,13h4.25L19,10H17v3ZM9,10.5Z"/>
+        </symbol>
+
+		<symbol id="delivery-truck-fill" viewBox="0 0 24 24">
+            <path d="M3.88,19.13Q3,18.25 3,17H1V6Q1,5.18 1.59,4.59T3,4H17V8h3l3,4v5H21q0,1.25-0.88,2.13T18,20t-2.13-0.88T15,17H9q0,1.25-0.88,2.13T6,20T3.88,19.13Zm2.84-1.41Q7,17.43 7,17T6.71,16.29T6,16q-0.42,0-0.71,0.29T5,17t0.29,0.71T6,18t0.71-0.29Zm12,0Q19,17.43 19,17t-0.29-0.71T18,16t-0.71,0.29T17,17t0.29,0.71T18,18t0.71-0.29ZM17,13h4.25L19,10H17v3Z"/>
+        </symbol>
+
         <symbol id="receipt" viewBox="0 -960 960 960">
             <path d="M240-80q-50 0-85-35t-35-85v-120h120v-560l60 60 60-60 60 60 60-60 60 60 60-60 60 60 60-60 60 60 60-60v680q0 50-35 85t-85 35H240Zm480-80q17 0 28.5-11.5T760-200v-560H320v440h360v120q0 17 11.5 28.5T720-160ZM360-600v-80h240v80H360Zm0 120v-80h240v80H360Zm320-120q-17 0-28.5-11.5T640-640q0-17 11.5-28.5T680-680q17 0 28.5 11.5T720-640q0 17-11.5 28.5T680-600Zm0 120q-17 0-28.5-11.5T640-520q0-17 11.5-28.5T680-560q17 0 28.5 11.5T720-520q0 17-11.5 28.5T680-480ZM240-160h360v-80H200v40q0 17 11.5 28.5T240-160Zm-40 0v-80 80Z"/>
         </symbol>
@@ -384,6 +396,18 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-icon lucide-package"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg>
         </symbol>
 
+		<symbol id="box-edit" viewBox="0 0 24 24">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-pen preview-icon"><path d="M12 14.34V12l8.71-5"/><path d="M16.511 21.141a2 2 0 0 0 .854-.506l4.013-4.009a1 1 0 1 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .599.626z"/><path d="M21 9.114V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l5.087 2.907"/><path d="M3.29 7 12 12"/><path d="m7.5 4.27 9 5.15"/></svg>
+        </symbol>
+
+		<symbol id="box-add" viewBox="0 0 24 24">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-plus preview-icon"><path d="M12 22V12"/><path d="M16 17h6"/><path d="M19 14v6"/><path d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"/><path d="M3.29 7 12 12l8.71-5"/><path d="m7.5 4.27 8.997 5.148"/></svg>
+        </symbol>
+
+		<symbol id="shipping" viewBox="0 0 24 24">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px"><path d="M3.86,18.74q-0.82-0.82-0.82-1.99H1.35V6.31q0-0.76 0.52-1.28T3.15,4.5H16.77V8.31h2.65l3.23,4.33v4.12H20.85q0,1.17-0.82,1.99t-1.99,0.82t-1.99-0.82t-0.82-1.99H8.65q0,1.17-0.82,1.99T5.84,19.56T3.86,18.74Zm2.92-1.06q0.38-0.38 0.38-0.93T6.78,15.82T5.85,15.44T4.92,15.82T4.54,16.75t0.38,0.93t0.93,0.38t0.93-0.38ZM2.85,15.25H3.57q0.32-0.56 0.92-0.93t1.35-0.38q0.73,0 1.35,0.37t0.93,0.94h7.15V6H3.15Q3.04,6 2.94,6.1T2.85,6.31v8.94Zm16.12,2.43q0.38-0.38 0.38-0.93t-0.38-0.93t-0.93-0.38t-0.93,0.38t-0.38,0.93t0.38,0.93t0.93,0.38t0.93-0.38Zm-2.2-4.43h4.48l-2.6-3.44H16.77v3.44ZM9.06,10.63Z"/></svg>
+        </symbol>
+
         <symbol id="clear" viewBox="0 0 24 24">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eraser-icon lucide-eraser"><path d="M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21"/><path d="m5.082 11.09 8.828 8.828"/></svg>
         </symbol>
@@ -461,6 +485,10 @@
 
 		<symbol id="folder-open" viewBox="0 0 256 256">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M245,110.64A16,16,0,0,0,232,104H216V88a16,16,0,0,0-16-16H130.67L102.94,51.2a16.14,16.14,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V208h0a8,8,0,0,0,8,8H211.1a8,8,0,0,0,7.59-5.47l28.49-85.47A16.05,16.05,0,0,0,245,110.64ZM93.34,64,123.2,86.4A8,8,0,0,0,128,88h72v16H69.77a16,16,0,0,0-15.18,10.94L40,158.7V64Z"></path></svg>
+        </symbol>
+
+		<symbol id="loader-circle" viewBox="0 0 24 24">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-circle preview-icon"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
         </symbol>
 
     <!--|       PANEL-VENDEDORES        |-->
